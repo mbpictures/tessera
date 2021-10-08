@@ -1,13 +1,14 @@
 import React from "react";
 import {SeatSelectionFree} from "../components/SeatSelectionFree";
 import {Typography} from "@mui/material";
+import {Step} from "../components/Step";
 
-export default function SeatSelection() {
+export default function SeatSelection({direction}) {
 
     return (
-        <div className="container">
+        <Step direction={direction}>
             <Typography variant={"body1"}>This event has no seat reservation</Typography>
             <SeatSelectionFree />
-        </div>
+        </Step>
     );
 }
