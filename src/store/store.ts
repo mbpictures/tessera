@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import nextStepAvailableReducer from "./reducers/nextStepAvailableReducer";
+import eventSelectionReducer from "./reducers/eventSelectionReducer";
 
 export function makeStore() {
     return configureStore({
         reducer: {
             nextStepAvailable: nextStepAvailableReducer,
+            selectedEvent: eventSelectionReducer
         },
     })
 }

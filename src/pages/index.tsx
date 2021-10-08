@@ -1,13 +1,23 @@
 import {Stack, Typography} from "@mui/material";
-import React from 'react';
+import React, {useEffect} from 'react';
 import {EventSelection} from "../components/EventSelection";
-import {EVENT_SELECTION_KEY} from "../constants/Constants";
 import {Step} from "../components/Step";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
+import {selectEventSelected, setEvent} from "../store/reducers/eventSelectionReducer";
+import {enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 
 export default function Home({events, direction}) {
+    const dispatch = useAppDispatch();
+    const currentEventSelected = useAppSelector(selectEventSelected);
+
+    useEffect(() => {
+        if (currentEventSelected < 0) return;
+        dispatch(enableNextStep());
+    }, []);
 
     const handleChange = (index: number) => {
-        window.localStorage.setItem(EVENT_SELECTION_KEY, index.toString());
+        dispatch(setEvent(index));
+        dispatch(enableNextStep());
     }
 
     return (
