@@ -29,7 +29,7 @@ export const SeatSelectionFree = ({onChange}: {onChange?: (amount: number) => un
     };
 
     return (
-        <Paper elevation={10} style={{display: "flex", minWidth: "50%", padding: "20px", alignItems: "center", justifyContent: "center"}}>
+        <Paper elevation={5} style={{display: "flex", minWidth: "50%", padding: "20px", alignItems: "center", justifyContent: "center"}}>
             <TextField id="outlined-basic" label="Amount" variant="outlined" value={value === -1 ? "" : value} onChange={handleChange} />
             <Box width={20} />
             <Stack>
