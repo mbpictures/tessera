@@ -4,7 +4,7 @@ import {STEP_URLS, STEPS} from "../constants/Constants";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
-import {useAppSelector} from "../hooks/reduxHooks";
+import {useAppSelector} from "../store/hooks";
 
 interface Props {
     onNext?: () => unknown;
