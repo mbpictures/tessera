@@ -1,6 +1,8 @@
-import {Button, Paper, Stack, TextField} from "@mui/material";
+import {Button, IconButton, Paper, Stack, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {Box} from "@mui/system";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 export const SeatSelectionFree = ({onChange}: {onChange?: (amount: number) => unknown}) => {
     const [value, setValue] = useState<number>(0);
@@ -33,8 +35,8 @@ export const SeatSelectionFree = ({onChange}: {onChange?: (amount: number) => un
             <TextField id="outlined-basic" label="Amount" variant="outlined" value={value === -1 ? "" : value} onChange={handleChange} />
             <Box width={20} />
             <Stack>
-                <Button variant={"contained"} onClick={onAdd}>+</Button>
-                <Button variant={"contained"} color="error" onClick={onSubtract}>-</Button>
+                <IconButton onClick={onAdd} color={"primary"}><AddCircleIcon fontSize={"large"} /></IconButton>
+                <IconButton color="error" onClick={onSubtract}><RemoveCircleIcon fontSize={"large"} /></IconButton>
             </Stack>
         </Paper>
     );
