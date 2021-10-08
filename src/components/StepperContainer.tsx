@@ -1,8 +1,10 @@
 import {Box, Button, Paper, Step, StepLabel, Stepper} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {STEP_URLS, STEPS} from "../constants/Constants";
 import {useRouter} from "next/router";
 import Head from "next/head";
+import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
+import {useAppSelector} from "../hooks/reduxHooks";
 
 interface Props {
     onNext?: () => unknown;
@@ -13,6 +15,7 @@ interface Props {
 export const StepperContainer = (props: Props) => {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState<number>(0);
+    const nextDisabled = useAppSelector(selectNextStateAvailable);
 
     useEffect(() => {
         setCurrentStep(STEP_URLS.findIndex(val => val === router.pathname));
@@ -68,7 +71,7 @@ export const StepperContainer = (props: Props) => {
                         }
 
                         <Box sx={{ flex: '1 1 auto' }} />
-                        <Button onClick={handleNext}>
+                        <Button onClick={handleNext} disabled={nextDisabled}>
                             Next
                         </Button>
                     </Box>
