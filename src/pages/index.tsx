@@ -1,14 +1,13 @@
 import Head from 'next/head';
 import {Box, Button, Paper, Stack, Step, StepLabel, Stepper, Typography} from "@mui/material";
-import React, {useState} from 'react';
+import React from 'react';
 import {EventSelection} from "../components/EventSelection";
+import {EVENT_SELECTION_KEY} from "../constants/Constants";
 
 export default function Home({events}) {
 
-    const [currentEventSelection, setCurrentEventSelection] = useState<number>(0);
-
     const handleChange = (index: number) => {
-        setCurrentEventSelection(index);
+        window.localStorage.setItem(EVENT_SELECTION_KEY, index.toString());
     }
 
     return (
