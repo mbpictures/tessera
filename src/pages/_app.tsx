@@ -8,6 +8,8 @@ import {useEffect, useState} from "react";
 import {EVENT_SELECTION_KEY, STEP_URLS} from "../constants/Constants";
 import {useRouter} from "next/router";
 import {AnimatePresence} from "framer-motion";
+import {Provider} from "react-redux";
+import {store} from "../store/store";
 
 export default function Global({ Component, pageProps }) {
     const router = useRouter();
@@ -19,10 +21,12 @@ export default function Global({ Component, pageProps }) {
     }, []);
 
     return (
-        <StepperContainer onBack={() => setDirection(-1)} onNext={() => setDirection(1)}>
-            <AnimatePresence exitBeforeEnter initial={false}>
-                <Component {...pageProps} key={router.pathname} direction={direction} />
-            </AnimatePresence>
-        </StepperContainer>
+        <Provider store={store}>
+            <StepperContainer onBack={() => setDirection(-1)} onNext={() => setDirection(1)}>
+                <AnimatePresence exitBeforeEnter initial={false}>
+                    <Component {...pageProps} key={router.pathname} direction={direction} />
+                </AnimatePresence>
+            </StepperContainer>
+        </Provider>
     );
 }
