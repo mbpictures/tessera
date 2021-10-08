@@ -1,5 +1,5 @@
 import {Box, Button, Paper, Step, StepLabel, Stepper} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {STEP_URLS, STEPS} from "../constants/Constants";
 import {useRouter} from "next/router";
 import Head from "next/head";
@@ -19,7 +19,7 @@ export const StepperContainer = (props: Props) => {
     }, [router]);
 
     const handleNext = async () => {
-        if (currentStep >= STEPS.length) return;
+        if (currentStep + 1 >= STEP_URLS.length) return;
         if (props.onNext)
             props.onNext();
         await router.push(STEP_URLS[currentStep + 1]);
