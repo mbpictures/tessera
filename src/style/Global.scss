@@ -5,6 +5,11 @@ body {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI,
   Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
   sans-serif;
+  height: 100%;
+}
+
+#__next {
+  height: 100%;
 }
 
 * {

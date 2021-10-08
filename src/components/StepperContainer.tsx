@@ -33,7 +33,7 @@ export const StepperContainer = (props: Props) => {
     }
 
     return (
-        <Box sx={{ width: '90%', margin: "auto", padding: "10px" }}>
+        <Box sx={{ width: '90%', margin: "auto", padding: "10px", display: "flex", flexDirection: "column", height: "100%" }}>
             <Head>
                 <title>Ticket Shop - {STEPS[currentStep]}</title>
                 <link rel="icon" href="/favicon.ico"/>
@@ -50,7 +50,9 @@ export const StepperContainer = (props: Props) => {
                 })}
             </Stepper>
             <React.Fragment>
-                {props.children}
+                <Box style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: "1 1 auto"}}>
+                    {props.children}
+                </Box>
                 <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={20}>
                     <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, padding: "5px 0" }}>
                         {
