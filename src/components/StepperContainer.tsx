@@ -71,7 +71,7 @@ export const StepperContainer = (props: Props) => {
                         }
 
                         <Box sx={{ flex: '1 1 auto' }} />
-                        <Button onClick={handleNext} disabled={nextDisabled}>
+                        <Button onClick={handleNext} disabled={!nextDisabled}>
                             Next
                         </Button>
                     </Box>

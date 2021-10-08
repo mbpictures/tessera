@@ -6,7 +6,7 @@ interface NextStepAvailableState {
 };
 
 const initialState: NextStepAvailableState = {
-    available: true
+    available: false
 };
 
 export const nextStepAvailableSlice = createSlice({

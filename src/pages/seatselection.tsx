@@ -11,10 +11,10 @@ export default function SeatSelection({direction}) {
 
     const handleChange = (amount: number) => {
         if (amount > 0) {
-            dispatch(disableNextStep());
+            dispatch(enableNextStep());
             return;
         }
-        dispatch(enableNextStep());
+        dispatch(disableNextStep());
     }
 
     return (
