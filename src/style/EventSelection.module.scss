@@ -34,8 +34,14 @@
         > p {
             flex-grow: 1;
             padding: 10px 0;
-            background-color: rgba(200, 200, 200, 1);
+            background-color: rgba(180, 180, 180, 1);
             border-radius: 0 3px 3px 0;
+            transition: .3s ease;
+
+            &:hover {
+                background-color: rgba(190, 190, 190, 1);
+            }
+
         }
 
         &:hover {
@@ -57,7 +63,7 @@
             }
         }
         > p {
-            background-color: rgba(200, 200, 200, 0.5);
+            background-color: rgba(210, 210, 210, 1)!important;
         }
     }
 }
