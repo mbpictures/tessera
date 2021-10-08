@@ -1,0 +1,62 @@
+.eventSelection {
+    clear: both;
+    overflow: hidden;
+
+    > input[type="radio"] {
+        display: none;
+    }
+
+    label {
+        position: relative;
+        line-height: 2.5em;
+        text-indent: 3.25em;
+        margin-top: 10px;
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+        border-radius: 3px;
+        align-items: center;
+
+        > div {
+            display: flex;
+            align-items: center;
+            padding: 10px 10px;
+            border-radius: 3px 0 0 3px;
+            background-color: lighten(#1976d2, 50);
+            transition: .3s ease;
+
+            > * {
+                opacity: 0;
+                transition: .3s ease;
+            }
+        }
+
+        > p {
+            flex-grow: 1;
+            padding: 10px 0;
+            background-color: rgba(200, 200, 200, 1);
+        }
+
+        &:hover {
+            > div > * {
+                opacity: 0.5;
+                color: #777777;
+            }
+        }
+    }
+
+    input[type="radio"]:checked ~ label {
+
+        > div {
+            background-color: #1976d2;
+
+            > * {
+                opacity: 1;
+                color: #FFF!important;
+            }
+        }
+        > p {
+            background-color: rgba(200, 200, 200, 0.5);
+        }
+    }
+}
