@@ -21,6 +21,10 @@ export const Step = ({children, direction}: {children?: React.ReactNode, directi
             initial={"initial"}
             animate={"visible"}
             custom={direction}
+            transition={{
+                type: "spring",
+                duration: 0.6
+            }}
         >
             {children}
         </motion.div>
