@@ -1,0 +1,13 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 auto;
+    overflow: auto;
+
+    &::before ,
+    &::after {
+        content:'';
+        flex:1;
+    }
+}

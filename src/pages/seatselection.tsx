@@ -50,8 +50,8 @@ export default function SeatSelection({categories, direction}) {
                     order.orders && order.orders.length > 0 && (
                         order.orders.map((o, index) => {
                             return (
-                                <Grid item xs={6}>
-                                    <SeatSelectionFree categories={categories} onChange={handleChange} index={index} key={index} currentOrder={order} />
+                                <Grid item xs={order.orders.length <= 2 ? 12 : 6} key={index}>
+                                    <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} />
                                 </Grid>
                             )
                         })
