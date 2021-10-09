@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
+import {motion, MotionStyle} from "framer-motion";
 import React, {useEffect} from "react";
 import {useAppSelector} from "../store/hooks";
 import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
 import {useRouter} from "next/router";
 import {STEP_URLS} from "../constants/Constants";
 
-export const Step = ({children, direction}: {children?: React.ReactNode, direction: number}) => {
+export const Step = ({children, direction, style}: {children?: React.ReactNode, direction: number, style?: MotionStyle}) => {
     const router = useRouter();
     const currentSelectedEvent = useAppSelector(selectEventSelected);
 
@@ -36,6 +36,7 @@ export const Step = ({children, direction}: {children?: React.ReactNode, directi
                 type: "spring",
                 duration: 0.6
             }}
+            style={style}
         >
             {children}
         </motion.div>

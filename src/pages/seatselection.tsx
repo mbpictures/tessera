@@ -1,17 +1,34 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {SeatSelectionFree} from "../components/SeatSelectionFree";
-import {Typography} from "@mui/material";
+import {Button, Grid, Typography} from "@mui/material";
 import {Step} from "../components/Step";
 import {useDispatch} from "react-redux";
 import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
-import {setOrder} from "../store/reducers/orderReducer";
+import {FreeSeatOrder, selectOrder, setOrder} from "../store/reducers/orderReducer";
+import {useAppSelector} from "../store/hooks";
+import AddIcon from '@mui/icons-material/Add';
+import {Box} from "@mui/system";
 
-export default function SeatSelection({direction}) {
+export default function SeatSelection({categories, direction}) {
 
     const dispatch = useDispatch();
+    const order = useAppSelector(selectOrder) as FreeSeatOrder;
 
-    const handleChange = (amount: number) => {
-        dispatch(setOrder({ticketAmount: amount}));
+    useEffect(() => {
+        if (order.orders && order.orders.length > 0) return;
+        const newOrder: FreeSeatOrder = {
+            ticketAmount: -1,
+            orders: [{amount: -1, categoryId: -1, price: 0}],
+            totalPrice: 0
+        }
+        dispatch(setOrder(newOrder));
+    }, []);
+
+    const handleChange = (index, amount: number, categoryId) => {
+        const price: number = amount * categories.find(cat => cat.id === categoryId).price;
+        const newOrder: FreeSeatOrder = {ticketAmount: amount, orders: order.orders.map(a => a), totalPrice: price};
+        newOrder.orders[index] = {amount: amount, categoryId: categoryId, price: price};
+        dispatch(setOrder(newOrder));
         if (amount > 0) {
             dispatch(enableNextStep());
             return;
@@ -19,10 +36,49 @@ export default function SeatSelection({direction}) {
         dispatch(disableNextStep());
     }
 
+    const handleAddCategory = () => {
+        const newOrder: FreeSeatOrder = {ticketAmount: order.ticketAmount, orders: order.orders.map(a => a), totalPrice: order.totalPrice};
+        newOrder.orders.push({amount: 0, categoryId: -1, price: 0});
+        dispatch(setOrder(newOrder));
+    };
+
     return (
-        <Step direction={direction}>
+        <Step direction={direction} style={{display: "flex", justifyContent: "center", flexDirection: "column"}}>
             <Typography variant={"body1"}>This event has no seat reservation</Typography>
-            <SeatSelectionFree onChange={handleChange} />
+            <Grid container rowSpacing={2} columnSpacing={2}>
+                {
+                    order.orders && order.orders.length > 0 && (
+                        order.orders.map((o, index) => {
+                            return (
+                                <Grid item xs={6}>
+                                    <SeatSelectionFree categories={categories} onChange={handleChange} index={index} key={index} currentOrder={order} />
+                                </Grid>
+                            )
+                        })
+                    )
+                }
+            </Grid>
+            <Box height={20} />
+            <Button color="primary" variant="outlined" onClick={handleAddCategory}><AddIcon /> Add Category</Button>
         </Step>
     );
+}
+
+export async function getServerSideProps(context) {
+    return {
+        props: {
+            categories: [
+                {
+                    id: 1,
+                    name: "Premium",
+                    price: 60.99
+                },
+                {
+                    id: 2,
+                    name: "Economy",
+                    price: 30.99
+                }
+            ]
+        }
+    }
 }

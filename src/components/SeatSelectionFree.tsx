@@ -1,51 +1,84 @@
-import {IconButton, Paper, Stack, TextField} from "@mui/material";
+import {IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {Box} from "@mui/system";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import {useAppSelector} from "../store/hooks";
-import {selectOrder} from "../store/reducers/orderReducer";
+import {FreeSeatOrder} from "../store/reducers/orderReducer";
+import { motion } from "framer-motion";
 
-export const SeatSelectionFree = ({onChange}: {onChange?: (amount: number) => unknown}) => {
-    const [value, setValue] = useState<number>(0);
-    const currentOrder = useAppSelector(selectOrder);
+export const SeatSelectionFree = (
+    {
+        onChange,
+        categories,
+        index,
+        currentOrder
+    }: {
+        onChange?: (index: number, amount: number, categoryId) => unknown,
+        categories: Array<{ id: number, name: string, price: number }>,
+        index: number,
+        currentOrder: FreeSeatOrder
+    }) => {
+    const [ticketAmount, setTicketAmount] = useState<number>(0);
+    const [category, setCategory] = useState<number>(categories[0].id);
 
     useEffect(() => {
-        if (currentOrder.ticketAmount <= 0) return;
-        setValue(currentOrder.ticketAmount);
+        if (!currentOrder.orders || currentOrder.orders.length <= index) return;
+        if (currentOrder.orders[index].amount > 0)
+            setTicketAmount(currentOrder.orders[index].amount);
+        if (currentOrder.orders[index].categoryId != -1)
+            setCategory(currentOrder.orders[index].categoryId);
     }, []);
 
     useEffect(() => {
         if (!onChange) return;
-        onChange(value);
-    }, [value, onChange]);
+        onChange(index, ticketAmount, category);
+    }, [ticketAmount, category]);
 
     const handleChange = (event) => {
         if (event.target.value === "") {
-            setValue(-1);
+            setTicketAmount(-1);
             return;
         }
         const newValue = parseInt(event.target.value);
-        setValue(isNaN(newValue) ? 0 : newValue);
+        setTicketAmount(isNaN(newValue) ? 0 : newValue);
     };
 
     const onAdd = () => {
-        setValue(value + 1);
+        setTicketAmount(ticketAmount + 1);
     };
 
     const onSubtract = () => {
-        if (value <= 0) return;
-        setValue(value - 1);
+        if (ticketAmount <= 0) return;
+        setTicketAmount(ticketAmount - 1);
     };
 
+    const handleCategoryChange = (event) => {
+        setCategory(parseInt(event.target.value));
+    }
+
+    const price = ticketAmount * categories.find(value => value.id === category).price;
+
     return (
-        <Paper elevation={5} style={{display: "flex", minWidth: "50%", padding: "20px", alignItems: "center", justifyContent: "center"}}>
-            <TextField id="outlined-basic" label="Amount" variant="outlined" value={value === -1 ? "" : value} onChange={handleChange} />
-            <Box width={20} />
-            <Stack>
-                <IconButton onClick={onAdd} color={"primary"}><AddCircleIcon fontSize={"large"} /></IconButton>
-                <IconButton color="error" onClick={onSubtract}><RemoveCircleIcon fontSize={"large"} /></IconButton>
-            </Stack>
+        <Paper elevation={5} style={{display: "flex", minWidth: "50%", padding: "20px", flexDirection: "column", margin: "20px 0"}}>
+            <Box style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <TextField id="outlined-basic" label="Amount" variant="outlined" value={ticketAmount === -1 ? "" : ticketAmount} onChange={handleChange} />
+                <Box width={20} />
+                <Stack>
+                    <IconButton onClick={onAdd} color={"primary"}><AddCircleIcon fontSize={"large"} /></IconButton>
+                    <IconButton color="error" onClick={onSubtract}><RemoveCircleIcon fontSize={"large"} /></IconButton>
+                </Stack>
+            </Box>
+            <InputLabel id="category-selection">Category</InputLabel>
+            <Select value={category} onChange={handleCategoryChange} id="category-selection">
+                {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.name} ({category.price}&euro;)</MenuItem>)}
+            </Select>
+            <motion.div layout style={{padding: "10px 0"}}>
+                {
+                    price > 0 && (
+                        <Typography variant={"body1"}>Price: <b>{price}&euro;</b></Typography>
+                    )
+                }
+            </motion.div>
         </Paper>
     );
 }

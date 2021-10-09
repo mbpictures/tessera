@@ -5,8 +5,13 @@ interface OrderState {
     order: IOrder;
 };
 
-interface IOrder {
+export interface IOrder {
     ticketAmount: number
+}
+
+export interface FreeSeatOrder extends IOrder {
+    orders: Array<{amount: number, categoryId: number, price: number}>;
+    totalPrice: number;
 }
 
 const initialState: OrderState = {
