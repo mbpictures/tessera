@@ -1,11 +1,19 @@
-import {Button, IconButton, Paper, Stack, TextField} from "@mui/material";
+import {IconButton, Paper, Stack, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {Box} from "@mui/system";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import {useAppSelector} from "../store/hooks";
+import {selectOrder} from "../store/reducers/orderReducer";
 
 export const SeatSelectionFree = ({onChange}: {onChange?: (amount: number) => unknown}) => {
     const [value, setValue] = useState<number>(0);
+    const currentOrder = useAppSelector(selectOrder);
+
+    useEffect(() => {
+        if (currentOrder.ticketAmount <= 0) return;
+        setValue(currentOrder.ticketAmount);
+    }, []);
 
     useEffect(() => {
         if (!onChange) return;
