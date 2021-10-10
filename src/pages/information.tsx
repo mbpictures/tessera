@@ -31,31 +31,31 @@ export default function Information({direction}) {
                         </Grid>
                     </Grid>
                 </Stack>
-                <CheckboxAccordion
-                    label={"Postal delivery"}
-                    name={"post"}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <Typography variant="body2">The ticket will be sent to your home.</Typography>
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Download"}
-                    name={"download"}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <Typography variant="body2">The ticket will be sent to your email address.</Typography>
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Box-Office"}
-                    name={"boxoffice"}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <Typography variant="body2">You can pick up your ticket at the Box-Office</Typography>
-                </CheckboxAccordion>
             </Card>
+            <CheckboxAccordion
+                label={"Postal delivery"}
+                name={"post"}
+                selectedItem={selectedShippingMethod}
+                onSelect={setSelectedShippingMethod}
+            >
+                <Typography variant="body2">The ticket will be sent to your home.</Typography>
+            </CheckboxAccordion>
+            <CheckboxAccordion
+                label={"Download"}
+                name={"download"}
+                selectedItem={selectedShippingMethod}
+                onSelect={setSelectedShippingMethod}
+            >
+                <Typography variant="body2">The ticket will be sent to your email address.</Typography>
+            </CheckboxAccordion>
+            <CheckboxAccordion
+                label={"Box-Office"}
+                name={"boxoffice"}
+                selectedItem={selectedShippingMethod}
+                onSelect={setSelectedShippingMethod}
+            >
+                <Typography variant="body2">You can pick up your ticket at the Box-Office</Typography>
+            </CheckboxAccordion>
         </Step>
     );
 }
