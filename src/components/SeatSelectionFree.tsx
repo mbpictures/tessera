@@ -72,7 +72,7 @@ export const SeatSelectionFree = (
             <Select value={category} onChange={handleCategoryChange} id="category-selection">
                 {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.name} ({category.price}&euro;)</MenuItem>)}
             </Select>
-            <motion.div layout style={{padding: "10px 0"}}>
+            <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
                 {
                     price > 0 && (
                         <Typography variant={"body1"}>Price: <b>{price}&euro;</b></Typography>
