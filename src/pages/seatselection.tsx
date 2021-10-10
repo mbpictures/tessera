@@ -44,14 +44,14 @@ export default function SeatSelection({categories, direction}) {
     };
 
     return (
-        <Step direction={direction} style={{display: "flex", justifyContent: "center", flexDirection: "column"}}>
-            <Typography variant={"body1"}>This event has no seat reservation</Typography>
-            <Grid container rowSpacing={2} columnSpacing={2}>
+        <Step direction={direction} style={{display: "flex", justifyContent: "center", flexDirection: "column", width: "100%"}}>
+            <Typography variant={"body1"} alignSelf={"center"}>This event has no seat reservation</Typography>
+            <Grid container rowSpacing={2} columnSpacing={2} justifyContent={"center"}>
                 {
                     order.orders && order.orders.length > 0 && (
                         order.orders.map((o, index) => {
                             return (
-                                <Grid item xs={order.orders.length <= 2 ? 12 : 6} key={index}>
+                                <Grid item xs={6} key={index}>
                                     <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} />
                                 </Grid>
                             )
