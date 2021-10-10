@@ -29,7 +29,7 @@ export default function SeatSelection({categories, direction}) {
         const newOrder: FreeSeatOrder = {ticketAmount: amount, orders: order.orders.map(a => a), totalPrice: price};
         newOrder.orders[index] = {amount: amount, categoryId: categoryId, price: price};
         dispatch(setOrder(newOrder));
-        if (amount > 0) {
+        if (newOrder.orders.every(value => value.amount > 0 && value.categoryId >= 0)) {
             dispatch(enableNextStep());
             return;
         }
