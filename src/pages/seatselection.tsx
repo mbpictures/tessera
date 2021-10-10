@@ -37,6 +37,7 @@ export default function SeatSelection({categories, direction}) {
     }
 
     const handleAddCategory = () => {
+        if (order.orders && order.orders.length >= categories.length) return;
         const newOrder: FreeSeatOrder = {ticketAmount: order.ticketAmount, orders: order.orders.map(a => a), totalPrice: order.totalPrice};
         newOrder.orders.push({amount: 0, categoryId: -1, price: 0});
         dispatch(setOrder(newOrder));
@@ -59,7 +60,7 @@ export default function SeatSelection({categories, direction}) {
                 }
             </Grid>
             <Box height={20} />
-            <Button color="primary" variant="outlined" onClick={handleAddCategory}><AddIcon /> Add Category</Button>
+            <Button color="primary" variant="outlined" onClick={handleAddCategory} disabled={order.orders && order.orders.length >= categories.length}><AddIcon /> Add Category</Button>
         </Step>
     );
 }
