@@ -75,7 +75,7 @@ export const SeatSelectionFree = (
             <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
                 {
                     price > 0 && (
-                        <Typography variant={"body1"}>Price: <b>{price}&euro;</b></Typography>
+                        <Typography variant={"body1"}>Price: <b>{price.toFixed(2)}&euro;</b></Typography>
                     )
                 }
             </motion.div>
