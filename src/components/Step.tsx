@@ -1,15 +1,18 @@
 import {motion, MotionStyle} from "framer-motion";
 import React, {useEffect} from "react";
-import {useAppSelector} from "../store/hooks";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
 import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
 import {useRouter} from "next/router";
 import {STEP_URLS} from "../constants/Constants";
+import {disableNextStep} from "../store/reducers/nextStepAvailableReducer";
 
 export const Step = ({children, direction, style}: {children?: React.ReactNode, direction: number, style?: MotionStyle}) => {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const currentSelectedEvent = useAppSelector(selectEventSelected);
 
     useEffect(() => {
+        dispatch(disableNextStep());
         if (currentSelectedEvent >= 0) return;
         router.push(STEP_URLS[0]).catch(console.log);
     }, []);
