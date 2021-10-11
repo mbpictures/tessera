@@ -18,12 +18,12 @@ export const StepperContainer = (props: Props) => {
     const [currentStep, setCurrentStep] = useState<number>(0);
     const nextDisabled = useAppSelector(selectNextStateAvailable);
     const bottomBar = useRef<HTMLDivElement>(null);
-    const content = useRef<HTMLDivElement>(null);
+    const container = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!bottomBar.current || !content.current) return;
-        content.current.style.paddingBottom = `${bottomBar.current.clientHeight}px`;
-    }, [bottomBar, content]);
+        if (!bottomBar.current || !container.current) return;
+        container.current.style.paddingBottom = `${bottomBar.current.clientHeight}px`;
+    }, [bottomBar, container]);
 
     useEffect(() => {
         setCurrentStep(STEP_URLS.findIndex(val => val === router.pathname));
@@ -44,12 +44,12 @@ export const StepperContainer = (props: Props) => {
     }
 
     return (
-        <Box sx={{ width: '90%', margin: "auto", padding: "10px", display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+        <Box sx={{ width: '90%', margin: "auto", padding: "10px", display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }} ref={container}>
             <Head>
                 <title>Ticket Shop - {STEPS[currentStep]}</title>
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
-            <Stepper activeStep={currentStep}>
+            <Stepper activeStep={currentStep} alternativeLabel>
                 {STEPS.map((label) => {
                     const stepProps = {};
                     const labelProps = {};
@@ -61,7 +61,7 @@ export const StepperContainer = (props: Props) => {
                 })}
             </Stepper>
             <React.Fragment>
-                <Box className={style.content} ref={content}>
+                <Box className={style.content} ref={container}>
                     {props.children}
                 </Box>
                 <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={20} ref={bottomBar}>
