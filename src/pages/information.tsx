@@ -21,6 +21,11 @@ import {
 const countryFilter = (searchCountry: Country) => (country: Country) => country.countryName == (searchCountry?.countryName ?? "");
 const regionFilter = (searchRegion: Region) => (region: Region) => region.name == (searchRegion?.name ?? "");
 
+interface AutocompleteObject {
+    label: string;
+    id: number;
+}
+
 export default function Information({direction}) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
@@ -31,7 +36,7 @@ export default function Information({direction}) {
     const [countryId, setCountryId] = useState<number>(countryRegionData.findIndex(countryFilter(selector.country)));
     const [regionId, setRegionId] = useState<number>(countryRegionData.find(countryFilter(selector.country))?.regions.findIndex(regionFilter(selector.region)) ?? -1);
 
-    const handleChangeCountry = (event: any, newValue: {label: string, id: number}) => {
+    const handleChangeCountry = (event: any, newValue: AutocompleteObject) => {
         if (newValue == null) {
             setCountryId(-1);
             dispatch(setCountry(null));
@@ -45,7 +50,7 @@ export default function Information({direction}) {
         dispatch(setRegion(null));
     };
 
-    const handleChangeRegion = (event: any, newValue: {label: string, id: number}) => {
+    const handleChangeRegion = (event: any, newValue: AutocompleteObject) => {
         if (newValue == null) {
             setRegionId(-1);
             dispatch(setRegion(null));
@@ -87,7 +92,9 @@ export default function Information({direction}) {
                                 })}
                                 fullWidth
                                 onChange={handleChangeCountry}
-                                value={{label: countryRegionData[countryId]?.countryName ?? "", id: countryId}}
+                                getOptionLabel={(option: AutocompleteObject) => option.label}
+                                isOptionEqualToValue={(option, value) => option.label === value.label && option.id === value.id}
+                                value={countryId >= 0 ? {label: countryRegionData[countryId]?.countryName ?? "", id: countryId} : null}
                             />
                         </Grid>
                         <Grid item md={6} xs={12}>
@@ -100,7 +107,9 @@ export default function Information({direction}) {
                                         })}
                                         fullWidth
                                         onChange={handleChangeRegion}
-                                        value={{label: countryRegionData[countryId]?.regions[regionId]?.name ?? "", id: countryId}}
+                                        getOptionLabel={(option: AutocompleteObject) => option.label}
+                                        isOptionEqualToValue={(option, value) => option.label === value.label && option.id === value.id}
+                                        value={countryId >= 0 && regionId >= 0 ? {label: countryRegionData[countryId]?.regions[regionId]?.name ?? "", id: countryId} : null}
                                     />
                                 )
                             }
