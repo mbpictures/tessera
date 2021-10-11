@@ -22,7 +22,7 @@ export default function Home({events, direction}) {
 
     return (
         <Step direction={direction}>
-            <Typography variant={"h1"}>Ticket Shop</Typography>
+            <Typography variant={"h1"} align={"center"}>Ticket Shop</Typography>
             <Stack spacing={2}>
                 {
                     events.map((event, index) => {
