@@ -6,24 +6,28 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {CheckboxAccordion} from "../components/CheckboxAccordion";
 import {ZIP} from "../components/form/ZIP";
 import countryRegionData, {Country, Region} from "country-region-data";
 import {useAppDispatch, useAppSelector} from "../store/hooks";
 import {
+    MockShipping,
     selectPersonalInformation, setCity, setCountry, setEmail,
     setFirstName,
-    setLastName, setRegion, setStreet,
+    setLastName, setRegion, setShipping, setStreet,
     setZip
 } from "../store/reducers/personalInformationReducer";
+import zippo from "zippo";
+import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 
-const countryFilter = (searchCountry: Country) => (country: Country) => country.countryName == (searchCountry?.countryName ?? "");
-const regionFilter = (searchRegion: Region) => (region: Region) => region.name == (searchRegion?.name ?? "");
+const validateEmail = (email) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
-interface AutocompleteObject {
-    label: string;
-    id: number;
+const hasNumber = (myString) => {
+    return /\d/.test(myString);
 }
 
 export default function Information({direction}) {
@@ -33,31 +37,54 @@ export default function Information({direction}) {
     const [localZip, setLocalZip] = useState<string>(selector.zip);
 
     const [selectedShippingMethod, setSelectedShippingMethod] = useState<string>(selector.shipping?.type ?? null);
-    const [countryId, setCountryId] = useState<number>(countryRegionData.findIndex(countryFilter(selector.country)));
-    const [regionId, setRegionId] = useState<number>(countryRegionData.find(countryFilter(selector.country))?.regions.findIndex(regionFilter(selector.region)) ?? -1);
 
-    const handleChangeCountry = (event: any, newValue: AutocompleteObject) => {
+    useEffect(() => {
+        console.log("Zip: " + (zippo.validate(selector.zip)));
+        const valid = validateEmail(selector.email) &&
+            selector.firstName.length > 3 &&
+            selector.lastName.length > 3 &&
+            selector.street.length > 5 &&
+            hasNumber(selector.street) &&
+            zippo.validate(selector.zip) &&
+            selector.city.length > 3 &&
+            selector.shipping != null &&
+            new MockShipping(selector.shipping).isValid() &&
+            selector.country != null &&
+            selector.region != null;
+
+        if (valid)
+            dispatch(enableNextStep());
+        else
+            dispatch(disableNextStep());
+    }, [selector]);
+
+    useEffect(() => {
+        if (selectedShippingMethod === null) {
+            dispatch(setShipping(null));
+            return;
+        }
+        dispatch(setShipping({
+            type: selectedShippingMethod,
+            data: "mock"
+        }));
+    }, [selectedShippingMethod]);
+
+    const handleChangeCountry = (event: any, newValue: Country) => {
         if (newValue == null) {
-            setCountryId(-1);
             dispatch(setCountry(null));
-            setRegionId(-1);
             dispatch(setRegion(null));
             return;
         }
-        setCountryId(newValue.id);
-        dispatch(setCountry(countryRegionData[newValue.id]));
-        setRegionId(-1);
+        dispatch(setCountry(newValue));
         dispatch(setRegion(null));
     };
 
-    const handleChangeRegion = (event: any, newValue: AutocompleteObject) => {
+    const handleChangeRegion = (event: any, newValue: Region) => {
         if (newValue == null) {
-            setRegionId(-1);
             dispatch(setRegion(null));
             return;
         }
-        setRegionId(newValue.id);
-        dispatch(setRegion(countryRegionData[countryId].regions[newValue.id]));
+        dispatch(setRegion(newValue));
     }
 
     const handleChangeZip = (newValue: string, valid: boolean) => {
@@ -87,29 +114,25 @@ export default function Information({direction}) {
                         <Grid item md={6} xs={12}>
                             <Autocomplete
                                 renderInput={(params) => <TextField {...params} label="Country" />}
-                                options={countryRegionData.map((country, index) => {
-                                    return {label: country.countryName, id: index};
-                                })}
+                                options={countryRegionData}
                                 fullWidth
                                 onChange={handleChangeCountry}
-                                getOptionLabel={(option: AutocompleteObject) => option.label}
-                                isOptionEqualToValue={(option, value) => option.label === value.label && option.id === value.id}
-                                value={countryId >= 0 ? {label: countryRegionData[countryId]?.countryName ?? "", id: countryId} : null}
+                                getOptionLabel={(option: Country) => option.countryName}
+                                isOptionEqualToValue={(option, value) => option.countryName === value.countryName && option.countryShortCode === value.countryShortCode}
+                                value={selector.country}
                             />
                         </Grid>
                         <Grid item md={6} xs={12}>
                             {
-                                (countryId >= 0 && countryRegionData[countryId].regions.length > 0) && (
+                                (selector.country != null && selector.country.regions.length > 0) && (
                                     <Autocomplete
                                         renderInput={(params) => <TextField {...params} label="Region" />}
-                                        options={countryRegionData[countryId].regions.map((region, index) => {
-                                            return {label: region.name, id: index};
-                                        })}
+                                        options={selector.country.regions}
                                         fullWidth
                                         onChange={handleChangeRegion}
-                                        getOptionLabel={(option: AutocompleteObject) => option.label}
-                                        isOptionEqualToValue={(option, value) => option.label === value.label && option.id === value.id}
-                                        value={countryId >= 0 && regionId >= 0 ? {label: countryRegionData[countryId]?.regions[regionId]?.name ?? "", id: countryId} : null}
+                                        getOptionLabel={(option: Region) => option.name}
+                                        isOptionEqualToValue={(option, value) => option.name === value.name && option.shortCode === value.shortCode}
+                                        value={selector.region}
                                     />
                                 )
                             }

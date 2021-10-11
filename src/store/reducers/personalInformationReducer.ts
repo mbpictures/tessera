@@ -15,8 +15,28 @@ interface PersonalInformationState {
 }
 
 export interface IShipping {
-    isValid: () => boolean;
+    data: any;
     type: string;
+}
+
+export abstract class Shipping {
+    shippingData: IShipping;
+
+    constructor(shipping: IShipping) {
+        this.shippingData = shipping;
+    }
+
+    get Shipping(): IShipping {
+        return this.shippingData;
+    }
+
+    abstract isValid(): boolean;
+}
+
+export class MockShipping extends Shipping {
+    isValid(): boolean {
+        return true;
+    }
 }
 
 const initialState: PersonalInformationState = {
