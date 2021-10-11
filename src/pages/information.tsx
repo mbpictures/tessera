@@ -9,30 +9,76 @@ import {
 import {useState} from "react";
 import {CheckboxAccordion} from "../components/CheckboxAccordion";
 import {ZIP} from "../components/form/ZIP";
-import countryRegionData from "country-region-data";
+import countryRegionData, {Country, Region} from "country-region-data";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
+import {
+    selectPersonalInformation, setCity, setCountry, setEmail,
+    setFirstName,
+    setLastName, setRegion, setStreet,
+    setZip
+} from "../store/reducers/personalInformationReducer";
+
+const countryFilter = (searchCountry: Country) => (country: Country) => country.countryName == (searchCountry?.countryName ?? "");
+const regionFilter = (searchRegion: Region) => (region: Region) => region.name == (searchRegion?.name ?? "");
 
 export default function Information({direction}) {
-    const [selectedShippingMethod, setSelectedShippingMethod] = useState<string>(null);
-    const [countryId, setCountryId] = useState<number>(-1);
+    const selector = useAppSelector(selectPersonalInformation);
+    const dispatch = useAppDispatch();
+
+    const [localZip, setLocalZip] = useState<string>(selector.zip);
+
+    const [selectedShippingMethod, setSelectedShippingMethod] = useState<string>(selector.shipping?.type ?? null);
+    const [countryId, setCountryId] = useState<number>(countryRegionData.findIndex(countryFilter(selector.country)));
+    const [regionId, setRegionId] = useState<number>(countryRegionData.find(countryFilter(selector.country))?.regions.findIndex(regionFilter(selector.region)) ?? -1);
+
+    const handleChangeCountry = (event: any, newValue: {label: string, id: number}) => {
+        if (newValue == null) {
+            setCountryId(-1);
+            dispatch(setCountry(null));
+            setRegionId(-1);
+            dispatch(setRegion(null));
+            return;
+        }
+        setCountryId(newValue.id);
+        dispatch(setCountry(countryRegionData[newValue.id]));
+        setRegionId(-1);
+        dispatch(setRegion(null));
+    };
+
+    const handleChangeRegion = (event: any, newValue: {label: string, id: number}) => {
+        if (newValue == null) {
+            setRegionId(-1);
+            dispatch(setRegion(null));
+            return;
+        }
+        setRegionId(newValue.id);
+        dispatch(setRegion(countryRegionData[countryId].regions[newValue.id]));
+    }
+
+    const handleChangeZip = (newValue: string, valid: boolean) => {
+        setLocalZip(newValue);
+        if (!valid) return;
+        dispatch(setZip(newValue));
+    };
 
     return (
         <Step direction={direction} style={{width: "100%"}}>
             <Card >
                 <Stack padding={1} spacing={1}>
                     <Typography>These address given will be used for invoice.</Typography>
-                    <TextField label="Firstname" />
-                    <TextField label="Lastname" />
-                    <TextField label="E-Mail Address" type="email" />
-                    <TextField label="Street" />
-                    <Grid container>
+                    <TextField label="Firstname" value={selector.firstName} onChange={event => dispatch(setFirstName(event.target.value))} />
+                    <TextField label="Lastname" value={selector.lastName} onChange={event => dispatch(setLastName(event.target.value))} />
+                    <TextField label="E-Mail Address" type="email" value={selector.email} onChange={event => dispatch(setEmail(event.target.value))} />
+                    <TextField label="Street" value={selector.street} onChange={event => dispatch(setStreet(event.target.value))} />
+                    <Grid container rowSpacing={1}>
                         <Grid item md={4} xs={12}>
-                            <ZIP />
+                            <ZIP value={localZip} onChange={handleChangeZip} />
                         </Grid>
                         <Grid item md={8} xs={12}>
-                            <TextField label="City" fullWidth />
+                            <TextField label="City" fullWidth value={selector.city} onChange={event => dispatch(setCity(event.target.value))} />
                         </Grid>
                     </Grid>
-                    <Grid container>
+                    <Grid container rowSpacing={1}>
                         <Grid item md={6} xs={12}>
                             <Autocomplete
                                 renderInput={(params) => <TextField {...params} label="Country" />}
@@ -40,7 +86,8 @@ export default function Information({direction}) {
                                     return {label: country.countryName, id: index};
                                 })}
                                 fullWidth
-                                onChange={(event: any, newValue: {label: string, id: number}) => setCountryId(newValue.id)}
+                                onChange={handleChangeCountry}
+                                value={{label: countryRegionData[countryId]?.countryName ?? "", id: countryId}}
                             />
                         </Grid>
                         <Grid item md={6} xs={12}>
@@ -52,6 +99,8 @@ export default function Information({direction}) {
                                             return {label: region.name, id: index};
                                         })}
                                         fullWidth
+                                        onChange={handleChangeRegion}
+                                        value={{label: countryRegionData[countryId]?.regions[regionId]?.name ?? "", id: countryId}}
                                     />
                                 )
                             }
