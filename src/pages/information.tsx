@@ -1,17 +1,19 @@
 import {Step} from "../components/Step";
 import {
+    Autocomplete,
     Card,
-    Grid,
-    Stack,
+    Grid, Stack,
     TextField,
     Typography
 } from "@mui/material";
 import {useState} from "react";
 import {CheckboxAccordion} from "../components/CheckboxAccordion";
 import {ZIP} from "../components/form/ZIP";
+import countryRegionData from "country-region-data";
 
 export default function Information({direction}) {
     const [selectedShippingMethod, setSelectedShippingMethod] = useState<string>(null);
+    const [countryId, setCountryId] = useState<number>(-1);
 
     return (
         <Step direction={direction} style={{width: "100%"}}>
@@ -28,6 +30,31 @@ export default function Information({direction}) {
                         </Grid>
                         <Grid item md={8} xs={12}>
                             <TextField label="City" fullWidth />
+                        </Grid>
+                    </Grid>
+                    <Grid container>
+                        <Grid item md={6} xs={12}>
+                            <Autocomplete
+                                renderInput={(params) => <TextField {...params} label="Country" />}
+                                options={countryRegionData.map((country, index) => {
+                                    return {label: country.countryName, id: index};
+                                })}
+                                fullWidth
+                                onChange={(event: any, newValue: {label: string, id: number}) => setCountryId(newValue.id)}
+                            />
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            {
+                                (countryId >= 0 && countryRegionData[countryId].regions.length > 0) && (
+                                    <Autocomplete
+                                        renderInput={(params) => <TextField {...params} label="Region" />}
+                                        options={countryRegionData[countryId].regions.map((region, index) => {
+                                            return {label: region.name, id: index};
+                                        })}
+                                        fullWidth
+                                    />
+                                )
+                            }
                         </Grid>
                     </Grid>
                 </Stack>
