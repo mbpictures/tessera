@@ -6,7 +6,7 @@ interface PersonalInformationState {
     firstName: string;
     lastName: string;
     email: string;
-    street: string;
+    address: string;
     zip: string;
     city: string;
     country: Country;
@@ -43,7 +43,7 @@ const initialState: PersonalInformationState = {
     firstName: "",
     lastName: "",
     email: "",
-    street: "",
+    address: "",
     zip: "",
     city: "",
     country: null,
@@ -64,8 +64,8 @@ export const personalInformationSlice = createSlice({
         setEmail: (state, action: PayloadAction<string>) => {
             state.email = action.payload;
         },
-        setStreet: (state, action: PayloadAction<string>) => {
-            state.street = action.payload;
+        setAddress: (state, action: PayloadAction<string>) => {
+            state.address = action.payload;
         },
         setZip: (state, action: PayloadAction<string>) => {
             state.zip = action.payload;
@@ -85,6 +85,6 @@ export const personalInformationSlice = createSlice({
     }
 });
 
-export const {setFirstName, setLastName, setEmail, setStreet, setZip, setCity, setCountry, setRegion, setShipping} = personalInformationSlice.actions;
+export const {setFirstName, setLastName, setEmail, setAddress, setZip, setCity, setCountry, setRegion, setShipping} = personalInformationSlice.actions;
 export const selectPersonalInformation = (state: RootState) => state.personalInformation;
 export default personalInformationSlice.reducer;

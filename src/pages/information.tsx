@@ -15,7 +15,7 @@ import {
     MockShipping,
     selectPersonalInformation, setCity, setCountry, setEmail,
     setFirstName,
-    setLastName, setRegion, setShipping, setStreet,
+    setLastName, setRegion, setShipping, setAddress,
     setZip
 } from "../store/reducers/personalInformationReducer";
 import zippo from "zippo";
@@ -43,8 +43,8 @@ export default function Information({direction}) {
         const valid = validateEmail(selector.email) &&
             selector.firstName.length > 3 &&
             selector.lastName.length > 3 &&
-            selector.street.length > 5 &&
-            hasNumber(selector.street) &&
+            selector.address.length > 5 &&
+            hasNumber(selector.address) &&
             zippo.validate(selector.zip) &&
             selector.city.length > 3 &&
             selector.shipping != null &&
@@ -101,7 +101,7 @@ export default function Information({direction}) {
                     <TextField label="Firstname" value={selector.firstName} onChange={event => dispatch(setFirstName(event.target.value))} />
                     <TextField label="Lastname" value={selector.lastName} onChange={event => dispatch(setLastName(event.target.value))} />
                     <TextField label="E-Mail Address" type="email" value={selector.email} onChange={event => dispatch(setEmail(event.target.value))} />
-                    <TextField label="Street" value={selector.street} onChange={event => dispatch(setStreet(event.target.value))} />
+                    <TextField label="Address" value={selector.address} onChange={event => dispatch(setAddress(event.target.value))} />
                     <Grid container rowSpacing={1}>
                         <Grid item md={4} xs={12}>
                             <ZIP value={localZip} onChange={handleChangeZip} />
