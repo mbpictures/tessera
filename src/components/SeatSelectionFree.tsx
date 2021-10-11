@@ -59,26 +59,28 @@ export const SeatSelectionFree = (
     const price = ticketAmount * categories.find(value => value.id === category).price;
 
     return (
-        <Paper elevation={5} style={{display: "flex", minWidth: "50%", padding: "20px", flexDirection: "column", margin: "20px 0"}}>
-            <Box style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                <TextField id="outlined-basic" label="Amount" variant="outlined" value={ticketAmount === -1 ? "" : ticketAmount} onChange={handleChange} />
-                <Box width={20} />
-                <Stack>
-                    <IconButton onClick={onAdd} color={"primary"}><AddCircleIcon fontSize={"large"} /></IconButton>
-                    <IconButton color="error" onClick={onSubtract}><RemoveCircleIcon fontSize={"large"} /></IconButton>
-                </Stack>
-            </Box>
-            <InputLabel id="category-selection">Category</InputLabel>
-            <Select value={category} onChange={handleCategoryChange} id="category-selection">
-                {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.name} ({category.price}&euro;)</MenuItem>)}
-            </Select>
-            <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
-                {
-                    price > 0 && (
-                        <Typography variant={"body1"}>Price: <b>{price.toFixed(2)}&euro;</b></Typography>
-                    )
-                }
-            </motion.div>
-        </Paper>
+        <motion.div layout>
+            <Paper elevation={5} style={{display: "flex", padding: "20px", flexDirection: "column", margin: "20px 0"}}>
+                <Box style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <TextField id="outlined-basic" label="Amount" variant="outlined" value={ticketAmount === -1 ? "" : ticketAmount} onChange={handleChange} />
+                    <Box width={20} />
+                    <Stack>
+                        <IconButton onClick={onAdd} color={"primary"}><AddCircleIcon fontSize={"large"} /></IconButton>
+                        <IconButton color="error" onClick={onSubtract}><RemoveCircleIcon fontSize={"large"} /></IconButton>
+                    </Stack>
+                </Box>
+                <InputLabel id="category-selection">Category</InputLabel>
+                <Select value={category} onChange={handleCategoryChange} id="category-selection">
+                    {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.name} ({category.price}&euro;)</MenuItem>)}
+                </Select>
+                <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
+                    {
+                        price > 0 && (
+                            <Typography variant={"body1"}>Price: <b>{price.toFixed(2)}&euro;</b></Typography>
+                        )
+                    }
+                </motion.div>
+            </Paper>
+        </motion.div>
     );
 }
