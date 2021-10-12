@@ -15,6 +15,7 @@ import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailab
 import {validateAddress} from "../constants/util";
 import {ShippingFactory} from "../store/factories/shipping/ShippingFactory";
 import {AddressComponent} from "../components/form/AddressComponent";
+import {PostalDeliveryShippingComponent} from "../components/shipping/PostalDeliveryShippingComponent";
 
 const validateEmail = (email) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -64,7 +65,7 @@ export default function Information({direction}) {
                 selectedItem={selectedShippingMethod}
                 onSelect={setSelectedShippingMethod}
             >
-                <Typography variant="body2">The ticket will be sent to your home.</Typography>
+                <PostalDeliveryShippingComponent />
             </CheckboxAccordion>
             <CheckboxAccordion
                 label={"Download"}

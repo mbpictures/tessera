@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {Country, Region} from "country-region-data";
 import {IAddress} from "../../constants/interfaces";
+import {Shipping} from "../factories/shipping/Shipping";
 
 interface PersonalInformationState {
     address: IAddress;
@@ -12,20 +13,6 @@ interface PersonalInformationState {
 export interface IShipping {
     data: any;
     type: string;
-}
-
-export abstract class Shipping {
-    shippingData: IShipping;
-
-    constructor(shipping: IShipping) {
-        this.shippingData = shipping;
-    }
-
-    get Shipping(): IShipping {
-        return this.shippingData;
-    }
-
-    abstract isValid(): boolean;
 }
 
 export class MockShipping extends Shipping {
