@@ -13,9 +13,11 @@ import {
 } from "../store/reducers/personalInformationReducer";
 import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 import {validateAddress} from "../constants/util";
-import {ShippingFactory} from "../store/factories/shipping/ShippingFactory";
+import {ShippingFactory, ShippingType} from "../store/factories/shipping/ShippingFactory";
 import {AddressComponent} from "../components/form/AddressComponent";
 import {PostalDeliveryShippingComponent} from "../components/shipping/PostalDeliveryShippingComponent";
+import {BoxOfficeShippingComponent} from "../components/shipping/BoxOfficeShippingComponent";
+import {DownloadShippingComponent} from "../components/shipping/DownloadShippingComponent";
 
 const validateEmail = (email) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -26,7 +28,7 @@ export default function Information({direction}) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
 
-    const [selectedShippingMethod, setSelectedShippingMethod] = useState<string>(selector.shipping?.type ?? null);
+    const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingType | null>(selector.shipping?.type ?? null);
 
     useEffect(() => {
         const valid = validateEmail(selector.email) &&
@@ -61,7 +63,7 @@ export default function Information({direction}) {
             </Card>
             <CheckboxAccordion
                 label={"Postal delivery"}
-                name={"post"}
+                name={ShippingType.Post}
                 selectedItem={selectedShippingMethod}
                 onSelect={setSelectedShippingMethod}
             >
@@ -69,19 +71,19 @@ export default function Information({direction}) {
             </CheckboxAccordion>
             <CheckboxAccordion
                 label={"Download"}
-                name={"download"}
+                name={ShippingType.Download}
                 selectedItem={selectedShippingMethod}
                 onSelect={setSelectedShippingMethod}
             >
-                <Typography variant="body2">The ticket will be sent to your email address.</Typography>
+                <DownloadShippingComponent />
             </CheckboxAccordion>
             <CheckboxAccordion
                 label={"Box-Office"}
-                name={"boxoffice"}
+                name={ShippingType.BoxOffice}
                 selectedItem={selectedShippingMethod}
                 onSelect={setSelectedShippingMethod}
             >
-                <Typography variant="body2">You can pick up your ticket at the Box-Office</Typography>
+                <BoxOfficeShippingComponent />
             </CheckboxAccordion>
         </Step>
     );

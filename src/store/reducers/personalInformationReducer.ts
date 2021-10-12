@@ -3,6 +3,7 @@ import {RootState} from "../store";
 import {Country, Region} from "country-region-data";
 import {IAddress} from "../../constants/interfaces";
 import {Shipping} from "../factories/shipping/Shipping";
+import {ShippingType} from "../factories/shipping/ShippingFactory";
 
 interface PersonalInformationState {
     address: IAddress;
@@ -12,7 +13,7 @@ interface PersonalInformationState {
 
 export interface IShipping {
     data: any;
-    type: string;
+    type: ShippingType;
 }
 
 export class MockShipping extends Shipping {
