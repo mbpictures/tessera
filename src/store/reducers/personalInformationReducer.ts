@@ -1,16 +1,11 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {Country, Region} from "country-region-data";
+import {IAddress} from "../../constants/interfaces";
 
 interface PersonalInformationState {
-    firstName: string;
-    lastName: string;
+    address: IAddress;
     email: string;
-    address: string;
-    zip: string;
-    city: string;
-    country: Country;
-    region: Region;
     shipping: IShipping;
 }
 
@@ -40,14 +35,16 @@ export class MockShipping extends Shipping {
 }
 
 const initialState: PersonalInformationState = {
-    firstName: "",
-    lastName: "",
+    address: {
+        firstName: "",
+        lastName: "",
+        address: "",
+        country: null,
+        region: null,
+        zip: "",
+        city: ""
+    },
     email: "",
-    address: "",
-    zip: "",
-    city: "",
-    country: null,
-    region: null,
     shipping: null
 };
 
@@ -56,28 +53,28 @@ export const personalInformationSlice = createSlice({
     initialState,
     reducers: {
         setFirstName: (state, action: PayloadAction<string>) => {
-            state.firstName = action.payload;
+            state.address.firstName = action.payload;
         },
         setLastName: (state, action: PayloadAction<string>) => {
-            state.lastName = action.payload;
+            state.address.lastName = action.payload;
         },
         setEmail: (state, action: PayloadAction<string>) => {
             state.email = action.payload;
         },
         setAddress: (state, action: PayloadAction<string>) => {
-            state.address = action.payload;
+            state.address.address = action.payload;
         },
         setZip: (state, action: PayloadAction<string>) => {
-            state.zip = action.payload;
+            state.address.zip = action.payload;
         },
         setCity: (state, action: PayloadAction<string>) => {
-            state.city = action.payload;
+            state.address.city = action.payload;
         },
         setCountry: (state, action: PayloadAction<Country>) => {
-            state.country = action.payload;
+            state.address.country = action.payload;
         },
         setRegion: (state, action: PayloadAction<Region>) => {
-            state.region = action.payload;
+            state.address.region = action.payload;
         },
         setShipping: (state, action: PayloadAction<IShipping>) => {
             state.shipping = action.payload;
