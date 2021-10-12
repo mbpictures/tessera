@@ -15,8 +15,6 @@ export const PostalDeliveryShippingComponent = () => {
     const [useDifferentAddress, setUseDifferentAddress] = useState<boolean>(postalDelivery.postalData.differentAddress);
     const [address, setAddress] = useState<IAddress>(postalDelivery.postalData.address);
 
-    console.log(address);
-
     useEffect(() => {
         postalDelivery.data = {differentAddress: useDifferentAddress, address: address};
         dispatch(setShipping(postalDelivery.Shipping));
