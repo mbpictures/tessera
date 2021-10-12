@@ -52,6 +52,9 @@ export const personalInformationSlice = createSlice({
     name: "order",
     initialState,
     reducers: {
+        setAddress: (state, action: PayloadAction<IAddress>) => {
+            state.address = action.payload;
+        },
         setFirstName: (state, action: PayloadAction<string>) => {
             state.address.firstName = action.payload;
         },
@@ -61,7 +64,7 @@ export const personalInformationSlice = createSlice({
         setEmail: (state, action: PayloadAction<string>) => {
             state.email = action.payload;
         },
-        setAddress: (state, action: PayloadAction<string>) => {
+        setAddressAddress: (state, action: PayloadAction<string>) => {
             state.address.address = action.payload;
         },
         setZip: (state, action: PayloadAction<string>) => {
@@ -82,6 +85,6 @@ export const personalInformationSlice = createSlice({
     }
 });
 
-export const {setFirstName, setLastName, setEmail, setAddress, setZip, setCity, setCountry, setRegion, setShipping} = personalInformationSlice.actions;
+export const {setFirstName, setLastName, setEmail, setAddress, setAddressAddress, setZip, setCity, setCountry, setRegion, setShipping} = personalInformationSlice.actions;
 export const selectPersonalInformation = (state: RootState) => state.personalInformation;
 export default personalInformationSlice.reducer;
