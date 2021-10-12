@@ -1,6 +1,7 @@
 import { IAddress } from "../../../constants/interfaces";
 import {validateAddress} from "../../../constants/util";
 import {Shipping} from "./Shipping";
+import {ShippingType} from "./ShippingFactory";
 
 export interface PostalDeliveryData {
     differentAddress: boolean;
@@ -22,7 +23,7 @@ const DEFAULT: PostalDeliveryData = {
 
 export class PostalDeliveryShipping extends Shipping {
     set data(data: PostalDeliveryData) {
-        this.shippingData = {type: "post", data: JSON.stringify(data)};
+        this.shippingData = {type: ShippingType.Post, data: JSON.stringify(data)};
     }
 
     isValid(): boolean {
