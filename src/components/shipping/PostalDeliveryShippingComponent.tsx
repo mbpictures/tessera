@@ -1,4 +1,4 @@
-import {Checkbox, InputLabel, Stack, Typography} from "@mui/material";
+import {Checkbox, FormControlLabel, Stack, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {AddressComponent} from "../form/AddressComponent";
 import {IAddress} from "../../constants/interfaces";
@@ -25,12 +25,17 @@ export const PostalDeliveryShippingComponent = () => {
     return (
         <Stack spacing={1}>
             <Typography variant="body2">The ticket will be sent to your home.</Typography>
-            <InputLabel id="postal-delivery-extra-address">Use different address than for invoice</InputLabel>
-            <Checkbox
-                id="postal-delivery-extra-address"
-                checked={useDifferentAddress}
-                onChange={event => setUseDifferentAddress(event.target.checked)}
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        id="postal-delivery-extra-address"
+                        checked={useDifferentAddress}
+                        onChange={event => setUseDifferentAddress(event.target.checked)}
+                    />
+                }
+                label="Differing shipping address"
             />
+
             {
                 useDifferentAddress && <AddressComponent value={address} onChange={setAddress} />
             }
