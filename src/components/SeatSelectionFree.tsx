@@ -4,7 +4,7 @@ import {Box} from "@mui/system";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {FreeSeatOrder} from "../store/reducers/orderReducer";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 
 export const SeatSelectionFree = (
     {

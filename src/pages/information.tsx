@@ -1,15 +1,13 @@
 import {Step} from "../components/Step";
-import {
-    Card,
-    Stack,
-    TextField,
-    Typography
-} from "@mui/material";
+import {Card, Stack, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {CheckboxAccordion} from "../components/CheckboxAccordion";
 import {useAppDispatch, useAppSelector} from "../store/hooks";
 import {
-    selectPersonalInformation, setEmail, setShipping, setAddress,
+    selectPersonalInformation,
+    setAddress,
+    setEmail,
+    setShipping,
 } from "../store/reducers/personalInformationReducer";
 import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 import {validateAddress} from "../constants/util";

@@ -1,4 +1,4 @@
-import { IAddress } from "../../../constants/interfaces";
+import {IAddress} from "../../../constants/interfaces";
 import {validateAddress} from "../../../constants/util";
 import {Shipping} from "./Shipping";
 import {ShippingType} from "./ShippingFactory";
