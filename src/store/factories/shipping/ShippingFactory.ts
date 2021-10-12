@@ -4,6 +4,7 @@ import {PostalDeliveryShipping} from "./PostalDeliveryShipping";
 
 export class ShippingFactory {
     static getShippingInstance(data: IShipping): Shipping {
+        if (data == null) return null;
         if (data.type === "post")
             return new PostalDeliveryShipping(data);
         return null;
