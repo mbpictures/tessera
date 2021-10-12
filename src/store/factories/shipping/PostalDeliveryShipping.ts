@@ -31,7 +31,7 @@ export class PostalDeliveryShipping extends Shipping {
     }
 
     get postalData(): PostalDeliveryData {
-        if (this.shippingData == null) return null;
+        if (this.shippingData == null) return DEFAULT;
         try {
             return JSON.parse(this.shippingData.data);
         } catch (e) {
