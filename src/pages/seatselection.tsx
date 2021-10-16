@@ -47,22 +47,28 @@ export default function SeatSelection({categories, direction}) {
 
     return (
         <Step direction={direction} style={{display: "flex", justifyContent: "center", flexDirection: "column", width: "100%"}}>
-            <Typography variant={"body1"} alignSelf={"center"}>This event has no seat reservation</Typography>
-            <Grid container rowSpacing={2} columnSpacing={2} justifyContent={"center"}>
-                {
-                    order.orders && order.orders.length > 0 && (
-                        order.orders.map((o, index) => {
-                            return (
-                                <Grid item xs={12} sm={6} key={index}>
-                                    <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} />
-                                </Grid>
+            <Grid container alignItems="center" justifyContent="center">
+                <Grid item md={12} lg={8} alignItems="center" justifyContent="center" display="flex" flexDirection="column">
+                    <Typography variant={"body1"} alignSelf={"center"}>This event has no seat reservation</Typography>
+                    <Grid container rowSpacing={2} columnSpacing={2} justifyContent={"center"}>
+                        {
+                            order.orders && order.orders.length > 0 && (
+                                order.orders.map((o, index) => {
+                                    return (
+                                        <Grid item xs={12} sm={6} key={index}>
+                                            <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} />
+                                        </Grid>
+                                    )
+                                })
                             )
-                        })
-                    )
-                }
+                        }
+                    </Grid>
+                    <Box height={20} />
+                    <Button color="primary" variant="outlined" onClick={handleAddCategory} disabled={order.orders && order.orders.length >= categories.length}><AddIcon /> Add Category</Button>
+                    <Box height={20} />
+                    <Typography>Total Price: <b>{order.totalPrice.toFixed(2)}&euro;</b></Typography>
+                </Grid>
             </Grid>
-            <Box height={20} />
-            <Button color="primary" variant="outlined" onClick={handleAddCategory} disabled={order.orders && order.orders.length >= categories.length}><AddIcon /> Add Category</Button>
         </Step>
     );
 }
