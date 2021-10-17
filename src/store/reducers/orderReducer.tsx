@@ -6,17 +6,18 @@ interface OrderState {
 };
 
 export interface IOrder {
-    ticketAmount: number
+    ticketAmount: number;
+    totalPrice: number;
 }
 
 export interface FreeSeatOrder extends IOrder {
     orders: Array<{amount: number, categoryId: number, price: number}>;
-    totalPrice: number;
 }
 
 const initialState: OrderState = {
     order: {
-        ticketAmount: -1
+        ticketAmount: -1,
+        totalPrice: 0
     }
 };
 

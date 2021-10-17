@@ -10,6 +10,8 @@ import style from "../style/StepperContainer.module.scss";
 interface Props {
     onNext?: () => unknown;
     onBack?: () => unknown;
+    disableOverflow?: boolean;
+    noNext?: boolean;
     children?: React.ReactNode;
 }
 
@@ -61,7 +63,7 @@ export const StepperContainer = (props: Props) => {
                 })}
             </Stepper>
             <React.Fragment>
-                <Box className={style.content} ref={container}>
+                <Box className={style.content} ref={container} style={{overflowY: props.disableOverflow ? "hidden" : "auto"}}>
                     {props.children}
                 </Box>
                 <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={20} ref={bottomBar}>
@@ -79,9 +81,13 @@ export const StepperContainer = (props: Props) => {
                         }
 
                         <Box sx={{ flex: '1 1 auto' }} />
-                        <Button onClick={handleNext} disabled={!nextDisabled}>
-                            Next
-                        </Button>
+                        {
+                            !props.noNext && (
+                                <Button onClick={handleNext} disabled={!nextDisabled}>
+                                    Next
+                                </Button>
+                            )
+                        }
                     </Box>
                 </Paper>
             </React.Fragment>

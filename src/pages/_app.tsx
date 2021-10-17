@@ -16,7 +16,7 @@ export default function Global({ Component, pageProps }) {
 
     return (
         <Provider store={store}>
-            <StepperContainer onBack={() => setDirection(-1)} onNext={() => setDirection(1)}>
+            <StepperContainer onBack={() => setDirection(-1)} onNext={() => setDirection(1)} disableOverflow={pageProps.disableOverflow ?? false} noNext={pageProps.noNext ?? false}>
                 <AnimatePresence exitBeforeEnter initial={false}>
                     <Component {...pageProps} key={router.pathname} direction={direction} />
                 </AnimatePresence>
