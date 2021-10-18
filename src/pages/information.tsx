@@ -110,13 +110,16 @@ export default function Information({categories, direction}) {
                     <Card style={{flex: "1 1 auto", padding: "10px"}}>
                         <List subheader={<ListSubheader><Typography variant="h5">Summary</Typography></ListSubheader>}>
                             {
-                                order.orders?.map(order => {
+                                order.orders?.map((order, index) => {
                                     return (
-                                        <ListItem secondaryAction={
-                                            <IconButton edge="end" aria-label="delete" color={"primary"}>
-                                                <Edit />
-                                            </IconButton>
-                                        }>
+                                        <ListItem
+                                            secondaryAction={
+                                                <IconButton edge="end" aria-label="delete" color={"primary"}>
+                                                    <Edit />
+                                                </IconButton>
+                                            }
+                                            key={index}
+                                        >
                                             <ListItemText
                                                 secondary={<span>{order.price} &#8364;</span>}
                                                 primary={`${order.amount}x: ${categories.find(cat => cat.id == order.categoryId).name}`}
