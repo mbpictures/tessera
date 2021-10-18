@@ -57,7 +57,7 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
                         onChange={handleChangeCountry}
                         getOptionLabel={(option: Country) => option.countryName}
                         isOptionEqualToValue={(option, value) => option?.countryName === value?.countryName && option?.countryShortCode === value?.countryShortCode}
-                        value={value.country ?? {countryName: "", countryShortCode: ""}}
+                        value={value.country}
                     />
                 </Grid>
                 <Grid item md={6} xs={12}>
@@ -70,7 +70,7 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
                                 onChange={handleChangeRegion}
                                 getOptionLabel={(option: Region) => option.name}
                                 isOptionEqualToValue={(option, value) => option?.name === value?.name && option?.shortCode === value?.shortCode}
-                                value={value.region ?? {name: "", shortCode: ""}}
+                                value={value.region}
                             />
                         )
                     }
