@@ -50,12 +50,12 @@ export default function SeatSelection({categories, direction}) {
             <Grid container alignItems="center" justifyContent="center">
                 <Grid item md={12} lg={8} alignItems="center" justifyContent="center" display="flex" flexDirection="column">
                     <Typography variant={"body1"} alignSelf={"center"}>This event has no seat reservation</Typography>
-                    <Grid container rowSpacing={2} columnSpacing={2} justifyContent={"center"}>
+                    <Grid container spacing={2} justifyContent={"center"}>
                         {
                             order.orders && order.orders.length > 0 && (
                                 order.orders.map((o, index) => {
                                     return (
-                                        <Grid item xs={12} sm={6} key={index}>
+                                        <Grid item sm={12} md={6} key={index}>
                                             <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} />
                                         </Grid>
                                     )
