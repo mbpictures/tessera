@@ -10,7 +10,6 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
     const handleUpdate = (property, newValue) => {
         const newAddress: IAddress = Object.assign({}, value);
         newAddress[property] = newValue;
-        console.log(newAddress);
         onChange(newAddress);
     };
 
