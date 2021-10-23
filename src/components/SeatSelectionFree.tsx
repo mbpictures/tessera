@@ -1,22 +1,25 @@
-import {IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography} from "@mui/material";
+import {Button, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {Box} from "@mui/system";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {FreeSeatOrder} from "../store/reducers/orderReducer";
 import {motion} from "framer-motion";
+import {Delete} from "@mui/icons-material";
 
 export const SeatSelectionFree = (
     {
         onChange,
         categories,
         index,
-        currentOrder
+        currentOrder,
+        onRemove
     }: {
         onChange?: (index: number, amount: number, categoryId) => unknown,
         categories: Array<{ id: number, name: string, price: number }>,
         index: number,
-        currentOrder: FreeSeatOrder
+        currentOrder: FreeSeatOrder,
+        onRemove?: (index: number) => unknown
     }) => {
     const [ticketAmount, setTicketAmount] = useState<number>(0);
     const [category, setCategory] = useState<number>(categories[0].id);
@@ -80,6 +83,9 @@ export const SeatSelectionFree = (
                         )
                     }
                 </motion.div>
+                <Button startIcon={<Delete />} color={"error"} onClick={() => onRemove(index)} variant="outlined" style={{alignSelf: "center"}}>
+                    Remove Category
+                </Button>
             </Paper>
         </motion.div>
     );

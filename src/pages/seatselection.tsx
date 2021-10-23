@@ -45,6 +45,13 @@ export default function SeatSelection({categories, direction}) {
         dispatch(setOrder(newOrder));
     };
 
+    const handleRemoveCategory = (index) => {
+        if (order.orders.length < index || order.orders.length <= 1) return;
+        const newOrder: FreeSeatOrder = {ticketAmount: order.ticketAmount, orders: order.orders.map(a => a), totalPrice: order.totalPrice};
+        newOrder.orders.splice(index, 1);
+        dispatch(setOrder(newOrder));
+    };
+
     return (
         <Step direction={direction} style={{display: "flex", justifyContent: "center", flexDirection: "column", width: "100%"}}>
             <Grid container alignItems="center" justifyContent="center">
@@ -56,7 +63,7 @@ export default function SeatSelection({categories, direction}) {
                                 order.orders.map((o, index) => {
                                     return (
                                         <Grid item sm={12} md={6} key={index}>
-                                            <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} />
+                                            <SeatSelectionFree categories={categories} onChange={handleChange} index={index} currentOrder={order} onRemove={handleRemoveCategory} />
                                         </Grid>
                                     )
                                 })
