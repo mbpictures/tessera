@@ -17,6 +17,7 @@
     "country-region-data": "^1.11.0",
     "framer-motion": "^4.1.17",
     "next": "^11.0.0",
+    "prisma": "^3.3.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-redux": "^7.2.5",
