@@ -5,6 +5,7 @@ import {Step} from "../components/Step";
 import {useAppDispatch, useAppSelector} from "../store/hooks";
 import {selectEventSelected, setEvent} from "../store/reducers/eventSelectionReducer";
 import {enableNextStep} from "../store/reducers/nextStepAvailableReducer";
+import prisma from "../lib/prisma";
 
 export default function Home({events, direction}) {
     const dispatch = useAppDispatch();
@@ -27,7 +28,7 @@ export default function Home({events, direction}) {
                 {
                     events.map((event, index) => {
                         return (
-                            <EventSelection label={event.name} name={"event_selection"} index={index} key={index} onChange={handleChange} />
+                            <EventSelection label={event.title} name={"event_selection"} index={index} key={index} onChange={handleChange} />
                         )
                     })
                 }
@@ -37,18 +38,10 @@ export default function Home({events, direction}) {
 }
 
 export async function getServerSideProps(context) {
+    const events = await prisma.event.findMany();
     return {
         props: {
-            events: [
-                {
-                    id: 1,
-                    name: "Demo Event 1"
-                },
-                {
-                    id: 2,
-                    name: "Demo Event 2"
-                }
-            ]
+            events
         }
     }
 }
