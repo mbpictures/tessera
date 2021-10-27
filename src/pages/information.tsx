@@ -32,14 +32,18 @@ export default function Information({direction}) {
     const dispatch = useAppDispatch();
 
     const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingType | null>(selector.shipping?.type ?? null);
+    const [emailError, setEmailError] = useState<string>(null);
 
     const theme = useTheme();
     const boxStyling = useMediaQuery(theme.breakpoints.up("md")) ? {width: "60%"} : {width: "100%"};
 
     useEffect(() => {
-        const valid = validateEmail(selector.email) &&
+        const emailValid = validateEmail(selector.email);
+        const valid = emailValid &&
             validateAddress(selector.address) &&
             (ShippingFactory.getShippingInstance(selector.shipping)?.isValid() ?? false);
+
+        setEmailError(selector.email.length == 0 || emailValid ? null : "Please enter valid email address");
 
         if (valid)
             dispatch(enableNextStep());
@@ -64,7 +68,14 @@ export default function Information({direction}) {
                 <Card>
                     <Stack padding={1} spacing={1}>
                         <Typography>These address given will be used for invoice.</Typography>
-                        <TextField label="E-Mail Address" type="email" value={selector.email} onChange={event => dispatch(setEmail(event.target.value))} />
+                        <TextField
+                            label="E-Mail Address"
+                            type="email"
+                            value={selector.email}
+                            onChange={event => dispatch(setEmail(event.target.value))}
+                            error={emailError != null}
+                            helperText={emailError}
+                        />
                         <AddressComponent value={selector.address} onChange={newValue => dispatch(setAddress(newValue))} />
                     </Stack>
                 </Card>
