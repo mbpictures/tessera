@@ -15,7 +15,8 @@ model Event {
     title       String
     seatType    String
     seatMap     SeatMap?    @relation(fields: [seatMapId], references: [id])
-    seatMapId   Int
+    seatMapId   Int?
+    orders      Order[]
 }
 
 model SeatMap {
@@ -34,6 +35,7 @@ model User {
     city        String
     countryCode String
     regionCode  String
+    orders      Order[]
 }
 
 model Order {
