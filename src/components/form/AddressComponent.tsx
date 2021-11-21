@@ -21,8 +21,6 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
     const [lastNameError, setLastNameError] = useState<string>(null);
     const [addressError, setAddressError] = useState<string>(null);
     const [cityError, setCityError] = useState<string>(null);
-    const [countryError, setCountryError] = useState<string>(null);
-    const [regionError, setRegionError] = useState<string>(null);
 
     const handleUpdate = (property, newValue) => {
         const newAddress: IAddress = Object.assign({}, value);
@@ -32,8 +30,6 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
         if (property === "lastName") setLastNameError(validateAddressComponent(newAddress, property));
         if (property === "address") setAddressError(validateAddressComponent(newAddress, property));
         if (property === "city") setCityError(validateAddressComponent(newAddress, property));
-        if (property === "country") setCountryError(validateAddressComponent(newAddress, property));
-        if (property === "region") setRegionError(validateAddressComponent(newAddress, property));
     };
 
     const handleChangeZip = (newValue: string, valid: boolean) => {
@@ -106,8 +102,6 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
                         getOptionLabel={(option: Country) => option.countryName}
                         isOptionEqualToValue={(option, value) => option?.countryName === value?.countryName && option?.countryShortCode === value?.countryShortCode}
                         value={value.country}
-                        helperText={countryError}
-                        error={countryError !== null}
                     />
                 </Grid>
                 <Grid item md={6} xs={12}>
@@ -121,8 +115,6 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
                                 getOptionLabel={(option: Region) => option.name}
                                 isOptionEqualToValue={(option, value) => option?.name === value?.name && option?.shortCode === value?.shortCode}
                                 value={value.region}
-                                helperText={regionError}
-                                error={regionError !== null}
                             />
                         )
                     }
