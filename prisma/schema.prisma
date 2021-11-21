@@ -17,12 +17,30 @@ model Event {
     seatMap     SeatMap?    @relation(fields: [seatMapId], references: [id])
     seatMapId   Int?
     orders      Order[]
+    categories  CategoriesOnEvents[]
 }
 
 model SeatMap {
     id          Int         @default(autoincrement()) @id
     events      Event[]
     orders      Order[]
+}
+
+model Category {
+    id          Int         @default(autoincrement()) @id
+    label       String
+    price       Float
+    currency    String
+    events      CategoriesOnEvents[]
+}
+
+model CategoriesOnEvents {
+    event      Event        @relation(fields: [eventId], references: [id])
+    eventId    Int
+    category   Category     @relation(fields: [categoryId], references: [id])
+    categoryId Int
+
+    @@id([eventId, categoryId])
 }
 
 model User {
