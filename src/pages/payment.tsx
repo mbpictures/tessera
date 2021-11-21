@@ -17,6 +17,7 @@ import {useAppSelector} from "../store/hooks";
 import {FreeSeatOrder, selectOrder} from "../store/reducers/orderReducer";
 import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
 import {useRouter} from "next/router";
+import {PaymentMethods} from "../components/payment/PaymentMethods";
 
 
 export default function Payment({categories, direction}) {
@@ -37,7 +38,7 @@ export default function Payment({categories, direction}) {
                 <Grid item md={12} lg={8} style={{maxHeight: "100%"}}>
                     <Box style={{maxHeight: "100%", overflowY: "auto", padding: "2px 10px"}}>
                         <Card>
-
+                            <PaymentMethods />
                         </Card>
                     </Box>
                 </Grid>
