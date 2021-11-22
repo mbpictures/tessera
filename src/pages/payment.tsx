@@ -13,16 +13,18 @@ import {
 } from "@mui/material";
 import {Box, useTheme} from "@mui/system";
 import {Edit} from "@mui/icons-material";
-import {useAppSelector} from "../store/hooks";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
 import {FreeSeatOrder, selectOrder} from "../store/reducers/orderReducer";
 import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
 import {useRouter} from "next/router";
 import {PaymentMethods} from "../components/payment/PaymentMethods";
+import {setPaymentStatus} from "../store/reducers/paymentReducer";
 
 
 export default function Payment({categories, direction}) {
     const nextEnabled = useAppSelector(selectNextStateAvailable);
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
+    const dispatch = useAppDispatch();
     const router = useRouter();
 
     const theme = useTheme();
@@ -31,6 +33,10 @@ export default function Payment({categories, direction}) {
     const openSeatSelectionPage = () => {
         router.push("/seatselection");
     };
+
+    const onPay = () => {
+        dispatch(setPaymentStatus("initiate"));
+    }
 
     return (
         <Step direction={direction} style={{width: "100%", maxHeight: "100%"}}>
@@ -69,7 +75,7 @@ export default function Payment({categories, direction}) {
                                 <ListItemText primary={<strong>Total:</strong>} secondary={<span>{order.totalPrice} &euro;</span>} />
                             </ListItem>
                         </List>
-                        <Button variant="outlined" style={{width: "100%"}} disabled={!nextEnabled}>Pay now</Button>
+                        <Button variant="outlined" style={{width: "100%"}} disabled={!nextEnabled} onClick={onPay}>Pay now</Button>
                     </Card>
                 </Grid>
             </Grid>
