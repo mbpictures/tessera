@@ -1,7 +1,6 @@
 import {Step} from "../components/Step";
-import React from "react";
+import React, {useEffect} from "react";
 import {
-    Button,
     Card, Divider,
     Grid,
     IconButton,
@@ -18,17 +17,25 @@ import {FreeSeatOrder, selectOrder} from "../store/reducers/orderReducer";
 import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
 import {useRouter} from "next/router";
 import {PaymentMethods} from "../components/payment/PaymentMethods";
-import {setPaymentStatus} from "../store/reducers/paymentReducer";
+import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer";
+import {LoadingButton} from "@mui/lab";
+import PaymentIcon from '@mui/icons-material/Payment';
 
 
 export default function Payment({categories, direction}) {
     const nextEnabled = useAppSelector(selectNextStateAvailable);
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
+    const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
     const theme = useTheme();
     const containerStyling: React.CSSProperties = useMediaQuery(theme.breakpoints.up("md")) ? {flexWrap: "nowrap"} : {flexDirection: "column-reverse", overflowY: "auto", flexWrap: "nowrap"};
+
+    useEffect(() => {
+        if (payment.state !== "finished") return;
+        router.push("/checkout")
+    }, [payment]);
 
     const openSeatSelectionPage = () => {
         router.push("/seatselection");
@@ -75,7 +82,17 @@ export default function Payment({categories, direction}) {
                                 <ListItemText primary={<strong>Total:</strong>} secondary={<span>{order.totalPrice} &euro;</span>} />
                             </ListItem>
                         </List>
-                        <Button variant="outlined" style={{width: "100%"}} disabled={!nextEnabled} onClick={onPay}>Pay now</Button>
+                        <LoadingButton
+                            loadingPosition="start"
+                            variant="outlined"
+                            fullWidth
+                            disabled={!nextEnabled}
+                            onClick={onPay}
+                            loading={payment.state === "processing"}
+                            startIcon={<PaymentIcon />}
+                        >
+                            {payment.state === "processing" ? "Processing" : "Pay now"}
+                        </LoadingButton>
                     </Card>
                 </Grid>
             </Grid>
