@@ -12,6 +12,7 @@
     "@emotion/styled": "^11.3.0",
     "@fontsource/roboto": "^4.5.1",
     "@mui/icons-material": "^5.0.1",
+    "@mui/lab": "^5.0.0-alpha.55",
     "@mui/material": "^5.0.2",
     "@prisma/client": "^3.5.0",
     "@reduxjs/toolkit": "^1.6.2",
