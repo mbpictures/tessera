@@ -16,7 +16,7 @@ export const SeatSelectionFree = (
         onRemove
     }: {
         onChange?: (index: number, amount: number, categoryId) => unknown,
-        categories: Array<{ id: number, name: string, price: number }>,
+        categories: Array<{ id: number, label: string, price: number }>,
         index: number,
         currentOrder: FreeSeatOrder,
         onRemove?: (index: number) => unknown
@@ -74,7 +74,7 @@ export const SeatSelectionFree = (
                 </Box>
                 <InputLabel id="category-selection">Category</InputLabel>
                 <Select value={category} onChange={handleCategoryChange} id="category-selection">
-                    {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.name} ({category.price}&euro;)</MenuItem>)}
+                    {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.label} ({category.price}&euro;)</MenuItem>)}
                 </Select>
                 <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
                     {

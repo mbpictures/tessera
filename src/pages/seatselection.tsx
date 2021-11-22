@@ -8,11 +8,16 @@ import {FreeSeatOrder, selectOrder, setOrder} from "../store/reducers/orderReduc
 import {useAppSelector} from "../store/hooks";
 import AddIcon from '@mui/icons-material/Add';
 import {Box} from "@mui/system";
+import prisma from "../lib/prisma";
+import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
 
 export default function SeatSelection({categories, direction}) {
 
     const dispatch = useDispatch();
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
+    const selectedEvent = useAppSelector(selectEventSelected);
+
+    categories = categories.filter(category => category.events.some(event => event.eventId === selectedEvent));
 
     useEffect(() => {
         if (order.orders && order.orders.length > 0) return;
@@ -81,20 +86,15 @@ export default function SeatSelection({categories, direction}) {
 }
 
 export async function getServerSideProps(context) {
+    const categories = await prisma.category.findMany({
+        include: {
+            events: true
+        }
+    });
+
     return {
         props: {
-            categories: [
-                {
-                    id: 1,
-                    name: "Premium",
-                    price: 60.99
-                },
-                {
-                    id: 2,
-                    name: "Economy",
-                    price: 30.99
-                }
-            ]
+            categories: categories
         }
     }
 }

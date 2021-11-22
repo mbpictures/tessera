@@ -21,6 +21,7 @@ import {PaymentMethods} from "../components/payment/PaymentMethods";
 import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer";
 import {LoadingButton} from "@mui/lab";
 import PaymentIcon from '@mui/icons-material/Payment';
+import prisma from "../lib/prisma";
 
 
 export default function Payment({categories, direction}) {
@@ -85,8 +86,8 @@ export default function Payment({categories, direction}) {
                                             key={index}
                                         >
                                             <ListItemText
-                                                secondary={<span>{order.price} &#8364;</span>}
-                                                primary={`${order.amount}x: ${categories.find(cat => cat.id == order.categoryId).name}`}
+                                                secondary={<span>{categories.find(cat => cat.id == order.categoryId).price} &#8364;</span>}
+                                                primary={`${order.amount}x: ${categories.find(cat => cat.id == order.categoryId).label}`}
                                             />
                                         </ListItem>
                                     )
@@ -116,22 +117,13 @@ export default function Payment({categories, direction}) {
 }
 
 export async function getStaticProps() {
+    const categories = await prisma.category.findMany();
+
     return {
         props: {
             disableOverflow: true,
             noNext: true,
-            categories: [
-                {
-                    id: 1,
-                    name: "Premium",
-                    price: 60.99
-                },
-                {
-                    id: 2,
-                    name: "Economy",
-                    price: 30.99
-                }
-            ]
+            categories: categories
         }
     }
 }
