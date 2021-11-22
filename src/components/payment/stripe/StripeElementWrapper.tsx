@@ -100,3 +100,15 @@ export function StripeTextFieldCVC(
         />
     );
 }
+
+export function StripeTextFieldIBAN(
+    props: StripeTextFieldProps<typeof IbanElement>
+) {
+    return (
+        <StripeTextField
+            label="IBAN"
+            stripeElement={IbanElement}
+            {...props}
+        />
+    );
+}

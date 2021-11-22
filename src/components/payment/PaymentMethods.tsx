@@ -9,6 +9,7 @@ import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {selectPayment, setPayment} from "../../store/reducers/paymentReducer";
 import {PaymentFactory, PaymentType} from "../../store/factories/payment/PaymentFactory";
 import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
+import {StripeIBAN} from "./StripeIBAN";
 
 export const PaymentMethods = () => {
     const selector = useAppSelector(selectPayment);
@@ -48,6 +49,14 @@ export const PaymentMethods = () => {
                     onSelect={handleChangeSelectedPaymentMethod}
                 >
                     <StripeCard />
+                </CheckboxAccordion>
+                <CheckboxAccordion
+                    label={"SEPA Direct Debit"}
+                    name={PaymentType.StripeIBAN}
+                    selectedItem={selectedPaymentMethod}
+                    onSelect={handleChangeSelectedPaymentMethod}
+                >
+                    <StripeIBAN />
                 </CheckboxAccordion>
             </ThemeProvider>
         </Elements>
