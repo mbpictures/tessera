@@ -28,7 +28,7 @@ export default function Home({events, direction}) {
                 {
                     events.map((event, index) => {
                         return (
-                            <EventSelection label={event.title} name={"event_selection"} index={index} key={index} onChange={handleChange} />
+                            <EventSelection label={event.title} name={"event_selection"} index={event.id} key={index} onChange={handleChange} />
                         )
                     })
                 }
