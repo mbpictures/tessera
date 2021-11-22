@@ -35,7 +35,6 @@ export default function Payment({categories, direction}) {
     const containerStyling: React.CSSProperties = useMediaQuery(theme.breakpoints.up("md")) ? {flexWrap: "nowrap"} : {flexDirection: "column-reverse", overflowY: "auto", flexWrap: "nowrap"};
 
     useEffect(() => {
-        console.log("PAYMENT STATE: " + payment.state);
         if (payment.state !== "finished") return;
         router.push("/checkout")
     }, [payment]);
