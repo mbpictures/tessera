@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start"
   },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
@@ -30,11 +33,12 @@
     "zippo": "^1.0.1"
   },
   "devDependencies": {
-    "@types/node": "latest",
+    "@types/node": "^16.11.9",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/react-redux": "^7.1.19",
     "prisma": "^3.5.0",
-    "typescript": "latest"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
   }
 }
