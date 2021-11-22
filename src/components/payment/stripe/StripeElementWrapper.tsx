@@ -42,8 +42,6 @@ export const StripeTextField = <T extends StripeElement>(
         ...other
     } = props;
 
-    console.log(stripeElement);
-
     return (
         <TextField
             fullWidth
