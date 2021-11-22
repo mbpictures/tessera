@@ -1,7 +1,8 @@
 import {Step} from "../components/Step";
 import React, {useEffect} from "react";
 import {
-    Card, Divider,
+    Button,
+    Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider,
     Grid,
     IconButton,
     List,
@@ -33,6 +34,7 @@ export default function Payment({categories, direction}) {
     const containerStyling: React.CSSProperties = useMediaQuery(theme.breakpoints.up("md")) ? {flexWrap: "nowrap"} : {flexDirection: "column-reverse", overflowY: "auto", flexWrap: "nowrap"};
 
     useEffect(() => {
+        console.log("PAYMENT STATE: " + payment.state);
         if (payment.state !== "finished") return;
         router.push("/checkout")
     }, [payment]);
@@ -46,9 +48,22 @@ export default function Payment({categories, direction}) {
     }
 
     return (
-        <Step direction={direction} style={{width: "100%", maxHeight: "100%"}}>
+        <Step direction={direction} style={{width: "100%", maxHeight: "100%", flex: "1 1 auto", display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <>
+                <Dialog open={payment.state === "failure"}>
+                    <DialogTitle>Payment failed!</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            An error occured while processing your payment. Please try again, choose a different payment method or contact us!
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button variant={"outlined"} onClick={() => dispatch(setPaymentStatus("none"))}>Close</Button>
+                    </DialogActions>
+                </Dialog>
+            </>
             <Grid container spacing={2} style={{ ...containerStyling, maxHeight: "100%"}}>
-                <Grid item md={12} lg={8} style={{maxHeight: "100%"}}>
+                <Grid item md={12} lg={8} style={{maxHeight: "100%", display: "flex", alignItems: "center"}}>
                     <Box style={{maxHeight: "100%", overflowY: "auto", padding: "2px 10px"}}>
                         <Card>
                             <PaymentMethods />
