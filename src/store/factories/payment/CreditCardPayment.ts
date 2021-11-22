@@ -17,6 +17,7 @@ export class CreditCardPayment extends Payment {
 
     isValid(): boolean {
         const data = JSON.parse(this.data.data) as CreditCardPaymentData;
+        if (data === null) return false;
         return data.cardNumberComplete && data.cvcComplete && data.expiredComplete;
     }
 
