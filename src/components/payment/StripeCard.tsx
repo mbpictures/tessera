@@ -32,7 +32,7 @@ export const StripeCard = () => {
         expiredError: null,
         cvcError: null
     });
-    const [cardHolderName, setCardHolderName] = useState<string>(null);
+    const [cardHolderName, setCardHolderName] = useState<string>("");
 
     const elements = useElements();
 
