@@ -15,7 +15,7 @@ export default async function handler(
         const { order }: { order: IOrder } = req.body;
         try {
             if (order.ticketAmount <= 0) {
-                throw new Error("Invalid ticket amoount");
+                throw new Error("Invalid ticket amount");
             }
 
             let amount = 0;
@@ -29,21 +29,24 @@ export default async function handler(
                         }
                     }
                 });
-                amount = orders.reduce((a, order) => a + order.amount * categories.find(category => category.id === order.categoryId)[0].price, 0)
+                amount = orders.reduce((a, order) => a + order.amount * categories.find(category => category.id === order.categoryId).price, 0)
                 currency = categories[0].currency;
             }
 
             const params: Stripe.PaymentIntentCreateParams = {
                 payment_method_types: ['card'],
-                amount: amount,
+                amount: Math.floor(amount * 100),
                 currency: currency,
             };
             const payment_intent: Stripe.PaymentIntent = await stripe.paymentIntents.create(
                 params
             );
 
+            // TODO: add idempotent request key
+
             res.status(200).json(payment_intent);
         } catch (err) {
+            console.log(err.message);
             res.status(500).json({ statusCode: 500, message: err.message });
         }
     } else {
