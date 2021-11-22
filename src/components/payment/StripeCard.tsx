@@ -45,9 +45,8 @@ export const StripeCard = () => {
 
             const response = await axios.post("api/payment_intent", {order: selectorOrder, eventId: selectorEvent});
 
-            if (response.status === 500) {
-                dispatch(setPaymentStatus("failure"));
-            }
+            if (response.status === 500)
+                throw new Error("Server Error: " + response.data)
 
             const cardElement = elements!.getElement(CardNumberElement);
             const { error, paymentIntent } = await stripe!.confirmCardPayment(
@@ -60,13 +59,12 @@ export const StripeCard = () => {
                 }
             );
 
-            if (error || paymentIntent.status !== "succeeded") {
-                dispatch(setPaymentStatus("failure"));
-            }
+            if (error || paymentIntent.status !== "succeeded")
+                throw new Error(error.message)
             dispatch(setPaymentStatus("finished"));
         }
 
-        processPayment().catch(console.log);
+        processPayment().catch(() => dispatch(setPaymentStatus("failure")));
 
     }, [selector]);
 
