@@ -46,7 +46,6 @@ export default async function handler(
 
             res.status(200).json(payment_intent);
         } catch (err) {
-            console.log(err.message);
             res.status(500).json({ statusCode: 500, message: err.message });
         }
     } else {
