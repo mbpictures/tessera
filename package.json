@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "vercel-build": "prisma generate && prisma db push && prisma db seed && next build",
+    "vercel-build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
     "prisma:generate": "prisma generate"
   },
   "prisma": {
