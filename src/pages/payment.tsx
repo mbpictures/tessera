@@ -14,7 +14,7 @@ import {
 import {Box, useTheme} from "@mui/system";
 import {Edit} from "@mui/icons-material";
 import {useAppDispatch, useAppSelector} from "../store/hooks";
-import {FreeSeatOrder, selectOrder} from "../store/reducers/orderReducer";
+import {FreeSeatOrder, selectOrder, setOrderId} from "../store/reducers/orderReducer";
 import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
 import {useRouter} from "next/router";
 import {PaymentMethods} from "../components/payment/PaymentMethods";
@@ -22,10 +22,15 @@ import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer"
 import {LoadingButton} from "@mui/lab";
 import PaymentIcon from '@mui/icons-material/Payment';
 import prisma from "../lib/prisma";
+import {storeOrderAndUser} from "../constants/util";
+import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
+import {selectPersonalInformation, setUserId} from "../store/reducers/personalInformationReducer";
 
 
 export default function Payment({categories, direction}) {
     const nextEnabled = useAppSelector(selectNextStateAvailable);
+    const selectedEvent = useAppSelector(selectEventSelected);
+    const userInformation = useAppSelector(selectPersonalInformation);
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
     const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
@@ -43,7 +48,10 @@ export default function Payment({categories, direction}) {
         router.push("/seatselection");
     };
 
-    const onPay = () => {
+    const onPay = async () => {
+        const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent);
+        dispatch(setUserId(userId));
+        dispatch(setOrderId(orderId));
         dispatch(setPaymentStatus("initiate"));
     }
 

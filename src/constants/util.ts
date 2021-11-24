@@ -1,5 +1,8 @@
 import {IAddress} from "./interfaces";
 import zippo from "zippo";
+import {IOrder} from "../store/reducers/orderReducer";
+import {PersonalInformationState} from "../store/reducers/personalInformationReducer";
+import axios from "axios";
 
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
@@ -19,3 +22,9 @@ export const validateAddress = (address: IAddress) => {
 export const hasNumber = (myString) => {
     return /\d/.test(myString);
 }
+
+export const storeOrderAndUser = async (order: IOrder, user: PersonalInformationState, eventId) => {
+    if (order.orderId != null || user.userId !== null) return {userId: user.userId, orderId: order.orderId};
+    const response = await axios.post("/api/order/store", {order: order, user: user, eventId: eventId});
+    return {userId: response.data.userId, orderId: response.data.orderId};
+};
