@@ -5,10 +5,11 @@ import {IAddress} from "../../constants/interfaces";
 import {Shipping} from "../factories/shipping/Shipping";
 import {ShippingType} from "../factories/shipping/ShippingFactory";
 
-interface PersonalInformationState {
+export interface PersonalInformationState {
     address: IAddress;
     email: string;
     shipping: IShipping;
+    userId?: number;
 }
 
 export interface IShipping {
@@ -33,7 +34,8 @@ const initialState: PersonalInformationState = {
         city: ""
     },
     email: "",
-    shipping: null
+    shipping: null,
+    userId: null
 };
 
 export const personalInformationSlice = createSlice({
@@ -70,9 +72,12 @@ export const personalInformationSlice = createSlice({
         setShipping: (state, action: PayloadAction<IShipping>) => {
             state.shipping = action.payload;
         },
+        setUserId: (state, action: PayloadAction<number>) => {
+            state.userId = action.payload;
+        }
     }
 });
 
-export const {setFirstName, setLastName, setEmail, setAddress, setAddressAddress, setZip, setCity, setCountry, setRegion, setShipping} = personalInformationSlice.actions;
+export const {setFirstName, setLastName, setEmail, setAddress, setAddressAddress, setZip, setCity, setCountry, setRegion, setShipping, setUserId} = personalInformationSlice.actions;
 export const selectPersonalInformation = (state: RootState) => state.personalInformation;
 export default personalInformationSlice.reducer;
