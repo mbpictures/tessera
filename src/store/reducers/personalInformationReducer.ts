@@ -2,7 +2,6 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {Country, Region} from "country-region-data";
 import {IAddress} from "../../constants/interfaces";
-import {Shipping} from "../factories/shipping/Shipping";
 import {ShippingType} from "../factories/shipping/ShippingFactory";
 
 export interface PersonalInformationState {
@@ -15,12 +14,6 @@ export interface PersonalInformationState {
 export interface IShipping {
     data: any;
     type: ShippingType;
-}
-
-export class MockShipping extends Shipping {
-    isValid(): boolean {
-        return true;
-    }
 }
 
 const initialState: PersonalInformationState = {
