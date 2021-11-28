@@ -10,6 +10,7 @@ import {selectPayment, setPayment} from "../../store/reducers/paymentReducer";
 import {PaymentFactory, PaymentType} from "../../store/factories/payment/PaymentFactory";
 import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
 import {StripeIBAN} from "./StripeIBAN";
+import {Sofort} from "./Sofort";
 
 export const PaymentMethods = () => {
     const selector = useAppSelector(selectPayment);
@@ -57,6 +58,14 @@ export const PaymentMethods = () => {
                     onSelect={handleChangeSelectedPaymentMethod}
                 >
                     <StripeIBAN />
+                </CheckboxAccordion>
+                <CheckboxAccordion
+                    label={"Sofort"}
+                    name={PaymentType.Sofort}
+                    selectedItem={selectedPaymentMethod}
+                    onSelect={handleChangeSelectedPaymentMethod}
+                >
+                    <Sofort />
                 </CheckboxAccordion>
             </ThemeProvider>
         </Elements>
