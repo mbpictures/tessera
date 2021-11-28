@@ -28,3 +28,9 @@ export const storeOrderAndUser = async (order: IOrder, user: PersonalInformation
     const response = await axios.post("/api/order/store", {order: order, user: user, eventId: eventId, paymentType: paymentType});
     return {userId: response.data.userId, orderId: response.data.orderId};
 };
+
+export const getStoreWithOrderId = async (orderId): Promise<{personalInformation: PersonalInformationState, order: IOrder, eventId: number}> => {
+    const response = await axios.post("/api/order", {orderId: orderId});
+    const {user, order, eventId} = response.data;
+    return {personalInformation: user, order: order, eventId: eventId};
+};
