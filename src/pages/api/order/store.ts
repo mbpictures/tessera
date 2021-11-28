@@ -21,7 +21,7 @@ export default async function handler(
                 lastName: user.address.lastName,
                 email: user.email,
                 address: user.address.address,
-                plz: user.address.zip,
+                zip: user.address.zip,
                 city: user.address.city,
                 countryCode: user.address.country.countryShortCode,
                 regionCode: user.address.region.shortCode
