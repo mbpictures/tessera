@@ -41,7 +41,8 @@ export default async function handler(
                     connect: {
                         id: createUser.id
                     }
-                }
+                },
+                shipping: JSON.stringify(user.shipping)
             }
         })
         res.status(200).json({userId: createUser.id, orderId: createOrder.id});

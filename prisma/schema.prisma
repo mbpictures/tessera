@@ -68,4 +68,5 @@ model Order {
     seatMapId       Int?
     event           Event       @relation(fields: [eventId], references: [id])
     eventId         Int
+    shipping        String
 }
