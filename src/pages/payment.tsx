@@ -49,7 +49,8 @@ export default function Payment({categories, direction}) {
     };
 
     const onPay = async () => {
-        const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent);
+        payment.payment.type
+        const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent, payment.payment.type);
         dispatch(setUserId(userId));
         dispatch(setOrderId(orderId));
         dispatch(setPaymentStatus("initiate"));

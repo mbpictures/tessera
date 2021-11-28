@@ -23,8 +23,8 @@ export const hasNumber = (myString) => {
     return /\d/.test(myString);
 }
 
-export const storeOrderAndUser = async (order: IOrder, user: PersonalInformationState, eventId) => {
+export const storeOrderAndUser = async (order: IOrder, user: PersonalInformationState, eventId, paymentType) => {
     if (order.orderId != null || user.userId !== null) return {userId: user.userId, orderId: order.orderId};
-    const response = await axios.post("/api/order/store", {order: order, user: user, eventId: eventId});
+    const response = await axios.post("/api/order/store", {order: order, user: user, eventId: eventId, paymentType: paymentType});
     return {userId: response.data.userId, orderId: response.data.orderId};
 };

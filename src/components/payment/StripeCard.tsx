@@ -61,6 +61,8 @@ export const StripeCard = () => {
 
             if (error || paymentIntent.status !== "succeeded")
                 throw new Error(error.message)
+
+            await axios.post("api/payment_intent/confirm", {order: selectorOrder, paymentResult: JSON.stringify(paymentIntent)});
             dispatch(setPaymentStatus("finished"));
         }
 

@@ -8,7 +8,7 @@ interface OrderState {
 export interface IOrder {
     ticketAmount: number;
     totalPrice: number;
-    orderId?: number;
+    orderId?: string;
 }
 
 export interface FreeSeatOrder extends IOrder {
@@ -30,7 +30,7 @@ export const orderSlice = createSlice({
         setOrder: (state, action: PayloadAction<IOrder>) => {
             state.order = action.payload;
         },
-        setOrderId: (state, action: PayloadAction<number>) => {
+        setOrderId: (state, action: PayloadAction<string>) => {
             state.order.orderId = action.payload;
         }
     }

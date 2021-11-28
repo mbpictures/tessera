@@ -11,58 +11,61 @@ datasource db {
 }
 
 model Event {
-    id          Int         @default(autoincrement()) @id
-    title       String
-    seatType    String
-    seatMap     SeatMap?    @relation(fields: [seatMapId], references: [id])
-    seatMapId   Int?
-    orders      Order[]
-    categories  CategoriesOnEvents[]
+    id              Int         @default(autoincrement()) @id
+    title           String
+    seatType        String
+    seatMap         SeatMap?    @relation(fields: [seatMapId], references: [id])
+    seatMapId       Int?
+    orders          Order[]
+    categories      CategoriesOnEvents[]
 }
 
 model SeatMap {
-    id          Int         @default(autoincrement()) @id
-    events      Event[]
-    orders      Order[]
+    id              Int         @default(autoincrement()) @id
+    events          Event[]
+    orders          Order[]
 }
 
 model Category {
-    id          Int         @default(autoincrement()) @id
-    label       String
-    price       Float
-    currency    String
-    events      CategoriesOnEvents[]
+    id              Int         @default(autoincrement()) @id
+    label           String
+    price           Float
+    currency        String
+    events          CategoriesOnEvents[]
 }
 
 model CategoriesOnEvents {
-    event      Event        @relation(fields: [eventId], references: [id])
-    eventId    Int
-    category   Category     @relation(fields: [categoryId], references: [id])
-    categoryId Int
+    event           Event        @relation(fields: [eventId], references: [id])
+    eventId         Int
+    category        Category     @relation(fields: [categoryId], references: [id])
+    categoryId      Int
 
     @@id([eventId, categoryId])
 }
 
 model User {
-    id          String      @default(uuid()) @id
-    firstName   String
-    lastName    String
-    email       String
-    address     String
-    zip         String
-    city        String
-    countryCode String
-    regionCode  String
-    orders      Order[]
+    id              String      @default(uuid()) @id
+    firstName       String
+    lastName        String
+    email           String
+    address         String
+    zip             String
+    city            String
+    countryCode     String
+    regionCode      String
+    orders          Order[]
 }
 
 model Order {
-    id          String      @default(uuid()) @id
-    user        User        @relation(fields: [userId], references: [id])
-    userId      String
-    order       String
-    seatMap     SeatMap?    @relation(fields: [seatMapId], references: [id])
-    seatMapId   Int?
-    event       Event       @relation(fields: [eventId], references: [id])
-    eventId     Int
+    id              String      @default(uuid()) @id
+    user            User        @relation(fields: [userId], references: [id])
+    userId          String
+    order           String
+    paymentType     String
+    paymentIntent   String?
+    paymentResult   String?
+    seatMap         SeatMap?    @relation(fields: [seatMapId], references: [id])
+    seatMapId       Int?
+    event           Event       @relation(fields: [eventId], references: [id])
+    eventId         Int
 }
