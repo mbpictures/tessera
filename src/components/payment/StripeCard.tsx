@@ -43,7 +43,7 @@ export const StripeCard = () => {
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post("api/payment_intent", {order: selectorOrder, eventId: selectorEvent});
+            const response = await axios.post("api/payment_intent/stripe_credit_card", {order: selectorOrder, eventId: selectorEvent});
 
             if (response.status === 500)
                 throw new Error("Server Error: " + response.data)
