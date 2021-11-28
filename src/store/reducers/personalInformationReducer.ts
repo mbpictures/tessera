@@ -8,7 +8,7 @@ export interface PersonalInformationState {
     address: IAddress;
     email: string;
     shipping: IShipping;
-    userId?: number;
+    userId?: string;
 }
 
 export interface IShipping {
@@ -65,7 +65,7 @@ export const personalInformationSlice = createSlice({
         setShipping: (state, action: PayloadAction<IShipping>) => {
             state.shipping = action.payload;
         },
-        setUserId: (state, action: PayloadAction<number>) => {
+        setUserId: (state, action: PayloadAction<string>) => {
             state.userId = action.payload;
         }
     }
