@@ -14,6 +14,9 @@ export default async function handler(
     if (req.method === 'POST') {
         const { order }: { order: IOrder } = req.body;
         try {
+            if (!order.orderId || order.orderId === "") {
+                throw new Error("Invalid Order ID");
+            }
             if (order.ticketAmount <= 0) {
                 throw new Error("Invalid ticket amount");
             }
@@ -41,6 +44,15 @@ export default async function handler(
             const payment_intent: Stripe.PaymentIntent = await stripe.paymentIntents.create(
                 params
             );
+
+            await prisma.order.update({
+                where: {
+                    id: order.orderId
+                },
+                data: {
+                    paymentIntent: JSON.stringify(payment_intent)
+                }
+            });
 
             // TODO: add idempotent request key
 

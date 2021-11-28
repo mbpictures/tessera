@@ -13,7 +13,7 @@ export default async function handler(
         return;
     }
 
-    const { order, user, eventId }: { order: IOrder, user: PersonalInformationState, eventId: number } = req.body;
+    const { order, user, eventId, paymentType }: { order: IOrder, user: PersonalInformationState, eventId: number, paymentType: string } = req.body;
     try {
         const createUser = await prisma.user.create({
             data: {
@@ -36,6 +36,7 @@ export default async function handler(
                         id: eventId
                     }
                 },
+                paymentType: paymentType,
                 user: {
                     connect: {
                         id: createUser.id
@@ -46,6 +47,7 @@ export default async function handler(
         res.status(200).json({userId: createUser.id, orderId: createOrder.id});
     }
     catch (e) {
+        console.log(e)
         res.status(500).end("Server error");
     }
 }
