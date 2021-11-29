@@ -19,10 +19,7 @@ export default async function handler(
     const xmlParser = new XMLParser({});
 
     try {
-        // TODO: add notification webhook URLs
-        // bug in fast-xml-parser typescript declarations
-        // @ts-ignore
-        const sofortRequestData = xmlBuilder.build({
+        const data = {
             multipay: {
                 project_id: process.env.SOFORT_PROJECT_ID,
                 interface_version: "TicketShop_1.0.0/Sofort_2.3.3",
@@ -34,9 +31,18 @@ export default async function handler(
                 ],
                 success_url: "http://" + req.headers.host + "/checkout?order=" + order.orderId,
                 abort_url: "http://" + req.headers.host + "/payment?order=" + order.orderId,
-                su: ""
+                su: "",
+                notification_urls: []
             }
-        });
+        };
+        // localhost doesnt work for sofort notifiaction
+        if (process.env.NODE_ENV === 'production' && !req.headers.host.includes("localhost")){
+            data.multipay.notification_urls.push("http://" + req.headers.host + "/api/webhook/sofort");
+        }
+
+        // bug in fast-xml-parser typescript declarations
+        // @ts-ignore
+        const sofortRequestData = xmlBuilder.build(data);
 
         const response = await sofortApiCall("https://api.sofort.com/api/xml", sofortRequestData);
         const responseXML = xmlParser.parse(response.data);
