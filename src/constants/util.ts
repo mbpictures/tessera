@@ -36,6 +36,7 @@ export const getStoreWithOrderId = async (orderId): Promise<{personalInformation
 };
 
 export const validatePayment = async (orderId): Promise<boolean> => {
+    if (!orderId || orderId === "") return false;
     const response = await axios.post("api/order/validate_intent", {orderId: orderId});
     return response.data.valid;
 }
