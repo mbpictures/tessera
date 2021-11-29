@@ -3,11 +3,13 @@ import {Payment} from "./Payment";
 import {CreditCardPayment} from "./CreditCardPayment";
 import {StripeIBANPayment} from "./StripeIBANPayment";
 import {SofortPayment} from "./Sofort";
+import {InvoicePayment} from "./InvoicePayment";
 
 export enum PaymentType {
     CreditCard = "creditcard",
     StripeIBAN = "stripeiban",
-    Sofort = "sofort"
+    Sofort = "sofort",
+    Invoice = "invoice"
 }
 
 export class PaymentFactory {
@@ -19,6 +21,8 @@ export class PaymentFactory {
             return new StripeIBANPayment(data);
         if (data.type === PaymentType.Sofort)
             return new SofortPayment(data);
+        if (data.type === PaymentType.Invoice)
+            return new InvoicePayment(data);
         return null;
     }
 
