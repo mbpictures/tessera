@@ -1,7 +1,6 @@
 import {getStripe} from "../../lib/stripe";
 import {Elements} from "@stripe/react-stripe-js";
 import {CheckboxAccordion} from "../CheckboxAccordion";
-import {StripeCard} from "./StripeCard";
 import {useEffect, useState} from "react";
 import {ThemeProvider} from "@mui/system";
 import {createTheme} from "@mui/material/styles";
@@ -9,8 +8,6 @@ import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {selectPayment, setPayment} from "../../store/reducers/paymentReducer";
 import {PaymentFactory, PaymentType} from "../../store/factories/payment/PaymentFactory";
 import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
-import {StripeIBAN} from "./StripeIBAN";
-import {Sofort} from "./Sofort";
 
 export const PaymentMethods = () => {
     const selector = useAppSelector(selectPayment);
@@ -43,30 +40,21 @@ export const PaymentMethods = () => {
     return (
         <Elements stripe={getStripe()}>
             <ThemeProvider theme={createTheme()}>
-                <CheckboxAccordion
-                    label={"Credit Card"}
-                    name={PaymentType.CreditCard}
-                    selectedItem={selectedPaymentMethod}
-                    onSelect={handleChangeSelectedPaymentMethod}
-                >
-                    <StripeCard />
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"SEPA Direct Debit"}
-                    name={PaymentType.StripeIBAN}
-                    selectedItem={selectedPaymentMethod}
-                    onSelect={handleChangeSelectedPaymentMethod}
-                >
-                    <StripeIBAN />
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Sofort"}
-                    name={PaymentType.Sofort}
-                    selectedItem={selectedPaymentMethod}
-                    onSelect={handleChangeSelectedPaymentMethod}
-                >
-                    <Sofort />
-                </CheckboxAccordion>
+                {
+                    PaymentFactory.getAllPaymentInstances().map((value, index) => {
+                        return (
+                            <CheckboxAccordion
+                                label={value.getHeaderComponent()}
+                                name={value.data.type}
+                                selectedItem={selectedPaymentMethod}
+                                onSelect={handleChangeSelectedPaymentMethod}
+                                key={index}
+                            >
+                                {value.getComponent()}
+                            </CheckboxAccordion>
+                        )
+                    })
+                }
             </ThemeProvider>
         </Elements>
     )

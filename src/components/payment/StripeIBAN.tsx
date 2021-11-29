@@ -11,6 +11,7 @@ import {selectOrder} from "../../store/reducers/orderReducer";
 import {selectEventSelected} from "../../store/reducers/eventSelectionReducer";
 import {selectPersonalInformation} from "../../store/reducers/personalInformationReducer";
 import {StripeIBANPayment} from "../../store/factories/payment/StripeIBANPayment";
+import {Typography} from "@mui/material";
 
 export const StripeIBAN = () => {
     const selector = useAppSelector(selectPayment);
@@ -84,3 +85,9 @@ export const StripeIBAN = () => {
         />
     )
 };
+
+export const StripeIBANHeader = () => {
+    return (
+        <Typography>SEPA Direct Debit</Typography>
+    )
+}
