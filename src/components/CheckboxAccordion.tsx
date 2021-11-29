@@ -9,7 +9,7 @@ export const CheckboxAccordion = (
         onSelect,
         children
     }: {
-        label: string,
+        label: string | React.ReactNode | React.Component,
         name: string,
         selectedItem: string,
         onSelect: (checkedItem) => unknown,
