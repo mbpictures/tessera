@@ -5,6 +5,8 @@ import {selectPayment, setPaymentStatus} from "../../store/reducers/paymentReduc
 import {PaymentType} from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
 import {selectOrder} from "../../store/reducers/orderReducer";
+import Image from 'next/image';
+import logo from "../../assets/payment/klarna.svg";
 
 export const Sofort = () => {
     const selector = useAppSelector(selectPayment);
@@ -31,3 +33,9 @@ export const Sofort = () => {
         <Typography>After clicking on "pay now" you will be redirected to "sofort" payment.</Typography>
     )
 };
+
+export const SofortHeader = () => {
+    return (
+        <Image src={logo} height={50} />
+    )
+}

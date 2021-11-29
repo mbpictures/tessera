@@ -1,4 +1,4 @@
-import {Grid, TextField} from "@mui/material";
+import {Grid, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {
     StripeTextFieldCVC,
@@ -122,3 +122,9 @@ export const StripeCard = () => {
         </Grid>
     )
 };
+
+export const StripeCardHeader = () => {
+    return (
+        <Typography>Credit Card</Typography>
+    )
+}
