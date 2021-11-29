@@ -1,6 +1,6 @@
 import {Payment} from "./Payment";
-import {FunctionComponent} from "react";
-import {StripeCard} from "../../../components/payment/StripeCard";
+import React from "react";
+import {StripeCard, StripeCardHeader} from "../../../components/payment/StripeCard";
 import {PaymentType} from "./PaymentFactory";
 
 export interface CreditCardPaymentData {
@@ -11,8 +11,8 @@ export interface CreditCardPaymentData {
 
 export class CreditCardPayment extends Payment {
 
-    getComponent(): FunctionComponent {
-        return StripeCard;
+    getComponent(): React.ReactNode {
+        return <StripeCard />;
     }
 
     isValid(): boolean {
@@ -23,5 +23,9 @@ export class CreditCardPayment extends Payment {
 
     setData(data: CreditCardPaymentData) {
         this.data = {type: PaymentType.CreditCard, data: JSON.stringify(data)};
+    }
+
+    getHeaderComponent(): React.ReactNode {
+        return <StripeCardHeader />;
     }
 }

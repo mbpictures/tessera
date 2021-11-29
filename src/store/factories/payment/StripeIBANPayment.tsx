@@ -1,7 +1,7 @@
 import {Payment} from "./Payment";
-import {FunctionComponent} from "react";
-import {StripeCard} from "../../../components/payment/StripeCard";
+import React from "react";
 import {PaymentType} from "./PaymentFactory";
+import {StripeIBAN, StripeIBANHeader} from "../../../components/payment/StripeIBAN";
 
 export interface StripeIBANPaymentData {
     ibanComplete: boolean;
@@ -9,8 +9,8 @@ export interface StripeIBANPaymentData {
 
 export class StripeIBANPayment extends Payment {
 
-    getComponent(): FunctionComponent {
-        return StripeCard;
+    getComponent(): React.ReactNode {
+        return <StripeIBAN />;
     }
 
     isValid(): boolean {
@@ -21,5 +21,9 @@ export class StripeIBANPayment extends Payment {
 
     setData(data: StripeIBANPaymentData) {
         this.data = {type: PaymentType.CreditCard, data: JSON.stringify(data)};
+    }
+
+    getHeaderComponent(): React.ReactNode {
+        return <StripeIBANHeader />;
     }
 }
