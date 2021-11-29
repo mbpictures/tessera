@@ -1,9 +1,9 @@
-import {FunctionComponent} from "react";
 import {IPayment} from "../../reducers/paymentReducer";
+import React from "react";
 
 export abstract class Payment {
     data: IPayment;
-    static _component: FunctionComponent;
+    static _component: React.ReactNode;
 
     constructor(data: IPayment) {
         this.data = data;
@@ -13,9 +13,10 @@ export abstract class Payment {
         return this.data;
     }
 
-    abstract getComponent(): FunctionComponent;
+    abstract getComponent(): React.ReactNode;
+    abstract getHeaderComponent(): React.ReactNode;
 
-    get component(): FunctionComponent {
+    get component(): React.ReactNode {
         if (!Payment._component)
             Payment._component = this.getComponent();
         return Payment._component;

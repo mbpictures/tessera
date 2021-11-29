@@ -21,4 +21,8 @@ export class PaymentFactory {
             return new SofortPayment(data);
         return null;
     }
+
+    static getAllPaymentInstances(): Array<Payment> {
+        return Object.values(PaymentType).map(value => PaymentFactory.getPaymentInstance({data: null, type: value}));
+    }
 }
