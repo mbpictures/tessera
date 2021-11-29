@@ -73,13 +73,13 @@ export default function Payment({categories, direction}) {
             </>
             <Grid container spacing={2} style={{ ...containerStyling, maxHeight: "100%"}}>
                 <Grid item md={12} lg={8} style={{maxHeight: "100%", display: "flex", alignItems: "center"}}>
-                    <Box style={{maxHeight: "100%", overflowY: "auto", padding: "2px 10px", width: "100%"}}>
+                    <Box style={{maxHeight: "100%", overflowY: "auto", padding: "2px 5px", width: "100%"}}>
                         <Card>
                             <PaymentMethods />
                         </Card>
                     </Box>
                 </Grid>
-                <Grid item md={12} lg={4} display="flex" alignItems="center" padding="2px 10px">
+                <Grid item md={12} lg={4} display="flex" alignItems="center" style={{paddingLeft: "21px", marginRight: "5px"}}>
                     <Card style={{flex: "1 1 auto", padding: "10px"}}>
                         <List subheader={<ListSubheader><Typography variant="h5">Summary</Typography></ListSubheader>}>
                             {
