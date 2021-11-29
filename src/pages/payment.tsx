@@ -22,7 +22,7 @@ import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer"
 import {LoadingButton} from "@mui/lab";
 import PaymentIcon from '@mui/icons-material/Payment';
 import prisma from "../lib/prisma";
-import {storeOrderAndUser} from "../constants/util";
+import {storeOrderAndUser, validatePayment} from "../constants/util";
 import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
 import {selectPersonalInformation, setUserId} from "../store/reducers/personalInformationReducer";
 
@@ -49,7 +49,10 @@ export default function Payment({categories, direction}) {
     };
 
     const onPay = async () => {
-        payment.payment.type
+        const paymentAlreadyValid = await validatePayment(order.orderId);
+        if (paymentAlreadyValid) {
+            dispatch(setPaymentStatus("finished"));
+        }
         const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent, payment.payment.type);
         dispatch(setUserId(userId));
         dispatch(setOrderId(orderId));

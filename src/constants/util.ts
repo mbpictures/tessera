@@ -34,3 +34,8 @@ export const getStoreWithOrderId = async (orderId): Promise<{personalInformation
     const {user, order, eventId} = response.data;
     return {personalInformation: user, order: order, eventId: eventId};
 };
+
+export const validatePayment = async (orderId): Promise<boolean> => {
+    const response = await axios.post("api/order/validate_intent", {orderId: orderId});
+    return response.data.valid;
+}
