@@ -115,10 +115,10 @@ export default function Payment({categories, direction}) {
                             fullWidth
                             disabled={!nextEnabled}
                             onClick={onPay}
-                            loading={payment.state === "processing"}
+                            loading={payment.state === "processing" || payment.state === "persist" || payment.state === "initiate"}
                             startIcon={<PaymentIcon />}
                         >
-                            {payment.state === "processing" ? "Processing" : "Pay now"}
+                            {(payment.state === "processing" || payment.state === "persist" || payment.state === "initiate") ? "Processing" : "Pay now"}
                         </LoadingButton>
                     </Card>
                 </Grid>
