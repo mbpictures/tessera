@@ -3,6 +3,7 @@ import prisma from "../../../lib/prisma";
 import {IOrder} from "../../../store/reducers/orderReducer";
 import {sofortApiCall} from "../../../lib/sofort";
 import {XMLBuilder, XMLParser} from "fast-xml-parser";
+import absoluteUrl from 'next-absolute-url';
 
 export default async function handler(
     req: NextApiRequest,
@@ -17,6 +18,7 @@ export default async function handler(
     const { order }: { order: IOrder } = req.body;
     const xmlBuilder = new XMLBuilder({});
     const xmlParser = new XMLParser({});
+    const { origin } = absoluteUrl(req);
 
     try {
         const data = {
@@ -29,15 +31,15 @@ export default async function handler(
                         reason: "Ticket buy"
                     }
                 ],
-                success_url: "http://" + req.headers.host + "/checkout?order=" + order.orderId,
-                abort_url: "http://" + req.headers.host + "/payment?order=" + order.orderId,
+                success_url: `${origin}/checkout?order=${order.orderId}`,
+                abort_url: `${origin}/payment?order=${order.orderId}`,
                 su: "",
                 notification_urls: []
             }
         };
         // localhost doesnt work for sofort notifiaction
         if (process.env.NODE_ENV === 'production' && !req.headers.host.includes("localhost")){
-            data.multipay.notification_urls.push("http://" + req.headers.host + "/api/webhook/sofort");
+            data.multipay.notification_urls.push(`${origin}/api/webhook/sofort`);
         }
 
         // bug in fast-xml-parser typescript declarations
@@ -59,6 +61,7 @@ export default async function handler(
         res.status(200).json({redirectUrl: responseXML.new_transaction.payment_url});
     }
     catch (e) {
-        res.status(500).end("Server error");
+        console.log(e);
+        res.status(500).end(e);
     }
 }
