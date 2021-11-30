@@ -49,6 +49,7 @@ export default function Payment({categories, direction}) {
     };
 
     const onPay = async () => {
+        dispatch(setPaymentStatus("persist"));
         const paymentAlreadyValid = await validatePayment(order.orderId);
         if (paymentAlreadyValid) {
             dispatch(setPaymentStatus("finished"));
@@ -62,7 +63,7 @@ export default function Payment({categories, direction}) {
     return (
         <Step direction={direction} style={{width: "100%", maxHeight: "100%", flex: "1 1 auto", display: "flex", justifyContent: "center", alignItems: "center"}}>
             <>
-                <Dialog open={payment.state === "failure"}>
+                <Dialog open={payment.state === "failure" || payment.state === "persist" || payment.state === "initiate"}>
                     <DialogTitle>Payment failed!</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
