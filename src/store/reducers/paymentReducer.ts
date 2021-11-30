@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {PaymentType} from "../factories/payment/PaymentFactory";
 
-type PaymentStatus = "none" | "initiate" | "processing" | "finished" | "failure";
+type PaymentStatus = "none" | "persist" | "initiate" | "processing" | "finished" | "failure";
 
 interface PaymentState {
     payment: IPayment;
