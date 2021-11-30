@@ -20,8 +20,6 @@ export default async function handler(
     const xmlParser = new XMLParser({});
     const { origin } = absoluteUrl(req);
 
-    console.log(origin);
-
     try {
         const data = {
             multipay: {
@@ -48,12 +46,8 @@ export default async function handler(
         // @ts-ignore
         const sofortRequestData = xmlBuilder.build(data);
 
-        console.log(sofortRequestData);
-
         const response = await sofortApiCall("https://api.sofort.com/api/xml", sofortRequestData);
         const responseXML = xmlParser.parse(response.data);
-
-        console.log(responseXML);
 
         await prisma.order.update({
             where: {
