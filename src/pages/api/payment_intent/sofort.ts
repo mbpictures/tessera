@@ -41,7 +41,7 @@ export default async function handler(
         };
         // localhost doesnt work for sofort notifiaction
         if (process.env.NODE_ENV === 'production' && !req.headers.host.includes("localhost")){
-            data.multipay.notification_urls.push(`${origin}/api/webhook/sofort`);
+            data.multipay.notification_urls.push({notification_url: `${origin}/api/webhook/sofort`});
         }
 
         // bug in fast-xml-parser typescript declarations
@@ -52,6 +52,8 @@ export default async function handler(
 
         const response = await sofortApiCall("https://api.sofort.com/api/xml", sofortRequestData);
         const responseXML = xmlParser.parse(response.data);
+
+        console.log(responseXML);
 
         await prisma.order.update({
             where: {
