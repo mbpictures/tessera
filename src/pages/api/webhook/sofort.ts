@@ -3,6 +3,7 @@ import {XMLBuilder, XMLParser} from "fast-xml-parser";
 import axios from "axios";
 import requestIp from 'request-ip';
 import {sofortApiCall} from "../../../lib/sofort";
+import prisma from "../../../lib/prisma";
 
 export default async function handler(
     req: NextApiRequest,
@@ -41,6 +42,15 @@ export default async function handler(
         const orderId = parsedResponse.transactions.transaction_details.user_variables.user_variable;
         const status = parsedResponse.transactions.transaction_details.status;
         const statusReason = parsedResponse.transactions.transaction_details.status_reason;
+
+        await prisma.order.update({
+            where: {
+                id: orderId
+            },
+            data: {
+                paymentResult: JSON.stringify({status: status, reason: statusReason})
+            }
+        });
 
         if (status === "pending") {
             res.status(200).end();
