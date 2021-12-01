@@ -2,6 +2,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {XMLBuilder, XMLParser} from "fast-xml-parser";
 import axios from "axios";
 import requestIp from 'request-ip';
+import {sofortApiCall} from "../../../lib/sofort";
 
 export default async function handler(
     req: NextApiRequest,
@@ -33,17 +34,13 @@ export default async function handler(
                 }
             ]
         });
-        console.log(requestData);
 
-        const response = await axios.post("https://api.sofort.com/api/xml", requestData);
-        console.log(response.data);
+        const response = await sofortApiCall("https://api.sofort.com/api/xml", requestData);
         const parsedResponse = xmlParser.parse(response.data);
 
-        const orderId = parsedResponse.transactions.transaction_details.user_variables.order_id;
+        const orderId = parsedResponse.transactions.transaction_details.user_variables.user_variable;
         const status = parsedResponse.transactions.transaction_details.status;
         const statusReason = parsedResponse.transactions.transaction_details.status_reason;
-
-        console.log("SOFORT STATUS: " + status);
 
         if (status === "pending") {
             res.status(200).end();
