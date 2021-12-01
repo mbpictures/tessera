@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "vercel-build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "ngrok": "ngrok http 3000"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -41,6 +42,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/react-redux": "^7.1.19",
+    "ngrok": "^4.2.2",
     "prisma": "^3.5.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
