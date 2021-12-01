@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {XMLBuilder, XMLParser} from "fast-xml-parser";
 import axios from "axios";
+import requestIp from 'request-ip';
 
 export default async function handler(
     req: NextApiRequest,
@@ -17,6 +18,12 @@ export default async function handler(
     const xmlParser = new XMLParser({});
 
     try {
+        const ipAddressResponse = await axios.get("https://www.sofort.com/payment/status/ipList");
+        const ipList: Array<string> = ipAddressResponse.data.split("|");
+        if (!ipList.includes(requestIp.getClientIp(req))) {
+            res.status(400).end("Wrong sender");
+            return;
+        }
         const parsed = xmlParser.parse(body);
         // @ts-ignore
         const requestData = xmlBuilder.build({
@@ -26,8 +33,10 @@ export default async function handler(
                 }
             ]
         });
+        console.log(requestData);
 
         const response = await axios.post("https://api.sofort.com/api/xml", requestData);
+        console.log(response.data);
         const parsedResponse = xmlParser.parse(response.data);
 
         const orderId = parsedResponse.transactions.transaction_details.user_variables.order_id;
