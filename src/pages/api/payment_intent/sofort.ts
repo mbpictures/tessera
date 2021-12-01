@@ -31,6 +31,11 @@ export default async function handler(
                         reason: "Ticket buy"
                     }
                 ],
+                user_variables: [
+                    {
+                        user_variable: order.orderId
+                    }
+                ],
                 success_url: `${origin}/checkout?order=${order.orderId}`,
                 abort_url: `${origin}/payment?order=${order.orderId}`,
                 su: "",
