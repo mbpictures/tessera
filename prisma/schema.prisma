@@ -69,4 +69,12 @@ model Order {
     event           Event       @relation(fields: [eventId], references: [id])
     eventId         Int
     shipping        String
+    tickets         Ticket[]
+}
+
+model Ticket {
+    id              String      @default(uuid()) @id
+    order           Order       @relation(fields: [orderId], references: [id])
+    orderId         String
+    used            Boolean     @default(false)
 }
