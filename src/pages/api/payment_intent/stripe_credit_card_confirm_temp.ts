@@ -22,7 +22,7 @@ export default async function handler(
                     id: order.orderId
                 },
                 data: {
-                    paymentResult: paymentResult
+                    paymentResult: JSON.stringify({temp: paymentResult})
                 }
             });
 
