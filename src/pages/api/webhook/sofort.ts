@@ -4,6 +4,7 @@ import axios from "axios";
 import requestIp from 'request-ip';
 import {sofortApiCall} from "../../../lib/sofort";
 import prisma from "../../../lib/prisma";
+import {send} from "../../../lib/send";
 
 export default async function handler(
     req: NextApiRequest,
@@ -62,7 +63,7 @@ export default async function handler(
             return;
         }
         if (status === "received" || status === "untraceable") {
-            // TODO: send email with invoice and optionally tickets
+            await send(orderId);
             res.status(200).end();
             return;
         }
