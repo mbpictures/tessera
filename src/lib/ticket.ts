@@ -17,7 +17,7 @@ const generateTicket = async (template, details: {category, price, name}, eventN
             fillTextField(form, "EVENT_NAME", eventName);
             fillTextField(form, "SEAT_INFORMATION", details.category);
             fillTextField(form, "PRICE", details.price + "€");
-            fillTextField(form, "CUSTOMER_NAME", details.name + "€");
+            fillTextField(form, "CUSTOMER_NAME", details.name);
 
             const ticket = await prisma.ticket.create({
                 data: {
