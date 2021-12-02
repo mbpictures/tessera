@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import getRawBody from 'raw-body';
 import {send} from "../../../lib/send";
 import Cors from 'micro-cors';
+import prisma from "../../../lib/prisma";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2020-08-27"
@@ -24,9 +25,17 @@ const handler = async(
         const event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET!);
 
         if (event.type === "charge.succeeded") {
-            console.log(event.data.object["metadata"]["orderId"]);
             setTimeout(async () => {
-                // await send();
+                const orderId = event.data.object["metadata"]["orderId"];
+                await prisma.order.update({
+                    where: {
+                        id: orderId
+                    },
+                    data: {
+                        paymentResult: JSON.stringify(event)
+                    }
+                });
+                await send(orderId);
             }, 0);
         }
 
