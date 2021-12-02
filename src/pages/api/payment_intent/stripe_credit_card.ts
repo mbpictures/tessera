@@ -40,6 +40,9 @@ export default async function handler(
                 payment_method_types: ['card'],
                 amount: Math.floor(amount * 100),
                 currency: currency,
+                metadata: {
+                    orderId: order.orderId
+                }
             };
             const payment_intent: Stripe.PaymentIntent = await stripe.paymentIntents.create(
                 params
