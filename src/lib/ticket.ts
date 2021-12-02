@@ -26,7 +26,7 @@ const generateTicket = async (template, details: {category, price, name}, eventN
                     }
                 }
             });
-            QRCode.toDataURL(ticket.id, async (err, data) => {
+            QRCode.toDataURL(ticket.id, {errorCorrectionLevel: "H"}, async (err, data) => {
                 if (err) {
                     reject(err);
                     return
