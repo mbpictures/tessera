@@ -9,21 +9,23 @@ import {getEmailTransporter} from "./email";
 
 export const send = async (orderId) => {
     return new Promise<void>(async (resolve, reject) => {
-        // generate invoice
-        const assetPath = pathA.join(process.cwd(), 'src/assets/');
-        const invoiceTemplatePath = pathA.join(assetPath, "invoice/template.html")
-        const invoiceTemplate = fs.readFileSync(invoiceTemplatePath, 'utf-8');
-        const invoicePath = await generateInvoice(invoiceTemplate, orderId);
-
         const order = await prisma.order.findUnique({
             where: {
                 id: orderId
             },
             select: {
                 shipping: true,
-                user: true
+                user: true,
+                order: true,
+                tickets: true
             }
         });
+
+        // generate invoice
+        const assetPath = pathA.join(process.cwd(), 'src/assets/');
+        const invoiceTemplatePath = pathA.join(assetPath, "invoice/template.html")
+        const invoiceTemplate = fs.readFileSync(invoiceTemplatePath, 'utf-8');
+        const invoicePath = await generateInvoice(invoiceTemplate, orderId);
 
         // TODO: replace email body by template
 
@@ -43,7 +45,9 @@ export const send = async (orderId) => {
 
         // generate tickets
         const shipping = ShippingFactory.getShippingInstance(JSON.parse(order.shipping));
-        if (shipping instanceof DownloadShipping) {
+        const ticketsAlreadySent = JSON.parse(order.order).orders.map(order => Array.from(Array(order.amount).keys())).flat().length <= order.tickets.length;
+
+        if (shipping instanceof DownloadShipping && !ticketsAlreadySent) {
             message.html += ` The tickets are available in the attachments as well.`;
 
             const ticketTemplatePath = pathA.join(assetPath, "ticket/template.pdf");
