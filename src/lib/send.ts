@@ -63,6 +63,7 @@ export const send = async (orderId) => {
                 reject(error);
                 return;
             }
+            fs.unlinkSync(invoicePath);
             resolve();
         })
     })
