@@ -69,7 +69,13 @@ export const generateTickets = async (template, orderId: string): Promise<Array<
         }
     })
 
-    return await Promise.all(freeSeatOrder.orders.map(async (order) => {
+    const orders: Array<{categoryId: number}> = freeSeatOrder.orders.map(order => Array.from(Array(order.amount).keys()).map(() => {
+        return {
+            categoryId: order.categoryId
+        };
+    })).flat();
+
+    return await Promise.all(orders.map(async (order) => {
         const category = categories.find(category => category.id === order.categoryId);
         return await generateTicket(
             template,
