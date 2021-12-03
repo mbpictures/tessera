@@ -7,6 +7,7 @@ import {ShippingFactory} from "../store/factories/shipping/ShippingFactory";
 import {DownloadShipping} from "../store/factories/shipping/DownloadShipping";
 import {getEmailTransporter} from "./email";
 import ejs from "ejs";
+import {PaymentFactory, PaymentType} from "../store/factories/payment/PaymentFactory";
 
 export const send = async (orderId) => {
     return new Promise<void>(async (resolve, reject) => {
@@ -18,7 +19,9 @@ export const send = async (orderId) => {
                 shipping: true,
                 user: true,
                 order: true,
-                tickets: true
+                tickets: true,
+                paymentResult: true,
+                paymentType: true
             }
         });
 
@@ -45,9 +48,9 @@ export const send = async (orderId) => {
         // generate tickets
         const shipping = ShippingFactory.getShippingInstance(JSON.parse(order.shipping));
         const ticketsAlreadySent = JSON.parse(order.order).orders.map(order => Array.from(Array(order.amount).keys())).flat().length <= order.tickets.length;
-
+        const payed = PaymentFactory.getPaymentInstance({data: null, type: order.paymentType as PaymentType})?.paymentResultValid(order.paymentResult) ?? false;
         let containsTickets = undefined;
-        if (shipping instanceof DownloadShipping && !ticketsAlreadySent) {
+        if (shipping instanceof DownloadShipping && !ticketsAlreadySent && payed) {
             const ticketTemplatePath = pathA.join(assetPath, "ticket/template.pdf");
             const ticketTemplate = fs.readFileSync(ticketTemplatePath);
             const tickets = await generateTickets(ticketTemplate, orderId);
