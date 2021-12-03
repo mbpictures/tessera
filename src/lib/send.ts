@@ -6,6 +6,7 @@ import prisma from "./prisma";
 import {ShippingFactory} from "../store/factories/shipping/ShippingFactory";
 import {DownloadShipping} from "../store/factories/shipping/DownloadShipping";
 import {getEmailTransporter} from "./email";
+import ejs from "ejs";
 
 export const send = async (orderId) => {
     return new Promise<void>(async (resolve, reject) => {
@@ -23,17 +24,15 @@ export const send = async (orderId) => {
 
         // generate invoice
         const assetPath = pathA.join(process.cwd(), 'src/assets/');
-        const invoiceTemplatePath = pathA.join(assetPath, "invoice/template.html")
+        const invoiceTemplatePath = pathA.join(assetPath, "invoice/template.html");
         const invoiceTemplate = fs.readFileSync(invoiceTemplatePath, 'utf-8');
         const invoicePath = await generateInvoice(invoiceTemplate, orderId);
-
-        // TODO: replace email body by template
 
         const message: any = {
             from: process.env.EMAIL_SENDER,
             to: order.user.email,
             subject: "Your ticket order!",
-            html: `Hello ${order.user.firstName} ${order.user.lastName}!<br>Thanks for your ticket purchase. You can find your invoice in the attachements.`,
+            html: null,
             attachments: [
                 {
                     filename: "Invoice.pdf",
@@ -47,9 +46,8 @@ export const send = async (orderId) => {
         const shipping = ShippingFactory.getShippingInstance(JSON.parse(order.shipping));
         const ticketsAlreadySent = JSON.parse(order.order).orders.map(order => Array.from(Array(order.amount).keys())).flat().length <= order.tickets.length;
 
+        let containsTickets = undefined;
         if (shipping instanceof DownloadShipping && !ticketsAlreadySent) {
-            message.html += ` The tickets are available in the attachments as well.`;
-
             const ticketTemplatePath = pathA.join(assetPath, "ticket/template.pdf");
             const ticketTemplate = fs.readFileSync(ticketTemplatePath);
             const tickets = await generateTickets(ticketTemplate, orderId);
@@ -59,8 +57,13 @@ export const send = async (orderId) => {
                     content: ticket,
                     contentType: 'application/pdf'
                 })
-            })
+            });
+            containsTickets = true;
         }
+        message.html = ejs.render(fs.readFileSync(pathA.join(assetPath, "email/template.html"), 'utf-8'), {
+            customerName: order.user.firstName + " " + order.user.lastName,
+            containsTickets: containsTickets
+        });
 
         (await getEmailTransporter()).sendMail(message, (error) => {
             if (error) {
