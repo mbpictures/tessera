@@ -49,14 +49,20 @@ export default function Payment({categories, direction}) {
     };
 
     const onPay = async () => {
+        dispatch(setPaymentStatus("persist"));
         const paymentAlreadyValid = await validatePayment(order.orderId);
         if (paymentAlreadyValid) {
             dispatch(setPaymentStatus("finished"));
         }
-        const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent, payment.payment.type);
-        dispatch(setUserId(userId));
-        dispatch(setOrderId(orderId));
-        dispatch(setPaymentStatus("initiate"));
+        try {
+            const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent, payment.payment.type);
+            dispatch(setUserId(userId));
+            dispatch(setOrderId(orderId));
+            dispatch(setPaymentStatus("initiate"));
+        }
+        catch (e) {
+            dispatch(setPaymentStatus("failure"));
+        }
     }
 
     return (
