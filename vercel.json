@@ -1,18 +1,6 @@
 {
   "functions": {
-    "api/order/store": {
-      "includeFiles": "src/assets/**/*"
-    },
-    "api/webhook/invoice": {
-      "includeFiles": "src/assets/**/*"
-    },
-    "api/webhook/sofort": {
-      "includeFiles": "src/assets/**/*"
-    },
-    "api/webhook/stripe": {
-      "includeFiles": "src/assets/**/*"
-    },
-    "api/payment_intent/invoice": {
+    "src/pages/**/*": {
       "includeFiles": "src/assets/**/*"
     }
   }
