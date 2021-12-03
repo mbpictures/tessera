@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import prisma from "../../../lib/prisma";
 import {IOrder} from "../../../store/reducers/orderReducer";
+import {send} from "../../../lib/send";
 
 export default async function handler(
     req: NextApiRequest,
@@ -24,7 +25,9 @@ export default async function handler(
                 paymentIntent: JSON.stringify({invoicePurpose: secret})
             }
         });
-
+        setTimeout(async () => {
+            await send(order.orderId);
+        }, 0);
         res.status(200).end();
     }
     catch (e) {
