@@ -26,4 +26,9 @@ export class StripeIBANPayment extends Payment {
     getHeaderComponent(): React.ReactNode {
         return <StripeIBANHeader />;
     }
+
+    paymentResultValid(data: any): boolean {
+        const json = JSON.parse(data);
+        return json?.event === "charge.succeeded";
+    }
 }

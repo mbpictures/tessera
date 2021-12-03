@@ -15,4 +15,8 @@ export class SofortPayment extends Payment{
         return <SofortHeader />;
     }
 
+    paymentResultValid(data: any): boolean {
+        return JSON.parse(data)?.status ?? false;
+    }
+
 }

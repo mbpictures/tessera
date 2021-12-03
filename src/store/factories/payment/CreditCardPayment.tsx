@@ -28,4 +28,8 @@ export class CreditCardPayment extends Payment {
     getHeaderComponent(): React.ReactNode {
         return <StripeCardHeader />;
     }
+
+    paymentResultValid(data: any): boolean {
+        return JSON.parse(data)?.event === "charge.succeeded";
+    }
 }

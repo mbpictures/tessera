@@ -15,4 +15,9 @@ export class InvoicePayment extends Payment{
         return <InvoiceHeader />;
     }
 
+    paymentResultValid(data: any): boolean {
+        const json = JSON.parse(data);
+        return json?.payed ?? false;
+    }
+
 }
