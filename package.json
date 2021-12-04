@@ -31,6 +31,8 @@
     "@stripe/react-stripe-js": "^1.6.0",
     "@stripe/stripe-js": "^1.21.1",
     "axios": "^0.24.0",
+    "copy-webpack-plugin": "^10.0.0",
+    "ajv": "^8.8.2",
     "country-region-data": "^1.11.0",
     "ejs": "^3.1.6",
     "fast-xml-parser": "^4.0.0-beta.2",
