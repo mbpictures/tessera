@@ -2,6 +2,9 @@
   "functions": {
     "src/pages/**/*": {
       "includeFiles": "src/assets/**/*"
+    },
+    "pages/api/**/*": {
+      "includeFiles": "src/assets/**/*"
     }
   }
 }
