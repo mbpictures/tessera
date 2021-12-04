@@ -26,7 +26,7 @@ export const send = async (orderId) => {
         });
 
         // generate invoice
-        const assetPath = pathA.join(process.cwd(), 'src/assets/');
+        const assetPath = pathA.resolve(process.cwd(), 'src/assets/');
         const invoiceTemplatePath = pathA.join(assetPath, "invoice/template.html");
         const invoiceTemplate = fs.readFileSync(invoiceTemplatePath, 'utf-8');
         const invoicePath = await generateInvoice(invoiceTemplate, orderId);
