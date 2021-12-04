@@ -25,18 +25,16 @@ const handler = async(
         const event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET!);
 
         if (event.type === "charge.succeeded") {
-            setTimeout(async () => {
-                const orderId = event.data.object["metadata"]["orderId"];
-                await prisma.order.update({
-                    where: {
-                        id: orderId
-                    },
-                    data: {
-                        paymentResult: JSON.stringify(event)
-                    }
-                });
-                await send(orderId);
-            }, 0);
+            const orderId = event.data.object["metadata"]["orderId"];
+            await prisma.order.update({
+                where: {
+                    id: orderId
+                },
+                data: {
+                    paymentResult: JSON.stringify(event)
+                }
+            });
+            await send(orderId);
         }
 
         res.status(200).json({received: true});

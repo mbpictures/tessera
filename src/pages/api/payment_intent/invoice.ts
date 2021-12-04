@@ -25,9 +25,9 @@ export default async function handler(
                 paymentIntent: JSON.stringify({invoicePurpose: secret})
             }
         });
-        setTimeout(async () => {
-            await send(order.orderId);
-        }, 0);
+
+        await send(order.orderId);
+
         res.status(200).end();
     }
     catch (e) {
