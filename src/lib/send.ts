@@ -1,4 +1,3 @@
-import pathA from "path";
 import fs from "fs";
 import {generateInvoice} from "./invoice";
 import {generateTickets} from "./ticket";
@@ -8,6 +7,7 @@ import {DownloadShipping} from "../store/factories/shipping/DownloadShipping";
 import {getEmailTransporter} from "./email";
 import ejs from "ejs";
 import {PaymentFactory, PaymentType} from "../store/factories/payment/PaymentFactory";
+import {getStaticAssetFile} from "../constants/serverUtil";
 
 export const send = async (orderId) => {
     return new Promise<void>(async (resolve, reject) => {
@@ -26,10 +26,7 @@ export const send = async (orderId) => {
         });
 
         // generate invoice
-        const assetPath = pathA.resolve(process.cwd(), 'src/assets/');
-        const invoiceTemplatePath = pathA.join(assetPath, "invoice/template.html");
-        const invoiceTemplate = fs.readFileSync(invoiceTemplatePath, 'utf-8');
-        const invoicePath = await generateInvoice(invoiceTemplate, orderId);
+        const invoicePath = await generateInvoice(getStaticAssetFile("invoice/template.html", "utf-8"), orderId);
 
         const message: any = {
             from: process.env.EMAIL_SENDER,
@@ -51,9 +48,7 @@ export const send = async (orderId) => {
         const payed = PaymentFactory.getPaymentInstance({data: null, type: order.paymentType as PaymentType})?.paymentResultValid(order.paymentResult) ?? false;
         let containsTickets = undefined;
         if (shipping instanceof DownloadShipping && !ticketsAlreadySent && payed) {
-            const ticketTemplatePath = pathA.join(assetPath, "ticket/template.pdf");
-            const ticketTemplate = fs.readFileSync(ticketTemplatePath);
-            const tickets = await generateTickets(ticketTemplate, orderId);
+            const tickets = await generateTickets(getStaticAssetFile("ticket/template.pdf"), orderId);
             tickets.forEach((ticket, i) => {
                 message.attachments.push({
                     filename: `Ticket${i + 1}.pdf`,
@@ -63,7 +58,7 @@ export const send = async (orderId) => {
             });
             containsTickets = true;
         }
-        message.html = ejs.render(fs.readFileSync(pathA.join(assetPath, "email/template.html"), 'utf-8'), {
+        message.html = ejs.render(getStaticAssetFile("email/template.html", "utf-8"), {
             customerName: order.user.firstName + " " + order.user.lastName,
             containsTickets: containsTickets
         });
