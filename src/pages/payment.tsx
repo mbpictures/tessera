@@ -25,6 +25,7 @@ import prisma from "../lib/prisma";
 import {storeOrderAndUser, validatePayment} from "../constants/util";
 import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
 import {selectPersonalInformation, setUserId} from "../store/reducers/personalInformationReducer";
+import {PayPal} from "../components/payment/PayPal";
 
 
 export default function Payment({categories, direction}) {
@@ -126,6 +127,7 @@ export default function Payment({categories, direction}) {
                         >
                             {(payment.state === "processing" || payment.state === "persist" || payment.state === "initiate") ? "Processing" : "Pay now"}
                         </LoadingButton>
+                        <PayPal />
                     </Card>
                 </Grid>
             </Grid>
