@@ -13,31 +13,40 @@ export const handler = async(
         res.status(405).end('Method Not Allowed');
         return;
     }
-    console.log("WEBHOOK PAYPAL");
-    console.log(req.body);
 
     try {
         const { orderId, paypalId } = req.body;
         const request = new paypal.orders.OrdersCaptureRequest(paypalId);
         request.requestBody({});
         const response = await paypalClient().execute(request);
+
         if (!response) {
             res.status(500).end("Server Error");
+            return;
         }
 
+        // store any result in db
         await prisma.order.update({
             where: {
                 id: orderId
             },
             data: {
-                paymentResult: JSON.stringify(response)
+                paymentResult: JSON.stringify(response.result)
             }
         });
+
+        if (response.result.status !== "COMPLETED") {
+            res.status(500).end("Payment not completed");
+        }
+
         await send(orderId);
-        res.json({ ...response.result });
+
+        res.status(200).json({ ...response.result });
     }
     catch (e) {
         console.log(e);
         res.status(500).json("Server Error");
     }
 }
+
+export default handler
