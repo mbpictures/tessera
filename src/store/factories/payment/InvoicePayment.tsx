@@ -1,6 +1,7 @@
 import {Payment} from "./Payment";
 import React from "react";
 import {Invoice, InvoiceHeader} from "../../../components/payment/Invoice";
+import {PayButton} from "../../../components/payment/button/PayButton";
 
 export class InvoicePayment extends Payment{
     getComponent(): React.ReactNode {
@@ -20,4 +21,7 @@ export class InvoicePayment extends Payment{
         return json?.payed ?? false;
     }
 
+    getPaymentButton(): React.ReactNode {
+        return <PayButton />;
+    }
 }

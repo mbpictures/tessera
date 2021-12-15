@@ -14,24 +14,17 @@ import {
 import {Box, useTheme} from "@mui/system";
 import {Edit} from "@mui/icons-material";
 import {useAppDispatch, useAppSelector} from "../store/hooks";
-import {FreeSeatOrder, selectOrder, setOrderId} from "../store/reducers/orderReducer";
-import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
+import {FreeSeatOrder, selectOrder} from "../store/reducers/orderReducer";
 import {useRouter} from "next/router";
 import {PaymentMethods} from "../components/payment/PaymentMethods";
 import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer";
-import {LoadingButton} from "@mui/lab";
-import PaymentIcon from '@mui/icons-material/Payment';
 import prisma from "../lib/prisma";
-import {storeOrderAndUser, validatePayment} from "../constants/util";
-import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
-import {selectPersonalInformation, setUserId} from "../store/reducers/personalInformationReducer";
 import {PayPal} from "../components/payment/PayPal";
+import {PayPalScriptProvider} from "@paypal/react-paypal-js";
+import {PaymentFactory} from "../store/factories/payment/PaymentFactory";
 
 
 export default function Payment({categories, direction}) {
-    const nextEnabled = useAppSelector(selectNextStateAvailable);
-    const selectedEvent = useAppSelector(selectEventSelected);
-    const userInformation = useAppSelector(selectPersonalInformation);
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
     const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
@@ -48,23 +41,6 @@ export default function Payment({categories, direction}) {
     const openSeatSelectionPage = () => {
         router.push("/seatselection");
     };
-
-    const onPay = async () => {
-        dispatch(setPaymentStatus("persist"));
-        const paymentAlreadyValid = await validatePayment(order.orderId);
-        if (paymentAlreadyValid) {
-            dispatch(setPaymentStatus("finished"));
-        }
-        try {
-            const {userId, orderId} = await storeOrderAndUser(order, userInformation, selectedEvent, payment.payment.type);
-            dispatch(setUserId(userId));
-            dispatch(setOrderId(orderId));
-            dispatch(setPaymentStatus("initiate"));
-        }
-        catch (e) {
-            dispatch(setPaymentStatus("failure"));
-        }
-    }
 
     return (
         <Step direction={direction} style={{width: "100%", maxHeight: "100%", flex: "1 1 auto", display: "flex", justifyContent: "center", alignItems: "center"}}>
@@ -116,18 +92,9 @@ export default function Payment({categories, direction}) {
                                 <ListItemText primary={<strong>Total:</strong>} secondary={<span>{order.totalPrice} &euro;</span>} />
                             </ListItem>
                         </List>
-                        <LoadingButton
-                            loadingPosition="start"
-                            variant="outlined"
-                            fullWidth
-                            disabled={!nextEnabled}
-                            onClick={onPay}
-                            loading={payment.state === "processing" || payment.state === "persist" || payment.state === "initiate"}
-                            startIcon={<PaymentIcon />}
-                        >
-                            {(payment.state === "processing" || payment.state === "persist" || payment.state === "initiate") ? "Processing" : "Pay now"}
-                        </LoadingButton>
-                        <PayPal />
+                        {
+                            PaymentFactory.getPaymentInstance(payment.payment)?.getPaymentButton()
+                        }
                     </Card>
                 </Grid>
             </Grid>

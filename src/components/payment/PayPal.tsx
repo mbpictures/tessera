@@ -9,6 +9,8 @@ import {selectPersonalInformation, setUserId} from "../../store/reducers/persona
 import {selectEventSelected} from "../../store/reducers/eventSelectionReducer";
 import {storeOrderAndUser, validatePayment} from "../../constants/util";
 import {OnApproveData, OnClickActions} from "@paypal/paypal-js/types/components/buttons";
+import logo from "../../assets/payment/paypal.svg";
+import Image from 'next/image';
 
 export const PayPal = () => {
     const selectorOrder = useAppSelector(selectOrder);
@@ -56,7 +58,6 @@ export const PayPal = () => {
 
     return (
         <>
-            <Typography align={"center"} paddingBottom={2} paddingTop={2}>or</Typography>
             <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID, currency: "USD" }}>
                 <PayPalButtons
                     style={{
@@ -75,4 +76,8 @@ export const PayPal = () => {
             </PayPalScriptProvider>
         </>
     )
+}
+
+export const PayPalHeader = () => {
+    return <Image src={logo} height={20} />;
 }

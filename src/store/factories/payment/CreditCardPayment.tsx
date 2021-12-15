@@ -2,6 +2,7 @@ import {Payment} from "./Payment";
 import React from "react";
 import {StripeCard, StripeCardHeader} from "../../../components/payment/StripeCard";
 import {PaymentType} from "./PaymentFactory";
+import {PayButton} from "../../../components/payment/button/PayButton";
 
 export interface CreditCardPaymentData {
     cardNumberComplete: boolean;
@@ -31,5 +32,9 @@ export class CreditCardPayment extends Payment {
 
     paymentResultValid(data: any): boolean {
         return JSON.parse(data)?.event === "charge.succeeded";
+    }
+
+    getPaymentButton(): React.ReactNode {
+        return <PayButton />;
     }
 }
