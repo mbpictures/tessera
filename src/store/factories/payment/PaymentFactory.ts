@@ -4,12 +4,14 @@ import {CreditCardPayment} from "./CreditCardPayment";
 import {StripeIBANPayment} from "./StripeIBANPayment";
 import {SofortPayment} from "./Sofort";
 import {InvoicePayment} from "./InvoicePayment";
+import {PayPalPayment} from "./PayPalPayment";
 
 export enum PaymentType {
     CreditCard = "creditcard",
     StripeIBAN = "stripeiban",
     Sofort = "sofort",
-    Invoice = "invoice"
+    Invoice = "invoice",
+    PayPal = "paypal"
 }
 
 export class PaymentFactory {
@@ -23,6 +25,8 @@ export class PaymentFactory {
             return new SofortPayment(data);
         if (data.type === PaymentType.Invoice)
             return new InvoicePayment(data);
+        if (data.type === PaymentType.PayPal)
+            return new PayPalPayment(data);
         return null;
     }
 
