@@ -1,4 +1,6 @@
 import {Payment} from "./Payment";
+import React from "react";
+import {PayPal, PayPalHeader} from "../../../components/payment/PayPal";
 
 export class PayPalPayment extends Payment {
     getComponent(): React.ReactNode {
@@ -6,7 +8,7 @@ export class PayPalPayment extends Payment {
     }
 
     getHeaderComponent(): React.ReactNode {
-        return undefined;
+        return <PayPalHeader />;
     }
 
     isValid(): boolean {
@@ -17,4 +19,7 @@ export class PayPalPayment extends Payment {
         return (JSON.parse(data)?.status ?? "error") === "COMPLETED";
     }
 
+    getPaymentButton(): React.ReactNode {
+        return <PayPal />;
+    }
 }
