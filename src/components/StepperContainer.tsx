@@ -6,6 +6,7 @@ import Head from "next/head";
 import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
 import {useAppSelector} from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
+import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
 
 interface Props {
     onNext?: () => unknown;
@@ -19,6 +20,7 @@ export const StepperContainer = (props: Props) => {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState<number>(0);
     const nextDisabled = useAppSelector(selectNextStateAvailable);
+    const selectedEvent = useAppSelector(selectEventSelected);
     const bottomBar = useRef<HTMLDivElement>(null);
     const container = useRef<HTMLDivElement>(null);
 
@@ -35,7 +37,7 @@ export const StepperContainer = (props: Props) => {
         if (currentStep + 1 >= STEP_URLS.length) return;
         if (props.onNext)
             props.onNext();
-        await router.push(STEP_URLS[currentStep + 1]);
+        await router.push(`${STEP_URLS[currentStep + 1]}?event=${selectedEvent}`);
     }
 
     const handleBack = async () => {
