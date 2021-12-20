@@ -24,6 +24,7 @@ model SeatMap {
     id              Int         @default(autoincrement()) @id
     events          Event[]
     orders          Order[]
+    definition      String
 }
 
 model Category {
