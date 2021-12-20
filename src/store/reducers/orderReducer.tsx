@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../store";
+import {Seat} from "../../components/seatmap/SeatMapSeat";
 
 interface OrderState {
     order: IOrder;
@@ -13,6 +14,10 @@ export interface IOrder {
 
 export interface FreeSeatOrder extends IOrder {
     orders: Array<{amount: number, categoryId: number, price: number}>;
+}
+
+export interface SeatOrder extends IOrder {
+    seats: Array<Seat>;
 }
 
 const initialState: OrderState = {
