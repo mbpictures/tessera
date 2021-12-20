@@ -1,92 +1,77 @@
-import {Button, IconButton, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import {Button, Grid, Typography} from "@mui/material";
+import {SeatSelectionFreeEntry} from "./SeatSelectionFreeEntry";
 import {Box} from "@mui/system";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import {FreeSeatOrder} from "../store/reducers/orderReducer";
-import {motion} from "framer-motion";
-import {Delete} from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
+import React, {useEffect} from "react";
+import {useAppSelector} from "../store/hooks";
+import {FreeSeatOrder, selectOrder, setOrder} from "../store/reducers/orderReducer";
+import {useDispatch} from "react-redux";
+import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 
-export const SeatSelectionFree = (
-    {
-        onChange,
-        categories,
-        index,
-        currentOrder,
-        onRemove
-    }: {
-        onChange?: (index: number, amount: number, categoryId) => unknown,
-        categories: Array<{ id: number, label: string, price: number }>,
-        index: number,
-        currentOrder: FreeSeatOrder,
-        onRemove?: (index: number) => unknown
-    }) => {
-    const [ticketAmount, setTicketAmount] = useState<number>(0);
-    const [category, setCategory] = useState<number>(categories[0].id);
+export const SeatSelectionFree = ({categories}) => {
+    console.log(categories);
+
+    const order = useAppSelector(selectOrder) as FreeSeatOrder;
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!currentOrder.orders || currentOrder.orders.length <= index) return;
-        if (currentOrder.orders[index].amount > 0)
-            setTicketAmount(currentOrder.orders[index].amount);
-        if (currentOrder.orders[index].categoryId != -1)
-            setCategory(currentOrder.orders[index].categoryId);
+        if (order.orders && order.orders.length > 0) return;
+        const newOrder: FreeSeatOrder = {
+            ticketAmount: -1,
+            orders: [{amount: -1, categoryId: -1, price: 0}],
+            totalPrice: 0
+        }
+        dispatch(setOrder(newOrder));
     }, []);
 
-    useEffect(() => {
-        if (!onChange) return;
-        onChange(index, ticketAmount, category);
-    }, [ticketAmount, category]);
-
-    const handleChange = (event) => {
-        if (event.target.value === "") {
-            setTicketAmount(-1);
+    const handleChange = (index, amount: number, categoryId) => {
+        const price: number = amount * categories.find(cat => cat.id === categoryId).price;
+        const newOrder: FreeSeatOrder = {ticketAmount: amount, orders: order.orders.map(a => a), totalPrice: price};
+        newOrder.orders[index] = {amount: amount, categoryId: categoryId, price: price};
+        newOrder.totalPrice = newOrder.orders.reduce((total, order) => total + order.price, 0);
+        newOrder.ticketAmount = newOrder.orders.reduce((total, order) => total + order.amount, 0);
+        dispatch(setOrder(newOrder));
+        if (newOrder.orders.every(value => value.amount > 0 && value.categoryId >= 0)) {
+            dispatch(enableNextStep());
             return;
         }
-        const newValue = parseInt(event.target.value);
-        setTicketAmount(isNaN(newValue) ? 0 : newValue);
-    };
-
-    const onAdd = () => {
-        setTicketAmount(ticketAmount + 1);
-    };
-
-    const onSubtract = () => {
-        if (ticketAmount <= 0) return;
-        setTicketAmount(ticketAmount - 1);
-    };
-
-    const handleCategoryChange = (event) => {
-        setCategory(parseInt(event.target.value));
+        dispatch(disableNextStep());
     }
 
-    const price = ticketAmount * categories.find(value => value.id === category).price;
+    const handleAddCategory = () => {
+        if (order.orders && order.orders.length >= categories.length) return;
+        const newOrder: FreeSeatOrder = {ticketAmount: order.ticketAmount, orders: order.orders.map(a => a), totalPrice: order.totalPrice};
+        newOrder.orders.push({amount: 0, categoryId: -1, price: 0});
+        dispatch(setOrder(newOrder));
+    };
+
+    const handleRemoveCategory = (index) => {
+        if (order.orders.length < index || order.orders.length <= 1) return;
+        const newOrder: FreeSeatOrder = {ticketAmount: order.ticketAmount, orders: order.orders.map(a => a), totalPrice: order.totalPrice};
+        newOrder.orders.splice(index, 1);
+        dispatch(setOrder(newOrder));
+    };
 
     return (
-        <motion.div layout>
-            <Paper elevation={5} style={{display: "flex", padding: "20px", flexDirection: "column", margin: "20px 0"}}>
-                <Box style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                    <TextField id="outlined-basic" label="Amount" variant="outlined" value={ticketAmount === -1 ? "" : ticketAmount} onChange={handleChange} />
-                    <Box width={20} />
-                    <Stack>
-                        <IconButton onClick={onAdd} color={"primary"}><AddCircleIcon fontSize={"large"} /></IconButton>
-                        <IconButton color="error" onClick={onSubtract}><RemoveCircleIcon fontSize={"large"} /></IconButton>
-                    </Stack>
-                </Box>
-                <InputLabel id="category-selection">Category</InputLabel>
-                <Select value={category} onChange={handleCategoryChange} id="category-selection">
-                    {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.label} ({category.price}&euro;)</MenuItem>)}
-                </Select>
-                <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
-                    {
-                        price > 0 && (
-                            <Typography variant={"body1"}>Price: <b>{price.toFixed(2)}&euro;</b></Typography>
+        <Grid item md={12} lg={8} alignItems="center" justifyContent="center" display="flex" flexDirection="column">
+            <Typography variant={"body1"} alignSelf={"center"}>This event has no seat reservation</Typography>
+            <Grid container spacing={2} justifyContent={"center"}>
+                {
+                    order.orders && order.orders.length > 0 && (
+                        order.orders.map((o, index) => {
+                            return (
+                                <Grid item sm={12} md={6} key={index}>
+                            <SeatSelectionFreeEntry categories={categories} onChange={handleChange} index={index} currentOrder={order} onRemove={handleRemoveCategory} />
+                            </Grid>
                         )
-                    }
-                </motion.div>
-                <Button startIcon={<Delete />} color={"error"} onClick={() => onRemove(index)} variant="outlined" style={{alignSelf: "center"}}>
-                    Remove Category
-                </Button>
-            </Paper>
-        </motion.div>
-    );
+                        })
+                    )
+                }
+                </Grid>
+                <Box height={20} />
+            <Button color="primary" variant="outlined" onClick={handleAddCategory} disabled={order.orders && order.orders.length >= categories.length}><AddIcon /> Add Category</Button>
+            <Box height={20} />
+            <Typography>Total Price: <b>{order.totalPrice.toFixed(2)}&euro;</b></Typography>
+        </Grid>
+    )
 }

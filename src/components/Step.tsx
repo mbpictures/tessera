@@ -16,7 +16,7 @@ export const Step = ({children, direction, style}: {children?: React.ReactNode, 
 
     useEffect(() => {
         if (!router.isReady) return;
-        const { orderId } = router.query;
+        const { orderId, event } = router.query;
         dispatch(disableNextStep());
         if (orderId && orderId !== "") {
             getStoreWithOrderId(orderId)
@@ -32,6 +32,10 @@ export const Step = ({children, direction, style}: {children?: React.ReactNode, 
                 .catch(() => {
                     router.push(STEP_URLS[0]).catch(console.log);
                 });
+            return;
+        }
+        if (event && event !== "") {
+            dispatch(setEvent(parseInt(event as string)));
             return;
         }
         if (currentSelectedEvent >= 0) return;

@@ -1,0 +1,12 @@
+.seat {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: .3s ease;
+}
