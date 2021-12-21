@@ -43,11 +43,15 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
             .reduce((a, seat) => a + seat.price, 0);
     };
 
+    const getTicketAmount = (order: SeatOrder) => {
+        return order.seats.reduce((a, seat) => a + seat.amount, 0);
+    };
+
     const addSeat = (seat: Seat) => {
         const newOrder: SeatOrder = createNewOrder();
         newOrder.seats.push(seat);
         newOrder.totalPrice = getPrice(newOrder);
-        newOrder.ticketAmount = newOrder.seats.length;
+        newOrder.ticketAmount = getTicketAmount(newOrder);
         dispatch(setOrder(newOrder));
     };
 
@@ -55,7 +59,7 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
         const newOrder: SeatOrder = createNewOrder();
         newOrder.seats.splice(newOrder.seats.findIndex(s => s.id === seat.id), 1);
         newOrder.totalPrice = getPrice(newOrder);
-        newOrder.ticketAmount = newOrder.seats.length;
+        newOrder.ticketAmount = getTicketAmount(newOrder);
         dispatch(setOrder(newOrder));
     };
 
