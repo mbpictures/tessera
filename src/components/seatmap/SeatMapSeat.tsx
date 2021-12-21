@@ -1,7 +1,9 @@
 import style from "./../../style/SeatMap.module.scss";
 import {motion} from "framer-motion";
 import {Tooltip, Typography} from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {useAppSelector} from "../../store/hooks";
+import {SeatOrder, selectOrder} from "../../store/reducers/orderReducer";
 
 export interface Seat {
     type: "seat" | "space";
@@ -14,6 +16,11 @@ export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
 
 export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number}>, onSeatSelect?: OnSeatSelect}) => {
     const [isSelected, setIsSelected] = useState(false);
+    const orders = useAppSelector(selectOrder) as SeatOrder;
+
+    useEffect(() => {
+        setIsSelected(orders.seats.some(val => val.id === seat.id));
+    }, [orders]);
 
     const handleSelect = () => {
         if (onSeatSelect)
