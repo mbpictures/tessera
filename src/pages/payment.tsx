@@ -2,30 +2,22 @@ import {Step} from "../components/Step";
 import React, {useEffect} from "react";
 import {
     Button,
-    Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider,
+    Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
     Grid,
-    IconButton,
-    List,
-    ListItem,
-    ListItemText,
-    ListSubheader,
-    Typography, useMediaQuery,
+    useMediaQuery,
 } from "@mui/material";
 import {Box, useTheme} from "@mui/system";
-import {Edit} from "@mui/icons-material";
 import {useAppDispatch, useAppSelector} from "../store/hooks";
-import {FreeSeatOrder, selectOrder} from "../store/reducers/orderReducer";
 import {useRouter} from "next/router";
 import {PaymentMethods} from "../components/payment/PaymentMethods";
 import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer";
 import prisma from "../lib/prisma";
-import {PayPal} from "../components/payment/PayPal";
-import {PayPalScriptProvider} from "@paypal/react-paypal-js";
 import {PaymentFactory} from "../store/factories/payment/PaymentFactory";
+import {PaymentOverview} from "../components/PaymentOverview";
+import {PayButton} from "../components/payment/button/PayButton";
 
 
 export default function Payment({categories, direction}) {
-    const order = useAppSelector(selectOrder) as FreeSeatOrder;
     const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -67,31 +59,7 @@ export default function Payment({categories, direction}) {
                 </Grid>
                 <Grid item md={12} lg={4} display="flex" alignItems="center" style={{paddingLeft: "21px", marginRight: "5px"}}>
                     <Card style={{flex: "1 1 auto", padding: "10px"}}>
-                        <List subheader={<ListSubheader><Typography variant="h5">Summary</Typography></ListSubheader>}>
-                            {
-                                order.orders?.map((order, index) => {
-                                    return (
-                                        <ListItem
-                                            secondaryAction={
-                                                <IconButton edge="end" aria-label="edit" color={"primary"} onClick={openSeatSelectionPage}>
-                                                    <Edit />
-                                                </IconButton>
-                                            }
-                                            key={index}
-                                        >
-                                            <ListItemText
-                                                secondary={<span>{categories.find(cat => cat.id == order.categoryId).price} &#8364;</span>}
-                                                primary={`${order.amount}x: ${categories.find(cat => cat.id == order.categoryId).label}`}
-                                            />
-                                        </ListItem>
-                                    )
-                                })
-                            }
-                            <Divider />
-                            <ListItem>
-                                <ListItemText primary={<strong>Total:</strong>} secondary={<span>{order.totalPrice} &euro;</span>} />
-                            </ListItem>
-                        </List>
+                        <PaymentOverview categories={categories} hideEmptyCategories withEditButton onEdit={openSeatSelectionPage} />
                         {
                             PaymentFactory.getPaymentInstance(payment.payment)?.getPaymentButton() ?? <PayButton />
                         }
