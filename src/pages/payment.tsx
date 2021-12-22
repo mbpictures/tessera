@@ -93,7 +93,7 @@ export default function Payment({categories, direction}) {
                             </ListItem>
                         </List>
                         {
-                            PaymentFactory.getPaymentInstance(payment.payment)?.getPaymentButton()
+                            PaymentFactory.getPaymentInstance(payment.payment)?.getPaymentButton() ?? <PayButton />
                         }
                     </Card>
                 </Grid>
