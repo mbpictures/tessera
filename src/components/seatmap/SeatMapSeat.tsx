@@ -14,7 +14,7 @@ export interface Seat {
 
 export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
 
-export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number}>, onSeatSelect?: OnSeatSelect}) => {
+export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number, color?: string, activeColor?: string}>, onSeatSelect?: OnSeatSelect}) => {
     const [isSelected, setIsSelected] = useState(false);
     const orders = useAppSelector(selectOrder) as SeatOrder;
 
@@ -42,7 +42,7 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
         >
             <motion.div
                 className={style.seat}
-                style={{height: 40, width: (seat.amount ?? 1) * 40, backgroundColor: !isSelected ? "#59bb59" : "#5959bb"}}
+                style={{height: 40, width: (seat.amount ?? 1) * 40, backgroundColor: !isSelected ? category.color ?? "#59bb59" : category.activeColor ?? "#5959bb"}}
                 whileHover={{
                     opacity: 0.6,
                     transition: { duration: 0.1, delay: 0 }
