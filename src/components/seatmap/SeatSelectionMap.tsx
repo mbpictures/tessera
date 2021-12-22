@@ -6,6 +6,7 @@ import {SeatOrder, selectOrder, setOrder} from "../../store/reducers/orderReduce
 import {useEffect} from "react";
 import {Seat} from "./SeatMapSeat";
 import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
+import {PaymentOverview} from "../PaymentOverview";
 
 export type SeatMap = Array<SeatRow>;
 
@@ -86,7 +87,7 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
             </Grid>
             <Grid item md={12} lg={4} display="flex" alignItems="center">
                 <Card style={{flex: "1 1 auto", padding: "10px"}}>
-                    {order.totalPrice} €
+                    <PaymentOverview categories={categories} />
                 </Card>
             </Grid>
         </Grid>
