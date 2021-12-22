@@ -62,7 +62,7 @@ export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCa
             }
             <Divider />
             <ListItem>
-                <ListItemText primary={<strong>Total:</strong>} secondary={<span>{order.totalPrice.toFixed(2)} &euro;</span>} />
+                <ListItemText primary={<strong>Total:</strong>} secondary={<span>{(Math.max(order.totalPrice, 0)).toFixed(2)} &euro;</span>} />
             </ListItem>
         </List>
     );
