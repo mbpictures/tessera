@@ -4,7 +4,7 @@ import React from "react";
 import {useAppSelector} from "../store/hooks";
 import {FreeSeatOrder, SeatOrder, selectOrder} from "../store/reducers/orderReducer";
 
-export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCategories}: {categories: Array<{id: number, price: number, label: string}>, withEditButton?: boolean, onEdit?: Function, hideEmptyCategories?: boolean}) => {
+export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCategories, displayColor}: {categories: Array<{id: number, price: number, label: string, color?: string}>, withEditButton?: boolean, onEdit?: Function, hideEmptyCategories?: boolean, displayColor?: boolean}) => {
     const order = useAppSelector(selectOrder);
 
     const handleEdit = () => {
@@ -35,6 +35,7 @@ export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCa
         <List subheader={<ListSubheader><Typography variant="h5">Summary</Typography></ListSubheader>}>
             {
                 items.map((item, index) => {
+                    const category = categories.find(cat => cat.id === item.categoryId);
                     return (
                         <ListItem
                             secondaryAction={
@@ -47,8 +48,13 @@ export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCa
                             key={index}
                         >
                             <ListItemText
-                                secondary={<span>{categories.find(cat => cat.id == item.categoryId).price} &#8364;</span>}
-                                primary={`${item.amount}x: ${categories.find(cat => cat.id == item.categoryId).label}`}
+                                secondary={<span>{category.price} &#8364;</span>}
+                                primary={
+                                    <>
+                                        {item.amount}x: {category.label}
+                                        {(displayColor) && <div style={{width: 20, height: 20, backgroundColor: category.color ?? "#59bb59", float: "right"}} />}
+                                    </>
+                                }
                             />
                         </ListItem>
                     )

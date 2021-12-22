@@ -87,7 +87,7 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
             </Grid>
             <Grid item md={12} lg={4} display="flex" alignItems="center">
                 <Card style={{flex: "1 1 auto", padding: "10px"}}>
-                    <PaymentOverview categories={categories} />
+                    <PaymentOverview categories={categories} displayColor />
                 </Card>
             </Grid>
         </Grid>

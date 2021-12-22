@@ -6,12 +6,14 @@ async function main() {
             {
                 label: "Premium",
                 price: 60.99,
-                currency: "USD"
+                currency: "USD",
+                color: "#59bb59"
             },
             {
                 label: "Economy",
                 price: 30.99,
-                currency: "USD"
+                currency: "USD",
+                color: "#59B8BB"
             }
         ]
     })
