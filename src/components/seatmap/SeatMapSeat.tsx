@@ -19,7 +19,7 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
     const orders = useAppSelector(selectOrder) as SeatOrder;
 
     useEffect(() => {
-        setIsSelected(orders.seats.some(val => val.id === seat.id));
+        setIsSelected(orders.seats?.some(val => val.id === seat.id) ?? false);
     }, [orders]);
 
     const handleSelect = () => {
@@ -38,13 +38,14 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
                     <Typography variant={"body1"}>Price: {(category.price * seat.amount).toFixed(2)}€</Typography>
                 </React.Fragment>
             }
+            disableInteractive
         >
             <motion.div
                 className={style.seat}
                 style={{height: 40, width: (seat.amount ?? 1) * 40, backgroundColor: !isSelected ? "#59bb59" : "#5959bb"}}
                 whileHover={{
                     opacity: 0.6,
-                    transition: { duration: 0.2, delay: 0 }
+                    transition: { duration: 0.1, delay: 0 }
                 }}
                 onClick={handleSelect}
             >
