@@ -73,8 +73,8 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
     };
 
     return (
-        <Grid container>
-            <Grid item md={12} lg={8} style={{width: "100%"}}>
+        <Grid container style={{maxHeight: "100%"}}>
+            <Grid item md={12} lg={8}>
                 <TransformWrapper centerOnInit centerZoomedOut>
                     <TransformComponent wrapperStyle={{width: "100%"}}>
                         <div style={{display: "flex", flexDirection: "column"}}>
@@ -85,7 +85,7 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
                     </TransformComponent>
                 </TransformWrapper>
             </Grid>
-            <Grid item md={12} lg={4} display="flex" alignItems="center">
+            <Grid item xs={12} md={12} lg={4} display="flex" alignItems="center">
                 <Card style={{flex: "1 1 auto", padding: "10px"}}>
                     <PaymentOverview categories={categories} displayColor />
                 </Card>
