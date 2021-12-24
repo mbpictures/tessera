@@ -9,8 +9,6 @@ import {useDispatch} from "react-redux";
 import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 
 export const SeatSelectionFree = ({categories}) => {
-    console.log(categories);
-
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
     const dispatch = useDispatch();
 
