@@ -8,6 +8,8 @@ import {getEmailTransporter} from "./email";
 import ejs from "ejs";
 import {PaymentFactory, PaymentType} from "../store/factories/payment/PaymentFactory";
 import {getStaticAssetFile} from "../constants/serverUtil";
+import {totalTicketAmount} from "../constants/util";
+import {IOrder} from "../store/reducers/orderReducer";
 
 export const send = async (orderId) => {
     return new Promise<void>(async (resolve, reject) => {
@@ -44,7 +46,8 @@ export const send = async (orderId) => {
 
         // generate tickets
         const shipping = ShippingFactory.getShippingInstance(JSON.parse(order.shipping));
-        const ticketsAlreadySent = JSON.parse(order.order).orders.map(order => Array.from(Array(order.amount).keys())).flat().length <= order.tickets.length;
+        // TODO: Replace by factory
+        const ticketsAlreadySent = totalTicketAmount(JSON.parse(order.order) as IOrder) <= order.tickets.length;
         const payed = PaymentFactory.getPaymentInstance({data: null, type: order.paymentType as PaymentType})?.paymentResultValid(order.paymentResult) ?? false;
         let containsTickets = undefined;
         if (shipping instanceof DownloadShipping && !ticketsAlreadySent && payed) {

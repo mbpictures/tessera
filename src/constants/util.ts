@@ -1,6 +1,6 @@
 import {IAddress} from "./interfaces";
 import zippo from "zippo";
-import {IOrder} from "../store/reducers/orderReducer";
+import {FreeSeatOrder, IOrder, SeatOrder} from "../store/reducers/orderReducer";
 import {PersonalInformationState} from "../store/reducers/personalInformationReducer";
 import axios from "axios";
 
@@ -39,4 +39,29 @@ export const validatePayment = async (orderId): Promise<boolean> => {
     if (!orderId || orderId === "") return false;
     const response = await axios.post("api/order/validate_intent", {orderId: orderId});
     return response.data.valid;
+}
+
+// TODO: replace by factory
+export const calculateTotalPrice = (order: IOrder, categories: Array<{id: number, price: number}>): number => {
+    if ("seats" in order) {
+        return (order as SeatOrder).seats
+            .map(seat => {
+                return {amount: seat.amount, price: categories.find(cat => cat.id === seat.category).price}
+            })
+            .reduce((a, seat) => a + (seat.price * seat.amount), 0);
+    }
+    if ("orders" in order) {
+        return (order as FreeSeatOrder).orders.reduce((total, order) => total + order.price, 0);
+    }
+    return -1;
+};
+
+export const totalTicketAmount = (order: IOrder): number => {
+    if ("seats" in order) {
+        return (order as SeatOrder).seats.reduce((a, seat) => a + seat.amount, 0);
+    }
+    if ("orders" in order) {
+        return (order as FreeSeatOrder).orders.reduce((a, seat) => a + seat.amount, 0);
+    }
+    return -1;
 }

@@ -1,7 +1,8 @@
 import prisma from "./prisma";
 import ejs from "ejs";
-import {FreeSeatOrder} from "../store/reducers/orderReducer";
 import htmlPdf from "html-pdf";
+import {FreeSeatOrder, IOrder, SeatOrder} from "../store/reducers/orderReducer";
+import {calculateTotalPrice} from "../constants/util";
 
 export const generateInvoice = async (template, orderId: string): Promise<string> => {
     return new Promise<string>(async (resolve, reject) => {
@@ -16,20 +17,35 @@ export const generateInvoice = async (template, orderId: string): Promise<string
             }
         });
 
-        const freeSeatOrder: FreeSeatOrder = JSON.parse(order.order);
-        const categories = await prisma.category.findMany({
-            where: {
-                id: {
-                    in: freeSeatOrder.orders.map(order => order.categoryId)
-                }
-            }
-        });
+        const parsedOrder = JSON.parse(order.order) as IOrder;
+        const categories = await prisma.category.findMany();
+        const totalPrice = calculateTotalPrice(parsedOrder, categories);
+
+        let orders: Array<{categoryId: number, amount: number}> = [];
+        // TODO: replace by factory
+        if ("seats" in parsedOrder) {
+            orders = (parsedOrder as SeatOrder).seats.map(seat => {
+                return {
+                    categoryId: seat.category,
+                    amount: seat.amount
+                };
+            });
+        }
+        if ("orders" in parsedOrder) {
+            orders = (parsedOrder as FreeSeatOrder).orders.map(order => {
+                return {
+                    categoryId: order.categoryId,
+                    amount: order.amount
+                };
+            });
+        }
+
         const date = new Date();
         const html = ejs.render(template, {
             invoice_number: 1,
             creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
             receiver: [order.user.firstName + " " + order.user.lastName, order.user.address, order.user.zip + " " + order.user.city],
-            products: freeSeatOrder.orders.map(order => {
+            products: orders.map(order => {
                 const category = categories.find(category => category.id === order.categoryId);
                 return {
                     name: category.label,
@@ -38,9 +54,9 @@ export const generateInvoice = async (template, orderId: string): Promise<string
                     total_price: (category.price * order.amount).toFixed(2) + "€"
                 };
             }),
-            total_net_price: (freeSeatOrder.totalPrice * 0.81).toFixed(2) + "€",
+            total_net_price: (totalPrice * 0.81).toFixed(2) + "€",
             tax_amount: "19%",
-            total_price: freeSeatOrder.totalPrice,
+            total_price: totalPrice,
             bank_information: ["Jon Doe", "Demo Bank", "IBAN: EN23 2133 2343 2343 2343"]
         });
 

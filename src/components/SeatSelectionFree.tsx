@@ -7,6 +7,7 @@ import {useAppSelector} from "../store/hooks";
 import {FreeSeatOrder, selectOrder, setOrder} from "../store/reducers/orderReducer";
 import {useDispatch} from "react-redux";
 import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
+import {calculateTotalPrice} from "../constants/util";
 
 export const SeatSelectionFree = ({categories}) => {
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
@@ -26,7 +27,7 @@ export const SeatSelectionFree = ({categories}) => {
         const price: number = amount * categories.find(cat => cat.id === categoryId).price;
         const newOrder: FreeSeatOrder = {ticketAmount: amount, orders: order.orders.map(a => a), totalPrice: price};
         newOrder.orders[index] = {amount: amount, categoryId: categoryId, price: price};
-        newOrder.totalPrice = newOrder.orders.reduce((total, order) => total + order.price, 0);
+        newOrder.totalPrice = calculateTotalPrice(newOrder, categories);
         newOrder.ticketAmount = newOrder.orders.reduce((total, order) => total + order.amount, 0);
         dispatch(setOrder(newOrder));
         if (newOrder.orders.every(value => value.amount > 0 && value.categoryId >= 0)) {
