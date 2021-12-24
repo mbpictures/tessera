@@ -1,7 +1,7 @@
 import {selectPayment, setPaymentStatus} from "../../../store/reducers/paymentReducer";
 import {storeOrderAndUser, validatePayment} from "../../../constants/util";
 import {selectPersonalInformation, setUserId} from "../../../store/reducers/personalInformationReducer";
-import {FreeSeatOrder, selectOrder, setOrderId} from "../../../store/reducers/orderReducer";
+import {selectOrder, setOrderId} from "../../../store/reducers/orderReducer";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {selectEventSelected} from "../../../store/reducers/eventSelectionReducer";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -11,7 +11,7 @@ import {selectNextStateAvailable} from "../../../store/reducers/nextStepAvailabl
 
 export const PayButton = () => {
 
-    const order = useAppSelector(selectOrder) as FreeSeatOrder;
+    const order = useAppSelector(selectOrder);
     const payment = useAppSelector(selectPayment);
     const selectedEvent = useAppSelector(selectEventSelected);
     const userInformation = useAppSelector(selectPersonalInformation);
