@@ -15,7 +15,7 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
     const dispatch = useAppDispatch();
     const container = useRef<HTMLDivElement>(null);
     const content = useRef<HTMLDivElement>(null);
-    const [minScale, setMinScale] = useState<number>(1);
+    const [scale, setScale] = useState<number>(1);
 
     const rescale = () => {
         if (!content.current || !container.current) return;
@@ -23,7 +23,7 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
         const maxHeight = container.current.clientHeight;
         const width = content.current.clientWidth;
         const height = content.current.clientHeight;
-        setMinScale(Math.min(width / maxWidth, height / maxHeight));
+        setScale(Math.min(width / maxWidth, height / maxHeight));
     };
 
     useEffect(() => {
@@ -95,13 +95,13 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
     return (
         <Grid container style={{maxHeight: "100%"}} ref={container}>
             <Grid item md={12} lg={8} style={{maxWidth: "100%"}}>
-                <TransformWrapper centerOnInit centerZoomedOut minScale={minScale}>
+                <TransformWrapper centerOnInit centerZoomedOut minScale={scale}>
                     <TransformComponent wrapperStyle={{width: "100%"}}>
-                            <div style={{display: "flex", flexDirection: "column"}} ref={content}>
-                                {
-                                    seatSelectionDefinition.map((row, index) => <SeatSelectionRow key={`row${index}`} row={row} categories={categories} onSelectSeat={handleSelectSeat} />)
-                                }
-                            </div>
+                        <div style={{display: "flex", flexDirection: "column"}} ref={content}>
+                            {
+                                seatSelectionDefinition.map((row, index) => <SeatSelectionRow key={`row${index}`} row={row} categories={categories} onSelectSeat={handleSelectSeat} />)
+                            }
+                        </div>
                     </TransformComponent>
                 </TransformWrapper>
             </Grid>
