@@ -3,7 +3,7 @@ import {TransformWrapper, TransformComponent} from "react-zoom-pan-pinch";
 import {Card, Grid} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {SeatOrder, selectOrder, setOrder} from "../../store/reducers/orderReducer";
-import {useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Seat} from "./SeatMapSeat";
 import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
 import {PaymentOverview} from "../PaymentOverview";
@@ -13,6 +13,22 @@ export type SeatMap = Array<SeatRow>;
 export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSelectionDefinition: SeatMap, categories: Array<{id: number, label: string, price: number}>}) => {
     const order = useAppSelector(selectOrder) as SeatOrder;
     const dispatch = useAppDispatch();
+    const container = useRef<HTMLDivElement>(null);
+    const content = useRef<HTMLDivElement>(null);
+    const [minScale, setMinScale] = useState<number>(1);
+
+    const rescale = () => {
+        if (!content.current || !container.current) return;
+        const maxWidth = container.current.clientWidth;
+        const maxHeight = container.current.clientHeight;
+        const width = content.current.clientWidth;
+        const height = content.current.clientHeight;
+        setMinScale(Math.min(width / maxWidth, height / maxHeight));
+    };
+
+    useEffect(() => {
+        rescale();
+    }, [container, content]);
 
     useEffect(() => {
         if (order.seats) return;
@@ -22,6 +38,10 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
             seats: []
         }
         dispatch(setOrder(newOrder));
+        document.addEventListener("resize", rescale);
+        return () => {
+            document.removeEventListener("resize", rescale);
+        };
     }, []);
 
     useEffect(() => {
@@ -73,15 +93,15 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
     };
 
     return (
-        <Grid container style={{maxHeight: "100%"}}>
-            <Grid item md={12} lg={8}>
-                <TransformWrapper centerOnInit centerZoomedOut>
+        <Grid container style={{maxHeight: "100%"}} ref={container}>
+            <Grid item md={12} lg={8} style={{maxWidth: "100%"}}>
+                <TransformWrapper centerOnInit centerZoomedOut minScale={minScale}>
                     <TransformComponent wrapperStyle={{width: "100%"}}>
-                        <div style={{display: "flex", flexDirection: "column"}}>
-                            {
-                                seatSelectionDefinition.map((row, index) => <SeatSelectionRow key={`row${index}`} row={row} categories={categories} onSelectSeat={handleSelectSeat} />)
-                            }
-                        </div>
+                            <div style={{display: "flex", flexDirection: "column"}} ref={content}>
+                                {
+                                    seatSelectionDefinition.map((row, index) => <SeatSelectionRow key={`row${index}`} row={row} categories={categories} onSelectSeat={handleSelectSeat} />)
+                                }
+                            </div>
                     </TransformComponent>
                 </TransformWrapper>
             </Grid>
