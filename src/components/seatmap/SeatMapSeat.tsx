@@ -24,6 +24,7 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
     }, [orders]);
 
     const handleSelect = () => {
+        if (seat.occupied) return;
         if (onSeatSelect)
             onSeatSelect(seat, !isSelected);
         setIsSelected(prev => !prev);
