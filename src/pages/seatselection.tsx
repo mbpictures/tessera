@@ -3,7 +3,8 @@ import {Grid} from "@mui/material";
 import {Step} from "../components/Step";
 import prisma from "../lib/prisma";
 import {SeatSelectionFree} from "../components/SeatSelectionFree";
-import {SeatSelectionMap} from "../components/seatmap/SeatSelectionMap";
+import {SeatMap, SeatSelectionMap} from "../components/seatmap/SeatSelectionMap";
+import {SeatOrder} from "../store/reducers/orderReducer";
 
 export default function SeatSelection({categories, direction, seatMap, seatType}) {
     let seatSelection;
@@ -45,15 +46,28 @@ export async function getServerSideProps(context) {
             id: parseInt(context.query.event)
         },
         include: {
-            seatMap: true
+            seatMap: true,
+            orders: true
         }
     });
+
+    let seatmap: SeatMap = null;
+    if (event.seatMap?.definition) {
+        const baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
+        seatmap = baseMap.map(row => row.map(seat => {
+            const isOccupied = event.orders.some(order => (JSON.parse(order.order) as SeatOrder).seats.some(value => value.id === seat.id));
+            return {
+                ...seat,
+                occupied: isOccupied
+            }
+        }));
+    }
 
     return {
         props: {
             categories,
             seatType: event.seatType,
-            seatMap: event.seatMap?.definition ? JSON.parse(event.seatMap?.definition) : null
+            seatMap: seatmap
         }
     }
 }

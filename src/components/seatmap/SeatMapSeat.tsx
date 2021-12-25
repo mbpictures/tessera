@@ -10,11 +10,12 @@ export interface Seat {
     id?: number;
     category?: number;
     amount?: number;
+    occupied?: boolean;
 }
 
 export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
 
-export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number, color?: string, activeColor?: string}>, onSeatSelect?: OnSeatSelect}) => {
+export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number, color?: string, activeColor?: string, occupiedColor?: string}>, onSeatSelect?: OnSeatSelect}) => {
     const [isSelected, setIsSelected] = useState(false);
     const orders = useAppSelector(selectOrder) as SeatOrder;
 
@@ -30,19 +31,29 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
 
     const category = categories.find(category => category.id === seat.category);
     if (!category) return null;
+
+    const color = seat.occupied ? category.occupiedColor ?? "#FF2222" : (!isSelected ? category.color ?? "#59bb59" : category.activeColor ?? "#5959bb");
     return (
         <Tooltip
             title={
                 <React.Fragment>
-                    <Typography variant={"body1"}>Category: {category.label}</Typography>
-                    <Typography variant={"body1"}>Price: {(category.price * seat.amount).toFixed(2)}€</Typography>
+                    {
+                        seat.occupied ? (
+                            <Typography>This seat has already been booked</Typography>
+                        ) : (
+                            <>
+                                <Typography variant={"body1"}>Category: {category.label}</Typography>
+                                <Typography variant={"body1"}>Price: {(category.price * seat.amount).toFixed(2)}€</Typography>
+                            </>
+                        )
+                    }
                 </React.Fragment>
             }
             disableInteractive
         >
             <motion.div
                 className={style.seat}
-                style={{height: 40, width: (seat.amount ?? 1) * 40, backgroundColor: !isSelected ? category.color ?? "#59bb59" : category.activeColor ?? "#5959bb"}}
+                style={{height: 40, width: (seat.amount ?? 1) * 40, backgroundColor: color}}
                 whileHover={{
                     opacity: 0.6,
                     transition: { duration: 0.1, delay: 0 }
