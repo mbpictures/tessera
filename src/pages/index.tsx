@@ -1,24 +1,16 @@
 import {Stack, Typography} from "@mui/material";
-import React, {useEffect} from 'react';
+import React from 'react';
 import {EventSelection} from "../components/EventSelection";
 import {Step} from "../components/Step";
-import {useAppDispatch, useAppSelector} from "../store/hooks";
-import {selectEventSelected, setEvent} from "../store/reducers/eventSelectionReducer";
-import {enableNextStep} from "../store/reducers/nextStepAvailableReducer";
+import {useAppDispatch} from "../store/hooks";
+import {setEvent} from "../store/reducers/eventSelectionReducer";
 import prisma from "../lib/prisma";
 
 export default function Home({events, direction}) {
     const dispatch = useAppDispatch();
-    const currentEventSelected = useAppSelector(selectEventSelected);
-
-    useEffect(() => {
-        if (currentEventSelected < 0) return;
-        dispatch(enableNextStep());
-    }, []);
 
     const handleChange = (index: number) => {
         dispatch(setEvent(index));
-        dispatch(enableNextStep());
     }
 
     return (

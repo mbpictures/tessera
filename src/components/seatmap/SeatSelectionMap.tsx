@@ -5,7 +5,6 @@ import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {SeatOrder, selectOrder, setOrder} from "../../store/reducers/orderReducer";
 import {useEffect, useRef, useState} from "react";
 import {Seat} from "./SeatMapSeat";
-import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
 import {PaymentOverview} from "../PaymentOverview";
 
 export type SeatMap = Array<SeatRow>;
@@ -43,14 +42,6 @@ export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSel
             document.removeEventListener("resize", rescale);
         };
     }, []);
-
-    useEffect(() => {
-        if (order.ticketAmount <= 0) {
-            dispatch(disableNextStep());
-            return;
-        }
-        dispatch(enableNextStep());
-    }, [order]);
 
     const createNewOrder = () => {
         return {ticketAmount: 0, seats: order.seats.map(a => a), totalPrice: 0};

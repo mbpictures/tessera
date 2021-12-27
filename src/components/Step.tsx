@@ -4,20 +4,37 @@ import {useAppDispatch, useAppSelector} from "../store/hooks";
 import {selectEventSelected, setEvent} from "../store/reducers/eventSelectionReducer";
 import {useRouter} from "next/router";
 import {STEP_URLS} from "../constants/Constants";
-import {disableNextStep} from "../store/reducers/nextStepAvailableReducer";
+import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
 import {getStoreWithOrderId} from "../constants/util";
 import {setOrder} from "../store/reducers/orderReducer";
 import {setAddress, setEmail, setShipping, setUserId} from "../store/reducers/personalInformationReducer";
+import {NextAvailableFactory} from "../store/factories/nextAvailable/NextAvailableFactory";
 
 export const Step = ({children, direction, style}: {children?: React.ReactNode, direction: number, style?: MotionStyle}) => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const currentSelectedEvent = useAppSelector(selectEventSelected);
+    const state = useAppSelector((state) => state);
+
+    const updateNextAvailable = () => {
+        if (NextAvailableFactory.getInstance(router.pathname, state)?.isNextAvailable() ?? false) {
+            dispatch(enableNextStep());
+        }
+        else {
+            dispatch(disableNextStep());
+        }
+    }
+
+    useEffect(() => {
+        updateNextAvailable();
+    }, [state.order, state.payment, state.personalInformation, state.selectedEvent]);
 
     useEffect(() => {
         if (!router.isReady) return;
         const { orderId, event } = router.query;
-        dispatch(disableNextStep());
+
+        updateNextAvailable();
+
         if (orderId && orderId !== "") {
             getStoreWithOrderId(orderId)
                 .then(({personalInformation, order, eventId}) => {
