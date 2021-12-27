@@ -7,7 +7,6 @@ import {createTheme} from "@mui/material/styles";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {selectPayment, setPayment} from "../../store/reducers/paymentReducer";
 import {PaymentFactory, PaymentType} from "../../store/factories/payment/PaymentFactory";
-import {disableNextStep, enableNextStep} from "../../store/reducers/nextStepAvailableReducer";
 
 export const PaymentMethods = () => {
     const selector = useAppSelector(selectPayment);
@@ -17,14 +16,6 @@ export const PaymentMethods = () => {
     const handleChangeSelectedPaymentMethod = (newMethod) => {
         setSelectedPaymentMethod(newMethod);
     }
-
-    useEffect(() => {
-        const valid = (PaymentFactory.getPaymentInstance(selector.payment)?.isValid() ?? false);
-        if (valid)
-            dispatch(enableNextStep());
-        else
-            dispatch(disableNextStep());
-    }, [selector])
 
     useEffect(() => {
         if (selectedPaymentMethod === null) {

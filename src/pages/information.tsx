@@ -13,9 +13,7 @@ import {
     setEmail,
     setShipping,
 } from "../store/reducers/personalInformationReducer";
-import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
-import {validateAddress} from "../constants/util";
-import {ShippingFactory, ShippingType} from "../store/factories/shipping/ShippingFactory";
+import {ShippingType} from "../store/factories/shipping/ShippingFactory";
 import {AddressComponent} from "../components/form/AddressComponent";
 import {PostalDeliveryShippingComponent} from "../components/shipping/PostalDeliveryShippingComponent";
 import {BoxOfficeShippingComponent} from "../components/shipping/BoxOfficeShippingComponent";
@@ -39,16 +37,8 @@ export default function Information({direction}) {
 
     useEffect(() => {
         const emailValid = validateEmail(selector.email);
-        const valid = emailValid &&
-            validateAddress(selector.address) &&
-            (ShippingFactory.getShippingInstance(selector.shipping)?.isValid() ?? false);
 
         setEmailError(selector.email.length == 0 || emailValid ? null : "Please enter valid email address");
-
-        if (valid)
-            dispatch(enableNextStep());
-        else
-            dispatch(disableNextStep());
     }, [selector]);
 
     useEffect(() => {
