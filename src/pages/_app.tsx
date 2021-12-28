@@ -9,10 +9,19 @@ import {useRouter} from "next/router";
 import {AnimatePresence} from "framer-motion";
 import {Provider} from "react-redux";
 import {store} from "../store/store";
+import { SessionProvider } from "next-auth/react";
 
 export default function Global({ Component, pageProps }) {
     const router = useRouter();
     const [direction, setDirection] = useState<number>(0);
+
+    if (router.pathname.startsWith("/admin")) {
+        return (
+            <SessionProvider session={pageProps.session} basePath={process.env.NEXT_PUBLIC_NEXTAUTH_PATH}>
+                <Component {...pageProps} />
+            </SessionProvider>
+        );
+    }
 
     return (
         <Provider store={store}>
