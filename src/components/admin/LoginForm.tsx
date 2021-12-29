@@ -22,9 +22,9 @@ export default function LoginForm({onSubmit}: {onSubmit?: (userName, password) =
             remember: true
         },
         validationSchema: LoginSchema,
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             if (!onSubmit) return;
-            onSubmit(values.email, values.password);
+            await onSubmit(values.email, values.password);
         }
     });
 
