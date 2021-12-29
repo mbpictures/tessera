@@ -26,11 +26,13 @@ export default function Login() {
 
     const handleLogIn = async (email, password) => {
         try {
-            await signIn("credentials", {
+            const result = await signIn("login", {
                 redirect: false,
                 email: email,
                 password: password
             });
+            if (result.error)
+                throw new Error("error while logging in");
             await router.push("/admin");
         } catch (e) {
             setError(true);
