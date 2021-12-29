@@ -1,6 +1,7 @@
-import {getSession, useSession} from "next-auth/react";
+import {useSession} from "next-auth/react";
 import {AdminLayout} from "../../components/admin/layout";
 import {Box, Typography} from "@mui/material";
+import {getAdminServerSideProps} from "../../constants/serverUtil";
 
 export default function dashboard() {
     const {data: session} = useSession();
@@ -17,18 +18,5 @@ export default function dashboard() {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/admin/login',
-                permanent: false,
-            },
-        }
-    }
-
-    return {
-        props: {session}
-    }
+    return await getAdminServerSideProps(context);
 }

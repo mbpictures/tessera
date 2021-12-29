@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import bycrypt from 'bcryptjs';
+import {getSession} from "next-auth/react";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -18,3 +19,24 @@ export function getStaticAssetFile(file, options = null) {
 export const hashPassword = async (password: string) => {
     return await bycrypt.hash(password, 10);
 };
+
+export const getAdminServerSideProps = async (context, resultFunction?) => {
+    const session = await getSession(context)
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/admin/login',
+                permanent: false,
+            },
+        }
+    }
+
+    const result = resultFunction ? await resultFunction() : {};
+    if (!result.props)
+        result.props = {};
+
+    result.props.session = session;
+
+    return result;
+}
