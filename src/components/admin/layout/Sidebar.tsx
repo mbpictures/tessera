@@ -31,7 +31,7 @@ const sidebarConfig = [
     },
     {
         title: 'Orders',
-        path: '/dashboard/orders',
+        path: '/admin/orders',
         icon: <BookOnlineIcon />
     }
 ];
