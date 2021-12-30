@@ -26,7 +26,7 @@ const sidebarConfig = [
     },
     {
         title: 'User',
-        path: '/admin/user',
+        path: '/admin/users',
         icon: <GroupIcon />
     },
     {
