@@ -14,7 +14,7 @@ import {useState} from "react";
 import {PaymentFactory, PaymentType} from "../../store/factories/payment/PaymentFactory";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import {OrderDetailsDialog} from "../../components/admin/layout/OrderDetailsDialog";
+import {OrderDetailsDialog} from "../../components/admin/dialogs/OrderDetailsDialog";
 
 export default function orders({orders}) {
     const {data: session} = useSession();
