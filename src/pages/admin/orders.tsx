@@ -1,16 +1,11 @@
 import {useSession} from "next-auth/react";
 import {AdminLayout} from "../../components/admin/layout";
 import {
-    Box, Button,
-    Dialog, DialogContent, DialogContentText,
-    DialogTitle, Divider,
-    IconButton,
-    Table,
+    Box, IconButton, Table,
     TableBody,
     TableCell,
     TableHead,
-    TableRow,
-    Typography
+    TableRow, Typography
 } from "@mui/material";
 import {getAdminServerSideProps} from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
@@ -19,6 +14,7 @@ import {useState} from "react";
 import {PaymentFactory, PaymentType} from "../../store/factories/payment/PaymentFactory";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import {OrderDetailsDialog} from "../../components/admin/layout/OrderDetailsDialog";
 
 export default function orders({orders}) {
     const {data: session} = useSession();
@@ -34,39 +30,13 @@ export default function orders({orders}) {
         return hasPayed(order) ? <CheckIcon color={"success"} /> : <CloseIcon color={"error"} />;
     }
 
-    const handleMarkAsPayed = () => {
-        // TODO
+    const handleCloseDetails = () => {
+        setOrder(null);
     }
 
     return (
         <AdminLayout>
-            {
-                order !== null && (
-                    <Dialog open={true} onClose={() => setOrder(null)}>
-                        <DialogTitle>Order Details</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Event: {order.event.title}<br />
-                                OrderID: {order.id}<br />
-                                User: <br />
-                                {order.user.firstName} {order.user.lastName}<br />
-                                {order.user.email}<br />
-                                {order.user.address}<br />
-                                {order.user.zip} {order.user.city}<br />
-                                {order.user.countryCode} {order.user.regionCode}
-                                <Divider />
-                                Payment Type: {order.paymentType}<br />
-                                Payed: {hasPayedIcon(order)}<br />
-                                {
-                                    (order.paymentType === "invoice" && !hasPayed(order)) && (
-                                        <Button onClick={handleMarkAsPayed}>Mark as payed</Button>
-                                    )
-                                }
-                            </DialogContentText>
-                        </DialogContent>
-                    </Dialog>
-                )
-            }
+            <OrderDetailsDialog order={order} onClose={handleCloseDetails} hasPayed={hasPayed} hasPayedIcon={hasPayedIcon} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
             </Box>

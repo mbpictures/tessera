@@ -11,5 +11,7 @@ export abstract class Shipping {
         return this.shippingData;
     }
 
+    abstract get DisplayName(): string;
+
     abstract isValid(): boolean;
 }
