@@ -10,9 +10,9 @@ import {
 import {getAdminServerSideProps} from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import {useState} from "react";
-import {UserDetailsDialog} from "../../components/admin/layout/UserDetailsDialog";
+import {UserDetailsDialog} from "../../components/admin/dialogs/UserDetailsDialog";
 import AddIcon from '@mui/icons-material/Add';
-import {AddUserDialog} from "../../components/admin/layout/AddUserDialog";
+import {AddUserDialog} from "../../components/admin/dialogs/AddUserDialog";
 import {useRouter} from "next/router";
 import EditIcon from '@mui/icons-material/Edit';
 
