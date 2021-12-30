@@ -39,4 +39,8 @@ export class PostalDeliveryShipping extends Shipping {
             return DEFAULT;
         }
     }
+
+    get DisplayName(): string {
+        return "Postal Delivery";
+    }
 }
