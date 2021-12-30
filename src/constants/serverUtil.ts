@@ -2,6 +2,8 @@ import path from "path";
 import fs from "fs";
 import bycrypt from 'bcryptjs';
 import {getSession} from "next-auth/react";
+import {NextApiRequest} from "next";
+import prisma from "../lib/prisma";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -39,4 +41,26 @@ export const getAdminServerSideProps = async (context, resultFunction?) => {
     result.props.session = session;
 
     return result;
+}
+
+export const getUserByApiKey = async (apiKey) => {
+    const key = await hashPassword(apiKey);
+    const user = await prisma.adminApiKeys.findUnique({
+        where: {
+            key: key
+        },
+        include: {
+            user: true
+        }
+    });
+
+    return user.user;
+}
+
+export const serverAuthenticate = async (req: NextApiRequest) => {
+    const apiKey = req.headers.authorization?.startsWith("Bearer") ?? null ? req.headers.authorization.replace("Bearer ", "") : null;
+    if (apiKey !== null) {
+        return await getUserByApiKey(apiKey);
+    }
+    return (await getSession({req}))?.user;
 }
