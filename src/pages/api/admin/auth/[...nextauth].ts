@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "../../../../lib/prisma";
-import {hashPassword} from "../../../../constants/serverUtil";
+import {getUserByApiKey} from "../../../../constants/serverUtil";
 import { compare } from 'bcryptjs';
 
 export default NextAuth({
@@ -35,17 +35,7 @@ export default NextAuth({
                 key: { label: "Api-Key", type: "text", },
             },
             async authorize(credentials, req) {
-                const key = await hashPassword(credentials.key ?? req.headers["Api-Key"]);
-                const apiKey = await prisma.adminApiKeys.findUnique({
-                    where: {
-                        key: key
-                    },
-                    include: {
-                        user: true
-                    }
-                });
-
-                return apiKey.user;
+                return await getUserByApiKey(credentials.key ?? req.headers["Api-Key"]);
             }
         })
     ],
