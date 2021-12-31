@@ -44,17 +44,18 @@ export const getAdminServerSideProps = async (context, resultFunction?) => {
 }
 
 export const getUserByApiKey = async (apiKey) => {
-    const key = await hashPassword(apiKey);
-    const user = await prisma.adminApiKeys.findUnique({
+    const [user, token] = apiKey.split(":"); //schema: username:token
+    const result = await prisma.adminApiKeys.findMany({
         where: {
-            key: key
+            user: {
+                userName: user
+            }
         },
         include: {
             user: true
         }
     });
-
-    return user.user;
+    return result.find(async (entry) => await bycrypt.compare(token, entry.key))?.user;
 }
 
 export const serverAuthenticate = async (req: NextApiRequest) => {
