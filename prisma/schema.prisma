@@ -96,4 +96,5 @@ model AdminApiKeys {
     key             String      @unique
     user            AdminUser   @relation(fields: [userId], references: [id])
     userId          Int
+    name            String
 }
