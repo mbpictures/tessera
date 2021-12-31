@@ -4,6 +4,7 @@ import {alpha} from "@mui/system";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {MenuPopover} from "../../util/MenuPopover";
 import {signOut, useSession} from "next-auth/react";
+import Link from "next/link";
 
 export const AccountPopover = () => {
     const anchorRef = useRef(null);
@@ -55,6 +56,11 @@ export const AccountPopover = () => {
                     <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
                         {session.user.email}
                     </Typography>
+                    <Link href={"/admin/user/settings"} passHref>
+                        <Button fullWidth variant="outlined">
+                            Settings
+                        </Button>
+                    </Link>
                 </Box>
 
                 <Divider sx={{ my: 1 }} />
