@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import prisma from "../../../lib/prisma";
 import {hashPassword, serverAuthenticate} from "../../../constants/serverUtil";
+import { compare } from 'bcryptjs';
 
 export default async function handler(
     req: NextApiRequest,
@@ -43,14 +44,23 @@ export default async function handler(
     }
     if (req.method === "PUT") {
         try {
-            const {id, username, email, password} = req.body;
-            console.log(req.body);
+            const {id, username, email, password, oldPassword} = req.body;
             const data: any = {
                 userName: username,
                 email: email,
             };
-            if (password)
+            if (password) {
+                const current = await prisma.adminUser.findUnique({
+                    where: {
+                        id: parseInt(id as string)
+                    }
+                });
+                if (!await compare(oldPassword, current.password)) {
+                    res.status(401).end("Current Password doesn't match");
+                    return;
+                }
                 data.password = await hashPassword(password);
+            }
 
             await prisma.adminUser.update({
                 where: {
