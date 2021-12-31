@@ -2,7 +2,6 @@ import {
     Alert,
     Button,
     Dialog,
-    DialogActions,
     DialogContent,
     DialogTitle,
     IconButton,
@@ -13,6 +12,7 @@ import {
 import {useState} from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
+import {ConfirmDialog} from "./ConfirmDialog";
 
 export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
     if (user === null) return null;
@@ -66,13 +66,7 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
                     </Stack>
                 </DialogContent>
             </Dialog>
-            <Dialog open={deleteOpen}>
-                <DialogTitle>Confirm delete of user <b>{user.userName}</b></DialogTitle>
-                <DialogActions>
-                    <Button onClick={handleDeleteUser}>Confirm</Button>
-                    <Button color={"error"} onClick={handleCloseDeleteUser}>Cancel</Button>
-                </DialogActions>
-            </Dialog>
+            <ConfirmDialog text={`Confirm delete of user <b>${user.userName}</b>`} open={deleteOpen} onClose={handleCloseDeleteUser} onConfirm={handleDeleteUser} />
             <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
                 <Alert severity="error">Error occurred!</Alert>
             </Snackbar>
