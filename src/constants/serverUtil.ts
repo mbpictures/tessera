@@ -34,7 +34,7 @@ export const getAdminServerSideProps = async (context, resultFunction?) => {
         }
     }
 
-    const result = resultFunction ? await resultFunction() : {};
+    const result = resultFunction ? await resultFunction(session) : {};
     if (!result.props)
         result.props = {};
 
