@@ -4,6 +4,7 @@ import {Tooltip, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useAppSelector} from "../../store/hooks";
 import {SeatOrder, selectOrder} from "../../store/reducers/orderReducer";
+import {SEAT_COLORS} from "../../constants/Constants";
 
 export interface Seat {
     type: "seat" | "space";
@@ -33,7 +34,7 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
     const category = categories.find(category => category.id === seat.category);
     if (!category) return null;
 
-    const color = seat.occupied ? category.occupiedColor ?? "#FF2222" : (!isSelected ? category.color ?? "#59bb59" : category.activeColor ?? "#5959bb");
+    const color = seat.occupied ? category.occupiedColor ?? SEAT_COLORS.occupied : (!isSelected ? category.color ?? SEAT_COLORS.normal : category.activeColor ?? SEAT_COLORS.active);
     return (
         <Tooltip
             title={
