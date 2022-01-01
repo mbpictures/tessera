@@ -8,6 +8,7 @@ import {Drawer, styled} from "@mui/material";
 import NavSection from "./NavSection";
 import GroupIcon from '@mui/icons-material/Group';
 import BookOnlineIcon from '@mui/icons-material/BookOnline';
+import EventIcon from '@mui/icons-material/Event';
 
 const RootStyle = styled('div')(({ theme }) => ({
     [theme.breakpoints.up('lg')]: {
@@ -33,6 +34,24 @@ const sidebarConfig = [
         title: 'Orders',
         path: '/admin/orders',
         icon: <BookOnlineIcon />
+    },
+    {
+        title: "Event Management",
+        icon: <EventIcon />,
+        children: [
+            {
+                title: "Events",
+                path: "/admin/events"
+            },
+            {
+                title: "Categories",
+                path: "/admin/events/categories"
+            },
+            {
+                title: "Seat Maps",
+                path: "/admin/events/seatmap"
+            }
+        ]
     }
 ];
 
