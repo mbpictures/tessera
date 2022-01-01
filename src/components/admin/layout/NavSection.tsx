@@ -42,7 +42,10 @@ function NavItem({ item, active }) {
     const theme = useTheme();
     const isActiveRoot = active(item.path);
     const { title, path, icon, info, children } = item;
-    const [open, setOpen] = useState(isActiveRoot);
+
+    const hasActiveSub = children?.some(child => active(child.path)) ?? false;
+
+    const [open, setOpen] = useState(isActiveRoot || hasActiveSub);
 
     const handleOpen = () => {
         setOpen((prev) => !prev);
@@ -66,7 +69,7 @@ function NavItem({ item, active }) {
                 <ListItemStyle
                     onClick={handleOpen}
                     sx={{
-                        ...(isActiveRoot && activeRootStyle)
+                        ...((isActiveRoot || hasActiveSub) && activeRootStyle)
                     }}
                 >
                     <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
@@ -89,30 +92,23 @@ function NavItem({ item, active }) {
                                 <ListItemStyle
                                     key={title}
                                     sx={{
-                                        ...(isActiveSub && activeSubStyle)
+                                        ...(isActiveSub && activeSubStyle),
+                                        padding: 0
                                     }}
                                 >
                                     <Link href={path}>
-                                        <ListItemIconStyle>
-                                            <Box
-                                                component="span"
-                                                sx={{
-                                                    width: 4,
-                                                    height: 4,
-                                                    display: 'flex',
-                                                    borderRadius: '50%',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    bgcolor: 'text.disabled',
-                                                    transition: (theme) => theme.transitions.create('transform'),
-                                                    ...(isActiveSub && {
-                                                        transform: 'scale(2)',
-                                                        bgcolor: 'primary.main'
-                                                    })
-                                                }}
-                                            />
-                                        </ListItemIconStyle>
-                                        <ListItemText disableTypography primary={title} />
+                                        <ListItemStyle
+                                            sx={{
+                                                ...(isActiveSub && {
+                                                    color: 'primary.main',
+                                                    fontWeight: 'fontWeightMedium',
+                                                    bgcolor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+                                                })
+                                            }}
+                                        >
+                                            <ListItemText disableTypography primary={title} sx={{
+                                                paddingLeft: theme.spacing(10)}} />
+                                        </ListItemStyle>
                                     </Link>
                                 </ListItemStyle>
                             );
