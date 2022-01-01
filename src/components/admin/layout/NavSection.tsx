@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, styled, useTheme} from "@mui/material";
 import {alpha} from "@mui/system";
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-const ListItemStyle = styled((props: {onClick?: any}) => <ListItemButton disableGutters {...props} />)(
+const ListItemStyle = styled(React.forwardRef<HTMLDivElement, {onClick?: any}>((props, ref) => <ListItemButton ref={ref} disableGutters {...props} />))(
     ({ theme }) => ({
         ...theme.typography.body2,
         height: 48,
