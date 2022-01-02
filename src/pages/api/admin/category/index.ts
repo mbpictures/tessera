@@ -30,6 +30,6 @@ export default async function handler(
                 currency: currency
             }
         });
-        res.status(200).end(category.id);
+        res.status(200).end(category.id.toFixed(0));
     }
 }
