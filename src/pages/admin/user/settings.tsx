@@ -51,7 +51,7 @@ export default function users({user}) {
 
     const deleteApiKey = async () => {
         try {
-            await axios.delete("/api/admin/apiKey", {data: {id: deleteApiKeyIndex.id}});
+            await axios.delete("/api/admin/user/apiKey/" + deleteApiKeyIndex.id);
             setDeleteApiKeyIndex(null);
             await refreshProps();
         } catch (e) {

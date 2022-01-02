@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {hashPassword, serverAuthenticate} from "../../../constants/serverUtil";
-import prisma from "../../../lib/prisma";
+import {hashPassword, serverAuthenticate} from "../../../../../constants/serverUtil";
+import prisma from "../../../../../lib/prisma";
 import * as crypto from "crypto";
 
 export default async function handler(
@@ -30,20 +30,6 @@ export default async function handler(
                 },
             });
             res.status(200).json({token: token});
-        } catch (e) {
-            res.status(500).end("Server error");
-        }
-    }
-
-    if (req.method === "DELETE") {
-        try {
-            const {id} = req.body;
-            await prisma.adminApiKeys.delete({
-                where: {
-                    id: id
-                }
-            });
-            res.status(200).end("Deleted");
         } catch (e) {
             res.status(500).end("Server error");
         }

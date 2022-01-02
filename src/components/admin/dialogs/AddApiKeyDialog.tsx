@@ -33,7 +33,7 @@ export const AddApiKeyDialog = ({open, onClose, onKeyGenerated}) => {
 
     const generateApiKey = async () => {
         try {
-            const response = await axios.post("/api/admin/apiKey", {name: name});
+            const response = await axios.post("/api/admin/user/apiKey", {name: name});
             setToken(response.data.token);
         } catch (e) {
             setError(e.response?.data ?? e.message);
