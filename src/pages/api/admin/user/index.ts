@@ -27,7 +27,7 @@ export default async function handler(
                 email: email
             }
         });
-        res.status(200).end(user.id);
+        res.status(200).end(user.id.toFixed(0));
     }
 
     res.status(400).end("Method unsupported");
