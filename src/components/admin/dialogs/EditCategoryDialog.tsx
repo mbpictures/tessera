@@ -76,7 +76,7 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
                             label={"Name"}
                             onChange={(event) => setCategoryName(event.target.value)}
                         />
-                        <Stack direction={useMediaQuery(theme => theme.breakpoints.up("lg")) ? "row" : "column"} spacing={2}>
+                        <Stack direction={useMediaQuery((theme: any) => theme.breakpoints.up("lg")) ? "row" : "column"} spacing={2}>
                             <TextField
                                 value={price}
                                 label={"Price"}

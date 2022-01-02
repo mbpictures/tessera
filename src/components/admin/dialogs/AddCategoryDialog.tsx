@@ -74,7 +74,7 @@ export const AddCategoryDialog = ({open, onClose, onAddCategory}) => {
                                     error={Boolean(touched.label && errors.label)}
                                     helperText={touched.label && errors.label}
                                 />
-                                <Stack direction={useMediaQuery(theme => theme.breakpoints.up("lg")) ? "row" : "column"} spacing={2}>
+                                <Stack direction={useMediaQuery((theme: any) => theme.breakpoints.up("lg")) ? "row" : "column"} spacing={2}>
                                     <TextField
                                         label={"Price"}
                                         sx={{flexGrow: 1}}
