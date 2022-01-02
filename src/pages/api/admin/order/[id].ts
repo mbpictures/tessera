@@ -9,15 +9,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
     const { id } = req.query;
+    const order = await prisma.order.findUnique({
+        where: {
+            id: id as string
+        },
+        include: {
+            tickets: true
+        }
+    });
+
+    if (!order) {
+        res.status(404).end("Order not found");
+        return;
+    }
+
     if (req.method === "DELETE") {
-        const order = await prisma.order.findUnique({
-            where: {
-                id: id as string
-            },
-            include: {
-                tickets: true
-            }
-        });
         await Promise.all(order.tickets.map(async (ticket) => {
             await prisma.ticket.delete({
                 where: {
@@ -35,11 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.method === "GET") {
-        const order = await prisma.order.findUnique({
-            where: {
-                id: id as string
-            }
-        });
         res.status(200).json(order);
         return;
     }
