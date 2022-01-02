@@ -27,7 +27,7 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
 
     const handleDeleteUser = async () => {
         try {
-            await axios.delete("/api/admin/user", {data: {id: user.id}});
+            await axios.delete("/api/admin/user/" + user.id);
             handleCloseDeleteUser();
             onClose();
             onDelete();
@@ -38,7 +38,7 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
 
     const handleSave = async () => {
         try {
-            await axios.put("/api/admin/user", {id: user.id, username: userName, email: email});
+            await axios.put("/api/admin/user/" + user.id, {username: userName, email: email});
             onClose();
             onChange();
         } catch (e) {

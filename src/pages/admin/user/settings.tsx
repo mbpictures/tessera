@@ -61,7 +61,7 @@ export default function users({user}) {
 
     const onSave = async () => {
         try {
-            await axios.put("/api/admin/user", {id: user.id, username: username, email: email});
+            await axios.put("/api/admin/user/" + user.id, {username: username, email: email});
             await refreshProps();
         } catch (e) {
             setError(true);

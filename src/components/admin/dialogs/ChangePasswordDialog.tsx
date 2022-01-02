@@ -20,7 +20,7 @@ export const ChangePasswordDialog = ({open, user, onClose}) => {
     const changePassword = async () => {
         if (!canChange) return;
         try {
-            await axios.put("/api/admin/user", {id: user.id, username: user.username, email: user.email, password: newPassword, oldPassword: currentPassword});
+            await axios.put("/api/admin/user/" + user.id, {username: user.username, email: user.email, password: newPassword, oldPassword: currentPassword});
             onClose();
         } catch (e) {
             setError(e.response?.data ?? e.message);
