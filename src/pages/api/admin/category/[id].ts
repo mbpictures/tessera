@@ -21,7 +21,6 @@ export default async function handler(
             events: true
         }
     });
-    console.log(category);
 
     if (!category) {
         res.status(404).end("Category not found");
