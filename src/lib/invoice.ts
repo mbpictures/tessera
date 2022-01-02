@@ -3,21 +3,23 @@ import ejs from "ejs";
 import htmlPdf from "html-pdf";
 import {FreeSeatOrder, IOrder, SeatOrder} from "../store/reducers/orderReducer";
 import {calculateTotalPrice} from "../constants/util";
+import {formatPrice} from "../constants/serverUtil";
 
 export const generateInvoice = async (template, orderId: string): Promise<string> => {
     return new Promise<string>(async (resolve, reject) => {
-        const order = await prisma.order.findUnique({
+        const orderDB = await prisma.order.findUnique({
             where: {
                 id: orderId
             },
             select: {
                 order: true,
                 user: true,
-                event: true
+                event: true,
+                locale: true
             }
         });
 
-        const parsedOrder = JSON.parse(order.order) as IOrder;
+        const parsedOrder = JSON.parse(orderDB.order) as IOrder;
         const categories = await prisma.category.findMany();
         const totalPrice = calculateTotalPrice(parsedOrder, categories);
 
@@ -44,19 +46,19 @@ export const generateInvoice = async (template, orderId: string): Promise<string
         const html = ejs.render(template, {
             invoice_number: 1,
             creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
-            receiver: [order.user.firstName + " " + order.user.lastName, order.user.address, order.user.zip + " " + order.user.city],
+            receiver: [orderDB.user.firstName + " " + orderDB.user.lastName, orderDB.user.address, orderDB.user.zip + " " + orderDB.user.city],
             products: orders.map(order => {
                 const category = categories.find(category => category.id === order.categoryId);
                 return {
                     name: category.label,
-                    unit_price: category.price.toFixed(2) + "€",
+                    unit_price: formatPrice(category.price, category.currency, orderDB.locale),
                     amount: order.amount,
-                    total_price: (category.price * order.amount).toFixed(2) + "€"
+                    total_price: formatPrice((category.price * order.amount), category.currency, orderDB.locale)
                 };
             }),
-            total_net_price: (totalPrice * 0.81).toFixed(2) + "€",
+            total_net_price: formatPrice((totalPrice * 0.81), categories[0].currency, orderDB.locale),
             tax_amount: "19%",
-            total_price: totalPrice,
+            total_price: formatPrice(totalPrice, categories[0].currency, orderDB.locale),
             bank_information: ["Jon Doe", "Demo Bank", "IBAN: EN23 2133 2343 2343 2343"]
         });
 

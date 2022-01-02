@@ -3,8 +3,9 @@ import {Edit} from "@mui/icons-material";
 import React from "react";
 import {useAppSelector} from "../store/hooks";
 import {FreeSeatOrder, SeatOrder, selectOrder} from "../store/reducers/orderReducer";
+import {formatPrice} from "../constants/util";
 
-export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCategories, displayColor}: {categories: Array<{id: number, price: number, label: string, color?: string}>, withEditButton?: boolean, onEdit?: Function, hideEmptyCategories?: boolean, displayColor?: boolean}) => {
+export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCategories, displayColor}: {categories: Array<{id: number, price: number, label: string, color?: string, currency: string}>, withEditButton?: boolean, onEdit?: Function, hideEmptyCategories?: boolean, displayColor?: boolean}) => {
     const order = useAppSelector(selectOrder);
 
     const handleEdit = () => {
@@ -62,7 +63,7 @@ export const PaymentOverview = ({categories, withEditButton, onEdit, hideEmptyCa
             }
             <Divider />
             <ListItem>
-                <ListItemText primary={<strong>Total:</strong>} secondary={<span>{(Math.max(order.totalPrice, 0)).toFixed(2)} &euro;</span>} />
+                <ListItemText primary={<strong>Total:</strong>} secondary={<span>{formatPrice(Math.max(order.totalPrice, 0), categories[0].currency)}</span>} />
             </ListItem>
         </List>
     );

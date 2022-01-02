@@ -2,6 +2,7 @@ import { PDFDocument } from 'pdf-lib';
 import prisma from "./prisma";
 import QRCode from 'qrcode';
 import {FreeSeatOrder, IOrder, SeatOrder} from "../store/reducers/orderReducer";
+import {formatPrice} from "../constants/serverUtil";
 
 const fillTextField = (form, fieldName, value) => {
     const field = form.getTextField(fieldName);
@@ -9,14 +10,14 @@ const fillTextField = (form, fieldName, value) => {
     field.setText(value);
 }
 
-const generateTicket = async (template, details: {seatInformation, price, name}, eventName: string, orderId): Promise<Uint8Array> => {
+const generateTicket = async (template, details: {seatInformation, price, name, currency, locale}, eventName: string, orderId): Promise<Uint8Array> => {
     return new Promise<Uint8Array>(async (resolve, reject) => {
         try {
             const pdfDoc = await PDFDocument.load(template);
             const form = pdfDoc.getForm();
             fillTextField(form, "EVENT_NAME", eventName);
             fillTextField(form, "SEAT_INFORMATION", details.seatInformation);
-            fillTextField(form, "PRICE", details.price + "€");
+            fillTextField(form, "PRICE", formatPrice(details.price, details.currency, details.locale));
             fillTextField(form, "CUSTOMER_NAME", details.name);
 
             const ticket = await prisma.ticket.create({
@@ -55,7 +56,8 @@ export const generateTickets = async (template, orderId: string): Promise<Array<
             id: true,
             order: true,
             event: true,
-            user: true
+            user: true,
+            locale: true
         }
     });
 
@@ -86,7 +88,13 @@ export const generateTickets = async (template, orderId: string): Promise<Array<
         const category = categories.find(category => category.id === order.categoryId);
         return await generateTicket(
             template,
-            {seatInformation: order.seatInformation, price: category.price, name: orderDB.user.firstName + " " + orderDB.user.lastName},
+            {
+                seatInformation: order.seatInformation,
+                price: category.price,
+                name: orderDB.user.firstName + " " + orderDB.user.lastName,
+                currency: category.currency,
+                locale: orderDB.locale
+            },
             orderDB.event.title,
             orderDB.id
         )

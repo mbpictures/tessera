@@ -74,6 +74,7 @@ model Order {
     eventId         Int
     shipping        String
     tickets         Ticket[]
+    locale          String
 }
 
 model Ticket {
