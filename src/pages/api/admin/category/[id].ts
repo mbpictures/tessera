@@ -13,26 +13,28 @@ export default async function handler(
     }
 
     const {id} = req.query;
+    const category = await prisma.category.findUnique({
+        where: {
+            id: parseInt(id as string)
+        },
+        include: {
+            events: true
+        }
+    });
+    console.log(category);
+
+    if (!category) {
+        res.status(404).end("Category not found");
+        return;
+    }
+
 
     if (req.method === "GET") {
-        const category = await prisma.category.findUnique({
-            where: {
-                id: parseInt(id as string)
-            }
-        });
-        res.status(200).end(category);
+        res.status(200).json(category);
         return;
     }
 
     if (req.method === "DELETE") {
-        const category = await prisma.category.findUnique({
-            where: {
-                id: parseInt(id as string)
-            },
-            include: {
-                events: true
-            }
-        });
         if (category.events.length > 0) {
             res.status(400).end("Category is in use by events!");
             return;
