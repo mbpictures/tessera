@@ -1,7 +1,11 @@
 {
   "name": "ticketshop",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "Full-stack ticket shop with admin dashboard.",
+  "author": "Marius Butz",
+  "homepage": "https://github.com/mbpictures/ticketshop#readme",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
