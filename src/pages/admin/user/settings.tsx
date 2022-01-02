@@ -1,4 +1,4 @@
-import {useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {AdminLayout} from "../../../components/admin/layout";
 import {
     Accordion,
@@ -21,7 +21,7 @@ import {
 import {getAdminServerSideProps} from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
 import {ChangePasswordDialog} from "../../../components/admin/dialogs/ChangePasswordDialog";
@@ -37,12 +37,17 @@ export default function users({user}) {
     if (!session) return null;
     const router = useRouter();
     const theme = useTheme();
-    const [username, setUsername] = useState(user.userName);
-    const [email, setEmail] = useState(user.email);
+    const [username, setUsername] = useState(user?.userName);
+    const [email, setEmail] = useState(user?.email);
     const [error, setError] = useState(false);
     const [changePasswordOpen, setChangePasswordOpen] = useState(false);
     const [addApiKeyOpen, setAddApiKeyOpen] = useState(false);
     const [deleteApiKeyIndex, setDeleteApiKeyIndex] = useState(null);
+
+    useEffect(() => {
+        if (user) return;
+        signOut().catch(alert);
+    }, [user]);
 
     const deleteApiKey = async () => {
         try {
@@ -68,7 +73,7 @@ export default function users({user}) {
         }
     }
 
-    const hasChange = username !== user.userName || email !== user.email;
+    const hasChange = username !== user?.userName || email !== user?.email;
 
     return (
         <AdminLayout>
@@ -105,7 +110,7 @@ export default function users({user}) {
                             <Button onClick={() => setAddApiKeyOpen(true)} style={{minWidth: 50}}><AddIcon /> Add Api Key</Button>
                         </Stack>
                         {
-                            user.apiKeys.length === 0 ? (
+                            user?.apiKeys.length === 0 ? (
                                 <Typography>You don't have any API keys yet!</Typography>
                             ) : (
                                 <Table>
@@ -117,7 +122,7 @@ export default function users({user}) {
                                     </TableHead>
                                     <TableBody>
                                         {
-                                            user.apiKeys.map((apiKey, index) => {
+                                            user?.apiKeys.map((apiKey, index) => {
                                                 return (
                                                     <TableRow key={index}>
                                                         <TableCell>{apiKey.name}</TableCell>
