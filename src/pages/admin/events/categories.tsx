@@ -21,6 +21,7 @@ import { EditCategoryDialog } from "../../../components/admin/dialogs/EditCatego
 import {useRouter} from "next/router";
 import AddIcon from "@mui/icons-material/Add";
 import {AddCategoryDialog} from "../../../components/admin/dialogs/AddCategoryDialog";
+import {formatPrice} from "../../../constants/util";
 
 const ColorPreview = ({color}: {color: string}) => {
     return <Box width={30} height={30} bgcolor={color} />
@@ -72,7 +73,7 @@ export default function events({categories}) {
                                             return (
                                                 <TableRow key={index}>
                                                     <TableCell>{category.label}</TableCell>
-                                                    <TableCell>{category.price.toFixed(2)} &euro;</TableCell>
+                                                    <TableCell>{formatPrice(category.price, category.currency)}</TableCell>
                                                     <TableCell><ColorPreview color={category.color ?? SEAT_COLORS.normal} /></TableCell>
                                                     <TableCell><ColorPreview color={category.activeColor ?? SEAT_COLORS.active} /></TableCell>
                                                     <TableCell><ColorPreview color={category.occupiedColor ?? SEAT_COLORS.occupied} /></TableCell>

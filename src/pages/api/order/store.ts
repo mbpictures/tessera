@@ -13,7 +13,7 @@ export default async function handler(
         return;
     }
 
-    const { order, user, eventId, paymentType }: { order: IOrder, user: PersonalInformationState, eventId: number, paymentType: string } = req.body;
+    const { order, user, eventId, paymentType, locale }: { order: IOrder, user: PersonalInformationState, eventId: number, paymentType: string, locale: string } = req.body;
     try {
         const createUser = await prisma.user.create({
             data: {
@@ -24,7 +24,7 @@ export default async function handler(
                 zip: user.address.zip,
                 city: user.address.city,
                 countryCode: user.address.country.countryShortCode,
-                regionCode: user.address.region.shortCode
+                regionCode: user.address.region.shortCode,
             }
         });
 
@@ -42,7 +42,8 @@ export default async function handler(
                         id: createUser.id
                     }
                 },
-                shipping: JSON.stringify(user.shipping)
+                shipping: JSON.stringify(user.shipping),
+                locale: locale
             }
         })
         res.status(200).json({userId: createUser.id, orderId: createOrder.id});

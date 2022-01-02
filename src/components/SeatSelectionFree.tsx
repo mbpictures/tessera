@@ -6,7 +6,7 @@ import React, {useEffect} from "react";
 import {useAppSelector} from "../store/hooks";
 import {FreeSeatOrder, selectOrder, setOrder} from "../store/reducers/orderReducer";
 import {useDispatch} from "react-redux";
-import {calculateTotalPrice} from "../constants/util";
+import {calculateTotalPrice, formatPrice} from "../constants/util";
 
 export const SeatSelectionFree = ({categories}) => {
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
@@ -60,11 +60,11 @@ export const SeatSelectionFree = ({categories}) => {
                         })
                     )
                 }
-                </Grid>
-                <Box height={20} />
+            </Grid>
+            <Box height={20} />
             <Button color="primary" variant="outlined" onClick={handleAddCategory} disabled={order.orders && order.orders.length >= categories.length}><AddIcon /> Add Category</Button>
             <Box height={20} />
-            <Typography>Total Price: <b>{order.totalPrice.toFixed(2)}&euro;</b></Typography>
+            <Typography suppressHydrationWarning>Total Price: <b>{formatPrice(order.totalPrice, categories[0].currency)}</b></Typography>
         </Grid>
     )
 }

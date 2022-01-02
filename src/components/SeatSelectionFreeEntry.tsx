@@ -6,6 +6,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {FreeSeatOrder} from "../store/reducers/orderReducer";
 import {motion} from "framer-motion";
 import {Delete} from "@mui/icons-material";
+import {formatPrice} from "../constants/util";
 
 export const SeatSelectionFreeEntry = (
     {
@@ -16,7 +17,7 @@ export const SeatSelectionFreeEntry = (
         onRemove
     }: {
         onChange?: (index: number, amount: number, categoryId) => unknown,
-        categories: Array<{ id: number, label: string, price: number }>,
+        categories: Array<{ id: number, label: string, price: number, currency: string }>,
         index: number,
         currentOrder: FreeSeatOrder,
         onRemove?: (index: number) => unknown
@@ -74,12 +75,12 @@ export const SeatSelectionFreeEntry = (
                 </Box>
                 <InputLabel id="category-selection">Category</InputLabel>
                 <Select value={category} onChange={handleCategoryChange} id="category-selection">
-                    {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.label} ({category.price}&euro;)</MenuItem>)}
+                    {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.label} ({formatPrice(category.price, category.currency)})</MenuItem>)}
                 </Select>
                 <motion.div layout style={{padding: "10px 0", alignSelf: "center"}}>
                     {
                         price > 0 && (
-                            <Typography variant={"body1"}>Price: <b>{price.toFixed(2)}&euro;</b></Typography>
+                            <Typography variant={"body1"}>Price: <b>{formatPrice(price, categories[0].currency)}</b></Typography>
                         )
                     }
                 </motion.div>

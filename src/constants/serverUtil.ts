@@ -65,3 +65,7 @@ export const serverAuthenticate = async (req: NextApiRequest) => {
     }
     return (await getSession({req}))?.user;
 }
+
+export const formatPrice = (price: number, currency: string, locale: string): string => {
+    return new Intl.NumberFormat(locale, {style: "currency", currency: currency}).format(price);
+}

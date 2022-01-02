@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {useAppSelector} from "../../store/hooks";
 import {SeatOrder, selectOrder} from "../../store/reducers/orderReducer";
 import {SEAT_COLORS} from "../../constants/Constants";
+import {formatPrice} from "../../constants/util";
 
 export interface Seat {
     type: "seat" | "space";
@@ -16,7 +17,7 @@ export interface Seat {
 
 export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
 
-export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number, color?: string, activeColor?: string, occupiedColor?: string}>, onSeatSelect?: OnSeatSelect}) => {
+export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number, currency: string, color?: string, activeColor?: string, occupiedColor?: string}>, onSeatSelect?: OnSeatSelect}) => {
     const [isSelected, setIsSelected] = useState(false);
     const orders = useAppSelector(selectOrder) as SeatOrder;
 
@@ -45,7 +46,7 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
                         ) : (
                             <>
                                 <Typography variant={"body1"}>Category: {category.label}</Typography>
-                                <Typography variant={"body1"}>Price: {(category.price * seat.amount).toFixed(2)}€</Typography>
+                                <Typography variant={"body1"}>Price: {formatPrice((category.price * seat.amount), category.currency)}</Typography>
                             </>
                         )
                     }

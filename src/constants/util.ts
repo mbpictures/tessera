@@ -25,7 +25,13 @@ export const hasNumber = (myString) => {
 
 export const storeOrderAndUser = async (order: IOrder, user: PersonalInformationState, eventId, paymentType) => {
     if (order.orderId != null || user.userId !== null) return {userId: user.userId, orderId: order.orderId};
-    const response = await axios.post("/api/order/store", {order: order, user: user, eventId: eventId, paymentType: paymentType});
+    const response = await axios.post("/api/order/store", {
+        order: order,
+        user: user,
+        eventId: eventId,
+        paymentType: paymentType,
+        locale: navigator.language
+    });
     return {userId: response.data.userId, orderId: response.data.orderId};
 };
 
@@ -64,4 +70,9 @@ export const totalTicketAmount = (order: IOrder): number => {
         return (order as FreeSeatOrder).orders.reduce((a, seat) => a + seat.amount, 0);
     }
     return -1;
+}
+
+export const formatPrice = (price: number, currency: string): string => {
+    if (typeof navigator === "undefined") return "";
+    return new Intl.NumberFormat(navigator.language, {style: "currency", currency: currency}).format(price);
 }
