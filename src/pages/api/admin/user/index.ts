@@ -6,9 +6,10 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    const canRegister = (await prisma.adminUser.findMany()).length === 0 && req.method === "POST";
     const user = await serverAuthenticate(req);
-    if (!user) {
-        res.status(401).end("Unauthenticated");
+    if (!user && !canRegister) {
+        res.status(401).end("Not Authenticated");
         return;
     }
 
