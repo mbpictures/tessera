@@ -22,7 +22,7 @@ export default async function handler(
         const {definition} = req.body;
         const seatMap = await prisma.seatMap.create({
             data: {
-                ...(definition && {definition: JSON.stringify(definition)})
+                definition: definition ? JSON.stringify(definition) : ""
             }
         });
         res.status(200).end(seatMap.id.toFixed(0));
