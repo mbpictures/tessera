@@ -1,11 +1,9 @@
 import {
-    Alert,
     Button,
     Dialog,
     DialogContent,
     DialogTitle,
     IconButton,
-    Snackbar,
     Stack,
     TextField
 } from "@mui/material";
@@ -13,13 +11,14 @@ import {useState} from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
 import {ConfirmDialog} from "./ConfirmDialog";
+import {useSnackbar} from "notistack";
 
 export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
     if (user === null) return null;
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [error, setError] = useState(false);
     const [email, setEmail] = useState(user.email);
     const [userName, setUserName] = useState(user.userName);
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleCloseDeleteUser = () => {
         setDeleteOpen(false);
@@ -32,7 +31,7 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
             onClose();
             onDelete();
         } catch (e) {
-            setError(true);
+            enqueueSnackbar("Error occurred!", {variant: "error"});
         }
     };
 
@@ -42,7 +41,7 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
             onClose();
             onChange();
         } catch (e) {
-            setError(true);
+            enqueueSnackbar("Error occurred!", {variant: "error"});
         }
     };
 
@@ -67,9 +66,6 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
                 </DialogContent>
             </Dialog>
             <ConfirmDialog text={`Confirm delete of user <b>${user.userName}</b>`} open={deleteOpen} onClose={handleCloseDeleteUser} onConfirm={handleDeleteUser} />
-            <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
-                <Alert severity="error">Error occurred!</Alert>
-            </Snackbar>
         </>
     );
 }

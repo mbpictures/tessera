@@ -56,6 +56,7 @@
     "next-absolute-url": "^1.2.2",
     "next-auth": "^4.0.6",
     "nodemailer": "^6.7.2",
+    "notistack": "^2.0.3",
     "paypal-checkout": "^4.0.331",
     "pdf-lib": "^1.17.1",
     "qrcode": "^1.5.0",
