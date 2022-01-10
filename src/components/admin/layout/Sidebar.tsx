@@ -49,7 +49,7 @@ const sidebarConfig = [
             },
             {
                 title: "Seat Maps",
-                path: "/admin/events/seatmap"
+                path: "/admin/events/seatmaps"
             }
         ]
     }
