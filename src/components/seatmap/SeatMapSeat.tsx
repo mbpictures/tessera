@@ -17,12 +17,12 @@ export interface Seat {
 
 export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
 
-export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categories: Array<{id: number, label: string, price: number, currency: string, color?: string, activeColor?: string, occupiedColor?: string}>, onSeatSelect?: OnSeatSelect}) => {
+export const SeatMapSeat = ({seat, categories, onSeatSelect, forceNoRedux}: {seat: Seat, categories: Array<{id: number, label: string, price: number, currency: string, color?: string, activeColor?: string, occupiedColor?: string}>, onSeatSelect?: OnSeatSelect, forceNoRedux?: boolean}) => {
     const [isSelected, setIsSelected] = useState(false);
-    const orders = useAppSelector(selectOrder) as SeatOrder;
+    const orders = !forceNoRedux ? useAppSelector(selectOrder) as SeatOrder : null;
 
     useEffect(() => {
-        setIsSelected(orders.seats?.some(val => val.id === seat.id) ?? false);
+        setIsSelected(orders?.seats?.some(val => val.id === seat.id) ?? false);
     }, [orders]);
 
     const handleSelect = () => {
@@ -56,7 +56,7 @@ export const SeatMapSeat = ({seat, categories, onSeatSelect}: {seat: Seat, categ
         >
             <motion.div
                 className={style.seat}
-                style={{height: 40, width: (seat.amount ?? 1) * 40, backgroundColor: color}}
+                style={{height: 40, width: (seat.amount ?? 1) * 40 + ((seat.amount ?? 1) - 1) * 10, backgroundColor: color}}
                 whileHover={{
                     opacity: 0.6,
                     transition: { duration: 0.1, delay: 0 }
