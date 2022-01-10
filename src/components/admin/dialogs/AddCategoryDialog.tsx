@@ -1,10 +1,9 @@
 import {
-    Alert, Autocomplete,
+    Autocomplete,
     Dialog,
     DialogContent,
     DialogTitle,
     IconButton,
-    Snackbar,
     Stack,
     TextField, Typography,
     useMediaQuery
@@ -13,15 +12,15 @@ import * as Yup from "yup";
 import {Form, FormikProvider, useFormik} from "formik";
 import {LoadingButton} from "@mui/lab";
 import axios from "axios";
-import {useState} from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import {SEAT_COLORS} from "../../../constants/Constants";
 // @ts-ignore
 import {ColorPicker} from "mui-color";
+import {useSnackbar} from "notistack";
 
 export const AddCategoryDialog = ({open, onClose, onAddCategory}) => {
-    const [error, setError] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const schema = Yup.object().shape({
         label: Yup.string().required("Name is required"),
@@ -48,7 +47,7 @@ export const AddCategoryDialog = ({open, onClose, onAddCategory}) => {
                 onClose();
                 onAddCategory();
             } catch (e) {
-                setError(true);
+                enqueueSnackbar("Error occurred!");
             }
         }
     });
@@ -135,9 +134,6 @@ export const AddCategoryDialog = ({open, onClose, onAddCategory}) => {
                     </FormikProvider>
                 </DialogContent>
             </Dialog>
-            <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
-                <Alert severity="error">Error adding category!</Alert>
-            </Snackbar>
         </>
     )
 };

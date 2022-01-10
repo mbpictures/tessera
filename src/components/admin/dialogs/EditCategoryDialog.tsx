@@ -1,11 +1,10 @@
 import {
-    Alert, Autocomplete,
+    Autocomplete,
     Button,
     Dialog,
     DialogContent,
     DialogTitle,
     IconButton,
-    Snackbar,
     Stack,
     TextField, Typography, useMediaQuery
 } from "@mui/material";
@@ -16,6 +15,7 @@ import {useState} from "react";
 import { ColorPicker } from 'mui-color';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import axios from "axios";
+import {useSnackbar} from "notistack";
 
 export const EditCategoryDialog = ({category, onClose, onChange}) => {
     if (category === null) return null;
@@ -23,10 +23,10 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
     const [categoryName, setCategoryName] = useState(category.label);
     const [price, setPrice] = useState(category.price);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [error, setError] = useState(false);
     const [normalColor, setNormalColor] = useState(category.color);
     const [activeColor, setActiveColor] = useState(category.activeColor);
     const [occupiedColor, setOccupiedColor] = useState(category.occupiedColor);
+    const { enqueueSnackbar } = useSnackbar();
 
     const hasChanges = categoryName !== category.label ||
         price !== category.price ||
@@ -48,7 +48,7 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
             onClose();
             onChange();
         } catch (e) {
-            setError(true);
+            enqueueSnackbar("Error occurred!", {variant: "error"});
         }
     };
 
@@ -58,7 +58,7 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
             onClose();
             onChange();
         } catch (e) {
-            setError(true);
+            enqueueSnackbar("Error occurred!", {variant: "error"});
         }
     };
 
@@ -116,9 +116,6 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
                 </DialogContent>
             </Dialog>
             <ConfirmDialog text={`Confirm delete of category <b>${category.label}</b>`} open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDeleteUser} />
-            <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
-                <Alert severity="error">Error occurred!</Alert>
-            </Snackbar>
         </>
     )
 }

@@ -1,10 +1,8 @@
 import {
-    Alert,
     Button,
     Dialog,
     DialogContent,
     DialogTitle, IconButton,
-    Snackbar,
     Stack,
     TextField,
     Typography
@@ -12,16 +10,16 @@ import {
 import {useState} from "react";
 import axios from "axios";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import {useSnackbar} from "notistack";
 
 export const AddApiKeyDialog = ({open, onClose, onKeyGenerated}) => {
     const [name, setName] = useState("");
     const [token, setToken] = useState(null);
-    const [error, setError] = useState(null);
-    const [copiedToClipboard, setCopiedToClipboard] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const copyToClipboard = async () => {
         await navigator.clipboard.writeText(token);
-        setCopiedToClipboard(true);
+        enqueueSnackbar("Copied to clipboard!", {variant: "info"});
     };
 
     const handleClose = () => {
@@ -36,7 +34,7 @@ export const AddApiKeyDialog = ({open, onClose, onKeyGenerated}) => {
             const response = await axios.post("/api/admin/user/apiKey", {name: name});
             setToken(response.data.token);
         } catch (e) {
-            setError(e.response?.data ?? e.message);
+            enqueueSnackbar("Error: " + (e.response?.data ?? e.message), {variant: "error"});
         }
     };
 
@@ -66,12 +64,6 @@ export const AddApiKeyDialog = ({open, onClose, onKeyGenerated}) => {
                     </Stack>
                 </DialogContent>
             </Dialog>
-            <Snackbar open={error !== null} autoHideDuration={6000} onClose={() => setError(null)}>
-                <Alert severity="error">{error}</Alert>
-            </Snackbar>
-            <Snackbar open={copiedToClipboard} autoHideDuration={6000} onClose={() => setCopiedToClipboard(false)}>
-                <Alert severity="info">Copied to clipboard</Alert>
-            </Snackbar>
         </>
     );
 };

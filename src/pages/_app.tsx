@@ -11,6 +11,7 @@ import {Provider} from "react-redux";
 import {store} from "../store/store";
 import { SessionProvider } from "next-auth/react";
 import {ThemeConfig} from "../components/admin/ThemeProvider";
+import { SnackbarProvider } from 'notistack';
 
 export default function Global({ Component, pageProps }) {
     const router = useRouter();
@@ -20,7 +21,9 @@ export default function Global({ Component, pageProps }) {
         return (
             <SessionProvider session={pageProps.session} basePath={process.env.NEXT_PUBLIC_NEXTAUTH_PATH}>
                 <ThemeConfig>
-                    <Component {...pageProps} />
+                    <SnackbarProvider maxSnack={3}>
+                        <Component {...pageProps} />
+                    </SnackbarProvider>
                 </ThemeConfig>
             </SessionProvider>
         );

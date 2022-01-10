@@ -1,12 +1,13 @@
-import {Alert, Button, Dialog, DialogContent, DialogTitle, Snackbar, Stack, TextField, Typography} from "@mui/material";
+import {Button, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useSnackbar} from "notistack";
 
 export const ChangePasswordDialog = ({open, user, onClose}) => {
-    const [error, setError] = useState(null);
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (!open) return;
@@ -23,7 +24,7 @@ export const ChangePasswordDialog = ({open, user, onClose}) => {
             await axios.put("/api/admin/user/" + user.id, {username: user.username, email: user.email, password: newPassword, oldPassword: currentPassword});
             onClose();
         } catch (e) {
-            setError(e.response?.data ?? e.message);
+            enqueueSnackbar("Error: " + (e.response?.data ?? e.message), {variant: "error"});
         }
     };
 
@@ -60,9 +61,6 @@ export const ChangePasswordDialog = ({open, user, onClose}) => {
                     </Stack>
                 </DialogContent>
             </Dialog>
-            <Snackbar open={error !== null} autoHideDuration={6000} onClose={() => setError(null)}>
-                <Alert severity="error">Error: {error}</Alert>
-            </Snackbar>
         </>
     );
 }

@@ -4,10 +4,8 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Alert,
     Button,
     IconButton,
-    Snackbar,
     Stack,
     Table,
     TableBody,
@@ -30,6 +28,7 @@ import {Box, useTheme} from "@mui/system";
 import {AddApiKeyDialog} from "../../../components/admin/dialogs/AddApiKeyDialog";
 import AddIcon from "@mui/icons-material/Add";
 import {ConfirmDialog} from "../../../components/admin/dialogs/ConfirmDialog";
+import {useSnackbar} from "notistack";
 
 export default function users({user}) {
     const {data: session} = useSession();
@@ -39,10 +38,10 @@ export default function users({user}) {
     const theme = useTheme();
     const [username, setUsername] = useState(user?.userName);
     const [email, setEmail] = useState(user?.email);
-    const [error, setError] = useState(false);
     const [changePasswordOpen, setChangePasswordOpen] = useState(false);
     const [addApiKeyOpen, setAddApiKeyOpen] = useState(false);
     const [deleteApiKeyIndex, setDeleteApiKeyIndex] = useState(null);
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (user) return;
@@ -56,7 +55,7 @@ export default function users({user}) {
             await refreshProps();
         } catch (e) {
             setDeleteApiKeyIndex(null);
-            setError(true);
+            enqueueSnackbar("Error while deleting api key!", {variant: "error"});
         }
     }
 
@@ -69,7 +68,7 @@ export default function users({user}) {
             await axios.put("/api/admin/user/" + user.id, {username: username, email: email});
             await refreshProps();
         } catch (e) {
-            setError(true);
+            enqueueSnackbar("Error while saving!", {variant: "error"});
         }
     }
 
@@ -142,9 +141,6 @@ export default function users({user}) {
                     </AccordionDetails>
                 </Accordion>
             </Stack>
-            <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
-                <Alert severity="error">Error occurred!</Alert>
-            </Snackbar>
         </AdminLayout>
     )
 }

@@ -1,13 +1,13 @@
-import {Alert, Dialog, DialogContent, DialogTitle, IconButton, Snackbar, Stack, TextField} from "@mui/material";
+import {Dialog, DialogContent, DialogTitle, IconButton, Stack, TextField} from "@mui/material";
 import * as Yup from "yup";
 import {Form, FormikProvider, useFormik} from "formik";
 import {LoadingButton} from "@mui/lab";
 import axios from "axios";
-import {useState} from "react";
 import CloseIcon from '@mui/icons-material/Close';
+import {useSnackbar} from "notistack";
 
 export const AddUserDialog = ({open, onClose, onAddUser}) => {
-    const [error, setError] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const schema = Yup.object().shape({
         username: Yup.string().required("Username is required"),
@@ -30,7 +30,7 @@ export const AddUserDialog = ({open, onClose, onAddUser}) => {
                 onClose();
                 onAddUser();
             } catch (e) {
-                setError(true);
+                enqueueSnackbar("Error occured", {variant: "error"})
             }
         }
     });
@@ -90,9 +90,6 @@ export const AddUserDialog = ({open, onClose, onAddUser}) => {
                     </FormikProvider>
                 </DialogContent>
             </Dialog>
-            <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
-                <Alert severity="error">Error adding user!</Alert>
-            </Snackbar>
         </>
     )
 };
