@@ -49,7 +49,7 @@ export default async function handler(
 
     if (req.method === "PUT") {
         const {definition} = req.body;
-        await prisma.category.update({
+        await prisma.seatMap.update({
             where: {
                 id: parseInt(id as string)
             },
