@@ -19,7 +19,7 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 const DRAWER_WIDTH = 280;
 
-const sidebarConfig = [
+export const sidebarConfig = [
     {
         title: 'Dashboard',
         path: '/admin',
