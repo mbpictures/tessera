@@ -90,9 +90,10 @@ export async function getServerSideProps(context) {
 
     const noUser = (await prisma.adminUser.findMany()).length === 0;
 
+    const csrf = await getCsrfToken(context);
     return {
         props: {
-            csrfToken: await getCsrfToken(context),
+            ...(csrf && {csrfToken: csrf}),
             noUser: noUser
         }
     };
