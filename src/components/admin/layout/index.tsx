@@ -27,14 +27,24 @@ const MainStyle = styled('div')(({ theme }) => ({
     }
 }));
 
+const additionalPages = [
+    {
+        title: "Settings",
+        path: "/admin/user/settings"
+    }
+]
+
 export const AdminLayout = ({children}) => {
     const [open, setOpen] = useState<boolean>(false);
     const [pageName, setPageName] = useState<string>("");
     const router = useRouter();
-    const urls = sidebarConfig.map(sidebar => [{title: sidebar.title, path: sidebar.path}, sidebar.children]).flat(2).filter(x => x !== undefined);
+    const urls = sidebarConfig
+        .map(sidebar => [{title: sidebar.title, path: sidebar.path}, sidebar.children])
+        .concat(additionalPages)
+        .flat(2).filter(x => x !== undefined);
 
     useEffect(() => {
-        const title = urls.find(url => url.path === router.pathname).title;
+        const title = urls.find(url => url.path === router.pathname)?.title;
         setPageName(title);
     }, [router.pathname]);
 
