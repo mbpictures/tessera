@@ -9,7 +9,7 @@ import {PaymentOverview} from "../PaymentOverview";
 
 export type SeatMap = Array<SeatRow>;
 
-export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSelectionDefinition: SeatMap, categories: Array<{id: number, label: string, price: number}>}) => {
+export const SeatSelectionMap = ({seatSelectionDefinition, categories}: {seatSelectionDefinition: SeatMap, categories: Array<{id: number, label: string, price: number, currency: string}>}) => {
     const order = useAppSelector(selectOrder) as SeatOrder;
     const dispatch = useAppDispatch();
     const container = useRef<HTMLDivElement>(null);
