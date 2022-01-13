@@ -3,8 +3,7 @@ import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, styled,
 import {alpha} from "@mui/system";
 import Link from 'next/link';
 import {useRouter} from "next/router";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const ListItemStyle = styled(React.forwardRef<HTMLDivElement, {onClick?: any}>((props, ref) => <ListItemButton ref={ref} disableGutters {...props} />))(
     ({ theme }) => ({
@@ -78,7 +77,7 @@ function NavItem({ item, active }) {
                     <Box
                         sx={{ width: 16, height: 16, ml: 1 }}
                     >
-                        {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+                        <ChevronRightIcon style={{transform: `rotate(${open ? 90 : 0}deg)`, transition: ".3s ease"}} />
                     </Box>
                 </ListItemStyle>
 
