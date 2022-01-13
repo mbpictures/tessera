@@ -2,7 +2,7 @@ import {useSession} from "next-auth/react";
 import {AdminLayout} from "../../../components/admin/layout";
 import {Box, Button, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import {getAdminServerSideProps} from "../../../constants/serverUtil";
-import InfoIcon from "@mui/icons-material/Info";
+import EditIcon from "@mui/icons-material/Edit";
 import prisma from "../../../lib/prisma";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
@@ -43,7 +43,7 @@ export default function events({events}) {
                                     <TableCell>Name</TableCell>
                                     <TableCell>Has Seat Reservation</TableCell>
                                     <TableCell>Ticket Amount</TableCell>
-                                    <TableCell>Details</TableCell>
+                                    <TableCell>Edit</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -54,7 +54,7 @@ export default function events({events}) {
                                                 <TableCell>{event.title}</TableCell>
                                                 <TableCell>{event.seatType === "seatmap" ? <CheckIcon color={"success"} /> : <CloseIcon color={"error"} />}</TableCell>
                                                 <TableCell>{event.ticketsBought}</TableCell>
-                                                <TableCell><IconButton><InfoIcon /></IconButton></TableCell>
+                                                <TableCell><IconButton><EditIcon /></IconButton></TableCell>
                                             </TableRow>
                                         );
                                     })
