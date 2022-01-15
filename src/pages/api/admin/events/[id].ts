@@ -47,14 +47,11 @@ export default async function handler(
             const seatMap = await prisma.seatMap.findUnique({
                 where: {
                     id: seatMapId
-                },
-                include: {
-
                 }
             });
             const definition = JSON.parse(seatMap.definition);
             // transform to category ids and receive only unique ids
-            categories = definition.map(row => row.map(seat => seat.category)).flat(2).filter((value, index, self) => self.indexOf(value) === index);
+            categories = definition.map(row => row.map(seat => seat.category)).flat(2).filter((value, index, self) => self.indexOf(value) === index && value !== undefined);
         }
 
         if (categories) {
