@@ -41,7 +41,39 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        const {title, seatType, seatMapId} = req.body;
+        let {title, seatType, seatMapId, categories} = req.body;
+
+        if (!categories && seatType === "seatmap") {
+            const seatMap = await prisma.seatMap.findUnique({
+                where: {
+                    id: seatMapId
+                },
+                include: {
+
+                }
+            });
+            const definition = JSON.parse(seatMap.definition);
+            // transform to category ids and receive only unique ids
+            categories = definition.map(row => row.map(seat => seat.category)).flat(2).filter((value, index, self) => self.indexOf(value) === index);
+        }
+
+        if (categories) {
+            await prisma.categoriesOnEvents.deleteMany({
+                where: {
+                    eventId: parseInt(id as string)
+                }
+            });
+
+            await prisma.categoriesOnEvents.createMany({
+                data: categories.map(category => {
+                    return {
+                        eventId: parseInt(id as string),
+                        categoryId: category
+                    }
+                })
+            })
+        }
+
         await prisma.event.update({
             where: {
                 id: parseInt(id as string)
