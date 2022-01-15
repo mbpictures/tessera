@@ -10,10 +10,12 @@ import AddIcon from "@mui/icons-material/Add";
 import {AddEventDialog} from "../../../components/admin/dialogs/AddEventDialog";
 import {useState} from "react";
 import {useRouter} from "next/router";
+import {EditEventDialog} from "../../../components/admin/dialogs/EditEventDialog";
 
-export default function events({events}) {
+export default function events({events, seatmaps, categories}) {
     const {data: session} = useSession();
     const [addEventOpen, setAddEventOpen] = useState(false);
+    const [event, setEvent] = useState(null);
     const router = useRouter();
 
     if (!session) return null;
@@ -25,12 +27,13 @@ export default function events({events}) {
     return (
         <AdminLayout>
             <AddEventDialog open={addEventOpen} onClose={() => setAddEventOpen(false)} onChange={refreshProps} />
+            <EditEventDialog event={event} onClose={() => setEvent(null)} seatmaps={seatmaps} onChange={refreshProps} categories={categories} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Events</Typography>
             </Box>
             <Box display={"flex"}>
                 <Box flexGrow={1} />
-                <Button onClick={() => setAddEventOpen(true)}><AddIcon /> Add Seat Map</Button>
+                <Button onClick={() => setAddEventOpen(true)}><AddIcon /> Add Event</Button>
             </Box>
             <Box>
                 {
@@ -54,7 +57,7 @@ export default function events({events}) {
                                                 <TableCell>{event.title}</TableCell>
                                                 <TableCell>{event.seatType === "seatmap" ? <CheckIcon color={"success"} /> : <CloseIcon color={"error"} />}</TableCell>
                                                 <TableCell>{event.ticketsBought}</TableCell>
-                                                <TableCell><IconButton><EditIcon /></IconButton></TableCell>
+                                                <TableCell><IconButton onClick={() => setEvent(event)}><EditIcon /></IconButton></TableCell>
                                             </TableRow>
                                         );
                                     })
@@ -76,6 +79,11 @@ export async function getServerSideProps(context) {
                     include: {
                         tickets: true
                     }
+                },
+                categories: {
+                    include: {
+                        category: true
+                    }
                 }
             }
         });
@@ -87,9 +95,14 @@ export async function getServerSideProps(context) {
             }
         });
 
+        const seatmaps = await prisma.seatMap.findMany();
+        const categories = await prisma.category.findMany();
+
         return {
             props: {
-                events
+                events,
+                seatmaps,
+                categories
             }
         }
     });
