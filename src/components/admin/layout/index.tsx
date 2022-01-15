@@ -34,7 +34,7 @@ const additionalPages = [
     }
 ]
 
-export const AdminLayout = ({children}) => {
+export const AdminLayout = ({permissionDenied, children}) => {
     const [open, setOpen] = useState<boolean>(false);
     const [pageName, setPageName] = useState<string>("");
     const router = useRouter();
@@ -56,7 +56,9 @@ export const AdminLayout = ({children}) => {
             <Navbar onOpen={() => setOpen(true)} />
             <Sidebar isOpen={open} onClose={() => setOpen(false)} />
             <MainStyle>
-                {children}
+                {!permissionDenied ? children : (
+                    <h4>You don't have permission to access this area!</h4>
+                )}
             </MainStyle>
         </RootStyle>
     );

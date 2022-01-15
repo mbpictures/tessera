@@ -5,6 +5,26 @@ import {getSession} from "next-auth/react";
 import {NextApiRequest} from "next";
 import prisma from "../lib/prisma";
 
+export enum PermissionType {
+    Read = "Read",
+    Write = "Write"
+}
+
+export enum PermissionSection {
+    None = "none",
+    UserManagement = "UserManagement",
+    EventManagement = "EventManagement",
+    EventCategories = "EventCategories",
+    EventSeatMaps = "EventSeatMaps",
+    Orders = "Orders",
+    OrderMarkAsPayed = "OrderMarkAsPayed"
+}
+
+export interface Permission {
+    permissionType: PermissionType;
+    permission: PermissionSection;
+}
+
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
     if (process.env.NODE_ENV === "production") {
@@ -22,7 +42,18 @@ export const hashPassword = async (password: string) => {
     return await bycrypt.hash(password, 10);
 };
 
-export const getAdminServerSideProps = async (context, resultFunction?) => {
+const checkPermissions = async (email: string, permission?: Permission): Promise<boolean> => {
+    if (permission === undefined || permission.permission === PermissionSection.None) return true;
+    const user = await prisma.adminUser.findUnique({
+        where: {
+            email: email
+        }
+    });
+    const permissions = permission.permissionType === PermissionType.Write ? user.writeRights : user.readRights;
+    return permissions.includes(permission.permission);
+}
+
+export const getAdminServerSideProps = async (context, resultFunction?, permission?: Permission) => {
     const session = await getSession(context)
 
     if (!session) {
@@ -31,6 +62,13 @@ export const getAdminServerSideProps = async (context, resultFunction?) => {
                 destination: '/admin/login',
                 permanent: false,
             },
+        }
+    }
+    if (!await checkPermissions(session.user.email, permission)) {
+        return {
+            props: {
+                permissionDenied: true
+            }
         }
     }
 
@@ -58,12 +96,18 @@ export const getUserByApiKey = async (apiKey) => {
     return result.find(async (entry) => await bycrypt.compare(token, entry.key))?.user;
 }
 
-export const serverAuthenticate = async (req: NextApiRequest) => {
+export const serverAuthenticate = async (req: NextApiRequest, permission?: Permission) => {
     const apiKey = req.headers.authorization?.startsWith("Bearer") ?? null ? req.headers.authorization.replace("Bearer ", "") : null;
+    let user;
     if (apiKey !== null) {
-        return await getUserByApiKey(apiKey);
+        user = await getUserByApiKey(apiKey);
     }
-    return (await getSession({req}))?.user;
+    else {
+        user = (await getSession({req}))?.user;
+    }
+    if (!user) return null;
+    if (!await checkPermissions(user.email, permission)) return null;
+    return user;
 }
 
 export const formatPrice = (price: number, currency: string, locale: string): string => {

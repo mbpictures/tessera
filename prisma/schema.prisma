@@ -90,6 +90,8 @@ model AdminUser {
     email           String      @unique
     password        String
     apiKeys         AdminApiKeys[]
+    readRights      String[]
+    writeRights     String[]
 }
 
 model AdminApiKeys {
