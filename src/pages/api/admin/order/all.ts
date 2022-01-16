@@ -6,14 +6,11 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const user = await serverAuthenticate(req, {
+    const user = await serverAuthenticate(req, res, {
         permission: PermissionSection.EventManagement,
         permissionType: PermissionType.Write
     });
-    if (!user) {
-        res.status(401).end("Unauthenticated");
-        return;
-    }
+    if (!user) return;
 
     if (req.method !== "DELETE") {
         res.status(400).end("Method unsupported");

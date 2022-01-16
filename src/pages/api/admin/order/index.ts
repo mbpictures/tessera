@@ -6,14 +6,11 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const user = await serverAuthenticate(req, {
+    const user = await serverAuthenticate(req, res, {
         permission: PermissionSection.EventManagement,
         permissionType: PermissionType.Read
     });
-    if (!user) {
-        res.status(401).end("Unauthorized");
-        return;
-    }
+    if (!user) return;
 
     if (req.method === "GET") {
         const orders = await prisma.order.findMany();

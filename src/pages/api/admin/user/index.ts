@@ -7,10 +7,10 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const canRegister = (await prisma.adminUser.findMany()).length === 0 && req.method === "POST";
-    const user = await serverAuthenticate(req, {
+    const user = await serverAuthenticate(req, res, {
         permission: PermissionSection.UserManagement,
         permissionType: req.method === "GET" ? PermissionType.Read : PermissionType.Write
-    });
+    }, false);
     if (!user && !canRegister) {
         res.status(401).end("Not Authenticated");
         return;

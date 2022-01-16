@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import bycrypt from 'bcryptjs';
 import {getSession} from "next-auth/react";
-import {NextApiRequest} from "next";
+import {NextApiRequest, NextApiResponse} from "next";
 import prisma from "../lib/prisma";
 
 export enum PermissionType {
@@ -96,7 +96,7 @@ export const getUserByApiKey = async (apiKey) => {
     return result.find(async (entry) => await bycrypt.compare(token, entry.key))?.user;
 }
 
-export const serverAuthenticate = async (req: NextApiRequest, permission?: Permission) => {
+export const serverAuthenticate = async (req: NextApiRequest, res: NextApiResponse, permission?: Permission, sendResponse: boolean = true) => {
     const apiKey = req.headers.authorization?.startsWith("Bearer") ?? null ? req.headers.authorization.replace("Bearer ", "") : null;
     let user;
     if (apiKey !== null) {
@@ -105,8 +105,14 @@ export const serverAuthenticate = async (req: NextApiRequest, permission?: Permi
     else {
         user = (await getSession({req}))?.user;
     }
-    if (!user) return null;
-    if (!await checkPermissions(user.email, permission)) return null;
+    if (!user) {
+        if (sendResponse) res.status(401).end("Unauthenticated");
+        return null;
+    }
+    if (!await checkPermissions(user.email, permission)) {
+        if (sendResponse) res.status(401).end("Permission denied");
+        return null;
+    }
     return user;
 }
 

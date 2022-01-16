@@ -6,14 +6,11 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const user = await serverAuthenticate(req, {
+    const user = await serverAuthenticate(req, res, {
         permission: PermissionSection.EventCategories,
         permissionType: req.method === "GET" ? PermissionType.Read : PermissionType.Write
     });
-    if (!user) {
-        res.status(401).end("Unauthenticated");
-        return;
-    }
+    if (!user) return;
 
     if (req.method === "GET") {
         const categories = await prisma.category.findMany();

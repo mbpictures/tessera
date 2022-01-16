@@ -6,11 +6,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ){
-    const user = await serverAuthenticate(req);
-    if (!user) {
-        res.status(401).end("Not Authenticated");
-        return;
-    }
+    const user = await serverAuthenticate(req, res);
+    if (!user) return;
     const {id} = req.query;
     const apiKey = await prisma.adminApiKeys.findUnique({
         where: {
