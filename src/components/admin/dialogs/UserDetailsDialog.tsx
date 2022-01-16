@@ -12,12 +12,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { useSnackbar } from "notistack";
+import { SelectionList } from "../SelectionList";
+import { PermissionSection } from "../../../constants/interfaces";
+import { arrayEquals } from "../../../constants/util";
 
 export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
     if (user === null) return null;
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [email, setEmail] = useState(user.email);
     const [userName, setUserName] = useState(user.userName);
+    const [readRights, setReadRights] = useState(user.readRights);
+    const [writeRights, setWriteRights] = useState(user.writeRights);
     const { enqueueSnackbar } = useSnackbar();
 
     const handleCloseDeleteUser = () => {
@@ -41,7 +46,9 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
         try {
             await axios.put("/api/admin/user/" + user.id, {
                 username: userName,
-                email: email
+                email: email,
+                writeRights: writeRights,
+                readRights: readRights
             });
             onClose();
             onChange();
@@ -52,7 +59,7 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
         }
     };
 
-    const hasChanges = email !== user.email || userName !== user.userName;
+    const hasChanges = email !== user.email || userName !== user.userName || !arrayEquals(user.writeRights, writeRights) || !arrayEquals(user.readRights, readRights);
 
     return (
         <>
@@ -80,6 +87,40 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
                             label={"E-Mail"}
                             onChange={(event) => setEmail(event.target.value)}
                         />
+                        <Stack direction={"row"} spacing={1} maxHeight={300} overflow={"auto"}>
+                            <SelectionList
+                                options={Object.values(PermissionSection).filter(x => x !== "none").map(permission => {
+                                    return {
+                                        value: permission,
+                                        primaryLabel: permission.replace(/([A-Z])/g, ' $1')
+                                    };
+                                })}
+                                selection={readRights}
+                                onChange={(newValue) => setReadRights(newValue)}
+                                header={"Read Rights"}
+                                style={{
+                                    flexGrow: 1,
+                                    overflow: "visible",
+                                    height: "fit-content"
+                                }}
+                            />
+                            <SelectionList
+                                options={Object.values(PermissionSection).filter(x => x !== "none").map(permission => {
+                                    return {
+                                        value: permission,
+                                        primaryLabel: permission.replace(/([A-Z])/g, ' $1')
+                                    };
+                                })}
+                                selection={writeRights}
+                                onChange={(newValue) => setWriteRights(newValue)}
+                                header={"Write Rights"}
+                                style={{
+                                    flexGrow: 1,
+                                    overflow: "visible",
+                                    height: "fit-content"
+                                }}
+                            />
+                        </Stack>
                         <Stack direction={"row"}>
                             <Button
                                 color={"success"}
