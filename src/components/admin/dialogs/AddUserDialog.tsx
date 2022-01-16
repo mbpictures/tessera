@@ -30,7 +30,7 @@ export const AddUserDialog = ({open, onClose, onAddUser}) => {
                 onClose();
                 onAddUser();
             } catch (e) {
-                enqueueSnackbar("Error occured", {variant: "error"})
+                enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"})
             }
         }
     });
