@@ -48,7 +48,7 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
             onClose();
             onChange();
         } catch (e) {
-            enqueueSnackbar("Error occurred!", {variant: "error"});
+            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"});
         }
     };
 
@@ -58,7 +58,7 @@ export const EditCategoryDialog = ({category, onClose, onChange}) => {
             onClose();
             onChange();
         } catch (e) {
-            enqueueSnackbar("Error occurred!", {variant: "error"});
+            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"});
         }
     };
 

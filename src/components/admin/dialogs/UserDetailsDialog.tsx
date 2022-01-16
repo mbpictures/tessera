@@ -31,7 +31,7 @@ export const UserDetailsDialog = ({user, onClose, onDelete, onChange}) => {
             onClose();
             onDelete();
         } catch (e) {
-            enqueueSnackbar("Error occurred!", {variant: "error"});
+            enqueueSnackbar("Error: " + (e.reponse.data ?? e.message), {variant: "error"});
         }
     };
 

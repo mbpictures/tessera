@@ -47,7 +47,7 @@ export const AddCategoryDialog = ({open, onClose, onAddCategory}) => {
                 onClose();
                 onAddCategory();
             } catch (e) {
-                enqueueSnackbar("Error occurred!");
+                enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"});
             }
         }
     });
