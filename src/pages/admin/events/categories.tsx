@@ -12,12 +12,12 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import {getAdminServerSideProps} from "../../../constants/serverUtil";
+import {getAdminServerSideProps, PermissionSection, PermissionType} from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import EditIcon from '@mui/icons-material/Edit';
 import {SEAT_COLORS} from "../../../constants/Constants";
 import {useState} from "react";
-import { EditCategoryDialog } from "../../../components/admin/dialogs/EditCategoryDialog";
+import {EditCategoryDialog} from "../../../components/admin/dialogs/EditCategoryDialog";
 import {useRouter} from "next/router";
 import AddIcon from "@mui/icons-material/Add";
 import {AddCategoryDialog} from "../../../components/admin/dialogs/AddCategoryDialog";
@@ -27,7 +27,7 @@ const ColorPreview = ({color}: {color: string}) => {
     return <Box width={30} height={30} bgcolor={color} />
 }
 
-export default function events({categories}) {
+export default function events({categories, permissionDenied}) {
     const {data: session} = useSession();
     const router = useRouter();
     const [category, setCategory] = useState(null);
@@ -40,7 +40,7 @@ export default function events({categories}) {
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout permissionDenied={permissionDenied}>
             <EditCategoryDialog category={category} onClose={() => setCategory(null)} onChange={refreshProps} />
             <AddCategoryDialog open={addCategoryOpen} onClose={() => setAddCategoryOpen(null)} onAddCategory={refreshProps} />
             <Box sx={{ pb: 5 }}>
@@ -53,7 +53,7 @@ export default function events({categories}) {
                 </Box>
                 <Box>
                     {
-                        categories.length === 0 ? (
+                        (categories?.length ?? 0) === 0 ? (
                             <Typography variant="body1">No categories</Typography>
                         ) : (
                             <Table>
@@ -100,5 +100,8 @@ export async function getServerSideProps(context) {
                 categories
             }
         }
+    }, {
+        permission: PermissionSection.EventCategories,
+        permissionType: PermissionType.Read
     });
 }

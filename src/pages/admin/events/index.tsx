@@ -1,7 +1,7 @@
 import {useSession} from "next-auth/react";
 import {AdminLayout} from "../../../components/admin/layout";
 import {Box, Button, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
-import {getAdminServerSideProps} from "../../../constants/serverUtil";
+import {getAdminServerSideProps, PermissionSection, PermissionType} from "../../../constants/serverUtil";
 import EditIcon from "@mui/icons-material/Edit";
 import prisma from "../../../lib/prisma";
 import CheckIcon from "@mui/icons-material/Check";
@@ -12,7 +12,7 @@ import {useState} from "react";
 import {useRouter} from "next/router";
 import {EditEventDialog} from "../../../components/admin/dialogs/EditEventDialog";
 
-export default function events({events, seatmaps, categories}) {
+export default function events({events, seatmaps, categories, permissionDenied}) {
     const {data: session} = useSession();
     const [addEventOpen, setAddEventOpen] = useState(false);
     const [event, setEvent] = useState(null);
@@ -25,7 +25,7 @@ export default function events({events, seatmaps, categories}) {
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout permissionDenied={permissionDenied}>
             <AddEventDialog open={addEventOpen} onClose={() => setAddEventOpen(false)} onChange={refreshProps} />
             <EditEventDialog event={event} onClose={() => setEvent(null)} seatmaps={seatmaps} onChange={refreshProps} categories={categories} />
             <Box sx={{ pb: 5 }}>
@@ -37,7 +37,7 @@ export default function events({events, seatmaps, categories}) {
             </Box>
             <Box>
                 {
-                    events.length === 0 ? (
+                    (events?.length ?? 0) === 0 ? (
                         <Typography variant="body1">No events available yet</Typography>
                     ) : (
                         <Table>
@@ -105,5 +105,8 @@ export async function getServerSideProps(context) {
                 categories
             }
         }
+    }, {
+        permission: PermissionSection.EventManagement,
+        permissionType: PermissionType.Read
     });
 }

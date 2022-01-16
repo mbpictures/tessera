@@ -1,13 +1,7 @@
 import {useSession} from "next-auth/react";
 import {AdminLayout} from "../../components/admin/layout";
-import {
-    Box, IconButton, Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow, Typography
-} from "@mui/material";
-import {getAdminServerSideProps} from "../../constants/serverUtil";
+import {Box, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {getAdminServerSideProps, PermissionSection, PermissionType} from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import InfoIcon from '@mui/icons-material/Info';
 import {useState} from "react";
@@ -16,7 +10,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {OrderDetailsDialog} from "../../components/admin/dialogs/OrderDetailsDialog";
 
-export default function orders({orders}) {
+export default function orders({orders, permissionDenied}) {
     const {data: session} = useSession();
     const [order, setOrder] = useState(null);
 
@@ -35,14 +29,14 @@ export default function orders({orders}) {
     }
 
     return (
-        <AdminLayout>
+        <AdminLayout permissionDenied={permissionDenied}>
             <OrderDetailsDialog order={order} onClose={handleCloseDetails} hasPayed={hasPayed} hasPayedIcon={hasPayedIcon} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
             </Box>
             <Box>
                 {
-                    orders.length === 0 ? (
+                    (orders?.length ?? 0) === 0 ? (
                         <Typography variant="body1">No orders available yet</Typography>
                     ) : (
                         <Table>
@@ -95,5 +89,8 @@ export async function getServerSideProps(context) {
                 orders
             }
         }
+    }, {
+        permission: PermissionSection.Orders,
+        permissionType: PermissionType.Read
     });
 }

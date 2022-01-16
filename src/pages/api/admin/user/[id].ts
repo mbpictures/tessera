@@ -1,13 +1,16 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {hashPassword, serverAuthenticate} from "../../../../constants/serverUtil";
+import {hashPassword, PermissionSection, PermissionType, serverAuthenticate} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
-import { compare } from 'bcryptjs';
+import {compare} from 'bcryptjs';
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ){
-    const user = await serverAuthenticate(req);
+    const user = await serverAuthenticate(req, {
+        permission: PermissionSection.UserManagement,
+        permissionType: req.method === "GET" ? PermissionType.Read : PermissionType.Write
+    });
     if (!user) {
         res.status(401).end("Unauthenticated");
         return;

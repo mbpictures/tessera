@@ -7,7 +7,7 @@ import {
     TableHead,
     TableRow, Typography
 } from "@mui/material";
-import {getAdminServerSideProps} from "../../constants/serverUtil";
+import {getAdminServerSideProps, PermissionSection, PermissionType} from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import {useState} from "react";
 import {UserDetailsDialog} from "../../components/admin/dialogs/UserDetailsDialog";
@@ -16,7 +16,7 @@ import {AddUserDialog} from "../../components/admin/dialogs/AddUserDialog";
 import {useRouter} from "next/router";
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function users({users}) {
+export default function users({users, permissionDenied}) {
     const router = useRouter();
     const {data: session} = useSession();
     const [user, setUser] = useState(null);
@@ -29,7 +29,7 @@ export default function users({users}) {
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout permissionDenied={permissionDenied}>
             <UserDetailsDialog user={user} onClose={() => setUser(null)} onDelete={refreshProps} onChange={refreshProps} />
             <AddUserDialog open={addUserOpen} onClose={() => setAddUserOpen(false)} onAddUser={refreshProps} />
             <Box sx={{ pb: 5 }}>
@@ -41,7 +41,7 @@ export default function users({users}) {
                     <Button onClick={() => setAddUserOpen(true)}><AddIcon /> Add User</Button>
                 </Box>
                 {
-                    users.length === 0 ? (
+                    (users?.length ?? 0) === 0 ? (
                         <Typography variant="body1">No users available yet</Typography>
                     ) : (
                         <Table>
@@ -81,5 +81,8 @@ export async function getServerSideProps(context) {
                 users
             }
         }
+    }, {
+        permission: PermissionSection.UserManagement,
+        permissionType: PermissionType.Read
     });
 }

@@ -12,7 +12,7 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import {getAdminServerSideProps} from "../../../constants/serverUtil";
+import {getAdminServerSideProps, PermissionSection, PermissionType} from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import EditIcon from '@mui/icons-material/Edit';
 import {useState} from "react";
@@ -22,7 +22,7 @@ import {SeatMapDialog} from "../../../components/admin/dialogs/SeatMapDialog";
 import {useSnackbar} from "notistack";
 import axios from "axios";
 
-export default function events({seatmaps, categories}) {
+export default function events({seatmaps, categories, permissionDenied}) {
     const {data: session} = useSession();
     const router = useRouter();
     const [seatmap, setSeatmap] = useState(null);
@@ -44,7 +44,7 @@ export default function events({seatmaps, categories}) {
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout permissionDenied={permissionDenied}>
             <SeatMapDialog seatmap={seatmap} categories={categories} onClose={() => setSeatmap(null)} onChange={refreshProps} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Seat Maps</Typography>
@@ -56,7 +56,7 @@ export default function events({seatmaps, categories}) {
                 </Box>
                 <Box>
                     {
-                        seatmaps.length === 0 ? (
+                        (seatmaps?.length ?? 0) === 0 ? (
                             <Typography variant="body1">No Seat Maps</Typography>
                         ) : (
                             <Table>
@@ -103,5 +103,8 @@ export async function getServerSideProps(context) {
                 categories
             }
         }
+    }, {
+        permission: PermissionSection.EventSeatMaps,
+        permissionType: PermissionType.Read
     });
 }

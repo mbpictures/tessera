@@ -1,9 +1,12 @@
-import {serverAuthenticate} from "../../../../constants/serverUtil";
+import {PermissionSection, PermissionType, serverAuthenticate} from "../../../../constants/serverUtil";
 import {NextApiRequest, NextApiResponse} from "next";
 import prisma from "../../../../lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const user = await serverAuthenticate(req);
+    const user = await serverAuthenticate(req, {
+        permission: PermissionSection.Orders,
+        permissionType: req.method === "GET" ? PermissionType.Read : PermissionType.Write
+    });
     if (!user) {
         res.status(401).end("Unauthorized");
         return;
