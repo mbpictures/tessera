@@ -11,9 +11,7 @@ import {
     Typography
 } from "@mui/material";
 import {
-    getAdminServerSideProps,
-    PermissionSection,
-    PermissionType
+    getAdminServerSideProps
 } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import InfoIcon from "@mui/icons-material/Info";
@@ -25,6 +23,7 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { OrderDetailsDialog } from "../../components/admin/dialogs/OrderDetailsDialog";
+import { PermissionSection, PermissionType } from "../../constants/interfaces";
 
 export default function orders({ orders, permissionDenied }) {
     const { data: session } = useSession();

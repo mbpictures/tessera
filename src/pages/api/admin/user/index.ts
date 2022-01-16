@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
     hashPassword,
-    PermissionSection,
-    PermissionType,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
+import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 
 export default async function handler(
     req: NextApiRequest,

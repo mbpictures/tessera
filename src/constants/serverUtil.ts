@@ -4,26 +4,7 @@ import bycrypt from "bcryptjs";
 import { getSession } from "next-auth/react";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../lib/prisma";
-
-export enum PermissionType {
-    Read = "Read",
-    Write = "Write"
-}
-
-export enum PermissionSection {
-    None = "none",
-    UserManagement = "UserManagement",
-    EventManagement = "EventManagement",
-    EventCategories = "EventCategories",
-    EventSeatMaps = "EventSeatMaps",
-    Orders = "Orders",
-    OrderMarkAsPayed = "OrderMarkAsPayed"
-}
-
-export interface Permission {
-    permissionType: PermissionType;
-    permission: PermissionSection;
-}
+import { Permission, PermissionSection, PermissionType } from "./interfaces";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();

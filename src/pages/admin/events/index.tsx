@@ -12,9 +12,7 @@ import {
     Typography
 } from "@mui/material";
 import {
-    getAdminServerSideProps,
-    PermissionSection,
-    PermissionType
+    getAdminServerSideProps
 } from "../../../constants/serverUtil";
 import EditIcon from "@mui/icons-material/Edit";
 import prisma from "../../../lib/prisma";
@@ -25,6 +23,7 @@ import { AddEventDialog } from "../../../components/admin/dialogs/AddEventDialog
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { EditEventDialog } from "../../../components/admin/dialogs/EditEventDialog";
+import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
 export default function events({
     events,

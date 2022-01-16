@@ -13,9 +13,7 @@ import {
     Typography
 } from "@mui/material";
 import {
-    getAdminServerSideProps,
-    PermissionSection,
-    PermissionType
+    getAdminServerSideProps
 } from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import EditIcon from "@mui/icons-material/Edit";
@@ -26,6 +24,7 @@ import { useRouter } from "next/router";
 import AddIcon from "@mui/icons-material/Add";
 import { AddCategoryDialog } from "../../../components/admin/dialogs/AddCategoryDialog";
 import { formatPrice } from "../../../constants/util";
+import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
 const ColorPreview = ({ color }: { color: string }) => {
     return <Box width={30} height={30} bgcolor={color} />;

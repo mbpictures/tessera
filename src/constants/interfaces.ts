@@ -9,3 +9,23 @@ export interface IAddress {
     country: Country;
     region: Region;
 }
+
+export enum PermissionType {
+    Read = "Read",
+    Write = "Write"
+}
+
+export enum PermissionSection {
+    None = "none",
+    UserManagement = "UserManagement",
+    EventManagement = "EventManagement",
+    EventCategories = "EventCategories",
+    EventSeatMaps = "EventSeatMaps",
+    Orders = "Orders",
+    OrderMarkAsPayed = "OrderMarkAsPayed"
+}
+
+export interface Permission {
+    permissionType: PermissionType;
+    permission: PermissionSection;
+}

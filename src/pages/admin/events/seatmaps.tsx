@@ -13,9 +13,7 @@ import {
     Typography
 } from "@mui/material";
 import {
-    getAdminServerSideProps,
-    PermissionSection,
-    PermissionType
+    getAdminServerSideProps
 } from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,6 +23,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { SeatMapDialog } from "../../../components/admin/dialogs/SeatMapDialog";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
 export default function events({ seatmaps, categories, permissionDenied }) {
     const { data: session } = useSession();

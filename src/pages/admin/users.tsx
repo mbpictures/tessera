@@ -13,9 +13,7 @@ import {
     Typography
 } from "@mui/material";
 import {
-    getAdminServerSideProps,
-    PermissionSection,
-    PermissionType
+    getAdminServerSideProps
 } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import { useState } from "react";
@@ -24,6 +22,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { AddUserDialog } from "../../components/admin/dialogs/AddUserDialog";
 import { useRouter } from "next/router";
 import EditIcon from "@mui/icons-material/Edit";
+import { PermissionSection, PermissionType } from "../../constants/interfaces";
 
 export default function users({ users, permissionDenied }) {
     const router = useRouter();

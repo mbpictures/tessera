@@ -1,10 +1,6 @@
 import { IAddress } from "./interfaces";
 import zippo from "zippo";
-import {
-    FreeSeatOrder,
-    IOrder,
-    SeatOrder
-} from "../store/reducers/orderReducer";
+import { FreeSeatOrder, IOrder, SeatOrder } from "../store/reducers/orderReducer";
 import { PersonalInformationState } from "../store/reducers/personalInformationReducer";
 import axios from "axios";
 
