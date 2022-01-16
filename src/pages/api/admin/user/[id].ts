@@ -45,10 +45,12 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        const { username, email, password, oldPassword } = req.body;
+        const { username, email, password, oldPassword, readRights, writeRights } = req.body;
         const data: any = {
             userName: username,
-            email: email
+            email: email,
+            ...(readRights && {readRights}),
+            ...(writeRights && {writeRights})
         };
         if (password) {
             const current = await prisma.adminUser.findUnique({
