@@ -2,18 +2,12 @@ import { useState } from "react";
 import { useSnackbar } from "notistack";
 import {
     Button,
-    Checkbox,
     Dialog,
     DialogContent,
     DialogTitle,
     FormControl,
     Grid,
     InputLabel,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    ListSubheader,
     MenuItem,
     Select,
     Stack,
@@ -22,16 +16,8 @@ import {
 import axios from "axios";
 import { SeatMapDialog } from "./SeatMapDialog";
 import { ConfirmDialog } from "./ConfirmDialog";
-import { formatPrice } from "../../../constants/util";
-
-const arrayEquals = (a, b) => {
-    return (
-        Array.isArray(a) &&
-        Array.isArray(b) &&
-        a.length === b.length &&
-        a.every((val) => b.indexOf(val) !== -1)
-    );
-};
+import { arrayEquals, formatPrice } from "../../../constants/util";
+import { SelectionList } from "../SelectionList";
 
 export const EditEventDialog = ({
     event,
@@ -83,16 +69,6 @@ export const EditEventDialog = ({
                 variant: "error"
             });
         }
-    };
-
-    const clickCategoryList = (id: number) => {
-        let newCategories = selectedCategories.map((a) => a);
-        if (newCategories.includes(id)) {
-            newCategories = newCategories.filter((a) => a !== id);
-        } else {
-            newCategories.push(id);
-        }
-        setSelectedCategories(newCategories);
     };
 
     const hasChanges =
@@ -179,51 +155,25 @@ export const EditEventDialog = ({
                             </Grid>
                         )}
                         {seatType === "free" && (
-                            <List
-                                sx={{
-                                    width: "100%",
-                                    maxHeight: 230,
-                                    bgcolor: "rgba(0, 0, 0, 0.06)",
-                                    borderRadius: 1,
-                                    overflow: "auto"
-                                }}
-                                component={"div"}
-                                role={"list"}
-                            >
-                                <ListSubheader
-                                    style={{ backgroundColor: "transparent" }}
-                                >
-                                    Select Categories
-                                </ListSubheader>
-                                {categories.map((category) => {
-                                    return (
-                                        <ListItem
-                                            key={category.id}
-                                            button
-                                            onClick={() =>
-                                                clickCategoryList(category.id)
-                                            }
-                                        >
-                                            <ListItemIcon>
-                                                <Checkbox
-                                                    checked={
-                                                        selectedCategories.indexOf(
-                                                            category.id
-                                                        ) !== -1
-                                                    }
-                                                />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`Category: ${category.label}`}
-                                                secondary={formatPrice(
-                                                    category.price,
-                                                    category.currency
-                                                )}
-                                            />
-                                        </ListItem>
-                                    );
+                            <SelectionList
+                                options={categories.map(category => {
+                                    return {
+                                        secondaryLabel: formatPrice(
+                                            category.price,
+                                            category.currency
+                                        ),
+                                        primaryLabel: `Category: ${category.label}`,
+                                        value: category.id
+                                    }
                                 })}
-                            </List>
+                                selection={selectedCategories}
+                                onChange={(newValue) => setSelectedCategories(newValue)}
+                                style={{
+                                    width: "100%",
+                                    maxHeight: 230
+                                }}
+                                header={"Select Categories"}
+                            />
                         )}
                         <Stack direction={"row"}>
                             <Button
