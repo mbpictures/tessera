@@ -79,6 +79,7 @@
     "@types/react-dom": "latest",
     "@types/react-redux": "^7.1.19",
     "ngrok": "^4.2.2",
+    "prettier": "2.5.1",
     "prisma": "^3.5.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
