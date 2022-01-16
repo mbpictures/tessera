@@ -23,11 +23,11 @@
             padding: 10px 10px;
             border-radius: 3px 0 0 3px;
             background-color: lighten(#1976d2, 50);
-            transition: .3s ease;
+            transition: 0.3s ease;
 
             > * {
                 opacity: 0;
-                transition: .3s ease;
+                transition: 0.3s ease;
             }
         }
 
@@ -36,12 +36,11 @@
             padding: 10px 0;
             background-color: rgba(180, 180, 180, 1);
             border-radius: 0 3px 3px 0;
-            transition: .3s ease;
+            transition: 0.3s ease;
 
             &:hover {
                 background-color: rgba(190, 190, 190, 1);
             }
-
         }
 
         &:hover {
@@ -53,17 +52,16 @@
     }
 
     input[type="radio"]:checked ~ label {
-
         > div {
             background-color: #1976d2;
 
             > * {
                 opacity: 1;
-                color: #FFF!important;
+                color: #fff !important;
             }
         }
         > p {
-            background-color: rgba(210, 210, 210, 1)!important;
+            background-color: rgba(210, 210, 210, 1) !important;
         }
     }
 }

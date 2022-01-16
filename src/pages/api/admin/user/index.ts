@@ -1,16 +1,31 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {hashPassword, PermissionSection, PermissionType, serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    hashPassword,
+    PermissionSection,
+    PermissionType,
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const canRegister = (await prisma.adminUser.findMany()).length === 0 && req.method === "POST";
-    const user = await serverAuthenticate(req, res, {
-        permission: PermissionSection.UserManagement,
-        permissionType: req.method === "GET" ? PermissionType.Read : PermissionType.Write
-    }, false);
+    const canRegister =
+        (await prisma.adminUser.findMany()).length === 0 &&
+        req.method === "POST";
+    const user = await serverAuthenticate(
+        req,
+        res,
+        {
+            permission: PermissionSection.UserManagement,
+            permissionType:
+                req.method === "GET"
+                    ? PermissionType.Read
+                    : PermissionType.Write
+        },
+        false
+    );
     if (!user && !canRegister) {
         res.status(401).end("Not Authenticated");
         return;
@@ -23,14 +38,18 @@ export default async function handler(
     }
 
     if (req.method === "POST") {
-        const {username, email, password} = req.body;
+        const { username, email, password } = req.body;
         let additionalData = {};
         if (canRegister) {
             // first user needs to have all rights (otherwise he can't do anything)
             additionalData = {
-                readRights: Object.values(PermissionSection).filter(permission => permission !== PermissionSection.None),
-                writeRights: Object.values(PermissionSection).filter(permission => permission !== PermissionSection.None),
-            }
+                readRights: Object.values(PermissionSection).filter(
+                    (permission) => permission !== PermissionSection.None
+                ),
+                writeRights: Object.values(PermissionSection).filter(
+                    (permission) => permission !== PermissionSection.None
+                )
+            };
         }
 
         const user = await prisma.adminUser.create({

@@ -1,10 +1,10 @@
-import {IPayment} from "../../reducers/paymentReducer";
-import {Payment} from "./Payment";
-import {CreditCardPayment} from "./CreditCardPayment";
-import {StripeIBANPayment} from "./StripeIBANPayment";
-import {SofortPayment} from "./Sofort";
-import {InvoicePayment} from "./InvoicePayment";
-import {PayPalPayment} from "./PayPalPayment";
+import { IPayment } from "../../reducers/paymentReducer";
+import { Payment } from "./Payment";
+import { CreditCardPayment } from "./CreditCardPayment";
+import { StripeIBANPayment } from "./StripeIBANPayment";
+import { SofortPayment } from "./Sofort";
+import { InvoicePayment } from "./InvoicePayment";
+import { PayPalPayment } from "./PayPalPayment";
 
 export enum PaymentType {
     CreditCard = "creditcard",
@@ -21,16 +21,15 @@ export class PaymentFactory {
             return new CreditCardPayment(data);
         if (data.type === PaymentType.StripeIBAN)
             return new StripeIBANPayment(data);
-        if (data.type === PaymentType.Sofort)
-            return new SofortPayment(data);
-        if (data.type === PaymentType.Invoice)
-            return new InvoicePayment(data);
-        if (data.type === PaymentType.PayPal)
-            return new PayPalPayment(data);
+        if (data.type === PaymentType.Sofort) return new SofortPayment(data);
+        if (data.type === PaymentType.Invoice) return new InvoicePayment(data);
+        if (data.type === PaymentType.PayPal) return new PayPalPayment(data);
         return null;
     }
 
     static getAllPaymentInstances(): Array<Payment> {
-        return Object.values(PaymentType).map(value => PaymentFactory.getPaymentInstance({data: null, type: value}));
+        return Object.values(PaymentType).map((value) =>
+            PaymentFactory.getPaymentInstance({ data: null, type: value })
+        );
     }
 }

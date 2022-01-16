@@ -1,9 +1,9 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../store";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface EventSelectionState {
     selectedEvent: number;
-};
+}
 
 const initialState: EventSelectionState = {
     selectedEvent: -1
@@ -19,6 +19,7 @@ export const eventSelectionSlice = createSlice({
     }
 });
 
-export const {setEvent} = eventSelectionSlice.actions;
-export const selectEventSelected = (state: RootState) => state.selectedEvent.selectedEvent;
+export const { setEvent } = eventSelectionSlice.actions;
+export const selectEventSelected = (state: RootState) =>
+    state.selectedEvent.selectedEvent;
 export default eventSelectionSlice.reducer;

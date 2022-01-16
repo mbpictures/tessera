@@ -1,8 +1,8 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "../../../../lib/prisma";
-import {getUserByApiKey} from "../../../../constants/serverUtil";
-import { compare } from 'bcryptjs';
+import { getUserByApiKey } from "../../../../constants/serverUtil";
+import { compare } from "bcryptjs";
 
 export default NextAuth({
     session: {
@@ -15,7 +15,7 @@ export default NextAuth({
             name: "email",
             id: "login",
             credentials: {
-                email: { label: "E-Mail", type: "email", },
+                email: { label: "E-Mail", type: "email" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
@@ -25,7 +25,10 @@ export default NextAuth({
                     }
                 });
 
-                const checkPassword = await compare(credentials.password, user.password);
+                const checkPassword = await compare(
+                    credentials.password,
+                    user.password
+                );
                 if (!checkPassword) return null;
 
                 return user;
@@ -35,12 +38,13 @@ export default NextAuth({
             name: "api",
             id: "apiKey",
             credentials: {
-                key: { label: "Api-Key", type: "text", },
+                key: { label: "Api-Key", type: "text" }
             },
             async authorize(credentials, req) {
-                return await getUserByApiKey(credentials.key ?? req.headers["Api-Key"]);
+                return await getUserByApiKey(
+                    credentials.key ?? req.headers["Api-Key"]
+                );
             }
         })
-    ],
-})
-
+    ]
+});

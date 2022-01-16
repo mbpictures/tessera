@@ -1,19 +1,25 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {hashPassword, PermissionSection, PermissionType, serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    hashPassword,
+    PermissionSection,
+    PermissionType,
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
-import {compare} from 'bcryptjs';
+import { compare } from "bcryptjs";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
-){
+) {
     const user = await serverAuthenticate(req, res, {
         permission: PermissionSection.UserManagement,
-        permissionType: req.method === "GET" ? PermissionType.Read : PermissionType.Write
+        permissionType:
+            req.method === "GET" ? PermissionType.Read : PermissionType.Write
     });
     if (!user) return;
 
-    const {id} = req.query;
+    const { id } = req.query;
     const adminUser = await prisma.adminUser.findUnique({
         where: {
             id: parseInt(id as string)
@@ -24,7 +30,6 @@ export default async function handler(
         res.status(404).end("Category not found");
         return;
     }
-
 
     if (req.method === "GET") {
         res.status(200).json(user);
@@ -41,10 +46,10 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        const {username, email, password, oldPassword} = req.body;
+        const { username, email, password, oldPassword } = req.body;
         const data: any = {
             userName: username,
-            email: email,
+            email: email
         };
         if (password) {
             const current = await prisma.adminUser.findUnique({
@@ -52,7 +57,7 @@ export default async function handler(
                     id: parseInt(id as string)
                 }
             });
-            if (!await compare(oldPassword, current.password)) {
+            if (!(await compare(oldPassword, current.password))) {
                 res.status(401).end("Current Password doesn't match");
                 return;
             }

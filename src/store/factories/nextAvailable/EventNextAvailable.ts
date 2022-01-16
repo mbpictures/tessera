@@ -1,5 +1,5 @@
-import {NextAvailable} from "./NextAvailable";
-import {selectEventSelected} from "../../reducers/eventSelectionReducer";
+import { NextAvailable } from "./NextAvailable";
+import { selectEventSelected } from "../../reducers/eventSelectionReducer";
 
 export class EventNextAvailable extends NextAvailable {
     isNextAvailable(): boolean {

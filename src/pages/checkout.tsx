@@ -1,13 +1,25 @@
 import { motion } from "framer-motion";
-import {Step} from "../components/Step";
-import {Typography} from "@mui/material";
-import {Box} from "@mui/system";
+import { Step } from "../components/Step";
+import { Typography } from "@mui/material";
+import { Box } from "@mui/system";
 
-export default function Checkout({direction}) {
+export default function Checkout({ direction }) {
     return (
-        <Step direction={direction} style={{width: "100%", maxHeight: "100%"}}>
-            <Box display={"flex"} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
-                <svg className="progress-icon" viewBox="0 0 50 50" style={{maxWidth: 400, maxHeight: 400}}>
+        <Step
+            direction={direction}
+            style={{ width: "100%", maxHeight: "100%" }}
+        >
+            <Box
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+            >
+                <svg
+                    className="progress-icon"
+                    viewBox="0 0 50 50"
+                    style={{ maxWidth: 400, maxHeight: 400 }}
+                >
                     <motion.path
                         fill="none"
                         strokeWidth="2"
@@ -43,8 +55,10 @@ export default function Checkout({direction}) {
                         }}
                     />
                 </svg>
-                <Typography variant="h3" align={"center"}>Checkout complete</Typography>
+                <Typography variant="h3" align={"center"}>
+                    Checkout complete
+                </Typography>
             </Box>
         </Step>
-    )
+    );
 }

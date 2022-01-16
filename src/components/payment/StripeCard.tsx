@@ -1,18 +1,26 @@
-import {Grid, TextField, Typography} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import { Grid, TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import {
     StripeTextFieldCVC,
     StripeTextFieldExpiry,
     StripeTextFieldNumber
 } from "./stripe/StripeElementWrapper";
-import {CardNumberElement, useElements, useStripe} from "@stripe/react-stripe-js";
-import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import {selectPayment, setPayment, setPaymentStatus} from "../../store/reducers/paymentReducer";
-import {CreditCardPayment} from "../../store/factories/payment/CreditCardPayment";
-import {PaymentType} from "../../store/factories/payment/PaymentFactory";
+import {
+    CardNumberElement,
+    useElements,
+    useStripe
+} from "@stripe/react-stripe-js";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+    selectPayment,
+    setPayment,
+    setPaymentStatus
+} from "../../store/reducers/paymentReducer";
+import { CreditCardPayment } from "../../store/factories/payment/CreditCardPayment";
+import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
-import {selectOrder} from "../../store/reducers/orderReducer";
-import {selectEventSelected} from "../../store/reducers/eventSelectionReducer";
+import { selectOrder } from "../../store/reducers/orderReducer";
+import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
 
 export const StripeCard = () => {
     const selector = useAppSelector(selectPayment);
@@ -37,16 +45,23 @@ export const StripeCard = () => {
     const elements = useElements();
 
     useEffect(() => {
-        if (selector.state !== "initiate" || selector.payment.type !== PaymentType.CreditCard || !creditCardPayment.isValid())
+        if (
+            selector.state !== "initiate" ||
+            selector.payment.type !== PaymentType.CreditCard ||
+            !creditCardPayment.isValid()
+        )
             return;
 
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post("api/payment_intent/stripe_credit_card", {order: selectorOrder, eventId: selectorEvent});
+            const response = await axios.post(
+                "api/payment_intent/stripe_credit_card",
+                { order: selectorOrder, eventId: selectorEvent }
+            );
 
             if (response.status === 500)
-                throw new Error("Server Error: " + response.data)
+                throw new Error("Server Error: " + response.data);
 
             const cardElement = elements!.getElement(CardNumberElement);
             const { error, paymentIntent } = await stripe!.confirmCardPayment(
@@ -54,20 +69,25 @@ export const StripeCard = () => {
                 {
                     payment_method: {
                         card: cardElement!,
-                        billing_details: { name: cardHolderName },
-                    },
+                        billing_details: { name: cardHolderName }
+                    }
                 }
             );
 
             if (error || paymentIntent.status !== "succeeded")
-                throw new Error(error.message)
+                throw new Error(error.message);
 
-            await axios.post("api/payment_intent/stripe_credit_card_confirm_temp", {order: selectorOrder, paymentResult: JSON.stringify(paymentIntent)});
+            await axios.post(
+                "api/payment_intent/stripe_credit_card_confirm_temp",
+                {
+                    order: selectorOrder,
+                    paymentResult: JSON.stringify(paymentIntent)
+                }
+            );
             dispatch(setPaymentStatus("finished"));
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-
     }, [selector]);
 
     useEffect(() => {
@@ -75,16 +95,21 @@ export const StripeCard = () => {
             cardNumberComplete: state.cardNumberComplete,
             expiredComplete: state.expiredComplete,
             cvcComplete: state.cvcComplete
-        })
+        });
         dispatch(setPayment(creditCardPayment.data));
     }, [state]);
 
-    const onElementChange = (field, errorField) => ({complete, error = { message: null }}) => {
-        setState({ ...state, [field]: complete, [errorField]: error.message });
-    };
+    const onElementChange =
+        (field, errorField) =>
+        ({ complete, error = { message: null } }) => {
+            setState({
+                ...state,
+                [field]: complete,
+                [errorField]: error.message
+            });
+        };
 
     const { cardNumberError, expiredError, cvcError } = state;
-
 
     return (
         <Grid container spacing={2}>
@@ -92,7 +117,7 @@ export const StripeCard = () => {
                 <TextField
                     label={"Card Holder Name"}
                     required
-                    onChange={event => setCardHolderName(event.target.value)}
+                    onChange={(event) => setCardHolderName(event.target.value)}
                     value={cardHolderName}
                     variant={"outlined"}
                     fullWidth
@@ -102,14 +127,20 @@ export const StripeCard = () => {
                 <StripeTextFieldNumber
                     error={Boolean(cardNumberError)}
                     labelErrorMessage={cardNumberError}
-                    onChange={onElementChange("cardNumberComplete", "cardNumberError")}
+                    onChange={onElementChange(
+                        "cardNumberComplete",
+                        "cardNumberError"
+                    )}
                 />
             </Grid>
             <Grid item xs={6} sm={6}>
                 <StripeTextFieldExpiry
                     error={Boolean(expiredError)}
                     labelErrorMessage={expiredError}
-                    onChange={onElementChange("expiredComplete", "expiredError")}
+                    onChange={onElementChange(
+                        "expiredComplete",
+                        "expiredError"
+                    )}
                 />
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -120,11 +151,9 @@ export const StripeCard = () => {
                 />
             </Grid>
         </Grid>
-    )
+    );
 };
 
 export const StripeCardHeader = () => {
-    return (
-        <Typography>Credit Card</Typography>
-    )
-}
+    return <Typography>Credit Card</Typography>;
+};

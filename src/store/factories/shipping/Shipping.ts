@@ -1,4 +1,4 @@
-import {IShipping} from "../../reducers/personalInformationReducer";
+import { IShipping } from "../../reducers/personalInformationReducer";
 
 export abstract class Shipping {
     shippingData: IShipping;

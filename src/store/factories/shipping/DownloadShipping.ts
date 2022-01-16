@@ -1,4 +1,4 @@
-import {Shipping} from "./Shipping";
+import { Shipping } from "./Shipping";
 
 export class DownloadShipping extends Shipping {
     isValid(): boolean {

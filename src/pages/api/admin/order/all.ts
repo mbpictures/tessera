@@ -1,5 +1,9 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {PermissionSection, PermissionType, serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    PermissionSection,
+    PermissionType,
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
 
 export default async function handler(
@@ -18,16 +22,20 @@ export default async function handler(
     }
 
     try {
-        const orders = await prisma.order.findMany({include: {tickets: true}});
+        const orders = await prisma.order.findMany({
+            include: { tickets: true }
+        });
         const promises = orders.map(async (order) => {
             // delete all tickets for order
-            await Promise.all(order.tickets.map(async (ticket) => {
-                await prisma.ticket.delete({
-                    where: {
-                        id: ticket.id
-                    }
+            await Promise.all(
+                order.tickets.map(async (ticket) => {
+                    await prisma.ticket.delete({
+                        where: {
+                            id: ticket.id
+                        }
+                    });
                 })
-            }));
+            );
             // delete order
             await prisma.order.delete({
                 where: {

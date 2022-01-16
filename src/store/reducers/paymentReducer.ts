@@ -1,8 +1,14 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../store";
-import {PaymentType} from "../factories/payment/PaymentFactory";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { PaymentType } from "../factories/payment/PaymentFactory";
 
-type PaymentStatus = "none" | "persist" | "initiate" | "processing" | "finished" | "failure";
+type PaymentStatus =
+    | "none"
+    | "persist"
+    | "initiate"
+    | "processing"
+    | "finished"
+    | "failure";
 
 interface PaymentState {
     payment: IPayment;
@@ -35,6 +41,6 @@ export const paymentSlice = createSlice({
     }
 });
 
-export const {setPayment, setPaymentStatus} = paymentSlice.actions;
+export const { setPayment, setPaymentStatus } = paymentSlice.actions;
 export const selectPayment = (state: RootState) => state.payment;
 export default paymentSlice.reducer;

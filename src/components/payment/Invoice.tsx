@@ -1,10 +1,13 @@
-import {Typography} from "@mui/material";
-import React, {useEffect} from "react";
-import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import {selectPayment, setPaymentStatus} from "../../store/reducers/paymentReducer";
-import {PaymentType} from "../../store/factories/payment/PaymentFactory"
+import { Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+    selectPayment,
+    setPaymentStatus
+} from "../../store/reducers/paymentReducer";
+import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
-import {IOrder, selectOrder} from "../../store/reducers/orderReducer";
+import { IOrder, selectOrder } from "../../store/reducers/orderReducer";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);
@@ -12,12 +15,15 @@ export const Invoice = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (selector.state !== "initiate" || selector.payment.type !== PaymentType.Invoice)
+        if (
+            selector.state !== "initiate" ||
+            selector.payment.type !== PaymentType.Invoice
+        )
             return;
 
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
-            await axios.post("api/payment_intent/invoice", {order: order});
+            await axios.post("api/payment_intent/invoice", { order: order });
             dispatch(setPaymentStatus("finished"));
         }
 
@@ -25,12 +31,13 @@ export const Invoice = () => {
     }, [selector]);
 
     return (
-        <Typography>You will receive an invoice containing the recipient's bank details by e-mail.</Typography>
-    )
+        <Typography>
+            You will receive an invoice containing the recipient's bank details
+            by e-mail.
+        </Typography>
+    );
 };
 
 export const InvoiceHeader = () => {
-    return (
-        <Typography>Invoice</Typography>
-    )
-}
+    return <Typography>Invoice</Typography>;
+};

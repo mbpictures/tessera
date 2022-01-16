@@ -1,30 +1,53 @@
 import React from "react";
-import {Grid} from "@mui/material";
-import {Step} from "../components/Step";
+import { Grid } from "@mui/material";
+import { Step } from "../components/Step";
 import prisma from "../lib/prisma";
-import {SeatSelectionFree} from "../components/SeatSelectionFree";
-import {SeatMap, SeatSelectionMap} from "../components/seatmap/SeatSelectionMap";
-import {SeatOrder} from "../store/reducers/orderReducer";
+import { SeatSelectionFree } from "../components/SeatSelectionFree";
+import {
+    SeatMap,
+    SeatSelectionMap
+} from "../components/seatmap/SeatSelectionMap";
+import { SeatOrder } from "../store/reducers/orderReducer";
 
-export default function SeatSelection({categories, direction, seatMap, seatType}) {
+export default function SeatSelection({
+    categories,
+    direction,
+    seatMap,
+    seatType
+}) {
     let seatSelection;
-    let containerStyles: React.CSSProperties = {alignItems: "center", justifyContent: "center"};
+    let containerStyles: React.CSSProperties = {
+        alignItems: "center",
+        justifyContent: "center"
+    };
     switch (seatType) {
         case "seatmap":
-            seatSelection = <SeatSelectionMap categories={categories} seatSelectionDefinition={seatMap} />;
+            seatSelection = (
+                <SeatSelectionMap
+                    categories={categories}
+                    seatSelectionDefinition={seatMap}
+                />
+            );
             containerStyles.width = "100%";
             break;
         case "free":
         default:
-            seatSelection = <SeatSelectionFree categories={categories} />
+            seatSelection = <SeatSelectionFree categories={categories} />;
     }
 
     return (
-        <Step direction={direction} style={{display: "flex", justifyContent: "center", flexDirection: "column", width: "100%", height: seatType === "seatmap" ? "100%" : "auto"}}>
+        <Step
+            direction={direction}
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                width: "100%",
+                height: seatType === "seatmap" ? "100%" : "auto"
+            }}
+        >
             <Grid container style={containerStyles}>
-                {
-                    seatSelection
-                }
+                {seatSelection}
             </Grid>
         </Step>
     );
@@ -54,13 +77,19 @@ export async function getServerSideProps(context) {
     let seatmap: SeatMap = null;
     if (event.seatMap?.definition) {
         const baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
-        seatmap = baseMap.map(row => row.map(seat => {
-            const isOccupied = event.orders.some(order => (JSON.parse(order.order) as SeatOrder).seats.some(value => value.id === seat.id));
-            return {
-                ...seat,
-                occupied: isOccupied
-            }
-        }));
+        seatmap = baseMap.map((row) =>
+            row.map((seat) => {
+                const isOccupied = event.orders.some((order) =>
+                    (JSON.parse(order.order) as SeatOrder).seats.some(
+                        (value) => value.id === seat.id
+                    )
+                );
+                return {
+                    ...seat,
+                    occupied: isOccupied
+                };
+            })
+        );
     }
 
     return {
@@ -69,5 +98,5 @@ export async function getServerSideProps(context) {
             seatType: event.seatType,
             seatMap: seatmap
         }
-    }
+    };
 }

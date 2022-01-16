@@ -1,6 +1,6 @@
-import {Payment} from "./Payment";
+import { Payment } from "./Payment";
 import React from "react";
-import {PayPal, PayPalHeader} from "../../../components/payment/PayPal";
+import { PayPal, PayPalHeader } from "../../../components/payment/PayPal";
 
 export class PayPalPayment extends Payment {
     getComponent(): React.ReactNode {

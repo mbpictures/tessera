@@ -1,5 +1,9 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {PermissionSection, PermissionType, serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    PermissionSection,
+    PermissionType,
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
 
 export default async function handler(

@@ -1,28 +1,35 @@
-import {Box, Button, Container, Stack, styled, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Container,
+    Stack,
+    styled,
+    Typography
+} from "@mui/material";
 import LoginForm from "../../components/admin/LoginForm";
-import {getCsrfToken, getSession, signIn} from "next-auth/react";
-import {useRouter} from "next/router";
-import {useState} from "react";
+import { getCsrfToken, getSession, signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import prisma from "../../lib/prisma";
-import {AddUserDialog} from "../../components/admin/dialogs/AddUserDialog";
-import {useSnackbar} from "notistack";
+import { AddUserDialog } from "../../components/admin/dialogs/AddUserDialog";
+import { useSnackbar } from "notistack";
 
-const RootStyle = styled('div')(({ theme }) => ({
-    [theme.breakpoints.up('md')]: {
-        display: 'flex'
+const RootStyle = styled("div")(({ theme }) => ({
+    [theme.breakpoints.up("md")]: {
+        display: "flex"
     }
 }));
 
-const ContentStyle = styled('div')(() => ({
+const ContentStyle = styled("div")(() => ({
     maxWidth: 480,
-    margin: 'auto',
-    display: 'flex',
-    minHeight: '100vh',
-    flexDirection: 'column',
-    justifyContent: 'center'
+    margin: "auto",
+    display: "flex",
+    minHeight: "100vh",
+    flexDirection: "column",
+    justifyContent: "center"
 }));
 
-export default function Login({noUser}) {
+export default function Login({ noUser }) {
     const router = useRouter();
     const [addUserOpen, setAddUserOpen] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
@@ -34,12 +41,11 @@ export default function Login({noUser}) {
                 email: email,
                 password: password
             });
-            if (result.error)
-                throw new Error("error while logging in");
+            if (result.error) throw new Error("error while logging in");
             await router.push("/admin");
         } catch (e) {
             enqueueSnackbar("Error while logging in: " + e.response.data, {
-                variant: 'error'
+                variant: "error"
             });
         }
     };
@@ -50,26 +56,40 @@ export default function Login({noUser}) {
 
     return (
         <RootStyle>
-            {
-                noUser && <AddUserDialog onAddUser={refreshProps} open={addUserOpen} onClose={() => setAddUserOpen(false)} />
-            }
+            {noUser && (
+                <AddUserDialog
+                    onAddUser={refreshProps}
+                    open={addUserOpen}
+                    onClose={() => setAddUserOpen(false)}
+                />
+            )}
             <Container maxWidth="sm">
                 <ContentStyle>
                     <Stack sx={{ mb: 5 }}>
                         <Typography variant="h4" gutterBottom>
                             Sign in to your ticket shop dashboard
                         </Typography>
-                        <Typography sx={{ color: 'text.secondary' }}>Enter your details below.</Typography>
+                        <Typography sx={{ color: "text.secondary" }}>
+                            Enter your details below.
+                        </Typography>
                     </Stack>
                     <LoginForm onSubmit={handleLogIn} />
-                    {
-                        noUser && (
-                            <Box pt={1} pb={1}>
-                                <Typography>There is no admin user registered yet! You can register your root user (this is only available one time).</Typography>
-                                <Button color={"secondary"} fullWidth onClick={() => setAddUserOpen(true)}>Register</Button>
-                            </Box>
-                        )
-                    }
+                    {noUser && (
+                        <Box pt={1} pb={1}>
+                            <Typography>
+                                There is no admin user registered yet! You can
+                                register your root user (this is only available
+                                one time).
+                            </Typography>
+                            <Button
+                                color={"secondary"}
+                                fullWidth
+                                onClick={() => setAddUserOpen(true)}
+                            >
+                                Register
+                            </Button>
+                        </Box>
+                    )}
                 </ContentStyle>
             </Container>
         </RootStyle>
@@ -77,15 +97,15 @@ export default function Login({noUser}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
+    const session = await getSession(context);
 
     if (session !== null) {
         return {
             redirect: {
-                destination: '/admin',
-                permanent: false,
-            },
-        }
+                destination: "/admin",
+                permanent: false
+            }
+        };
     }
 
     const noUser = (await prisma.adminUser.findMany()).length === 0;
@@ -93,7 +113,7 @@ export async function getServerSideProps(context) {
     const csrf = await getCsrfToken(context);
     return {
         props: {
-            ...(csrf && {csrfToken: csrf}),
+            ...(csrf && { csrfToken: csrf }),
             noUser: noUser
         }
     };

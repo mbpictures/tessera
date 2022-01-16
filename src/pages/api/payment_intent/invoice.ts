@@ -1,15 +1,15 @@
-import {NextApiRequest, NextApiResponse} from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import {IOrder} from "../../../store/reducers/orderReducer";
-import {send} from "../../../lib/send";
+import { IOrder } from "../../../store/reducers/orderReducer";
+import { send } from "../../../lib/send";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        res.status(405).end('Method Not Allowed');
+    if (req.method !== "POST") {
+        res.setHeader("Allow", "POST");
+        res.status(405).end("Method Not Allowed");
         return;
     }
 
@@ -22,15 +22,14 @@ export default async function handler(
                 id: order.orderId
             },
             data: {
-                paymentIntent: JSON.stringify({invoicePurpose: secret})
+                paymentIntent: JSON.stringify({ invoicePurpose: secret })
             }
         });
 
         await send(order.orderId);
 
         res.status(200).end();
-    }
-    catch (e) {
+    } catch (e) {
         res.status(500).end("Server error");
     }
 }

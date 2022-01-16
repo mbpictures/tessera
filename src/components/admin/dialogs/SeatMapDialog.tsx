@@ -1,26 +1,28 @@
-import {ChangeEvent, useEffect, useRef, useState} from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
-    Accordion, AccordionDetails,
+    Accordion,
+    AccordionDetails,
     AccordionSummary,
     AppBar,
     Button,
     Dialog,
     Grid,
-    IconButton, Stack,
+    IconButton,
+    Stack,
     Toolbar,
     Typography
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-import {TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
-import {SeatSelectionRowEditor} from "../SeatMapEditor/SeatSelectionRowEditor";
-import {Seat} from "../../seatmap/SeatMapSeat";
-import {SeatMap} from "../../seatmap/SeatSelectionMap";
+import CloseIcon from "@mui/icons-material/Close";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import { SeatSelectionRowEditor } from "../SeatMapEditor/SeatSelectionRowEditor";
+import { Seat } from "../../seatmap/SeatMapSeat";
+import { SeatMap } from "../../seatmap/SeatSelectionMap";
 import axios from "axios";
-import {useSnackbar} from "notistack";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Box} from "@mui/system";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { useSnackbar } from "notistack";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Box } from "@mui/system";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const isJson = (str) => {
     try {
@@ -31,11 +33,12 @@ const isJson = (str) => {
     return true;
 };
 
-export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
-
+export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
     if (!seatmap) return null;
 
-    const [seatmapDefinition, setSeatmapDefinition] = useState<SeatMap>(isJson(seatmap.definition) ? JSON.parse(seatmap.definition) : []);
+    const [seatmapDefinition, setSeatmapDefinition] = useState<SeatMap>(
+        isJson(seatmap.definition) ? JSON.parse(seatmap.definition) : []
+    );
     const [scale, setScale] = useState<number>(1);
     const container = useRef<HTMLDivElement>(null);
     const content = useRef<HTMLDivElement>(null);
@@ -63,7 +66,11 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
     }, []);
 
     const copySeatmapDefinition = (): SeatMap => {
-        return seatmapDefinition.map(row => row.map(seat => {return {...seat}}));
+        return seatmapDefinition.map((row) =>
+            row.map((seat) => {
+                return { ...seat };
+            })
+        );
     };
 
     const handleAddSeat = (rowIndex: number, seat: Seat, index: number) => {
@@ -75,19 +82,29 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
     const handleDeleteSeat = (seat: Seat, isSelected: boolean) => {
         if (!isSelected) return;
         let newSeatmapDefinition = copySeatmapDefinition();
-        const rowIndex = newSeatmapDefinition.findIndex(row => row.some(filterSeat => filterSeat.id === seat.id));
-        const seatIndex = newSeatmapDefinition[rowIndex].findIndex(value => value.id === seat.id);
+        const rowIndex = newSeatmapDefinition.findIndex((row) =>
+            row.some((filterSeat) => filterSeat.id === seat.id)
+        );
+        const seatIndex = newSeatmapDefinition[rowIndex].findIndex(
+            (value) => value.id === seat.id
+        );
         newSeatmapDefinition[rowIndex].splice(seatIndex, 1);
         setSeatmapDefinition(newSeatmapDefinition);
     };
 
     const handleSave = async () => {
         try {
-            await axios.put("/api/admin/seatmap/" + seatmap.id, {definition: seatmapDefinition});
-            enqueueSnackbar("Successfully saved seat map", {variant: "success"});
+            await axios.put("/api/admin/seatmap/" + seatmap.id, {
+                definition: seatmapDefinition
+            });
+            enqueueSnackbar("Successfully saved seat map", {
+                variant: "success"
+            });
             onChange();
         } catch (e) {
-            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"});
+            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {
+                variant: "error"
+            });
         }
     };
 
@@ -97,15 +114,19 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
             onChange();
             onClose();
         } catch (e) {
-            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"});
+            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {
+                variant: "error"
+            });
         }
-    }
+    };
 
     const exportJson = () => {
-        const blob = new Blob([JSON.stringify(seatmapDefinition, null, 4)], {type: 'text/plain'});
-        const tempLink = document.createElement('a');
+        const blob = new Blob([JSON.stringify(seatmapDefinition, null, 4)], {
+            type: "text/plain"
+        });
+        const tempLink = document.createElement("a");
         tempLink.href = URL.createObjectURL(blob);
-        tempLink.setAttribute('download', 'Seatmap.json');
+        tempLink.setAttribute("download", "Seatmap.json");
         tempLink.click();
     };
 
@@ -113,7 +134,7 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
         const imported = await event.target.files[0].text();
         setSeatmapDefinition(JSON.parse(imported) as SeatMap);
         uploadElement.current.value = "";
-        enqueueSnackbar("JSON imported successfully!", {variant: "success"});
+        enqueueSnackbar("JSON imported successfully!", { variant: "success" });
     };
 
     const handleAddRow = () => {
@@ -124,9 +145,13 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
 
     return (
         <Dialog open={true} fullScreen>
-            <AppBar sx={{ position: 'relative' }}>
+            <AppBar sx={{ position: "relative" }}>
                 <Toolbar>
-                    <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                    <Typography
+                        sx={{ ml: 2, flex: 1 }}
+                        variant="h6"
+                        component="div"
+                    >
                         Edit Seat Map
                     </Typography>
                     <IconButton
@@ -139,24 +164,46 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <Grid container style={{maxHeight: "100%"}} flexGrow={1}>
-                <Grid item md={12} lg={8} style={{maxWidth: "100%"}} ref={container}>
-                    <TransformWrapper centerOnInit centerZoomedOut minScale={scale}>
-                        <TransformComponent wrapperStyle={{width: "100%", height: "100%"}}>
-                            <div style={{display: "flex", flexDirection: "column"}} ref={content}>
-                                {
-                                    seatmapDefinition.map((row, index) => {
-                                        return (
-                                            <SeatSelectionRowEditor
-                                                key={`row${index}`}
-                                                row={row}
-                                                categories={categories}
-                                                onSelectSeat={handleDeleteSeat}
-                                                onAddSeat={(seat, seatIndex) => handleAddSeat(index, seat, seatIndex)}
-                                            />
-                                        );
-                                    })
-                                }
+            <Grid container style={{ maxHeight: "100%" }} flexGrow={1}>
+                <Grid
+                    item
+                    md={12}
+                    lg={8}
+                    style={{ maxWidth: "100%" }}
+                    ref={container}
+                >
+                    <TransformWrapper
+                        centerOnInit
+                        centerZoomedOut
+                        minScale={scale}
+                    >
+                        <TransformComponent
+                            wrapperStyle={{ width: "100%", height: "100%" }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column"
+                                }}
+                                ref={content}
+                            >
+                                {seatmapDefinition.map((row, index) => {
+                                    return (
+                                        <SeatSelectionRowEditor
+                                            key={`row${index}`}
+                                            row={row}
+                                            categories={categories}
+                                            onSelectSeat={handleDeleteSeat}
+                                            onAddSeat={(seat, seatIndex) =>
+                                                handleAddSeat(
+                                                    index,
+                                                    seat,
+                                                    seatIndex
+                                                )
+                                            }
+                                        />
+                                    );
+                                })}
                                 <Button onClick={handleAddRow}>Add Row</Button>
                             </div>
                         </TransformComponent>
@@ -165,24 +212,28 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
                 <Grid item md={12} lg={4}>
                     <Stack p={2}>
                         <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                            >
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography>Import/Export</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Stack>
-                                    <Button onClick={exportJson}><FileDownloadIcon /> Export to JSON</Button>
+                                    <Button onClick={exportJson}>
+                                        <FileDownloadIcon /> Export to JSON
+                                    </Button>
                                     <input
                                         accept="application/json"
                                         id="upload-json"
                                         type="file"
-                                        style={{ display: 'none' }}
+                                        style={{ display: "none" }}
                                         onChange={importJson}
                                         ref={uploadElement}
                                     />
                                     <label htmlFor="upload-json">
-                                        <Button color="secondary" component="span" fullWidth>
+                                        <Button
+                                            color="secondary"
+                                            component="span"
+                                            fullWidth
+                                        >
                                             <FileUploadIcon /> Upload JSON
                                         </Button>
                                     </label>
@@ -190,31 +241,44 @@ export const SeatMapDialog = ({seatmap, onClose, categories, onChange}) => {
                             </AccordionDetails>
                         </Accordion>
                         <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                            >
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography>Categories</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Stack>
-                                    {
-                                        categories.map(category => {
-                                            return (
-                                                <Stack direction={"row"} key={category.id}>
-                                                    <Box height={20} width={20} bgcolor={category.color} />
-                                                    <Typography>{category.label}</Typography>
-                                                </Stack>
-                                            )
-                                        })
-                                    }
+                                    {categories.map((category) => {
+                                        return (
+                                            <Stack
+                                                direction={"row"}
+                                                key={category.id}
+                                            >
+                                                <Box
+                                                    height={20}
+                                                    width={20}
+                                                    bgcolor={category.color}
+                                                />
+                                                <Typography>
+                                                    {category.label}
+                                                </Typography>
+                                            </Stack>
+                                        );
+                                    })}
                                 </Stack>
                             </AccordionDetails>
                         </Accordion>
-                        <Button fullWidth onClick={handleSave}>Save Seat Map</Button>
-                        <Button fullWidth onClick={handleDelete} color={"error"}>Delete Seat Map</Button>
+                        <Button fullWidth onClick={handleSave}>
+                            Save Seat Map
+                        </Button>
+                        <Button
+                            fullWidth
+                            onClick={handleDelete}
+                            color={"error"}
+                        >
+                            Delete Seat Map
+                        </Button>
                     </Stack>
                 </Grid>
             </Grid>
         </Dialog>
-    )
+    );
 };

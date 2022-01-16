@@ -1,4 +1,4 @@
-import {Country, Region} from "country-region-data";
+import { Country, Region } from "country-region-data";
 
 export interface IAddress {
     firstName: string;

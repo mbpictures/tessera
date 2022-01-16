@@ -1,5 +1,5 @@
-import {signOut, useSession} from "next-auth/react";
-import {AdminLayout} from "../../../components/admin/layout";
+import { signOut, useSession } from "next-auth/react";
+import { AdminLayout } from "../../../components/admin/layout";
 import {
     Accordion,
     AccordionDetails,
@@ -16,22 +16,22 @@ import {
     Typography,
     useMediaQuery
 } from "@mui/material";
-import {getAdminServerSideProps} from "../../../constants/serverUtil";
+import { getAdminServerSideProps } from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {useEffect, useState} from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {useRouter} from "next/router";
-import {ChangePasswordDialog} from "../../../components/admin/dialogs/ChangePasswordDialog";
-import DeleteIcon from '@mui/icons-material/Delete';
-import {Box, useTheme} from "@mui/system";
-import {AddApiKeyDialog} from "../../../components/admin/dialogs/AddApiKeyDialog";
+import { useRouter } from "next/router";
+import { ChangePasswordDialog } from "../../../components/admin/dialogs/ChangePasswordDialog";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, useTheme } from "@mui/system";
+import { AddApiKeyDialog } from "../../../components/admin/dialogs/AddApiKeyDialog";
 import AddIcon from "@mui/icons-material/Add";
-import {ConfirmDialog} from "../../../components/admin/dialogs/ConfirmDialog";
-import {useSnackbar} from "notistack";
+import { ConfirmDialog } from "../../../components/admin/dialogs/ConfirmDialog";
+import { useSnackbar } from "notistack";
 
-export default function users({user}) {
-    const {data: session} = useSession();
+export default function users({ user }) {
+    const { data: session } = useSession();
 
     if (!session) return null;
     const router = useRouter();
@@ -50,14 +50,18 @@ export default function users({user}) {
 
     const deleteApiKey = async () => {
         try {
-            await axios.delete("/api/admin/user/apiKey/" + deleteApiKeyIndex.id);
+            await axios.delete(
+                "/api/admin/user/apiKey/" + deleteApiKeyIndex.id
+            );
             setDeleteApiKeyIndex(null);
             await refreshProps();
         } catch (e) {
             setDeleteApiKeyIndex(null);
-            enqueueSnackbar("Error while deleting api key!", {variant: "error"});
+            enqueueSnackbar("Error while deleting api key!", {
+                variant: "error"
+            });
         }
-    }
+    };
 
     const refreshProps = async () => {
         await router.replace(router.asPath);
@@ -65,20 +69,36 @@ export default function users({user}) {
 
     const onSave = async () => {
         try {
-            await axios.put("/api/admin/user/" + user.id, {username: username, email: email});
+            await axios.put("/api/admin/user/" + user.id, {
+                username: username,
+                email: email
+            });
             await refreshProps();
         } catch (e) {
-            enqueueSnackbar("Error while saving!", {variant: "error"});
+            enqueueSnackbar("Error while saving!", { variant: "error" });
         }
-    }
+    };
 
     const hasChange = username !== user?.userName || email !== user?.email;
 
     return (
         <AdminLayout>
-            <ChangePasswordDialog open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)} user={user} />
-            <AddApiKeyDialog open={addApiKeyOpen} onClose={() => setAddApiKeyOpen(false)} onKeyGenerated={refreshProps} />
-            <ConfirmDialog text={`Delete API <b>${deleteApiKeyIndex?.name}</b>`} open={deleteApiKeyIndex !== null} onConfirm={deleteApiKey} onClose={() => setDeleteApiKeyIndex(null)} />
+            <ChangePasswordDialog
+                open={changePasswordOpen}
+                onClose={() => setChangePasswordOpen(false)}
+                user={user}
+            />
+            <AddApiKeyDialog
+                open={addApiKeyOpen}
+                onClose={() => setAddApiKeyOpen(false)}
+                onKeyGenerated={refreshProps}
+            />
+            <ConfirmDialog
+                text={`Delete API <b>${deleteApiKeyIndex?.name}</b>`}
+                open={deleteApiKeyIndex !== null}
+                onConfirm={deleteApiKey}
+                onClose={() => setDeleteApiKeyIndex(null)}
+            />
             <Stack>
                 <Typography variant={"h4"}>Account Settings</Typography>
                 <Accordion>
@@ -87,10 +107,29 @@ export default function users({user}) {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Stack spacing={2}>
-                            <TextField label={"Username"} value={username} onChange={event => setUsername(event.target.value)} />
-                            <TextField label={"E-Mail"} value={email} onChange={event => setEmail(event.target.value)} />
-                            <Button onClick={onSave} disabled={!hasChange}>Save</Button>
-                            <Button color={"secondary"} onClick={() => setChangePasswordOpen(true)}>Change Password</Button>
+                            <TextField
+                                label={"Username"}
+                                value={username}
+                                onChange={(event) =>
+                                    setUsername(event.target.value)
+                                }
+                            />
+                            <TextField
+                                label={"E-Mail"}
+                                value={email}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
+                            />
+                            <Button onClick={onSave} disabled={!hasChange}>
+                                Save
+                            </Button>
+                            <Button
+                                color={"secondary"}
+                                onClick={() => setChangePasswordOpen(true)}
+                            >
+                                Change Password
+                            </Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
@@ -99,50 +138,73 @@ export default function users({user}) {
                         <Typography variant={"h6"}>Api-Keys</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Stack direction={useMediaQuery(theme.breakpoints.up("lg")) ? "row" : "column"} pb={2}>
+                        <Stack
+                            direction={
+                                useMediaQuery(theme.breakpoints.up("lg"))
+                                    ? "row"
+                                    : "column"
+                            }
+                            pb={2}
+                        >
                             <Box flexGrow={1}>
                                 <Typography>
-                                    Api Keys are used to access sensible data, e.g. using direct HTTP REST calls or the command line interface for the ticketshop.<br />
-                                    Once you generated an API Key and closed the confirmation, you can't restore it.
+                                    Api Keys are used to access sensible data,
+                                    e.g. using direct HTTP REST calls or the
+                                    command line interface for the ticketshop.
+                                    <br />
+                                    Once you generated an API Key and closed the
+                                    confirmation, you can't restore it.
                                 </Typography>
                             </Box>
-                            <Button onClick={() => setAddApiKeyOpen(true)} style={{minWidth: 50}}><AddIcon /> Add Api Key</Button>
+                            <Button
+                                onClick={() => setAddApiKeyOpen(true)}
+                                style={{ minWidth: 50 }}
+                            >
+                                <AddIcon /> Add Api Key
+                            </Button>
                         </Stack>
-                        {
-                            user?.apiKeys.length === 0 ? (
-                                <Typography>You don't have any API keys yet!</Typography>
-                            ) : (
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Delete</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {
-                                            user?.apiKeys.map((apiKey, index) => {
-                                                return (
-                                                    <TableRow key={index}>
-                                                        <TableCell>{apiKey.name}</TableCell>
-                                                        <TableCell>
-                                                            <IconButton color={"error"} onClick={() => setDeleteApiKeyIndex(apiKey)}>
-                                                                <DeleteIcon />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            })
-                                        }
-                                    </TableBody>
-                                </Table>
-                            )
-                        }
+                        {user?.apiKeys.length === 0 ? (
+                            <Typography>
+                                You don't have any API keys yet!
+                            </Typography>
+                        ) : (
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Delete</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {user?.apiKeys.map((apiKey, index) => {
+                                        return (
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    {apiKey.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        color={"error"}
+                                                        onClick={() =>
+                                                            setDeleteApiKeyIndex(
+                                                                apiKey
+                                                            )
+                                                        }
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        )}
                     </AccordionDetails>
                 </Accordion>
             </Stack>
         </AdminLayout>
-    )
+    );
 }
 
 export async function getServerSideProps(context) {
@@ -159,6 +221,6 @@ export async function getServerSideProps(context) {
             props: {
                 user
             }
-        }
+        };
     });
 }

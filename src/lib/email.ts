@@ -32,4 +32,4 @@ export const getEmailTransporter = async () => {
             pass: testAccount.pass
         }
     });
-}
+};

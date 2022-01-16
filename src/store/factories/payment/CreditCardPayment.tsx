@@ -1,8 +1,11 @@
-import {Payment} from "./Payment";
+import { Payment } from "./Payment";
 import React from "react";
-import {StripeCard, StripeCardHeader} from "../../../components/payment/StripeCard";
-import {PaymentType} from "./PaymentFactory";
-import {PayButton} from "../../../components/payment/button/PayButton";
+import {
+    StripeCard,
+    StripeCardHeader
+} from "../../../components/payment/StripeCard";
+import { PaymentType } from "./PaymentFactory";
+import { PayButton } from "../../../components/payment/button/PayButton";
 
 export interface CreditCardPaymentData {
     cardNumberComplete: boolean;
@@ -11,7 +14,6 @@ export interface CreditCardPaymentData {
 }
 
 export class CreditCardPayment extends Payment {
-
     getComponent(): React.ReactNode {
         return <StripeCard />;
     }
@@ -19,11 +21,16 @@ export class CreditCardPayment extends Payment {
     isValid(): boolean {
         const data = JSON.parse(this.data.data) as CreditCardPaymentData;
         if (data === null) return false;
-        return data.cardNumberComplete && data.cvcComplete && data.expiredComplete;
+        return (
+            data.cardNumberComplete && data.cvcComplete && data.expiredComplete
+        );
     }
 
     setData(data: CreditCardPaymentData) {
-        this.data = {type: PaymentType.CreditCard, data: JSON.stringify(data)};
+        this.data = {
+            type: PaymentType.CreditCard,
+            data: JSON.stringify(data)
+        };
     }
 
     getHeaderComponent(): React.ReactNode {

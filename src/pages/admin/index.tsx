@@ -1,10 +1,10 @@
-import {useSession} from "next-auth/react";
-import {AdminLayout} from "../../components/admin/layout";
-import {Box, Typography} from "@mui/material";
-import {getAdminServerSideProps} from "../../constants/serverUtil";
+import { useSession } from "next-auth/react";
+import { AdminLayout } from "../../components/admin/layout";
+import { Box, Typography } from "@mui/material";
+import { getAdminServerSideProps } from "../../constants/serverUtil";
 
 export default function dashboard() {
-    const {data: session} = useSession();
+    const { data: session } = useSession();
 
     if (!session) return null;
 
@@ -14,7 +14,7 @@ export default function dashboard() {
                 <Typography variant="h4">Hi, Welcome back</Typography>
             </Box>
         </AdminLayout>
-    )
+    );
 }
 
 export async function getServerSideProps(context) {
