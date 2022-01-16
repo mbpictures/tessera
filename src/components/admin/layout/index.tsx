@@ -34,7 +34,7 @@ const additionalPages = [
     }
 ]
 
-export const AdminLayout = ({permissionDenied, children}) => {
+export const AdminLayout = ({permissionDenied, children}: {permissionDenied?: boolean, children: JSX.Element | JSX.Element[]}) => {
     const [open, setOpen] = useState<boolean>(false);
     const [pageName, setPageName] = useState<string>("");
     const router = useRouter();
