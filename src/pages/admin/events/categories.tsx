@@ -51,7 +51,7 @@ export default function Categories({ categories, permissionDenied }) {
             />
             <AddCategoryDialog
                 open={addCategoryOpen}
-                onClose={() => setAddCategoryOpen(null)}
+                onClose={() => setAddCategoryOpen(false)}
                 onAddCategory={refreshProps}
             />
             <Box sx={{ pb: 5 }}>
