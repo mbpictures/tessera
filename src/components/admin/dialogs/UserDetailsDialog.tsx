@@ -7,7 +7,7 @@ import {
     Stack,
     TextField
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -17,13 +17,20 @@ import { PermissionSection } from "../../../constants/interfaces";
 import { arrayEquals } from "../../../constants/util";
 
 export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
-    if (user === null) return null;
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [email, setEmail] = useState(user.email);
-    const [userName, setUserName] = useState(user.userName);
-    const [readRights, setReadRights] = useState(user.readRights);
-    const [writeRights, setWriteRights] = useState(user.writeRights);
+    const [email, setEmail] = useState("");
+    const [userName, setUserName] = useState("");
+    const [readRights, setReadRights] = useState([]);
+    const [writeRights, setWriteRights] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        if (!user) return;
+        setEmail(user.email);
+        setUserName(user.userName);
+        setReadRights(user.readRights);
+        setWriteRights(user.writeRights);
+    }, [user]);
 
     const handleCloseDeleteUser = () => {
         setDeleteOpen(false);
@@ -59,6 +66,7 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
         }
     };
 
+    if (user === null) return null;
     const hasChanges = email !== user.email || userName !== user.userName || !arrayEquals(user.writeRights, writeRights) || !arrayEquals(user.readRights, readRights);
 
     return (
