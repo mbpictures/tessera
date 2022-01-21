@@ -25,6 +25,7 @@ import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import PaymentIcon from "@mui/icons-material/Payment";
 import { formatDistanceToNow } from "date-fns";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import Image from "next/image";
 
 function renderContent(notification) {
     const title = (
@@ -59,7 +60,7 @@ function renderContent(notification) {
         };
     }
     return {
-        avatar: <img alt={notification.title} src={notification.avatar} />,
+        avatar: <Image alt={notification.title} src={notification.avatar} />,
         title
     };
 }
