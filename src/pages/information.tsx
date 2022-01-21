@@ -62,7 +62,7 @@ export default function Information({ direction }) {
                 data: "mock"
             })
         );
-    }, [selectedShippingMethod]);
+    }, [selectedShippingMethod, dispatch]);
 
     return (
         <Step
