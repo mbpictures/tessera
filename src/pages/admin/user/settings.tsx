@@ -40,6 +40,7 @@ export default function UserSettings({ user }) {
     const [addApiKeyOpen, setAddApiKeyOpen] = useState(false);
     const [deleteApiKeyIndex, setDeleteApiKeyIndex] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
+    const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 
     useEffect(() => {
         if (user) return;
@@ -140,9 +141,7 @@ export default function UserSettings({ user }) {
                     <AccordionDetails>
                         <Stack
                             direction={
-                                useMediaQuery(theme.breakpoints.up("lg"))
-                                    ? "row"
-                                    : "column"
+                                isLgUp ? "row" : "column"
                             }
                             pb={2}
                         >
