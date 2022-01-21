@@ -33,7 +33,7 @@ export const Sofort = () => {
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-    }, [selector]);
+    }, [selector, selectorOrder]);
 
     return (
         <Typography>

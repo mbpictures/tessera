@@ -28,7 +28,7 @@ export const Invoice = () => {
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-    }, [selector, dispatch]);
+    }, [selector, dispatch, order]);
 
     return (
         <Typography>

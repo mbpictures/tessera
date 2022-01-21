@@ -88,7 +88,16 @@ export const StripeCard = () => {
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-    }, [selector]);
+    }, [
+        selector,
+        cardHolderName,
+        creditCardPayment,
+        dispatch,
+        elements,
+        selectorOrder,
+        selectorEvent,
+        stripe
+    ]);
 
     useEffect(() => {
         creditCardPayment.setData({
@@ -97,7 +106,7 @@ export const StripeCard = () => {
             cvcComplete: state.cvcComplete
         });
         dispatch(setPayment(creditCardPayment.data));
-    }, [state]);
+    }, [state, creditCardPayment, dispatch]);
 
     const onElementChange =
         (field, errorField) =>
