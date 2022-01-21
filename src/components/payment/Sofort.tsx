@@ -37,8 +37,8 @@ export const Sofort = () => {
 
     return (
         <Typography>
-            After clicking on "pay now" you will be redirected to "sofort"
-            payment.
+            After clicking on &quot;pay now&quot; you will be redirected to
+            &quot;sofort&quot; payment.
         </Typography>
     );
 };
