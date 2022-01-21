@@ -34,16 +34,17 @@ const isJson = (str) => {
 };
 
 export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
-    if (!seatmap) return null;
-
-    const [seatmapDefinition, setSeatmapDefinition] = useState<SeatMap>(
-        isJson(seatmap.definition) ? JSON.parse(seatmap.definition) : []
-    );
+    const [seatmapDefinition, setSeatmapDefinition] = useState<SeatMap>([]);
     const [scale, setScale] = useState<number>(1);
     const container = useRef<HTMLDivElement>(null);
     const content = useRef<HTMLDivElement>(null);
     const { enqueueSnackbar } = useSnackbar();
     const uploadElement = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (seatmap == null) return;
+        setSeatmapDefinition(isJson(seatmap.definition) ? JSON.parse(seatmap.definition) : [])
+    }, [seatmap]);
 
     const rescale = () => {
         if (!content.current || !container.current) return;
@@ -142,6 +143,8 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
         newSeatmap.push([]);
         setSeatmapDefinition(newSeatmap);
     };
+
+    if (!seatmap) return null;
 
     return (
         <Dialog open={true} fullScreen>
