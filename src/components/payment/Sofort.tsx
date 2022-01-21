@@ -44,5 +44,5 @@ export const Sofort = () => {
 };
 
 export const SofortHeader = () => {
-    return <Image src={logo} height={50} />;
+    return <Image src={logo} height={50} alt="Sofort Logo" />;
 };
