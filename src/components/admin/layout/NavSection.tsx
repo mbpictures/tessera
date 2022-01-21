@@ -14,10 +14,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
+const ListItemElement = React.forwardRef<HTMLDivElement, { onClick?: any }>((props, ref) => (
+    <ListItemButton ref={ref} disableGutters {...props} />
+));
+ListItemElement.displayName = "ListItemElement";
+
 const ListItemStyle = styled(
-    React.forwardRef<HTMLDivElement, { onClick?: any }>((props, ref) => (
-        <ListItemButton ref={ref} disableGutters {...props} />
-    ))
+    ListItemElement
 )(({ theme }) => ({
     ...theme.typography.body2,
     height: 48,
@@ -39,6 +42,8 @@ const ListItemStyle = styled(
         backgroundColor: theme.palette.primary.main
     }
 }));
+
+ListItemStyle.displayName = "ListItem";
 
 const ListItemIconStyle = styled(ListItemIcon)({
     width: 22,
