@@ -1,21 +1,9 @@
 import { Grid, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import {
-    StripeTextFieldCVC,
-    StripeTextFieldExpiry,
-    StripeTextFieldNumber
-} from "./stripe/StripeElementWrapper";
-import {
-    CardNumberElement,
-    useElements,
-    useStripe
-} from "@stripe/react-stripe-js";
+import { StripeTextFieldCVC, StripeTextFieldExpiry, StripeTextFieldNumber } from "./stripe/StripeElementWrapper";
+import { CardNumberElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-    selectPayment,
-    setPayment,
-    setPaymentStatus
-} from "../../store/reducers/paymentReducer";
+import { selectPayment, setPayment, setPaymentStatus } from "../../store/reducers/paymentReducer";
 import { CreditCardPayment } from "../../store/factories/payment/CreditCardPayment";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
@@ -30,8 +18,6 @@ export const StripeCard = () => {
 
     const stripe = useStripe();
 
-    const creditCardPayment = new CreditCardPayment(selector.payment);
-
     const [state, setState] = React.useState({
         cardNumberComplete: false,
         expiredComplete: false,
@@ -45,6 +31,7 @@ export const StripeCard = () => {
     const elements = useElements();
 
     useEffect(() => {
+        const creditCardPayment = new CreditCardPayment(selector.payment);
         if (
             selector.state !== "initiate" ||
             selector.payment.type !== PaymentType.CreditCard ||
@@ -91,7 +78,6 @@ export const StripeCard = () => {
     }, [
         selector,
         cardHolderName,
-        creditCardPayment,
         dispatch,
         elements,
         selectorOrder,
@@ -100,13 +86,14 @@ export const StripeCard = () => {
     ]);
 
     useEffect(() => {
+        const creditCardPayment = new CreditCardPayment(null);
         creditCardPayment.setData({
             cardNumberComplete: state.cardNumberComplete,
             expiredComplete: state.expiredComplete,
             cvcComplete: state.cvcComplete
         });
         dispatch(setPayment(creditCardPayment.data));
-    }, [state, creditCardPayment, dispatch]);
+    }, [state, dispatch]);
 
     const onElementChange =
         (field, errorField) =>
