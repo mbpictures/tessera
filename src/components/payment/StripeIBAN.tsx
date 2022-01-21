@@ -24,8 +24,6 @@ export const StripeIBAN = () => {
 
     const stripe = useStripe();
 
-    const ibanPayment = new StripeIBANPayment(selector.payment);
-
     const [state, setState] = React.useState({
         ibanComplete: false,
         ibanError: null
@@ -34,6 +32,7 @@ export const StripeIBAN = () => {
     const elements = useElements();
 
     useEffect(() => {
+        const ibanPayment = new StripeIBANPayment(selector.payment);
         if (
             selector.state !== "initiate" ||
             selector.payment.type !== PaymentType.CreditCard ||
@@ -76,14 +75,23 @@ export const StripeIBAN = () => {
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-    }, [selector]);
+    }, [
+        selector,
+        dispatch,
+        elements,
+        selectorEvent,
+        selectorInformation,
+        selectorOrder,
+        stripe
+    ]);
 
     useEffect(() => {
+        const ibanPayment = new StripeIBANPayment(null);
         ibanPayment.setData({
             ibanComplete: state.ibanComplete
         });
         dispatch(setPayment(ibanPayment.data));
-    }, [state]);
+    }, [state, dispatch]);
 
     const onElementChange =
         (field, errorField) =>
