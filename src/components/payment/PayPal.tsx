@@ -109,5 +109,5 @@ export const PayPal = () => {
 };
 
 export const PayPalHeader = () => {
-    return <Image src={logo} height={20} />;
+    return <Image src={logo} height={20} alt="PayPal Logo" />;
 };
