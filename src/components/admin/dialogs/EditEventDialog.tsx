@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import {
     Button,
@@ -26,21 +26,24 @@ export const EditEventDialog = ({
     onClose,
     onChange
 }) => {
-    if (event === null) return null;
-
-    const originalSelectedCategories = event.categories.map(
+    const originalSelectedCategories = event?.categories?.map(
         (category) => category.category.id
-    );
-
-    const [name, setName] = useState<string>(event.title);
-    const [seatType, setSeatType] = useState<string>(event.seatType);
-    const [seatMap, setSeatMap] = useState<number>(event.seatMapId);
+    ) ?? [];
+    const [name, setName] = useState<string>("");
+    const [seatType, setSeatType] = useState<string>("");
+    const [seatMap, setSeatMap] = useState<number>(0);
     const [openPreview, setOpenPreview] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [selectedCategories, setSelectedCategories] = useState<number[]>(
-        originalSelectedCategories
-    );
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        if (!event) return;
+        setSelectedCategories(originalSelectedCategories);
+        setName(event.title);
+        setSeatType(event.seatType);
+        setSeatMap(event.seatMapId);
+    }, [event]);
 
     const handleSave = async () => {
         try {
@@ -70,6 +73,8 @@ export const EditEventDialog = ({
             });
         }
     };
+
+    if (event === null) return null;
 
     const hasChanges =
         name !== event.title ||
