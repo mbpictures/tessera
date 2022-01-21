@@ -43,7 +43,7 @@ export const EditEventDialog = ({
         setName(event.title);
         setSeatType(event.seatType);
         setSeatMap(event.seatMapId);
-    }, [event]);
+    }, [event, originalSelectedCategories]);
 
     const handleSave = async () => {
         try {
