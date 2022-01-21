@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ConfirmDialog } from "./ConfirmDialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // @ts-ignore
 import { ColorPicker } from "mui-color";
 import currencyToSymbolMap from "currency-symbol-map/map";
@@ -20,23 +20,28 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 
 export const EditCategoryDialog = ({ category, onClose, onChange }) => {
-    if (category === null) return null;
-    const [currency, setCurrency] = useState(category.currency);
-    const [categoryName, setCategoryName] = useState(category.label);
-    const [price, setPrice] = useState(category.price);
+    const [currency, setCurrency] = useState("");
+    const [categoryName, setCategoryName] = useState("");
+    const [price, setPrice] = useState(0);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [normalColor, setNormalColor] = useState(category.color);
-    const [activeColor, setActiveColor] = useState(category.activeColor);
-    const [occupiedColor, setOccupiedColor] = useState(category.occupiedColor);
+    const [normalColor, setNormalColor] = useState("");
+    const [activeColor, setActiveColor] = useState("");
+    const [occupiedColor, setOccupiedColor] = useState("");
     const { enqueueSnackbar } = useSnackbar();
+    const isLgUp = useMediaQuery((theme: any) =>
+        theme.breakpoints.up("lg")
+    );
 
-    const hasChanges =
-        categoryName !== category.label ||
-        price !== category.price ||
-        normalColor !== category.color ||
-        activeColor !== category.activeColor ||
-        occupiedColor !== category.occupiedColor ||
-        currency !== category.currency;
+    useEffect(() => {
+        if (category == null) return;
+        console.log(category);
+        setCurrency(category.currency);
+        setCategoryName(category.label);
+        setPrice(category.price);
+        setNormalColor(category.color);
+        setActiveColor(category.activeColor);
+        setOccupiedColor(category.occupiedColor);
+    }, [category]);
 
     const handleSave = async () => {
         try {
@@ -69,6 +74,15 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
         }
     };
 
+    if (category === null) return null;
+
+    const hasChanges =
+        categoryName !== category.label ||
+        price !== category.price ||
+        normalColor !== category.color ||
+        activeColor !== category.activeColor ||
+        occupiedColor !== category.occupiedColor ||
+        currency !== category.currency;
     return (
         <>
             <Dialog open={true} onClose={onClose} fullWidth>
@@ -92,11 +106,7 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
                         />
                         <Stack
                             direction={
-                                useMediaQuery((theme: any) =>
-                                    theme.breakpoints.up("lg")
-                                )
-                                    ? "row"
-                                    : "column"
+                                isLgUp ? "row" : "column"
                             }
                             spacing={2}
                         >
