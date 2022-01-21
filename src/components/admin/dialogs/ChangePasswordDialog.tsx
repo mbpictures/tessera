@@ -81,8 +81,8 @@ export const ChangePasswordDialog = ({ open, user, onClose }) => {
                         </Button>
                         {!canChange && (
                             <Typography color={"error"}>
-                                Passwords need to much and have to be minimum 7
-                                characters long!
+                                Passwords need to match and have to be minimum
+                                of 7 characters long!
                             </Typography>
                         )}
                     </Stack>
