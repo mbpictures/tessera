@@ -42,11 +42,11 @@ export default function Payment({ categories, direction }) {
 
     useEffect(() => {
         if (payment.state !== "finished") return;
-        router.push("/checkout");
-    }, [payment]);
+        router.push("/checkout").catch(console.log);
+    }, [payment, router]);
 
     const openSeatSelectionPage = () => {
-        router.push("/seatselection");
+        router.push("/seatselection").catch(console.log);
     };
 
     return (
