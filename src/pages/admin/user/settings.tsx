@@ -152,7 +152,7 @@ export default function UserSettings({ user }) {
                                     command line interface for the ticketshop.
                                     <br />
                                     Once you generated an API Key and closed the
-                                    confirmation, you can't restore it.
+                                    confirmation, you can&apos;t restore it.
                                 </Typography>
                             </Box>
                             <Button
@@ -164,7 +164,7 @@ export default function UserSettings({ user }) {
                         </Stack>
                         {user?.apiKeys.length === 0 ? (
                             <Typography>
-                                You don't have any API keys yet!
+                                You don&apos;t have any API keys yet!
                             </Typography>
                         ) : (
                             <Table>
