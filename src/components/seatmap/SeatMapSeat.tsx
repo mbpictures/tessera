@@ -37,15 +37,16 @@ export const SeatMapSeat = ({
     forceNoRedux?: boolean;
 }) => {
     const [isSelected, setIsSelected] = useState(false);
+    const reduxOrder = (useAppSelector(selectOrder) as SeatOrder);
     const orders = !forceNoRedux
-        ? (useAppSelector(selectOrder) as SeatOrder)
+        ? reduxOrder
         : null;
 
     useEffect(() => {
         setIsSelected(
             orders?.seats?.some((val) => val.id === seat.id) ?? false
         );
-    }, [orders]);
+    }, [orders, seat.id]);
 
     const handleSelect = () => {
         if (seat.occupied) return;
