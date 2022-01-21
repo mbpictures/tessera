@@ -44,16 +44,16 @@ export const AdminLayout = ({
     const [open, setOpen] = useState<boolean>(false);
     const [pageName, setPageName] = useState<string>("");
     const router = useRouter();
-    const urls = sidebarConfig
-        .map((sidebar) => [
-            { title: sidebar.title, path: sidebar.path },
-            sidebar.children
-        ])
-        .concat(additionalPages)
-        .flat(2)
-        .filter((x) => x !== undefined);
 
     useEffect(() => {
+        const urls = sidebarConfig
+            .map((sidebar) => [
+                { title: sidebar.title, path: sidebar.path },
+                sidebar.children
+            ])
+            .concat(additionalPages)
+            .flat(2)
+            .filter((x) => x !== undefined);
         const title = urls.find((url) => url.path === router.pathname)?.title;
         setPageName(title);
     }, [router.pathname]);
@@ -69,7 +69,7 @@ export const AdminLayout = ({
                 {!permissionDenied ? (
                     children
                 ) : (
-                    <h4>You don't have permission to access this area!</h4>
+                    <h4>You don&apos;t have permission to access this area!</h4>
                 )}
             </MainStyle>
         </RootStyle>
