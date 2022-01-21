@@ -209,7 +209,7 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                         </TransformComponent>
                     </TransformWrapper>
                 </Grid>
-                <Grid item md={12} lg={4}>
+                <Grid item xs={12} md={12} lg={4}>
                     <Stack p={2}>
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
