@@ -32,8 +32,6 @@ import { useSnackbar } from "notistack";
 
 export default function UserSettings({ user }) {
     const { data: session } = useSession();
-
-    if (!session) return null;
     const router = useRouter();
     const theme = useTheme();
     const [username, setUsername] = useState(user?.userName);
@@ -80,6 +78,8 @@ export default function UserSettings({ user }) {
     };
 
     const hasChange = username !== user?.userName || email !== user?.email;
+
+    if (!session) return null;
 
     return (
         <AdminLayout>
