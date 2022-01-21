@@ -45,12 +45,12 @@ export const SeatSelectionFreeEntry = ({
             setTicketAmount(currentOrder.orders[index].amount);
         if (currentOrder.orders[index].categoryId != -1)
             setCategory(currentOrder.orders[index].categoryId);
-    }, []);
+    }, [currentOrder.orders, index]);
 
     useEffect(() => {
         if (!onChange) return;
         onChange(index, ticketAmount, category);
-    }, [ticketAmount, category]);
+    }, [ticketAmount, category, index, onChange]);
 
     const handleChange = (event) => {
         if (event.target.value === "") {

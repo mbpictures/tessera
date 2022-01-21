@@ -23,12 +23,13 @@ export const PostalDeliveryShippingComponent = () => {
     );
 
     useEffect(() => {
+        const postalDelivery = new PostalDeliveryShipping(null);
         postalDelivery.data = {
             differentAddress: useDifferentAddress,
             address: address
         };
         dispatch(setShipping(postalDelivery.Shipping));
-    }, [useDifferentAddress, address]);
+    }, [useDifferentAddress, address, dispatch]);
 
     return (
         <Stack spacing={1}>

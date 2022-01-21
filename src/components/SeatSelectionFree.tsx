@@ -24,7 +24,7 @@ export const SeatSelectionFree = ({ categories }) => {
             totalPrice: 0
         };
         dispatch(setOrder(newOrder));
-    }, []);
+    }, [dispatch, order.orders]);
 
     const handleChange = (index, amount: number, categoryId) => {
         const price: number =

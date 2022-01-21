@@ -1,5 +1,5 @@
 import { motion, MotionStyle } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
     selectEventSelected,
@@ -35,19 +35,22 @@ export const Step = ({
     const currentSelectedEvent = useAppSelector(selectEventSelected);
     const state = useAppSelector((state) => state);
 
-    const updateNextAvailable = () => {
-        if (
-            NextAvailableFactory.getInstance(
-                router.pathname,
-                state
-            )?.isNextAvailable() ??
-            false
-        ) {
-            dispatch(enableNextStep());
-        } else {
-            dispatch(disableNextStep());
-        }
-    };
+    const updateNextAvailable = useCallback(
+        () => {
+            if (
+                NextAvailableFactory.getInstance(
+                    router.pathname,
+                    state
+                )?.isNextAvailable() ??
+                false
+            ) {
+                dispatch(enableNextStep());
+            } else {
+                dispatch(disableNextStep());
+            }
+        },
+        [dispatch, router, state]
+    );
 
     useEffect(() => {
         updateNextAvailable();
@@ -55,7 +58,8 @@ export const Step = ({
         state.order,
         state.payment,
         state.personalInformation,
-        state.selectedEvent
+        state.selectedEvent,
+        updateNextAvailable
     ]);
 
     useEffect(() => {
@@ -86,7 +90,7 @@ export const Step = ({
         }
         if (currentSelectedEvent >= 0) return;
         router.push(STEP_URLS[0]).catch(console.log);
-    }, [router.isReady]);
+    }, [router.isReady, currentSelectedEvent, dispatch, router, updateNextAvailable]);
 
     const variants = {
         visible: { x: 0 },

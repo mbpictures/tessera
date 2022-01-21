@@ -56,7 +56,7 @@ export const SeatSelectionMap = ({
         return () => {
             document.removeEventListener("resize", rescale);
         };
-    }, []);
+    }, [dispatch, order.seats]);
 
     const createNewOrder = () => {
         return {
