@@ -32,7 +32,7 @@ export const PaymentMethods = () => {
                 data: null
             })
         );
-    }, [selectedPaymentMethod]);
+    }, [selectedPaymentMethod, dispatch]);
 
     return (
         <Elements stripe={getStripe()}>

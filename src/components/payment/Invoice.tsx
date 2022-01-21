@@ -28,11 +28,11 @@ export const Invoice = () => {
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-    }, [selector]);
+    }, [selector, dispatch]);
 
     return (
         <Typography>
-            You will receive an invoice containing the recipient's bank details
+            You will receive an invoice containing the recipient&apos;s bank details
             by e-mail.
         </Typography>
     );
