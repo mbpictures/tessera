@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "notistack";
 import {
     Button,
@@ -26,9 +26,10 @@ export const EditEventDialog = ({
     onClose,
     onChange
 }) => {
-    const originalSelectedCategories = event?.categories?.map(
-        (category) => category.category.id
-    ) ?? [];
+    const originalSelectedCategories = useMemo(
+        () => event?.categories?.map((category) => category.category.id) ?? [],
+        [event]
+    );
     const [name, setName] = useState<string>("");
     const [seatType, setSeatType] = useState<string>("");
     const [seatMap, setSeatMap] = useState<number>(0);
@@ -161,7 +162,7 @@ export const EditEventDialog = ({
                         )}
                         {seatType === "free" && (
                             <SelectionList
-                                options={categories.map(category => {
+                                options={categories.map((category) => {
                                     return {
                                         secondaryLabel: formatPrice(
                                             category.price,
@@ -169,10 +170,12 @@ export const EditEventDialog = ({
                                         ),
                                         primaryLabel: `Category: ${category.label}`,
                                         value: category.id
-                                    }
+                                    };
                                 })}
                                 selection={selectedCategories}
-                                onChange={(newValue) => setSelectedCategories(newValue)}
+                                onChange={(newValue) =>
+                                    setSelectedCategories(newValue)
+                                }
                                 style={{
                                     width: "100%",
                                     maxHeight: 230
