@@ -12,8 +12,12 @@
     "start": "next start",
     "vercel-build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
     "prisma:generate": "prisma generate",
-    "ngrok": "ngrok http 3000"
+    "ngrok": "ngrok http 3000",
+    "lint": "next lint"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "pkg": {
     "assets": [
       "src/assets/**/*",
@@ -78,7 +82,10 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/react-redux": "^7.1.19",
+    "eslint": "8.7.0",
+    "eslint-config-next": "12.0.8",
     "ngrok": "^4.2.2",
+    "pre-commit": "^1.2.2",
     "prettier": "2.5.1",
     "prisma": "^3.5.0",
     "ts-node": "^10.4.0",
