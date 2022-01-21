@@ -30,7 +30,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { ConfirmDialog } from "../../../components/admin/dialogs/ConfirmDialog";
 import { useSnackbar } from "notistack";
 
-export default function users({ user }) {
+export default function UserSettings({ user }) {
     const { data: session } = useSession();
 
     if (!session) return null;

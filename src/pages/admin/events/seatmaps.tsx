@@ -25,7 +25,7 @@ import { useSnackbar } from "notistack";
 import axios from "axios";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
-export default function events({ seatmaps, categories, permissionDenied }) {
+export default function SeatMaps({ seatmaps, categories, permissionDenied }) {
     const { data: session } = useSession();
     const router = useRouter();
     const [seatmap, setSeatmap] = useState(null);

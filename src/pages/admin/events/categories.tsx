@@ -30,7 +30,7 @@ const ColorPreview = ({ color }: { color: string }) => {
     return <Box width={30} height={30} bgcolor={color} />;
 };
 
-export default function events({ categories, permissionDenied }) {
+export default function Categories({ categories, permissionDenied }) {
     const { data: session } = useSession();
     const router = useRouter();
     const [category, setCategory] = useState(null);

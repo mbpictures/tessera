@@ -25,7 +25,7 @@ import { useRouter } from "next/router";
 import { EditEventDialog } from "../../../components/admin/dialogs/EditEventDialog";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
-export default function events({
+export default function Events({
     events,
     seatmaps,
     categories,

@@ -25,7 +25,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { OrderDetailsDialog } from "../../components/admin/dialogs/OrderDetailsDialog";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
 
-export default function orders({ orders, permissionDenied }) {
+export default function Orders({ orders, permissionDenied }) {
     const { data: session } = useSession();
     const [order, setOrder] = useState(null);
 

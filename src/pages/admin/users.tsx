@@ -24,7 +24,7 @@ import { useRouter } from "next/router";
 import EditIcon from "@mui/icons-material/Edit";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
 
-export default function users({ users, permissionDenied }) {
+export default function Users({ users, permissionDenied }) {
     const router = useRouter();
     const { data: session } = useSession();
     const [user, setUser] = useState(null);

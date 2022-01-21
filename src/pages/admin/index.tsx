@@ -3,7 +3,7 @@ import { AdminLayout } from "../../components/admin/layout";
 import { Box, Typography } from "@mui/material";
 import { getAdminServerSideProps } from "../../constants/serverUtil";
 
-export default function dashboard() {
+export default function Dashboard() {
     const { data: session } = useSession();
 
     if (!session) return null;
