@@ -117,7 +117,7 @@ function NavItem({ item, active }) {
                                         padding: 0
                                     }}
                                 >
-                                    <Link href={path}>
+                                    <Link href={path} passHref>
                                         <ListItemStyle
                                             sx={{
                                                 ...(isActiveSub && {
@@ -153,7 +153,7 @@ function NavItem({ item, active }) {
     }
 
     return (
-        <Link href={path}>
+        <Link href={path} passHref>
             <ListItemStyle
                 sx={{
                     ...(isActiveRoot && activeRootStyle)
