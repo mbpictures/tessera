@@ -44,8 +44,9 @@ export const StepperContainer = (props: Props) => {
     const handleBack = async () => {
         if (currentStep <= 0) return;
         if (props.onBack) props.onBack();
+        const query = currentStep - 1 === 0 ? "" : `?event=${selectedEvent}`;
         await router.push(
-            `${STEP_URLS[currentStep - 1]}?event=${selectedEvent}`
+            `${STEP_URLS[currentStep - 1]}${query}`
         );
     };
 
