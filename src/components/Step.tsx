@@ -89,6 +89,7 @@ export const Step = ({
             return;
         }
         if (currentSelectedEvent >= 0) return;
+        if (router.pathname === STEP_URLS[0]) return;
         router.push(STEP_URLS[0]).catch(console.log);
     }, [router.isReady, currentSelectedEvent, dispatch, router, updateNextAvailable]);
 
