@@ -8,7 +8,7 @@ import { useAppSelector } from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
 
-export interface StepperContainerProps {
+interface Props {
     onNext?: () => unknown;
     onBack?: () => unknown;
     disableOverflow?: boolean;
@@ -16,7 +16,7 @@ export interface StepperContainerProps {
     children?: React.ReactNode;
 }
 
-export const StepperContainer = (props: StepperContainerProps) => {
+export const StepperContainer = (props: Props) => {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState<number>(0);
     const nextDisabled = useAppSelector(selectNextStateAvailable);
