@@ -48,7 +48,7 @@ export const SeatSelectionFreeEntry = ({
     }, [currentOrder.orders, index]);
 
     useEffect(() => {
-        if (!onChange) return;
+        if (!onChange || ticketAmount === currentOrder.orders[index].amount) return;
         onChange(index, ticketAmount, category);
     }, [ticketAmount, category, index, onChange]);
 
