@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "vercel-build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
     "prisma:generate": "prisma generate",
     "ngrok": "ngrok http 3000",
