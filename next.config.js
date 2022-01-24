@@ -1,4 +1,5 @@
-const CopyPlugin = require("copy-webpack-plugin")
+const CopyPlugin = require("copy-webpack-plugin");
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
     future: {
@@ -16,6 +17,16 @@ module.exports = {
                     patterns: [{ from: "src/assets", to: "assets" }],
                 })
             )
+        }
+
+        if (process.env.ANALYZE) {
+            config.plugins.push(
+                new BundleAnalyzerPlugin({
+                    analyzerMode: "server",
+                    analyzerPort: isServer ? 8888 : 8889,
+                    openAnalyzer: true
+                })
+            );
         }
 
         return config

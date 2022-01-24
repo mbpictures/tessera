@@ -14,9 +14,12 @@
     "heroku-postbuild": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
     "prisma:generate": "prisma generate",
     "ngrok": "ngrok http 3000",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "set ANALYZE=true && npm run build"
   },
-  "cacheDirectories": [".next/cache"],
+  "cacheDirectories": [
+    ".next/cache"
+  ],
   "pre-commit": [
     "lint"
   ],
@@ -76,6 +79,7 @@
     "sass": "^1.42.1",
     "simplebar-react": "^2.3.6",
     "stripe": "^8.191.0",
+    "webpack-bundle-analyzer": "^4.5.0",
     "yup": "^0.32.11",
     "zippo": "^1.0.1"
   },
