@@ -9,15 +9,26 @@ import { useRouter } from "next/router";
 import { AnimatePresence } from "framer-motion";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
-import { SessionProvider } from "next-auth/react";
-import { ThemeConfig } from "../components/admin/ThemeProvider";
-import { SnackbarProvider } from "notistack";
+import { SessionProviderProps } from "next-auth/react";
+import { SnackbarProviderProps } from "notistack";
+import dynamic from "next/dynamic";
 
 export default function Global({ Component, pageProps }) {
     const router = useRouter();
     const [direction, setDirection] = useState<number>(0);
 
     if (router.pathname.startsWith("/admin")) {
+        const SessionProvider = dynamic<SessionProviderProps>(() =>
+            import("next-auth/react").then((mod) => mod.SessionProvider)
+        );
+        const ThemeConfig = dynamic(() =>
+            import("../components/admin/ThemeProvider").then(
+                (mod) => mod.ThemeConfig
+            )
+        );
+        const SnackbarProvider = dynamic<SnackbarProviderProps>(() =>
+            import("notistack").then((mod) => mod.SnackbarProvider)
+        );
         return (
             <SessionProvider
                 session={pageProps.session}
