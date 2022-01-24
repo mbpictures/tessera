@@ -41,10 +41,10 @@ export default function Login({ noUser }) {
                 email: email,
                 password: password
             });
-            if (result.error) throw new Error("error while logging in");
+            if (result.error) throw new Error("Username/Password wrong");
             await router.push("/admin");
         } catch (e) {
-            enqueueSnackbar("Error while logging in: " + e.response.data, {
+            enqueueSnackbar("Error while logging in: " + (e.response?.data ?? e.message), {
                 variant: "error"
             });
         }
