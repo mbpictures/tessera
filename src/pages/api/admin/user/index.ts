@@ -60,6 +60,7 @@ export default async function handler(
             }
         });
         res.status(200).end(user.id.toFixed(0));
+        return;
     }
 
     res.status(400).end("Method unsupported");

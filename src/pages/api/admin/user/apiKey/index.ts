@@ -30,8 +30,10 @@ export default async function handler(
                 }
             });
             res.status(200).json({ token: token });
+            return;
         } catch (e) {
             res.status(500).end("Server error");
+            return;
         }
     }
 
