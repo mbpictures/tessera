@@ -1,6 +1,6 @@
 import prisma from "../src/lib/prisma";
 
-async function main() {
+export async function main() {
     await prisma.category.createMany({
         data: [
             {

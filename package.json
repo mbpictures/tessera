@@ -15,7 +15,8 @@
     "prisma:generate": "prisma generate",
     "ngrok": "ngrok http 3000",
     "lint": "next lint",
-    "analyze": "set ANALYZE=true && npm run build"
+    "analyze": "set ANALYZE=true && npm run build",
+    "cypress:open": "cypress open"
   },
   "cacheDirectories": [
     ".next/cache"
@@ -88,6 +89,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/react-redux": "^7.1.19",
+    "cypress": "^9.3.1",
     "eslint": "8.7.0",
     "eslint-config-next": "12.0.8",
     "ngrok": "^4.2.2",
