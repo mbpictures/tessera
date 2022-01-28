@@ -57,8 +57,9 @@ export const AddApiKeyDialog = ({ open, onClose, onKeyGenerated }) => {
                                         setName(event.target.value)
                                     }
                                     label={"Name"}
+                                    id={"api-key-name"}
                                 />
-                                <Button onClick={generateApiKey}>
+                                <Button onClick={generateApiKey} id="api-key-generate">
                                     Generate
                                 </Button>
                             </>
@@ -83,6 +84,7 @@ export const AddApiKeyDialog = ({ open, onClose, onKeyGenerated }) => {
                                         alignItems={"center"}
                                         display={"flex"}
                                         justifyContent={"center"}
+                                        id="api-key-token"
                                     >
                                         {token}
                                     </Typography>
