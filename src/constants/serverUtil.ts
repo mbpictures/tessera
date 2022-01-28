@@ -86,8 +86,10 @@ export const getUserByApiKey = async (apiKey) => {
             user: true
         }
     });
-    return result.find(async (entry) => await bycrypt.compare(token, entry.key))
-        ?.user;
+    for (let entry of result) {
+        if (await bycrypt.compare(token, entry.key)) return entry.user;
+    }
+    return null;
 };
 
 export const serverAuthenticate = async (
