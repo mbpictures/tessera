@@ -31,7 +31,7 @@ export default async function handler(
     }
 
     if (req.method === "GET") {
-        const users = await prisma.user.findMany();
+        const users = await prisma.adminUser.findMany();
         res.status(200).json(users);
         return;
     }
