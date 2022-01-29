@@ -59,6 +59,7 @@ export const ChangePasswordDialog = ({ open, user, onClose }) => {
                             }
                             label={"Current Password"}
                             type={"password"}
+                            id={"change-password-current"}
                         />
                         <TextField
                             value={newPassword}
@@ -67,6 +68,7 @@ export const ChangePasswordDialog = ({ open, user, onClose }) => {
                             }
                             label={"New Password"}
                             type={"password"}
+                            id={"change-password-new"}
                         />
                         <TextField
                             value={confirmNewPassword}
@@ -75,8 +77,13 @@ export const ChangePasswordDialog = ({ open, user, onClose }) => {
                             }
                             label={"Confirm New Password"}
                             type={"password"}
+                            id={"change-password-new-confirm"}
                         />
-                        <Button onClick={changePassword} disabled={!canChange}>
+                        <Button
+                            onClick={changePassword}
+                            disabled={!canChange}
+                            id={"change-password-button"}
+                        >
                             Change Password
                         </Button>
                         {!canChange && (

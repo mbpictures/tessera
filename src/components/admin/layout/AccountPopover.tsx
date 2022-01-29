@@ -47,6 +47,7 @@ export const AccountPopover = () => {
                         }
                     })
                 }}
+                id={"account-button"}
             >
                 <Avatar alt="photoURL">
                     <AccountCircleIcon />
@@ -85,6 +86,7 @@ export const AccountPopover = () => {
                         color="inherit"
                         variant="outlined"
                         onClick={() => signOut()}
+                        id={"logout-button"}
                     >
                         Logout
                     </Button>
