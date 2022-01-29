@@ -29,4 +29,11 @@ Cypress.Commands.add("login", (email, password) => {
     cy.get("input[name=email]").type(email);
     cy.get("input[name=password]").type(password);
     cy.get("button[type=submit]").click();
-})
+});
+
+Cypress.Commands.add("logout", () => {
+    cy.visit("/admin");
+    cy.get("#account-button").click();
+    cy.get("#logout-button").click();
+    cy.url().should("eq", Cypress.config().baseUrl + "/admin/login");
+});

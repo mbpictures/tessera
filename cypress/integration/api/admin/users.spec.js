@@ -76,6 +76,32 @@ describe("Admin Users", () => {
         });
     });
 
+    it("Change Password", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.login(userFixture.email, userFixture.password);
+            cy.url().should("eq", Cypress.config().baseUrl + "/admin");
+            cy.visit("/admin/user/settings");
+            cy.get(".MuiAccordion-root").first().click();
+            cy.get("#change-password").click();
+            const newPassword = userFixture.password + "_changed";
+            cy.get("#change-password-current").type(userFixture.password);
+            cy.get("#change-password-new").clear().type(newPassword);
+            cy.get("#change-password-new-confirm").clear().type(newPassword);
+            cy.get("#change-password-button").click();
+            cy.logout();
+
+            cy.login(userFixture.email, newPassword);
+            cy.url().should("eq", Cypress.config().baseUrl + "/admin");
+            cy.visit("/admin/user/settings");
+            cy.get(".MuiAccordion-root").first().click();
+            cy.get("#change-password").click();
+            cy.get("#change-password-current").type(newPassword);
+            cy.get("#change-password-new").clear().type(userFixture.password);
+            cy.get("#change-password-new-confirm").clear().type(userFixture.password);
+            cy.get("#change-password-button").click();
+        });
+    });
+
     it("GET API", () => {
         cy.fixture("admin/user").then((userFixture) => {
             cy.task("getAdminToken").then((token) => {
