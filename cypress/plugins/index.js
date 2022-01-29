@@ -28,6 +28,13 @@ module.exports = (on, config) => {
             const {main} = require("../../prisma/seed");
             await main();
             return null
-        }
+        },
+        "setAdminToken": (adminToken) => {
+            global.adminToken = adminToken;
+            return null;
+        },
+        "getAdminToken": () => {
+            return global.adminToken;
+        },
     })
 }
