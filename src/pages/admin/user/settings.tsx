@@ -114,6 +114,7 @@ export default function UserSettings({ user }) {
                                 onChange={(event) =>
                                     setUsername(event.target.value)
                                 }
+                                id={"change-username"}
                             />
                             <TextField
                                 label={"E-Mail"}
@@ -121,13 +122,19 @@ export default function UserSettings({ user }) {
                                 onChange={(event) =>
                                     setEmail(event.target.value)
                                 }
+                                id={"change-email"}
                             />
-                            <Button onClick={onSave} disabled={!hasChange}>
+                            <Button
+                                onClick={onSave}
+                                disabled={!hasChange}
+                                id={"change-save"}
+                            >
                                 Save
                             </Button>
                             <Button
                                 color={"secondary"}
                                 onClick={() => setChangePasswordOpen(true)}
+                                id={"change-password"}
                             >
                                 Change Password
                             </Button>
