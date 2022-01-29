@@ -42,6 +42,7 @@ export default async function handler(
             }
         });
         res.status(200).end("Deleted");
+        return;
     }
 
     if (req.method === "PUT") {
