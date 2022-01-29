@@ -38,6 +38,24 @@ export default async function handler(
 
     if (req.method === "POST") {
         const { username, email, password } = req.body;
+
+        const adminUser = await prisma.adminUser.findMany({
+            where: {
+                OR: [
+                    {
+                        email: email
+                    },
+                    {
+                        userName: username
+                    }
+                ]
+            }
+        });
+        if (adminUser.length > 0) {
+            res.status(400).end("Username and email have to be unique!");
+            return;
+        }
+
         let additionalData = {};
         if (canRegister) {
             // first user needs to have all rights (otherwise he can't do anything)
