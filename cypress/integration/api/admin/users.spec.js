@@ -51,8 +51,6 @@ describe("Admin Users", () => {
             cy.get("#api-key-name").type("test");
             cy.get("#api-key-generate").click();
             cy.get("#api-key-close-button").click();
-            //cy.visit("/admin/user/settings");
-            //cy.get(".MuiAccordion-root").last().click();
             cy.get(".delete-api-key-button").should("have.length", 2);
             cy.get(".MuiAccordion-root").last().click();
             cy.get(".delete-api-key-button").last().click();
