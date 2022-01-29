@@ -165,6 +165,7 @@ export default function UserSettings({ user }) {
                             <Button
                                 onClick={() => setAddApiKeyOpen(true)}
                                 style={{ minWidth: 50 }}
+                                id={"add-api-key-button"}
                             >
                                 <AddIcon /> Add Api Key
                             </Button>
@@ -196,6 +197,7 @@ export default function UserSettings({ user }) {
                                                                 apiKey
                                                             )
                                                         }
+                                                        className={"delete-api-key-button"}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>

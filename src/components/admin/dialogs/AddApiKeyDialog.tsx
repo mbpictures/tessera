@@ -95,7 +95,12 @@ export const AddApiKeyDialog = ({ open, onClose, onKeyGenerated }) => {
                                         <ContentCopyIcon />
                                     </IconButton>
                                 </Stack>
-                                <Button onClick={handleClose}>Close</Button>
+                                <Button
+                                    onClick={handleClose}
+                                    id={"api-key-close-button"}
+                                >
+                                    Close
+                                </Button>
                             </>
                         )}
                     </Stack>
