@@ -52,7 +52,7 @@ describe("Admin Users", () => {
             cy.get("#change-username").clear().type(newUser);
             cy.get("#change-email").clear().type(newEmail);
             cy.get("#change-save").click();
-            cy.wait(500);
+            cy.logout();
             cy.task("getAdminToken").then((token) => {
                 cy.request({
                     method: "GET",
