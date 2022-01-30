@@ -36,7 +36,14 @@ describe("Admin Users", () => {
             cy.get("#api-key-generate").click();
             cy.get("#api-key-token").then((text) => {
                 cy.log("Token: " + text.text());
-                cy.task("setAdminToken", text.text())
+                cy.task("setAdminToken", text.text());
+                cy.get("#api-key-copy-to-clipboard").focus();
+                cy.get("#api-key-copy-to-clipboard").realClick();
+                cy.window().then((win) => {
+                    win.navigator.clipboard.readText().then((clipboard) => {
+                        expect(clipboard).to.equal(text.text());
+                    });
+                });
             })
         });
     });
