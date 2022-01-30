@@ -91,6 +91,7 @@ export const AddApiKeyDialog = ({ open, onClose, onKeyGenerated }) => {
                                     <IconButton
                                         color={"info"}
                                         onClick={copyToClipboard}
+                                        id={"api-key-copy-to-clipboard"}
                                     >
                                         <ContentCopyIcon />
                                     </IconButton>
