@@ -1,0 +1,45 @@
+{
+    "events": [
+        {
+            "title": "Demo Event 1",
+            "seatType": "free",
+            "categories": [0, 1]
+        },
+        {
+            "title": "Demo Event 2",
+            "seatType": "seatmap",
+            "seatMap": [
+                [
+                    {"id":1,"category":0,"amount":1,"type":"seat"},
+                    {"id":1,"category":0,"amount":1,"type":"seat"},
+                    {"id":1,"category":0,"amount":1,"type":"seat"},
+                    {"id":1,"category":0,"amount":1,"type":"seat"}
+                ],
+                [
+                    {"id":1,"category":1,"amount":1,"type":"seat"},
+                    {"id":1,"category":1,"amount":1,"type":"seat"},
+                    {"id":1,"category":1,"amount":1,"type":"seat"},
+                    {"id":1,"category":1,"amount":1,"type":"seat"}
+                ]
+            ]
+        }
+    ],
+    "categories": [
+        {
+            "label": "Economy",
+            "price": 30.99,
+            "color": "#00AA00",
+            "occupiedColor": "#FF0000",
+            "activeColor": "#00FF00",
+            "currency": "USD"
+        },
+        {
+            "label": "Premium",
+            "price": 60.99,
+            "color": "#0000AA",
+            "occupiedColor": "#FF0000",
+            "activeColor": "#0000FF",
+            "currency": "USD"
+        }
+    ]
+}
