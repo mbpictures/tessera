@@ -55,7 +55,10 @@ export default function Users({ users, permissionDenied }) {
             <Stack>
                 <Box display={"flex"}>
                     <Box flexGrow={1} />
-                    <Button onClick={() => setAddUserOpen(true)}>
+                    <Button
+                        onClick={() => setAddUserOpen(true)}
+                        id={"add-user-button"}
+                    >
                         <AddIcon /> Add User
                     </Button>
                 </Box>
@@ -81,6 +84,7 @@ export default function Users({ users, permissionDenied }) {
                                         <TableCell>
                                             <IconButton
                                                 onClick={() => setUser(user)}
+                                                className={"user-edit-button"}
                                             >
                                                 <EditIcon />
                                             </IconButton>

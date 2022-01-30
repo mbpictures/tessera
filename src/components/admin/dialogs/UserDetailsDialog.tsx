@@ -135,6 +135,7 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
                                 disabled={!hasChanges}
                                 fullWidth
                                 onClick={handleSave}
+                                id={"edit-user-save"}
                             >
                                 Save Changes
                             </Button>
@@ -142,6 +143,7 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
                                 color={"error"}
                                 fullWidth
                                 onClick={() => setDeleteOpen(true)}
+                                id={"edit-user-delete"}
                             >
                                 Delete User
                             </Button>
