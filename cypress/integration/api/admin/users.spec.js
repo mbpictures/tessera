@@ -123,6 +123,36 @@ describe("Admin Users", () => {
         });
     });
 
+    it("Create/Update/Delete User", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.login(userFixture.email, userFixture.password);
+            cy.url().should("eq", Cypress.config().baseUrl + "/admin");
+            cy.visit("/admin/users");
+            cy.get(".user-edit-button").should("have.length", 1);
+
+            cy.get("#add-user-button").click();
+            cy.get("input[name=username]").type("seconduser");
+            cy.get("input[name=email]").type("seconduser@email.com");
+            cy.get("input[name=password]").type("userpass");
+            cy.get("input[name=confirmPassword]").type("userpass");
+            cy.get("button[type=submit]").click();
+
+            cy.get(".user-edit-button").should("have.length", 2);
+            cy.get(".user-edit-button").last().click();
+            cy.get("input[type=checkbox]").click({multiple: true});
+            cy.get("#edit-user-save").click();
+
+            cy.visit("/admin/users")
+            cy.get(".user-edit-button").last().click();
+            cy.get("#edit-user-delete").click();
+
+            cy.get("#confirm-confirm-button").click();
+            cy.get("#confirm-confirm-button").should("not.exist");
+
+            cy.get(".user-edit-button").should("have.length", 1);
+        }) ;
+    });
+
     it("GET API", () => {
         cy.fixture("admin/user").then((userFixture) => {
             cy.task("getAdminToken").then((token) => {
@@ -216,7 +246,7 @@ describe("Admin Users", () => {
                     }
                 }).then(({ status, body }) => {
                     expect(status).to.equal(200);
-                    expect(body).to.equal(2);
+                    expect(body).to.equal(3);
                 });
             })
         });
@@ -227,7 +257,7 @@ describe("Admin Users", () => {
             cy.task("getAdminToken").then((token) => {
                 cy.request({
                     method: "DELETE",
-                    url: "api/admin/user/2",
+                    url: "api/admin/user/3",
                     headers: {
                         "Authorization": `Bearer ${userFixture.username}:${token}`
                     }
