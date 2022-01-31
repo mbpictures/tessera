@@ -45,12 +45,7 @@ export const SeatSelectionFreeEntry = ({
             setTicketAmount(currentOrder.orders[index].amount);
         if (currentOrder.orders[index].categoryId != -1)
             setCategory(currentOrder.orders[index].categoryId);
-    }, [currentOrder.orders, index]);
-
-    useEffect(() => {
-        if (!onChange || ticketAmount === currentOrder.orders[index].amount) return;
-        onChange(index, ticketAmount, category);
-    }, [ticketAmount, category, index, onChange]);
+    }, []);
 
     const handleChange = (event) => {
         if (event.target.value === "") {
@@ -59,19 +54,23 @@ export const SeatSelectionFreeEntry = ({
         }
         const newValue = parseInt(event.target.value);
         setTicketAmount(isNaN(newValue) ? 0 : newValue);
+        onChange(index, isNaN(newValue) ? 0 : newValue, category);
     };
 
     const onAdd = () => {
         setTicketAmount(ticketAmount + 1);
+        onChange(index, ticketAmount + 1, category);
     };
 
     const onSubtract = () => {
         if (ticketAmount <= 0) return;
         setTicketAmount(ticketAmount - 1);
+        onChange(index, ticketAmount - 1, category);
     };
 
     const handleCategoryChange = (event) => {
         setCategory(parseInt(event.target.value));
+        onChange(index, ticketAmount, parseInt(event.target.value));
     };
 
     const price =
