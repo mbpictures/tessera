@@ -100,25 +100,39 @@ export const SeatSelectionFreeEntry = ({
                         variant="outlined"
                         value={ticketAmount === -1 ? "" : ticketAmount}
                         onChange={handleChange}
+                        className={"seat-selection-free-ticket-amount"}
                     />
                     <Box width={20} />
                     <Stack>
-                        <IconButton onClick={onAdd} color={"primary"}>
+                        <IconButton
+                            onClick={onAdd}
+                            color={"primary"}
+                            className={"seat-selection-free-add"}
+                        >
                             <AddCircleIcon fontSize={"large"} />
                         </IconButton>
-                        <IconButton color="error" onClick={onSubtract}>
+                        <IconButton
+                            color="error"
+                            onClick={onSubtract}
+                            className={"seat-selection-free-remove"}
+                        >
                             <RemoveCircleIcon fontSize={"large"} />
                         </IconButton>
                     </Stack>
                 </Box>
-                <InputLabel id="category-selection">Category</InputLabel>
+                <InputLabel id={"category-selection" + index}>Category</InputLabel>
                 <Select
                     value={category}
                     onChange={handleCategoryChange}
-                    id="category-selection"
+                    id={"category-selection" + index}
+                    className={"category-selection"}
                 >
                     {categories.map((category) => (
-                        <MenuItem value={category.id} key={category.id}>
+                        <MenuItem
+                            value={category.id}
+                            key={category.id}
+                            id={"category-selection-entry" + index + "-" + category.id}
+                        >
                             {category.label} (
                             {formatPrice(category.price, category.currency)})
                         </MenuItem>
