@@ -106,6 +106,7 @@ export const StepperContainer = (props: Props) => {
                                 color="inherit"
                                 sx={{ mr: 1 }}
                                 onClick={handleBack}
+                                id={"stepper-back-button"}
                             >
                                 Back
                             </Button>
@@ -116,6 +117,7 @@ export const StepperContainer = (props: Props) => {
                             <Button
                                 onClick={handleNext}
                                 disabled={!nextDisabled}
+                                id={"stepper-next-button"}
                             >
                                 Next
                             </Button>
