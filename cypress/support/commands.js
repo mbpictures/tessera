@@ -92,7 +92,9 @@ Cypress.Commands.add("createEvents", () => {
                             title: event.title,
                             seatType: event.seatType
                         };
-                        let updateData = {};
+                        let updateData = {
+                            seatType: event.seatType
+                        };
                         if ("seatMap" in event) {
                             const seatMapDefinition = event.seatMap.map((row) => {
                                 return row.map((seat) => {
@@ -114,7 +116,7 @@ Cypress.Commands.add("createEvents", () => {
                                     }
                                 }
                             ).then(({ body }) => {
-                                updateData.seatMapId = parseInt(body);
+                                updateData["seatMapId"] = parseInt(body);
                             });
                         }
                         if ("categories" in event) {
