@@ -17,5 +17,27 @@ describe("Buy tickets", () => {
                 expect(texts).to.deep.equal(eventNames);
             });
         });
-    })
+    });
+
+    it("Selecting Event", () => {
+        cy.visit("/");
+
+        cy.get("input[name=event_selection]").first().parent().click();
+        cy.get("#stepper-next-button").click();
+        cy.url().should("include", "seatselection");
+        cy.location().should((url) => {
+            const queries = new URL(url.toString());
+            expect(parseInt(queries.searchParams.get("event"))).to.equal(1);
+        });
+
+        cy.visit("/");
+
+        cy.get("input[name=event_selection]").last().parent().click();
+        cy.get("#stepper-next-button").click();
+        cy.url().should("include", "seatselection");
+        cy.location().should((url) => {
+            const queries = new URL(url.toString());
+            expect(parseInt(queries.searchParams.get("event"))).to.equal(2);
+        });
+    });
 });
