@@ -99,7 +99,9 @@ export const PaymentOverview = ({
                             }
                             primary={
                                 <>
-                                    {item.amount}x: {category.label}
+                                    <span id={"payment-overview-category-amount-" + category.label}>
+                                        {item.amount}x: {category.label}
+                                    </span>
                                     {displayColor && (
                                         <div
                                             style={{
@@ -122,7 +124,7 @@ export const PaymentOverview = ({
                 <ListItemText
                     primary={<strong>Total:</strong>}
                     secondary={
-                        <span>
+                        <span id="payment-overview-total-price">
                             {formatPrice(
                                 Math.max(order.totalPrice, 0),
                                 categories[0].currency

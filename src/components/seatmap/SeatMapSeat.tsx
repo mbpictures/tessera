@@ -91,7 +91,7 @@ export const SeatMapSeat = ({
             disableInteractive
         >
             <motion.div
-                className={style.seat}
+                className={`${style.seat} seat-selection-seatmap-seat`}
                 style={{
                     height: 40,
                     width:
