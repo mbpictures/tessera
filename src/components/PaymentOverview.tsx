@@ -92,7 +92,11 @@ export const PaymentOverview = ({
                         key={index}
                     >
                         <ListItemText
-                            secondary={<span>{category.price} &#8364;</span>}
+                            secondary={
+                                <span>
+                                    {formatPrice(category.price, category.currency)}
+                                </span>
+                            }
                             primary={
                                 <>
                                     {item.amount}x: {category.label}
