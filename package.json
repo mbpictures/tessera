@@ -10,6 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p $PORT",
+    "start:default": "next start -p 3000",
     "vercel-build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
     "heroku-postbuild": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && prisma db seed && next build",
     "prisma:generate": "prisma generate",
