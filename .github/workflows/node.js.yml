@@ -48,7 +48,7 @@ jobs:
         node-version: '12.x'
         cache: 'npm'
 
-    - run: npm install
+    - run: npm ci
     - run: npm run cypress:build
     - run: npm run start
     - run: npm run cypress:run
