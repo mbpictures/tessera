@@ -32,6 +32,6 @@ jobs:
         NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
     - run: npm install
-    - run: npm run build
+    - run: npm run cypress:build
     - run: npm run start
     - run: npm run cypress:run
