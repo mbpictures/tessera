@@ -33,9 +33,12 @@ Cypress.Commands.add("login", (email, password) => {
 
 Cypress.Commands.add("logout", () => {
     cy.visit("/admin");
-    cy.get("#account-button").click();
-    cy.get("#logout-button").click();
-    cy.url().should("eq", Cypress.config().baseUrl + "/admin/login");
+    cy.location().then((loc) => {
+        if (loc.pathname === "/admin/login") return;
+        cy.get("#account-button").click();
+        cy.get("#logout-button").click();
+        cy.url().should("eq", Cypress.config().baseUrl + "/admin/login");
+    });
 });
 
 Cypress.Commands.add("registerInitialAdminUser", () => {
