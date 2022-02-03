@@ -120,19 +120,23 @@ export const PaymentOverview = ({
                 );
             })}
             <Divider />
-            <ListItem>
-                <ListItemText
-                    primary={<strong>Total:</strong>}
-                    secondary={
-                        <span id="payment-overview-total-price">
+            {
+                categories.length > 0 && (
+                    <ListItem>
+                        <ListItemText
+                            primary={<strong>Total:</strong>}
+                            secondary={
+                                <span id="payment-overview-total-price">
                             {formatPrice(
                                 Math.max(order.totalPrice, 0),
                                 categories[0].currency
                             )}
                         </span>
-                    }
-                />
-            </ListItem>
+                            }
+                        />
+                    </ListItem>
+                )
+            }
         </List>
     );
 };
