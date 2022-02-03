@@ -16,6 +16,7 @@
     "ngrok": "ngrok http 3000",
     "lint": "next lint",
     "analyze": "set ANALYZE=true && npm run build",
+    "cypress:build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && next build",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:cov": "npx nyc report --reporter=text-summary"
