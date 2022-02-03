@@ -26,6 +26,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+      env:
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        NEXT_PUBLIC_NEXTAUTH_PATH: ${{ secrets.NEXT_PUBLIC_NEXTAUTH_PATH }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
     - run: npm install
     - run: npm run build
     - run: npm run start
