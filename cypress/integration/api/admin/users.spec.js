@@ -29,7 +29,11 @@ describe("Admin Users", () => {
         cy.fixture("admin/user").then((userFixture) => {
             cy.login(userFixture.email, userFixture.password);
             cy.url().should("eq", Cypress.config().baseUrl + "/admin")
-            cy.visit("/admin/user/settings");
+            cy.visit("/admin/user/settings", {
+                onBeforeLoad(win) {
+                    cy.spy(win.navigator.clipboard, "writeText").as("copy");
+                }
+            });
             cy.get(".MuiAccordion-root").last().click();
             cy.get("#add-api-key-button").click();
             cy.get("#api-key-name").type("test");
@@ -38,12 +42,8 @@ describe("Admin Users", () => {
                 cy.log("Token: " + text.text());
                 cy.task("setAdminToken", text.text());
                 cy.get("#api-key-copy-to-clipboard").focus();
-                cy.get("#api-key-copy-to-clipboard").realClick();
-                cy.window().then((win) => {
-                    win.navigator.clipboard.readText().then((clipboard) => {
-                        expect(clipboard).to.equal(text.text());
-                    });
-                });
+                cy.get("#api-key-copy-to-clipboard").click();
+                cy.get("@copy").should("be.calledWithExactly", text.text());
             })
         });
     });
