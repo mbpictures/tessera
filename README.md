@@ -10,7 +10,7 @@
 
 ### 🏠 [Homepage](https://github.com/mbpictures/ticketshop#readme)
 
-### ✨ [Demo](https://nextjs-ticketshop-demo.vercel.app)
+### ✨ [Demo](https://nextjs-ticketshop-demo.herokuapp.com/)
 
 ## Quickstart
 ### Install
