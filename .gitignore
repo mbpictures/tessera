@@ -35,3 +35,4 @@ yarn-error.log*
 .vs/
 .code/
 .vscode/
+/.env
