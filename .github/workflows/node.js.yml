@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  cypress-run:
 
     runs-on: ubuntu-latest
 
@@ -41,14 +41,12 @@ jobs:
       NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketshop-ci
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+    - name: Cypress run
+      uses: cypress-io/github-action@v2
       with:
-        node-version: '12.x'
-        cache: 'npm'
-
-    - run: npm ci
-    - run: npm run cypress:build
-    - run: next start -p 3000
-    - run: npm run cypress:run
+        build: npm run cypress:build
+        start: npm run start:default
