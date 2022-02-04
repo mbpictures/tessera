@@ -10,7 +10,7 @@
   </p>
 </h1>
 
-> Open source and ready to use ticket shop with lots of customization abilities with feature rich admin dashboard. Several payment providers (stripe, paypal, sofort) are available out of the box and new ones can be added with ease.
+> Open source and ready to use ticket shop with lots of customization abilities and feature rich admin dashboard. Several payment providers (stripe, paypal, sofort) are available out of the box and new ones can be added with ease.
 
 ### 🏠 [Homepage](https://github.com/mbpictures/ticketshop#readme)
 
