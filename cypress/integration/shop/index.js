@@ -29,7 +29,7 @@ describe("Buy tickets", () => {
     });
 
     it("Events exist", () => {
-        cy.visit("/", {timeout: 8000});
+        cy.visit("/");
 
         cy.fixture("admin/events").then((events) => {
             cy.get("input[name=event_selection]").should("have.length", 2);
