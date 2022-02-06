@@ -15,6 +15,8 @@ import TabPanel from "@mui/lab/TabPanel";
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { ShippingFactory } from "../../../store/factories/shipping/ShippingFactory";
+import { useSnackbar } from "notistack";
+import axios from "axios";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -34,14 +36,24 @@ export const OrderDetailsDialog = ({
     order,
     onClose,
     hasPayedIcon,
-    hasPayed
+    hasPayed,
+    onMarkAsPayed
 }) => {
     const [detailsTab, setDetailsTab] = useState("overview");
+    const { enqueueSnackbar } = useSnackbar();
 
     if (order === null) return null;
 
-    const handleMarkAsPayed = () => {
-        // TODO
+    const handleMarkAsPayed = async () => {
+        try {
+            await axios.put("/api/admin/order/paid", { orderId: order.id });
+            enqueueSnackbar("Marked as pay", { variant: "success" });
+            onMarkAsPayed();
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {
+                variant: "error"
+            });
+        }
     };
 
     const handleDetailsTabChange = (event, newValue) => {

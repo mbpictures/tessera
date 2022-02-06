@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
-    Box,
+    Box, Grid,
     IconButton,
     Table,
     TableBody,
@@ -24,12 +24,19 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { OrderDetailsDialog } from "../../components/admin/dialogs/OrderDetailsDialog";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
+import { MarkOrderPayed } from "../../components/admin/MarkOrderPayed";
+import { useRouter } from "next/router";
 
 export default function Orders({ orders, permissionDenied }) {
     const { data: session } = useSession();
     const [order, setOrder] = useState(null);
+    const router = useRouter();
 
     if (!session) return null;
+
+    const refreshProps = async () => {
+        await router.replace(router.asPath);
+    };
 
     const hasPayed = (order) => {
         return (
@@ -59,10 +66,21 @@ export default function Orders({ orders, permissionDenied }) {
                 onClose={handleCloseDetails}
                 hasPayed={hasPayed}
                 hasPayedIcon={hasPayedIcon}
+                onMarkAsPayed={refreshProps}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
             </Box>
+            <Grid container>
+                <Grid item md={6} xs={12} display={"flex"} alignItems={"center"}>
+                    <Typography variant={"body1"}>
+                        Mark orders as payed by invoice purpose of your received bank transactions
+                    </Typography>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                    <MarkOrderPayed onMarkAsPayed={refreshProps} />
+                </Grid>
+            </Grid>
             <Box>
                 {(orders?.length ?? 0) === 0 ? (
                     <Typography variant="body1">
