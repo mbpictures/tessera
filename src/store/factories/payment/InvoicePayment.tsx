@@ -24,4 +24,8 @@ export class InvoicePayment extends Payment {
     getPaymentButton(): React.ReactNode {
         return <PayButton />;
     }
+
+    getValidPaymentResult(data?: any): Object {
+        return { payed: true };
+    }
 }

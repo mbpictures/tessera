@@ -23,4 +23,8 @@ export class SofortPayment extends Payment {
     getPaymentButton(): React.ReactNode {
         return <PayButton />;
     }
+
+    getValidPaymentResult(data?: any): Object {
+        return { status: true };
+    }
 }

@@ -41,4 +41,8 @@ export class StripeIBANPayment extends Payment {
     getPaymentButton(): React.ReactNode {
         return <PayButton />;
     }
+
+    getValidPaymentResult(data?: any): Object {
+        return { event: "charge.succeeded" };
+    }
 }

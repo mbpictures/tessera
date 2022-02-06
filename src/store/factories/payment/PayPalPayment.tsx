@@ -22,4 +22,8 @@ export class PayPalPayment extends Payment {
     getPaymentButton(): React.ReactNode {
         return <PayPal />;
     }
+
+    getValidPaymentResult(data?: any): Object {
+        return { status: "COMPLETED" };
+    }
 }
