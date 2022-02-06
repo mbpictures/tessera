@@ -8,6 +8,7 @@ import {
 } from "../store/reducers/orderReducer";
 import { calculateTotalPrice } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
+import { PaymentType } from "../store/factories/payment/PaymentFactory";
 
 export const generateInvoice = async (
     template,
@@ -22,7 +23,9 @@ export const generateInvoice = async (
                 order: true,
                 user: true,
                 event: true,
-                locale: true
+                locale: true,
+                paymentType: true,
+                paymentIntent: true
             }
         });
 
@@ -47,6 +50,11 @@ export const generateInvoice = async (
                     amount: order.amount
                 };
             });
+        }
+
+        let purpose = undefined;
+        if (orderDB.paymentType === PaymentType.Invoice) {
+            purpose = JSON.parse(orderDB.paymentIntent).invoicePurpose;
         }
 
         const date = new Date();
@@ -92,8 +100,11 @@ export const generateInvoice = async (
                 "Jon Doe",
                 "Demo Bank",
                 "IBAN: EN23 2133 2343 2343 2343"
-            ]
+            ],
+            ...(purpose && {purpose})
         });
+
+        // TODO: replace bank information by database
 
         htmlPdf
             .create(html, { format: "A4" })
