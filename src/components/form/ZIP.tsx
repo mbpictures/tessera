@@ -4,10 +4,12 @@ import zip from "zippo";
 
 export const ZIP = ({
     value,
-    onChange
+    onChange,
+    name
 }: {
     value: string;
     onChange: (newValue: string, valid: boolean) => unknown;
+    name?: string;
 }) => {
     const [error, setError] = useState<string | undefined>(undefined);
 
@@ -29,6 +31,7 @@ export const ZIP = ({
             helperText={error}
             onChange={handleChange}
             value={value}
+            name={name}
         />
     );
 };

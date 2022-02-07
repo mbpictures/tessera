@@ -57,6 +57,7 @@ export const PayButton = () => {
                 payment.state === "initiate"
             }
             startIcon={<PaymentIcon />}
+            id="pay-button"
         >
             {payment.state === "processing" ||
             payment.state === "persist" ||

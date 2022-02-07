@@ -89,6 +89,7 @@ export default function Information({ direction }) {
                             }
                             error={emailError != null}
                             helperText={emailError}
+                            name={"address-email"}
                         />
                         <AddressComponent
                             value={selector.address}

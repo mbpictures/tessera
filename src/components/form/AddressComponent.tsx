@@ -74,6 +74,7 @@ export const AddressComponent = ({
                 }
                 helperText={firstNameError}
                 error={firstNameError !== null}
+                name={"address-firstname"}
             />
             <TextField
                 label="Lastname"
@@ -83,6 +84,7 @@ export const AddressComponent = ({
                 }
                 helperText={lastNameError}
                 error={lastNameError !== null}
+                name={"address-lastname"}
             />
             <TextField
                 label="Address"
@@ -92,10 +94,15 @@ export const AddressComponent = ({
                 }
                 helperText={addressError}
                 error={addressError !== null}
+                name={"address-address"}
             />
             <Grid container rowSpacing={1}>
                 <Grid item md={4} xs={12}>
-                    <ZIP value={localZip} onChange={handleChangeZip} />
+                    <ZIP
+                        value={localZip}
+                        onChange={handleChangeZip}
+                        name={"address-zip"}
+                    />
                 </Grid>
                 <Grid item md={8} xs={12}>
                     <TextField
@@ -107,6 +114,7 @@ export const AddressComponent = ({
                         }
                         helperText={cityError}
                         error={cityError !== null}
+                        name={"address-city"}
                     />
                 </Grid>
             </Grid>
@@ -114,7 +122,11 @@ export const AddressComponent = ({
                 <Grid item md={6} xs={12}>
                     <Autocomplete
                         renderInput={(params) => (
-                            <TextField {...params} label="Country" />
+                            <TextField
+                                {...params}
+                                label="Country"
+                                name={"address-country-text"}
+                            />
                         )}
                         options={countryRegionData}
                         fullWidth
@@ -132,7 +144,11 @@ export const AddressComponent = ({
                         value.country.regions.length > 0 && (
                             <Autocomplete
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Region" />
+                                    <TextField
+                                        {...params}
+                                        label="Region"
+                                        name={"address-region-text"}
+                                    />
                                 )}
                                 options={value.country.regions}
                                 fullWidth

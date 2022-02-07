@@ -29,7 +29,11 @@ export const CheckboxAccordion = ({
     };
 
     return (
-        <Accordion onChange={handleChange} expanded={name === selectedItem}>
+        <Accordion
+            onChange={handleChange}
+            expanded={name === selectedItem}
+            id={"checkbox-" + name}
+        >
             <AccordionSummary>
                 <Checkbox
                     checked={name === selectedItem}

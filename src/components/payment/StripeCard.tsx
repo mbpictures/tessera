@@ -117,6 +117,7 @@ export const StripeCard = () => {
                     value={cardHolderName}
                     variant={"outlined"}
                     fullWidth
+                    id={"stripe-card-name"}
                 />
             </Grid>
             <Grid item xs={12} md={12}>
@@ -127,6 +128,7 @@ export const StripeCard = () => {
                         "cardNumberComplete",
                         "cardNumberError"
                     )}
+                    id={"stripe-card-number"}
                 />
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -137,6 +139,7 @@ export const StripeCard = () => {
                         "expiredComplete",
                         "expiredError"
                     )}
+                    id={"stripe-card-expire"}
                 />
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -144,6 +147,7 @@ export const StripeCard = () => {
                     error={Boolean(cvcError)}
                     labelErrorMessage={cvcError}
                     onChange={onElementChange("cvcComplete", "cvcError")}
+                    id={"stripe-card-cvc"}
                 />
             </Grid>
         </Grid>
