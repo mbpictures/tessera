@@ -40,6 +40,15 @@ jobs:
       NEXT_PUBLIC_NEXTAUTH_PATH: ${{ secrets.NEXT_PUBLIC_NEXTAUTH_PATH }}
       NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketshop-ci
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      SOFORT_USERNAME: ${{ secrets.SOFORT_USERNAME }}
+      SOFORT_API_KEY: ${{ secrets.SOFORT_API_KEY }}
+      SOFORT_PROJECT_ID: ${{ secrets.SOFORT_PROJECT_ID }}
+      NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
+      PAYPAL_CLIENT_SECRET: ${{ secrets.PAYPAL_CLIENT_SECRET }}
+      PAYPAL_CLIENT_LIVE_ENVIRONMENT: ${{ secrets.PAYPAL_CLIENT_LIVE_ENVIRONMENT }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
