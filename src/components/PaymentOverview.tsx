@@ -75,6 +75,7 @@ export const PaymentOverview = ({
                 const category = categories.find(
                     (cat) => cat.id === item.categoryId
                 );
+                if (!category) return null;
                 return (
                     <ListItem
                         secondaryAction={
