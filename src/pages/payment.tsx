@@ -134,7 +134,7 @@ export default function Payment({ categories, direction }) {
     );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const categories = await prisma.category.findMany();
 
     return {
