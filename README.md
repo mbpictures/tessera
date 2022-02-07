@@ -6,6 +6,7 @@
     <a href="LICENSE" target="_blank">
       <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" />
     </a>
+    <img alt="Build Status" src="https://github.com/mbpictures/ticketshop/actions/workflows/build.yml/badge.svg" />
     <img alt="CI Status" src="https://github.com/mbpictures/ticketshop/actions/workflows/node.js.yml/badge.svg" />
     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/mbpictures/tessera?style=for-the-badge&token=R7CJUK2K1X">
   </p>
