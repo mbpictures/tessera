@@ -18,14 +18,14 @@
 
 ### ✨ [Demo](https://nextjs-ticketshop-demo.herokuapp.com/)
 
-## Quickstart
-### Install
+## ⚡️ Quickstart
+### 📥 Install
 
 ```sh
 npm install
 ```
 
-### Run
+### ▶️ Run
 1. Create a ```.env``` file containing all values of [.env.example](.env.example) except the optional ones
 2. Set up a database (further instructions [here](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/connect-your-database-typescript-postgres))
 3. If you're **not** using _postgresql_ please update the provider flag inside the [schema.prisma](prisma/schema.prisma)
@@ -49,15 +49,24 @@ npm install
 10. Open the admin page at URL/admin
 11. Create your first admin user with the register button (the first user is granted with admin permissions)
 
-## Documentation
+## 👨‍💻 Tech stack
+- This project uses [React](https://reactjs.org/) for frontend
+- [MUI](https://mui.com/) as UI library
+- [Next.JS](https://nextjs.org/) is used as WebSDK and as server backend
+- All data is stored in a database (e.g. Postgre) and with [prisma](https://www.prisma.io/) as ORM accessed
+- Integration testing is done with [cypress](https://www.cypress.io/)
+- Continuous Integration using [GitHub Actions](https://github.com/features/actions)
+
+## 📝 Documentation
 A detailed documentation will follow soon!
 
-## Author
+## 👥 Author
 
 👤 **Marius Butz**
 
 * Website: http://marius-butz.de
 
-## Show your support
+## ⭐️ Show your support
 
-Give a ⭐️ if this project helped you!
+- Give a [⭐️ star](https://github.com/mbpictures/tessera) if this project helped you!
+- Create a [🍴 fork](https://github.com/mbpictures/tessera) and contribute by fixing bugs or adding features
