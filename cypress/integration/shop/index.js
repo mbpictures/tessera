@@ -23,7 +23,7 @@ function RGBToHex(rgb) {
 
 describe("Buy tickets", () => {
     before(() => {
-        cy.task("db:teardown", null, {timeout: 30000});
+        cy.task("db:teardown", null, {timeout: 60000});
         cy.registerInitialAdminUser();
         cy.createToken();
         cy.createEvents();

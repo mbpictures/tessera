@@ -1,6 +1,6 @@
 describe("Admin Users", () => {
     before(() => {
-        cy.task("db:teardown", null, {timeout: 30000});
+        cy.task("db:teardown", null, {timeout: 60000});
     })
     it("Register initial user", () => {
         cy.fixture("admin/user").then((userFixture) => {
