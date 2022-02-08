@@ -49,6 +49,22 @@ npm install
 10. Open the admin page at URL/admin
 11. Create your first admin user with the register button (the first user is granted with admin permissions)
 
+## 🎯 Features
+- Select events, seats and collect customer information (address, e-mail, etc)
+- Three delivery possibilities: Download (Template Ticket with QR), Postal delivery and box office
+- Payment: [PayPal](https://www.paypal.com/), [stripe](https://stripe.com) (iban & credit card), [sofort](https://www.klarna.com/sofort/) and invoice
+- Sending emails (with templates) containing invoice and/or tickets
+- Easy to use admin section with event management, seat map editor, viewing orders, marking invoices as payed
+- RESTful API to manage events and orders with third party tools or webhooks
+
+### 🔜 Planned
+- Ticket control webapp (to scan and verify downloaded tickets)
+- Notifications (e.g. for new orders) and configurable webhooks
+- Customizable ticket shop UI with import function for [MUI themes](https://mui.com/customization/theming/)
+- Event scheduling
+
+If you miss some features, which are not planned, please create an [issue ❗](https://github.com/mbpictures/tessera/issues)
+
 ## 👨‍💻 Tech stack
 - This project uses [React](https://reactjs.org/) for frontend
 - [MUI](https://mui.com/) as UI library
