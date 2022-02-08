@@ -47,6 +47,7 @@ export const PostalDeliveryShippingComponent = () => {
                     />
                 }
                 label="Differing shipping address"
+                id={"checkbox-differing-shipping-address"}
             />
 
             {useDifferentAddress && (
