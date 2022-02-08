@@ -198,20 +198,93 @@ describe("Buy tickets", () => {
             cy.wrap(iframe.contents().find("input[name=cardnumber]"))
                 .type(`4242424242424242`)
         });
-        //cy.get("input[name=cardnumber]").type("4242424242424242");
+
         const expirationData = new Date(Date.now() + 1000*60*60*24*30*6);
         cy.get("#stripe-card-expire iframe").then(iframe => {
             cy.wrap(iframe.contents().find("input[name=exp-date]"))
                 .type(`${expirationData.getMonth()}-${expirationData.getFullYear().toString().substr(-2)}`)
         });
-        //cy.get("input[name=exp-date]")
-        //    .type(`${expirationData.getMonth()}-${expirationData.getFullYear().toString().substr(-2)}`);
+
         cy.get("#stripe-card-cvc iframe").then(iframe => {
             cy.wrap(iframe.contents().find("input[name=cvc]"))
                 .type(faker.finance.creditCardCVV())
         });
-        //cy.get("input[cvc]").type(faker.finance.creditCardCVV());
 
         cy.get("#pay-button").should("be.enabled");
+    });
+
+    it("Check Delivery Variants", () => {
+        cy.visit("/seatselection?event=1");
+        cy.get(".seat-selection-free-add").first().click();
+        cy.get("#stepper-next-button").click();
+        cy.url().should("include", "information");
+
+        cy.get("input[name=address-email]").type(faker.internet.email());
+        cy.get("input[name=address-firstname]").type(faker.name.firstName());
+        cy.get("input[name=address-lastname]").type(faker.name.lastName());
+        cy.get("input[name=address-address]").type(faker.address.streetAddress());
+        cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
+        cy.get("input[name=address-city]").type(faker.address.city());
+
+        cy.get("input[name=address-country-text").type("Germany");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("input[name=address-region-text").type("Rheinland");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("#checkbox-boxoffice").click();
+        cy.get("#stepper-next-button").should("be.enabled");
+
+        cy.get("#checkbox-post").click();
+        cy.get("#stepper-next-button").should("be.enabled");
+        cy.get("#checkbox-differing-shipping-address").click();
+        cy.get("#stepper-next-button").should("be.disabled");
+
+        cy.get("#checkbox-post").find("input[name=address-firstname]").type(faker.name.firstName());
+        cy.get("#checkbox-post").find("input[name=address-lastname]").type(faker.name.lastName());
+        cy.get("#checkbox-post").find("input[name=address-address]").type(faker.address.streetAddress());
+        cy.get("#checkbox-post").find("input[name=address-zip]").type(faker.address.zipCode("#####"));
+        cy.get("#checkbox-post").find("input[name=address-city]").type(faker.address.city());
+
+        cy.get("#checkbox-post").find("input[name=address-country-text]").type("Germany");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("#checkbox-post").find("input[name=address-region-text]").type("Rheinland");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+        cy.get("#stepper-next-button").should("be.enabled");
+    });
+
+    it("Check Payment Variants", () => {
+        cy.visit("/seatselection?event=1");
+        cy.get(".seat-selection-free-add").first().click();
+        cy.get("#stepper-next-button").click();
+        cy.url().should("include", "information");
+
+        cy.get("input[name=address-email]").type(faker.internet.email());
+        cy.get("input[name=address-firstname]").type(faker.name.firstName());
+        cy.get("input[name=address-lastname]").type(faker.name.lastName());
+        cy.get("input[name=address-address]").type(faker.address.streetAddress());
+        cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
+        cy.get("input[name=address-city]").type(faker.address.city());
+
+        cy.get("input[name=address-country-text").type("Germany");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("input[name=address-region-text").type("Rheinland");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("#checkbox-download").click();
+        cy.get("#stepper-next-button").click();
+
+        cy.url().should("include", "payment");
+
+        cy.get("#pay-button").should("be.disabled");
+        cy.get("#checkbox-invoice").click();
+        cy.get("#pay-button").should("exist").and("be.enabled");
+        cy.get("#checkbox-sofort").click();
+        cy.get("#pay-button").should("exist").and("be.enabled");
+        cy.get("#checkbox-paypal").click();
+        cy.get(".paypal-buttons").should("have.length.at.least", 1);
+        cy.get("#pay-button").should("not.exist");
     });
 });
