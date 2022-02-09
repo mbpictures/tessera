@@ -9,6 +9,12 @@ describe("Payment Factories", () => {
             });
             expect(instance).to.not.equal(null);
         });
+
+        expect(PaymentFactory.getPaymentInstance(null)).to.equal(null);
+        expect(PaymentFactory.getPaymentInstance({
+            type: "abc",
+            data: null
+        })).to.equal(null);
     })
 
     it("Invoice", () => {

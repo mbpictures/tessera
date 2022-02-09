@@ -10,6 +10,12 @@ describe("Shipping Factories", () => {
                 data: null
             })).to.not.equal(null);
         });
+
+        expect(ShippingFactory.getShippingInstance({
+            data: null,
+            type: "abc"
+        })).to.equal(null);
+        expect(ShippingFactory.getShippingInstance(null)).to.equal(null);
     })
 
     it("Post", () => {
@@ -17,7 +23,8 @@ describe("Shipping Factories", () => {
             type: ShippingType.Post,
             data: null
         });
-        expect(post.isValid()).to.equal(false);
+        post.shippingData = null;
+        expect(post.isValid()).to.equal(true);
         post.data = {
             differentAddress: false
         };
@@ -65,6 +72,7 @@ describe("Shipping Factories", () => {
             }
         };
         expect(post.isValid()).to.equal(true);
+        expect(post.DisplayName).to.equal("Postal Delivery");
     })
 
     it("Download", () => {
@@ -73,6 +81,7 @@ describe("Shipping Factories", () => {
             data: null
         });
         expect(download.isValid()).to.equal(true);
+        expect(download.DisplayName).to.equal("Download");
     })
 
     it("Box Office", () => {
@@ -81,5 +90,6 @@ describe("Shipping Factories", () => {
             data: null
         });
         expect(boxoffice.isValid()).to.equal(true);
+        expect(boxoffice.DisplayName).to.equal("Box Office");
     })
 })
