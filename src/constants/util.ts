@@ -7,18 +7,18 @@ import axios from "axios";
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
     firstName: (address) =>
-        address.firstName != null && address.firstName.length > 1,
+        address?.firstName != null && address.firstName.length > 1,
     lastName: (address) =>
-        address.lastName != null && address.lastName.length > 1,
+        address?.lastName != null && address.lastName.length > 1,
     address: (address) =>
-        address.address != null &&
+        address?.address != null &&
         address.address.length > 5 &&
         hasNumber(address.address),
-    zip: (address) => zippo.validate(address.zip),
-    city: (address) => address.city != null && address.city.length > 3,
-    country: (address) => address.country != null,
+    zip: (address) => zippo.validate(address?.zip),
+    city: (address) => address?.city != null && address.city.length > 3,
+    country: (address) => address?.country != null,
     region: (address) =>
-        address.region != null || address.country.regions.length == 0
+        address?.region != null || address.country.regions.length == 0
 };
 
 export const validateAddress = (address: IAddress) => {

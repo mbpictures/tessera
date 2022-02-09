@@ -31,6 +31,7 @@ export class PostalDeliveryShipping extends Shipping {
 
     isValid(): boolean {
         const data: PostalDeliveryData = this.postalData;
+        if (!data) return false;
         return data.differentAddress ? validateAddress(data.address) : true;
     }
 
