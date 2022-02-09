@@ -61,4 +61,38 @@ describe("Payment Factories", () => {
         expect(creditcard.paymentResultValid(JSON.stringify({  }))).to.equal(false);
         expect(creditcard.paymentResultValid(JSON.stringify({event: "charge.failed"}))).to.equal(false);
     })
+
+    it("PayPal", () => {
+        const paypal = PaymentFactory.getPaymentInstance({
+            type: PaymentType.PayPal,
+            data: null
+        });
+        expect(paypal.isValid()).to.equal(true);
+        expect(paypal.getValidPaymentResult()).to.deep.equal({
+            status: "COMPLETED"
+        });
+        expect(paypal.paymentResultValid(JSON.stringify({status: "COMPLETED"}))).to.equal(true);
+        expect(paypal.paymentResultValid(JSON.stringify(null))).to.equal(false);
+        expect(paypal.paymentResultValid(JSON.stringify({  }))).to.equal(false);
+        expect(paypal.paymentResultValid(JSON.stringify({status: "FAILED"}))).to.equal(false);
+    })
+
+    it("StripeIBAN", () => {
+        const iban = PaymentFactory.getPaymentInstance({
+            type: PaymentType.StripeIBAN,
+            data: null
+        });
+        expect(iban.isValid()).to.equal(false);
+        iban.setData({
+            ibanComplete: true
+        })
+        expect(iban.isValid()).to.equal(true);
+        expect(iban.getValidPaymentResult()).to.deep.equal({
+            event: "charge.succeeded"
+        });
+        expect(iban.paymentResultValid(JSON.stringify({event: "charge.succeeded"}))).to.equal(true);
+        expect(iban.paymentResultValid(JSON.stringify(null))).to.equal(false);
+        expect(iban.paymentResultValid(JSON.stringify({  }))).to.equal(false);
+        expect(iban.paymentResultValid(JSON.stringify({event: "charge.failed"}))).to.equal(false);
+    })
 })
