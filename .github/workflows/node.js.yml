@@ -75,6 +75,6 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage/clover.xml
+        files: ./coverage/lcov.info
         name: tessera-cov
         fail_ci_if_error: true # optional (default = false)
