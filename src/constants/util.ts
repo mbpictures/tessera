@@ -37,7 +37,7 @@ export const storeOrderAndUser = async (
     eventId,
     paymentType
 ) => {
-    if (order.orderId != null || user.userId !== null)
+    if (order.orderId || user.userId)
         return { userId: user.userId, orderId: order.orderId };
     const response = await axios.post("/api/order/store", {
         order: order,
