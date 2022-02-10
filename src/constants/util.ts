@@ -87,7 +87,11 @@ export const calculateTotalPrice = (
     }
     if ("orders" in order) {
         return (order as FreeSeatOrder).orders.reduce(
-            (total, order) => total + order.price,
+            (total, order) => {
+                const category = categories.find(cat => cat.id === order.categoryId)
+                if (!category) return total + order.price;
+                return total + category.price * order.amount
+            },
             0
         );
     }
