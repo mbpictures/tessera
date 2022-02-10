@@ -3,11 +3,13 @@ import { PaymentFactory, PaymentType } from "../../../../src/store/factories/pay
 describe("Payment Factories", () => {
     it("Factories available", () => {
         Object.values(PaymentType).forEach((type) => {
-            const instance = PaymentFactory.getPaymentInstance({
+            const data = {
                 type: type,
                 data: null
-            });
+            }
+            const instance = PaymentFactory.getPaymentInstance(data);
             expect(instance).to.not.equal(null);
+            expect(instance.getData()).to.deep.equal(data);
         });
 
         expect(PaymentFactory.getPaymentInstance(null)).to.equal(null);

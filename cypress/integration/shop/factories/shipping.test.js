@@ -25,6 +25,8 @@ describe("Shipping Factories", () => {
         });
         post.shippingData = null;
         expect(post.isValid()).to.equal(true);
+        post.data = null;
+        expect(post.isValid()).to.equal(false)
         post.data = {
             differentAddress: false
         };
