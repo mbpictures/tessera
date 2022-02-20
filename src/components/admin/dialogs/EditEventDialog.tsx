@@ -299,6 +299,13 @@ export const EditEventDialog = ({
                                                             getAriaValueText={(value) => value.toString()}
                                                             valueLabelDisplay="auto"
                                                         />
+                                                        {
+                                                            coverImageSize > 2 && (
+                                                                <Typography color={"error"}>
+                                                                    Images with size larger than 2 will be cut-off on mobile devices
+                                                                </Typography>
+                                                            )
+                                                        }
                                                     </Stack>
                                                 )
                                             }
