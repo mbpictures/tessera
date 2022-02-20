@@ -5,7 +5,7 @@ export const GalleryEventSelection = ({events, onChange}) => {
     return (
         <div className={style.eventSelectionGallery}>
             {
-                events.concat(events).map((event, index) => <GalleryEventSelectionEntry key={index} event={event} index={index} onChange={onChange} />)
+                events.map((event, index) => <GalleryEventSelectionEntry key={index} event={event} index={event.id} onChange={onChange} />)
             }
         </div>
     );
