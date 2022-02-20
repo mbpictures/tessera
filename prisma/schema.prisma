@@ -18,6 +18,8 @@ model Event {
     seatMapId       Int?
     orders          Order[]
     categories      CategoriesOnEvents[]
+    coverImage      String?
+    coverImageSize  Int?
 }
 
 model SeatMap {
