@@ -1,10 +1,10 @@
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
-import styles from "../style/EventSelection.module.scss";
+import styles from "../../style/EventSelection.module.scss";
 import { Check } from "@mui/icons-material";
 import { ChangeEventHandler } from "react";
-import { useAppSelector } from "../store/hooks";
-import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
+import { useAppSelector } from "../../store/hooks";
+import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
 
 interface Props {
     label: string;
@@ -13,7 +13,7 @@ interface Props {
     onChange?: (index: number) => unknown;
 }
 
-export const EventSelection = (props: Props) => {
+export const EventSelectionEntry = (props: Props) => {
     const currentSelectedEvent = useAppSelector(selectEventSelected);
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {

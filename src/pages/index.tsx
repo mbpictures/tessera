@@ -1,10 +1,11 @@
-import { Stack, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
-import { EventSelection } from "../components/EventSelection";
 import { Step } from "../components/Step";
 import { useAppDispatch } from "../store/hooks";
 import { setEvent } from "../store/reducers/eventSelectionReducer";
 import prisma from "../lib/prisma";
+import { GalleryEventSelection } from "../components/EventSelection/GalleryEventSelection";
+import { EventSelection } from "../components/EventSelection/EventSelection";
 
 export default function Home({ events, direction }) {
     const dispatch = useAppDispatch();
@@ -13,24 +14,20 @@ export default function Home({ events, direction }) {
         dispatch(setEvent(index));
     };
 
+    const gallery = events.filter(event => !event.coverImage).length === 0;
+
     return (
-        <Step direction={direction}>
+        <Step direction={direction} style={{width: gallery ? "100%" : "auto"}}>
             <Typography variant={"h1"} align={"center"}>
                 Ticket Shop
             </Typography>
-            <Stack spacing={2}>
-                {events.map((event, index) => {
-                    return (
-                        <EventSelection
-                            label={event.title}
-                            name={"event_selection"}
-                            index={event.id}
-                            key={index}
-                            onChange={handleChange}
-                        />
-                    );
-                })}
-            </Stack>
+            {
+                gallery ? (
+                    <GalleryEventSelection events={events} onChange={handleChange} />
+                ) : (
+                    <EventSelection events={events} onChange={handleChange} />
+                )
+            }
         </Step>
     );
 }
