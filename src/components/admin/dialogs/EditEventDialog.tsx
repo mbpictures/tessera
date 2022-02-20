@@ -1,23 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "notistack";
 import {
-    Button,
+    Button, Checkbox,
     Dialog,
     DialogContent,
     DialogTitle,
-    FormControl,
+    FormControl, FormControlLabel,
     Grid,
     InputLabel,
     MenuItem,
-    Select,
+    Select, Slider,
     Stack,
-    TextField
+    TextField, Typography
 } from "@mui/material";
 import axios from "axios";
 import { SeatMapDialog } from "./SeatMapDialog";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { arrayEquals, formatPrice } from "../../../constants/util";
 import { SelectionList } from "../SelectionList";
+import ImageIcon from '@mui/icons-material/Image';
+import Image from "next/image";
+import containImageStyle from "../../../style/ContainImage.module.scss";
 
 export const EditEventDialog = ({
     event,
@@ -36,6 +39,9 @@ export const EditEventDialog = ({
     const [openPreview, setOpenPreview] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    const [coverImage, setCoverImage] = useState(null);
+    const [coverImageUrl, setCoverImageUrl] = useState(null);
+    const [coverImageSize, setCoverImageSize] = useState<number | null>(null);
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -44,6 +50,8 @@ export const EditEventDialog = ({
         setName(event.title);
         setSeatType(event.seatType);
         setSeatMap(event.seatMapId);
+        setCoverImageUrl(event.coverImage ?? null);
+        setCoverImageSize(event.coverImageSize ?? null);
     }, [event, originalSelectedCategories]);
 
     const handleSave = async () => {
@@ -54,6 +62,12 @@ export const EditEventDialog = ({
                 seatType,
                 ...(seatType === "free" && { categories: selectedCategories })
             });
+            if (coverImage)
+                await uploadCoverImage();
+            else if (!coverImageUrl)
+                await deleteCoverImage();
+
+            await storeCoverImageSize();
             onChange();
             onClose();
         } catch (e) {
@@ -62,6 +76,21 @@ export const EditEventDialog = ({
             });
         }
     };
+
+    const deleteCoverImage = async () => {
+        await axios.delete("/api/admin/events/coverimage?eventId=" + event.id);
+    };
+
+    const uploadCoverImage = async () => {
+        const pictureData = new FormData();
+        pictureData.append('coverImage', coverImage);
+        await axios.post("/api/admin/events/coverimage?eventId=" + event.id, pictureData);
+    };
+
+    const storeCoverImageSize = async () => {
+        if (coverImageSize === event.coverImageSize) return;
+        await axios.put(`/api/admin/events/coverimage?eventId=${event.id}&coverImageSize=${coverImageSize}`);
+    }
 
     const handleDelete = async () => {
         try {
@@ -75,13 +104,34 @@ export const EditEventDialog = ({
         }
     };
 
+    const handleUploadImageChange = (event) => {
+        setCoverImage(event.target.files[0]);
+        setCoverImageUrl(URL.createObjectURL(event.target.files[0]));
+    };
+
+    const handleRemoveCoverImage = () => {
+        setCoverImage(null);
+        setCoverImageUrl(null);
+    };
+
+    const handleSetCoverImageSizeRandom = (event: ChangeEvent<HTMLInputElement>) => {
+        setCoverImageSize(event.target.checked ? null : 1);
+    };
+
+    const handleChangeCoverImageSize = (event, value) => {
+        setCoverImageSize(value);
+    }
+
     if (event === null) return null;
 
     const hasChanges =
         name !== event.title ||
         seatType !== event.seatType ||
         seatMap !== event.seatMapId ||
-        !arrayEquals(originalSelectedCategories, selectedCategories);
+        !arrayEquals(originalSelectedCategories, selectedCategories) ||
+        coverImage !== event.coverImage;
+
+    console.log(coverImageSize);
 
     return (
         <>
@@ -112,7 +162,7 @@ export const EditEventDialog = ({
                         </FormControl>
                         {seatType === "seatmap" && (
                             <Grid container>
-                                <Grid item lg={6} md={12}>
+                                <Grid item lg={6} md={12} xs={12}>
                                     <FormControl variant={"filled"} fullWidth>
                                         <InputLabel id={"seatMapLabel"}>
                                             Seat Map
@@ -147,6 +197,7 @@ export const EditEventDialog = ({
                                     item
                                     lg={6}
                                     md={12}
+                                    xs={12}
                                     display={"flex"}
                                     justifyContent={"center"}
                                 >
@@ -183,6 +234,79 @@ export const EditEventDialog = ({
                                 header={"Select Categories"}
                             />
                         )}
+                        <Grid container>
+                            {
+                               coverImageUrl && (
+                                    <Grid item lg={6} md={12} xs={12} className={containImageStyle.containImage} height={120}>
+                                        <Image src={coverImageUrl} layout={"fill"} />
+                                    </Grid>
+                                )
+                            }
+                            <Grid item lg={coverImageUrl ? 6 : 12} md={12} xs={12}>
+                                <input
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    id="upload-file"
+                                    type="file"
+                                    onChange={handleUploadImageChange}
+                                />
+                                <Stack height={"100%"} justifyContent={"center"}>
+                                    <label htmlFor="upload-file">
+                                        <Button component="span" fullWidth>
+                                            <ImageIcon /> Upload Cover Image
+                                        </Button>
+                                    </label>
+                                    {
+                                        coverImageUrl && (
+                                            <Button
+                                                fullWidth
+                                                onClick={handleRemoveCoverImage}
+                                                color={"error"}
+                                            >
+                                                Remove Cover Image
+                                            </Button>
+                                        )
+                                    }
+                                </Stack>
+                            </Grid>
+                            {
+                                coverImageUrl && (
+                                    <Grid item md={12}>
+                                        <Stack pt={2} pb={2}>
+                                            <Typography>Customize Size</Typography>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={coverImageSize === null}
+                                                        onChange={handleSetCoverImageSizeRandom}
+                                                    />
+                                                }
+                                                label={"Randomize Gallery Size"}
+                                            />
+                                            {
+                                                coverImageSize !== null && (
+                                                    <Stack>
+                                                        <Typography>
+                                                            Fixed Size
+                                                        </Typography>
+                                                        <Slider
+                                                            min={1}
+                                                            max={5}
+                                                            step={1}
+                                                            value={coverImageSize}
+                                                            onChange={handleChangeCoverImageSize}
+                                                            marks
+                                                            getAriaValueText={(value) => value.toString()}
+                                                            valueLabelDisplay="auto"
+                                                        />
+                                                    </Stack>
+                                                )
+                                            }
+                                        </Stack>
+                                    </Grid>
+                                )
+                            }
+                        </Grid>
                         <Stack direction={"row"}>
                             <Button
                                 color={"success"}
