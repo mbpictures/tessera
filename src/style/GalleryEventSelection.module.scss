@@ -31,7 +31,7 @@
     > div {
         position: relative;
 
-        &.active {
+        &.selected {
             > div {
                 .border {
                     top: 5%;
@@ -40,7 +40,11 @@
                     height: 90%;
                     opacity: 1;
                 }
+            }
+        }
 
+        &.active {
+            > div {
                 > span {
                     > img {
                         filter: brightness(1) !important;

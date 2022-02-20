@@ -25,6 +25,9 @@ export const GalleryEventSelectionEntry = ({event, index, onChange}) => {
         onChange(index);
     }
 
+    const classNames = (isHovering || currentSelectedEvent === index ? style.active : "") + " " +
+        (currentSelectedEvent === index ? style.selected : "");
+
     return (
         <div
             style={{
@@ -32,7 +35,7 @@ export const GalleryEventSelectionEntry = ({event, index, onChange}) => {
                 gridRow: `span ${size.current}`,
                 zIndex: isHovering ? 110 : 100
             }}
-            className={isHovering || currentSelectedEvent === index ? style.active : ""}
+            className={classNames}
             onClick={handleClick}
         >
             <Tilt
