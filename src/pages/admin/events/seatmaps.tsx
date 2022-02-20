@@ -24,6 +24,8 @@ import { SeatMapDialog } from "../../../components/admin/dialogs/SeatMapDialog";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
+import { Provider } from "react-redux";
+import { makeStore } from "../../../store/store";
 
 export default function SeatMaps({ seatmaps, categories, permissionDenied }) {
     const { data: session } = useSession();
@@ -48,12 +50,14 @@ export default function SeatMaps({ seatmaps, categories, permissionDenied }) {
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
-            <SeatMapDialog
-                seatmap={seatmap}
-                categories={categories}
-                onClose={() => setSeatmap(null)}
-                onChange={refreshProps}
-            />
+            <Provider store={makeStore()}>
+                <SeatMapDialog
+                    seatmap={seatmap}
+                    categories={categories}
+                    onClose={() => setSeatmap(null)}
+                    onChange={refreshProps}
+                />
+            </Provider>
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Seat Maps</Typography>
             </Box>
