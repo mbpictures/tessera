@@ -103,3 +103,8 @@ model AdminApiKeys {
     userId          Int
     name            String
 }
+
+model Option {
+    key             String      @unique
+    value           String      @unique
+}
