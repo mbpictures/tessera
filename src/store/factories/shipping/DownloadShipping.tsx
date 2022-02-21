@@ -1,4 +1,6 @@
 import { Shipping } from "./Shipping";
+import { DownloadShippingComponent } from "../../../components/shipping/DownloadShippingComponent";
+import React from "react";
 
 export class DownloadShipping extends Shipping {
     isValid(): boolean {
@@ -7,5 +9,9 @@ export class DownloadShipping extends Shipping {
 
     get DisplayName(): string {
         return "Download";
+    }
+
+    get Component(): React.ReactElement {
+        return <DownloadShippingComponent />;
     }
 }

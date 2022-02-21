@@ -1,4 +1,5 @@
 import { IShipping } from "../../reducers/personalInformationReducer";
+import React from "react";
 
 export abstract class Shipping {
     shippingData: IShipping;
@@ -12,6 +13,8 @@ export abstract class Shipping {
     }
 
     abstract get DisplayName(): string;
+
+    abstract get Component(): React.ReactElement;
 
     abstract isValid(): boolean;
 }
