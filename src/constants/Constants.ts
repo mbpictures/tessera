@@ -19,3 +19,10 @@ export const SEAT_COLORS = {
     active: "#5959bb",
     occupied: "#FF2222"
 };
+
+export enum Options {
+    ShopTitle = "shop.title",
+    ShopSubtitle = "shop.subtitle",
+    PaymentProviders = "shop.payment-provider",
+    Delivery = "shop.delivery"
+}
