@@ -1,11 +1,5 @@
 import { Step } from "../components/Step";
-import {
-    Card,
-    Stack,
-    TextField,
-    Typography,
-    useMediaQuery
-} from "@mui/material";
+import { Card, Stack, TextField, Typography, useMediaQuery } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CheckboxAccordion } from "../components/CheckboxAccordion";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -15,12 +9,11 @@ import {
     setEmail,
     setShipping
 } from "../store/reducers/personalInformationReducer";
-import { ShippingType } from "../store/factories/shipping/ShippingFactory";
+import { ShippingFactory, ShippingType } from "../store/factories/shipping/ShippingFactory";
 import { AddressComponent } from "../components/form/AddressComponent";
-import { PostalDeliveryShippingComponent } from "../components/shipping/PostalDeliveryShippingComponent";
-import { BoxOfficeShippingComponent } from "../components/shipping/BoxOfficeShippingComponent";
-import { DownloadShippingComponent } from "../components/shipping/DownloadShippingComponent";
 import { Box, useTheme } from "@mui/system";
+import { getOption } from "../lib/options";
+import { Options } from "../constants/Constants";
 
 const validateEmail = (email) => {
     const re =
@@ -28,7 +21,7 @@ const validateEmail = (email) => {
     return re.test(String(email).toLowerCase());
 };
 
-export default function Information({ direction }) {
+export default function Information({ direction, deliveryMethods }) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
 
@@ -99,31 +92,35 @@ export default function Information({ direction }) {
                         />
                     </Stack>
                 </Card>
-                <CheckboxAccordion
-                    label={"Postal delivery"}
-                    name={ShippingType.Post}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <PostalDeliveryShippingComponent />
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Download"}
-                    name={ShippingType.Download}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <DownloadShippingComponent />
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Box-Office"}
-                    name={ShippingType.BoxOffice}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <BoxOfficeShippingComponent />
-                </CheckboxAccordion>
+                {
+                    // iterate through enum and filter to keep order constant
+                    Object.values(ShippingType)
+                        .filter((type) => deliveryMethods.includes(type))
+                        .map((shippingType) => {
+                            const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
+                            return (
+                                <CheckboxAccordion
+                                    label={instance.DisplayName}
+                                    name={shippingType}
+                                    selectedItem={selectedShippingMethod}
+                                    onSelect={setSelectedShippingMethod}
+                                    key={shippingType}
+                                >
+                                    {instance.Component}
+                                </CheckboxAccordion>
+                            )
+                        })
+                }
             </Box>
         </Step>
     );
+}
+
+export async function getServerSideProps(context) {
+    const deliveryMethods = await getOption(Options.Delivery);
+    return {
+        props: {
+            deliveryMethods
+        }
+    };
 }
