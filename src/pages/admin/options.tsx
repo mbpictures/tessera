@@ -72,6 +72,17 @@ export default function Options({options, permissionDenied}) {
         }
     };
 
+    const handleSaveShipping = async () => {
+        try {
+            await storeSetting(OptionsEnum.Delivery, shippingProviders);
+            await refreshProps();
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
+                variant: "error"
+            })
+        }
+    };
+
     return (
         <AdminLayout permissionDenied={permissionDenied}>
             <Box sx={{ pb: 5 }}>
@@ -144,7 +155,7 @@ export default function Options({options, permissionDenied}) {
                                     height: "fit-content"
                                 }}
                             />
-                            <Button onClick={handleSavePayment}>Save</Button>
+                            <Button onClick={handleSaveShipping}>Save</Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
