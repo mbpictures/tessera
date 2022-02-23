@@ -1,6 +1,5 @@
 import { getStoreWithOrderId, storeOrderAndUser } from "../../../src/constants/util";
 import faker from "@faker-js/faker";
-import { ShippingType } from "../../../src/store/factories/shipping/ShippingFactory";
 import countryData from "country-region-data";
 
 describe("Util", () => {
@@ -20,7 +19,7 @@ describe("Util", () => {
                 email: faker.internet.email(),
                 shipping: {
                     data: null,
-                    type: ShippingType.Download
+                    type: "download"
                 },
                 address: {
                     firstName: faker.name.firstName(),

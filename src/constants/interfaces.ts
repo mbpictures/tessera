@@ -22,7 +22,8 @@ export enum PermissionSection {
     EventCategories = "EventCategories",
     EventSeatMaps = "EventSeatMaps",
     Orders = "Orders",
-    OrderMarkAsPayed = "OrderMarkAsPayed"
+    OrderMarkAsPayed = "OrderMarkAsPayed",
+    Options = "Options"
 }
 
 export interface Permission {

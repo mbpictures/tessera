@@ -11,7 +11,7 @@ import {
     PaymentType
 } from "../../store/factories/payment/PaymentFactory";
 
-export const PaymentMethods = () => {
+export const PaymentMethods = ({ paymentMethods }) => {
     const selector = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -37,19 +37,23 @@ export const PaymentMethods = () => {
     return (
         <Elements stripe={getStripe()}>
             <ThemeProvider theme={createTheme()}>
-                {PaymentFactory.getAllPaymentInstances().map((value, index) => {
-                    return (
-                        <CheckboxAccordion
-                            label={value.getHeaderComponent()}
-                            name={value.data.type}
-                            selectedItem={selectedPaymentMethod}
-                            onSelect={handleChangeSelectedPaymentMethod}
-                            key={index}
-                        >
-                            {value.getComponent()}
-                        </CheckboxAccordion>
-                    );
-                })}
+                {
+                    PaymentFactory.getAllPaymentInstances()
+                        .filter(payment => paymentMethods.includes(payment.data.type))
+                        .map((value, index) => {
+                            return (
+                                <CheckboxAccordion
+                                    label={value.getHeaderComponent()}
+                                    name={value.data.type}
+                                    selectedItem={selectedPaymentMethod}
+                                    onSelect={handleChangeSelectedPaymentMethod}
+                                    key={index}
+                                >
+                                    {value.getComponent()}
+                                </CheckboxAccordion>
+                            );
+                        })
+                }
             </ThemeProvider>
         </Elements>
     );

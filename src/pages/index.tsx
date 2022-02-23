@@ -6,8 +6,10 @@ import { setEvent } from "../store/reducers/eventSelectionReducer";
 import prisma from "../lib/prisma";
 import { GalleryEventSelection } from "../components/EventSelection/GalleryEventSelection";
 import { EventSelection } from "../components/EventSelection/EventSelection";
+import { getOption } from "../lib/options";
+import { Options } from "../constants/Constants";
 
-export default function Home({ events, direction }) {
+export default function Home({ events, direction, title, subtitle }) {
     const dispatch = useAppDispatch();
 
     const handleChange = (index: number) => {
@@ -18,9 +20,16 @@ export default function Home({ events, direction }) {
 
     return (
         <Step direction={direction} style={{width: gallery ? "100%" : "auto"}}>
-            <Typography variant={"h1"} align={"center"}>
-                Ticket Shop
+            <Typography variant={"h1"} align={"center"} id={"shop-title"}>
+                {title}
             </Typography>
+            {
+                subtitle && (
+                    <Typography variant={"h3"} align={"center"} id={"shop-subtitle"}>
+                        {subtitle}
+                    </Typography>
+                )
+            }
             {
                 gallery ? (
                     <GalleryEventSelection events={events} onChange={handleChange} />
@@ -36,7 +45,9 @@ export async function getServerSideProps(context) {
     const events = await prisma.event.findMany();
     return {
         props: {
-            events
+            events,
+            title: await getOption(Options.ShopTitle),
+            subtitle: await getOption(Options.ShopSubtitle)
         }
     };
 }

@@ -15,16 +15,15 @@ import { Box, useTheme } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useRouter } from "next/router";
 import { PaymentMethods } from "../components/payment/PaymentMethods";
-import {
-    selectPayment,
-    setPaymentStatus
-} from "../store/reducers/paymentReducer";
+import { selectPayment, setPaymentStatus } from "../store/reducers/paymentReducer";
 import prisma from "../lib/prisma";
 import { PaymentFactory } from "../store/factories/payment/PaymentFactory";
 import { PaymentOverview } from "../components/PaymentOverview";
 import { PayButton } from "../components/payment/button/PayButton";
+import { getOption } from "../lib/options";
+import { Options } from "../constants/Constants";
 
-export default function Payment({ categories, direction }) {
+export default function Payment({ categories, direction, paymentMethods }) {
     const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -105,7 +104,7 @@ export default function Payment({ categories, direction }) {
                         }}
                     >
                         <Card>
-                            <PaymentMethods />
+                            <PaymentMethods paymentMethods={paymentMethods} />
                         </Card>
                     </Box>
                 </Grid>
@@ -136,12 +135,14 @@ export default function Payment({ categories, direction }) {
 
 export async function getServerSideProps() {
     const categories = await prisma.category.findMany();
+    const paymentMethods = await getOption(Options.PaymentProviders);
 
     return {
         props: {
             disableOverflow: true,
             noNext: true,
-            categories: categories
+            categories: categories,
+            paymentMethods
         }
     };
 }

@@ -2,6 +2,8 @@ import { IAddress } from "../../../constants/interfaces";
 import { validateAddress } from "../../../constants/util";
 import { Shipping } from "./Shipping";
 import { ShippingType } from "./ShippingFactory";
+import { PostalDeliveryShippingComponent } from "../../../components/shipping/PostalDeliveryShippingComponent";
+import React from "react";
 
 export interface PostalDeliveryData {
     differentAddress: boolean;
@@ -46,5 +48,9 @@ export class PostalDeliveryShipping extends Shipping {
 
     get DisplayName(): string {
         return "Postal Delivery";
+    }
+
+    get Component(): React.ReactElement {
+        return <PostalDeliveryShippingComponent />;
     }
 }

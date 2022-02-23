@@ -9,6 +9,7 @@ import NavSection from "./NavSection";
 import GroupIcon from "@mui/icons-material/Group";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import EventIcon from "@mui/icons-material/Event";
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const RootStyle = styled("div")(({ theme }) => ({
     [theme.breakpoints.up("lg")]: {
@@ -52,6 +53,11 @@ export const sidebarConfig = [
                 path: "/admin/events/seatmaps"
             }
         ]
+    },
+    {
+        title: "Options",
+        icon: <SettingsIcon />,
+        path: "/admin/options"
     }
 ];
 
