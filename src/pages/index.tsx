@@ -20,12 +20,12 @@ export default function Home({ events, direction, title, subtitle }) {
 
     return (
         <Step direction={direction} style={{width: gallery ? "100%" : "auto"}}>
-            <Typography variant={"h1"} align={"center"}>
+            <Typography variant={"h1"} align={"center"} id={"shop-title"}>
                 {title}
             </Typography>
             {
                 subtitle && (
-                    <Typography variant={"h3"} align={"center"}>
+                    <Typography variant={"h3"} align={"center"} id={"shop-subtitle"}>
                         {subtitle}
                     </Typography>
                 )
