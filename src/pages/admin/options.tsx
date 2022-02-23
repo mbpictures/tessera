@@ -88,7 +88,7 @@ export default function Options({options, permissionDenied}) {
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Options</Typography>
                 <Accordion>
-                    <AccordionSummary>
+                    <AccordionSummary id={"accordion-general"}>
                         General
                     </AccordionSummary>
                     <AccordionDetails>
@@ -97,21 +97,28 @@ export default function Options({options, permissionDenied}) {
                                 label={"Ticketshop Title"}
                                 value={title}
                                 onChange={(event) => setTitle(event.target.value)}
+                                id={"shop-title-input"}
                             />
                             <TextField
                                 label={"Ticketshop Subtitle"}
                                 value={subtitle}
                                 onChange={(event) => setSubtitle(event.target.value)}
+                                id={"shop-subtitle-input"}
                             />
-                            <Button onClick={handleSaveGeneral}>Save</Button>
+                            <Button
+                                onClick={handleSaveGeneral}
+                                id={"general-save"}
+                            >
+                                Save
+                            </Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
-                    <AccordionSummary>
+                    <AccordionSummary id={"accordion-payment"}>
                         Payment
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails id={"accordion-payment-details"}>
                         <Stack spacing={2}>
                             <SelectionList
                                 options={Object.entries(PaymentType).map(option => {
@@ -129,15 +136,20 @@ export default function Options({options, permissionDenied}) {
                                     height: "fit-content"
                                 }}
                             />
-                            <Button onClick={handleSavePayment}>Save</Button>
+                            <Button
+                                onClick={handleSavePayment}
+                                id={"payment-save"}
+                            >
+                                Save
+                            </Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
-                    <AccordionSummary>
+                    <AccordionSummary id={"accordion-delivery"}>
                         Delivery
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails id={"accordion-delivery-details"}>
                         <Stack spacing={2}>
                             <SelectionList
                                 options={Object.entries(ShippingType).map(option => {
@@ -155,7 +167,12 @@ export default function Options({options, permissionDenied}) {
                                     height: "fit-content"
                                 }}
                             />
-                            <Button onClick={handleSaveShipping}>Save</Button>
+                            <Button
+                                onClick={handleSaveShipping}
+                                id={"delivery-save"}
+                            >
+                                Save
+                            </Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
