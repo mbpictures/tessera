@@ -8,7 +8,7 @@ export const STEPS = [
 ];
 export const STEP_URLS = [
     "/",
-    "/seatselection",
+    "/seatselection/[id]",
     "/information",
     "/payment",
     "/checkout"

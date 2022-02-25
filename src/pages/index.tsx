@@ -41,7 +41,7 @@ export default function Home({ events, direction, title, subtitle }) {
     );
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps() {
     const events = await prisma.event.findMany();
     return {
         props: {

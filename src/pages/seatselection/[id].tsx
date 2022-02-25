@@ -1,20 +1,23 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { Step } from "../components/Step";
-import prisma from "../lib/prisma";
-import { SeatSelectionFree } from "../components/SeatSelectionFree";
+import { Step } from "../../components/Step";
+import prisma from "../../lib/prisma";
+import { SeatSelectionFree } from "../../components/SeatSelectionFree";
 import {
     SeatMap,
     SeatSelectionMap
-} from "../components/seatmap/SeatSelectionMap";
-import { SeatOrder } from "../store/reducers/orderReducer";
+} from "../../components/seatmap/SeatSelectionMap";
+import { SeatOrder } from "../../store/reducers/orderReducer";
 
 export default function SeatSelection({
     categories,
     direction,
     seatMap,
-    seatType
+    seatType,
+    fallback
 }) {
+    if (fallback) return null;
+
     let seatSelection;
     let containerStyles: React.CSSProperties = {
         alignItems: "center",
@@ -53,12 +56,21 @@ export default function SeatSelection({
     );
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticPaths() {
+    const events = await prisma.event.findMany();
+    const paths = events.map((event) => ({
+        params: {id: event.id.toString()}
+    }));
+    return { paths, fallback: "blocking"};
+}
+
+export async function getStaticProps({ params }) {
+    if (params.id === "[id]") return {props: { fallback: true }};
     const categories = await prisma.category.findMany({
         where: {
             events: {
                 some: {
-                    eventId: parseInt(context.query.event)
+                    eventId: parseInt(params.id)
                 }
             }
         }
@@ -66,13 +78,15 @@ export async function getServerSideProps(context) {
 
     const event = await prisma.event.findUnique({
         where: {
-            id: parseInt(context.query.event)
+            id: parseInt(params.id)
         },
         include: {
             seatMap: true,
             orders: true
         }
     });
+
+    if (!event) return { notFound: true }
 
     let seatmap: SeatMap = null;
     if (event.seatMap?.definition) {
