@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+    revalidateBuild,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
@@ -39,6 +40,7 @@ export default async function handler(
                 id: parseInt(id as string)
             }
         });
+        await revalidateBuild(res, ["/"]);
         res.status(200).end("Deleted");
         return;
     }
@@ -90,6 +92,8 @@ export default async function handler(
                 ...(seatMapId && { seatMapId: seatMapId })
             }
         });
+
+        await revalidateBuild(res, ["/", `/seatselection/${id as string}`]);
         res.status(200).end("Updated");
         return;
     }

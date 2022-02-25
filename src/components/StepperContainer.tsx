@@ -30,24 +30,24 @@ export const StepperContainer = (props: Props) => {
     }, [bottomBar, container]);
 
     useEffect(() => {
-        setCurrentStep(STEP_URLS.findIndex((val) => val === router.pathname));
+        setCurrentStep(STEP_URLS.findIndex((val) => val.startsWith(router.pathname)));
     }, [router]);
 
     const handleNext = async () => {
         if (currentStep + 1 >= STEP_URLS.length) return;
         if (props.onNext) props.onNext();
+        const url = STEP_URLS[currentStep + 1].replace("[id]", selectedEvent.toString());
         await router.push(
-            `${STEP_URLS[currentStep + 1]}?event=${selectedEvent}`
+            `${url}?event=${selectedEvent}`
         );
     };
 
     const handleBack = async () => {
         if (currentStep <= 0) return;
         if (props.onBack) props.onBack();
+        const url = STEP_URLS[currentStep - 1].replace("[id]", selectedEvent.toString());
         const query = currentStep - 1 === 0 ? "" : `?event=${selectedEvent}`;
-        await router.push(
-            `${STEP_URLS[currentStep - 1]}${query}`
-        );
+        await router.push(`${url}${query}`);
     };
 
     return (
@@ -72,7 +72,7 @@ export const StepperContainer = (props: Props) => {
                     const stepProps = {};
                     const labelProps = {};
                     return (
-                        <Step key={label} {...stepProps}>
+                        <Step key={label} {...stepProps} className={style.stepperStep}>
                             <StepLabel {...labelProps}>{label}</StepLabel>
                         </Step>
                     );

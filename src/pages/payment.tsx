@@ -133,7 +133,7 @@ export default function Payment({ categories, direction, paymentMethods }) {
     );
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
     const categories = await prisma.category.findMany();
     const paymentMethods = await getOption(Options.PaymentProviders);
 

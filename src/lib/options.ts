@@ -2,6 +2,8 @@ import prisma from "./prisma";
 import { ShippingType } from "../store/factories/shipping/ShippingFactory";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
 import { Options } from "../constants/Constants";
+import { revalidateBuild } from "../constants/serverUtil";
+import { NextApiResponse } from "next";
 
 const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
     "shop.title": "Ticket shop",
@@ -9,7 +11,22 @@ const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
     "shop.delivery": Object.values(ShippingType)
 }
 
-export const setOption = async (key: Options, value: any) => {
+const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
+    if (!res) return;
+    switch (key) {
+        case Options.ShopSubtitle:
+        case Options.ShopTitle:
+            await revalidateBuild(res, "/");
+            break;
+        case Options.Delivery:
+            await revalidateBuild(res, "/information");
+            break;
+        case Options.PaymentProviders:
+            await revalidateBuild(res, "/payment");
+    }
+};
+
+export const setOption = async (key: Options, value: any, res?: NextApiResponse) => {
     const valueSerialized = JSON.stringify({
         value
     });
@@ -26,15 +43,16 @@ export const setOption = async (key: Options, value: any) => {
                 value: valueSerialized
             }
         });
-        return;
+    } else {
+        await prisma.option.create({
+            data: {
+                key: key,
+                value: valueSerialized
+            }
+        });
     }
 
-    await prisma.option.create({
-        data: {
-            key: key,
-            value: valueSerialized
-        }
-    });
+    await updateNecessaryPages(key, res);
 };
 
 export const getOption = async (key: Options): Promise<any> => {

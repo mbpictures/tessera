@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+    revalidateBuild,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
@@ -30,6 +31,7 @@ export default async function handler(
                 seatType: seatType
             }
         });
+        await revalidateBuild(res, ["/", "/payment"]);
         res.status(200).end(seatMap.id.toFixed(0));
     }
 }

@@ -67,7 +67,7 @@ describe("Buy tickets", () => {
     });
 
     it("Select Free Seats", () => {
-        cy.visit("/seatselection?event=1");
+        cy.visit("/seatselection/1?event=1");
 
         cy.get(".seat-selection-free-add").first().click();
         cy.get(".seat-selection-free-ticket-amount input").should("have.value", "1");
@@ -104,7 +104,7 @@ describe("Buy tickets", () => {
     it("Select Seat Map", () => {
         cy.fixture("admin/events").then((eventsFixture) => {
             const seats = eventsFixture.events[1].seatMap.flat(2);
-            cy.visit("/seatselection?event=2");
+            cy.visit("/seatselection/2?event=2");
 
             const selectedIndexes = [0, 1, 2, 3];
             selectedIndexes.forEach((num) => {
@@ -133,7 +133,7 @@ describe("Buy tickets", () => {
     });
 
     it("Enter Information", () => {
-        cy.visit("/seatselection?event=1");
+        cy.visit("/seatselection/1?event=1");
         cy.get(".seat-selection-free-add").first().click();
         cy.get("#stepper-next-button").click();
         cy.url().should("include", "information");
@@ -168,7 +168,7 @@ describe("Buy tickets", () => {
     });
 
     it("Select Payment", () => {
-        cy.visit("/seatselection?event=1");
+        cy.visit("/seatselection/1?event=1");
         cy.get(".seat-selection-free-add").first().click();
         cy.get("#stepper-next-button").click();
         cy.url().should("include", "information");
@@ -214,48 +214,50 @@ describe("Buy tickets", () => {
     });
 
     it("Check Delivery Variants", () => {
-        cy.visit("/seatselection?event=1");
-        cy.get(".seat-selection-free-add").first().click();
-        cy.get("#stepper-next-button").click();
-        cy.url().should("include", "information");
+        cy.setOption("shop.delivery", ["boxoffice", "download", "post"]).then(() => {
+            cy.visit("/seatselection/1?event=1");
+            cy.get(".seat-selection-free-add").first().click();
+            cy.get("#stepper-next-button").click();
+            cy.url().should("include", "information");
 
-        cy.get("input[name=address-email]").type(faker.internet.email());
-        cy.get("input[name=address-firstname]").type(faker.name.firstName());
-        cy.get("input[name=address-lastname]").type(faker.name.lastName());
-        cy.get("input[name=address-address]").type(faker.address.streetAddress());
-        cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
-        cy.get("input[name=address-city]").type(faker.address.city());
+            cy.get("input[name=address-email]").type(faker.internet.email());
+            cy.get("input[name=address-firstname]").type(faker.name.firstName());
+            cy.get("input[name=address-lastname]").type(faker.name.lastName());
+            cy.get("input[name=address-address]").type(faker.address.streetAddress());
+            cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
+            cy.get("input[name=address-city]").type(faker.address.city());
 
-        cy.get("input[name=address-country-text").type("Germany");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
+            cy.get("input[name=address-country-text").type("Germany");
+            cy.get(".MuiAutocomplete-popper").children().first().click();
 
-        cy.get("input[name=address-region-text").type("Rheinland");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
+            cy.get("input[name=address-region-text").type("Rheinland");
+            cy.get(".MuiAutocomplete-popper").children().first().click();
 
-        cy.get("#checkbox-boxoffice").click();
-        cy.get("#stepper-next-button").should("be.enabled");
+            cy.get("#checkbox-boxoffice").click();
+            cy.get("#stepper-next-button").should("be.enabled");
 
-        cy.get("#checkbox-post").click();
-        cy.get("#stepper-next-button").should("be.enabled");
-        cy.get("#checkbox-differing-shipping-address").click();
-        cy.get("#stepper-next-button").should("be.disabled");
+            cy.get("#checkbox-post").click();
+            cy.get("#stepper-next-button").should("be.enabled");
+            cy.get("#checkbox-differing-shipping-address").click();
+            cy.get("#stepper-next-button").should("be.disabled");
 
-        cy.get("#checkbox-post").find("input[name=address-firstname]").type(faker.name.firstName());
-        cy.get("#checkbox-post").find("input[name=address-lastname]").type(faker.name.lastName());
-        cy.get("#checkbox-post").find("input[name=address-address]").type(faker.address.streetAddress());
-        cy.get("#checkbox-post").find("input[name=address-zip]").type(faker.address.zipCode("#####"));
-        cy.get("#checkbox-post").find("input[name=address-city]").type(faker.address.city());
+            cy.get("#checkbox-post").find("input[name=address-firstname]").type(faker.name.firstName());
+            cy.get("#checkbox-post").find("input[name=address-lastname]").type(faker.name.lastName());
+            cy.get("#checkbox-post").find("input[name=address-address]").type(faker.address.streetAddress());
+            cy.get("#checkbox-post").find("input[name=address-zip]").type(faker.address.zipCode("#####"));
+            cy.get("#checkbox-post").find("input[name=address-city]").type(faker.address.city());
 
-        cy.get("#checkbox-post").find("input[name=address-country-text]").type("Germany");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
+            cy.get("#checkbox-post").find("input[name=address-country-text]").type("Germany");
+            cy.get(".MuiAutocomplete-popper").children().first().click();
 
-        cy.get("#checkbox-post").find("input[name=address-region-text]").type("Rheinland");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
-        cy.get("#stepper-next-button").should("be.enabled");
+            cy.get("#checkbox-post").find("input[name=address-region-text]").type("Rheinland");
+            cy.get(".MuiAutocomplete-popper").children().first().click();
+            cy.get("#stepper-next-button").should("be.enabled");
+        })
     });
 
     it("Check Payment Variants", () => {
-        cy.visit("/seatselection?event=1");
+        cy.visit("/seatselection/1?event=1");
         cy.get(".seat-selection-free-add").first().click();
         cy.get("#stepper-next-button").click();
         cy.url().should("include", "information");

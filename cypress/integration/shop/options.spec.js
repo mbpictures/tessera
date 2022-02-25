@@ -79,7 +79,7 @@ describe("Admin Configuration on store page", () => {
                         value: deliveryMethods,
                     }
                 }).then(() => {
-                    cy.visit("/seatselection?event=1");
+                    cy.visit("/seatselection/1?event=1");
                     cy.get(".seat-selection-free-add").first().click();
                     cy.get("#stepper-next-button").click();
                     cy.url().should("include", "information");
@@ -109,7 +109,7 @@ describe("Admin Configuration on store page", () => {
                         value: paymentMethods,
                     }
                 }).then(() => {
-                    cy.visit("/seatselection?event=1");
+                    cy.visit("/seatselection/1?event=1");
                     cy.get(".seat-selection-free-add").first().click();
                     cy.get("#stepper-next-button").click();
                     cy.url().should("include", "information");

@@ -15,6 +15,7 @@ import { useSnackbar } from "notistack";
 import { SelectionList } from "../SelectionList";
 import { PermissionSection } from "../../../constants/interfaces";
 import { arrayEquals } from "../../../constants/util";
+import { SaveButton } from "../SaveButton";
 
 export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -130,15 +131,15 @@ export const UserDetailsDialog = ({ user, onClose, onDelete, onChange }) => {
                             />
                         </Stack>
                         <Stack direction={"row"}>
-                            <Button
+                            <SaveButton
                                 color={"success"}
                                 disabled={!hasChanges}
                                 fullWidth
-                                onClick={handleSave}
+                                action={handleSave}
                                 id={"edit-user-save"}
                             >
                                 Save Changes
-                            </Button>
+                            </SaveButton>
                             <Button
                                 color={"error"}
                                 fullWidth

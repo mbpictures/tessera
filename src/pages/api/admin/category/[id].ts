@@ -1,9 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+    revalidateBuild,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
 import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
+
+const updateEventPages = async (res, additionalPages: string[]) => {
+    const events = await prisma.event.findMany();
+    const eventPaths = events.map(event => `/seatselection/${event.id}`);
+
+    await revalidateBuild(res, eventPaths.concat(additionalPages));
+};
 
 export default async function handler(
     req: NextApiRequest,
@@ -46,6 +54,7 @@ export default async function handler(
                 id: parseInt(id as string)
             }
         });
+        await updateEventPages(res, ["/payment"]);
         res.status(200).end("Deleted");
         return;
     }
@@ -67,6 +76,8 @@ export default async function handler(
             },
             data: data
         });
+
+        await updateEventPages(res, ["/payment"]);
         res.status(200).end("Updated");
         return;
     }

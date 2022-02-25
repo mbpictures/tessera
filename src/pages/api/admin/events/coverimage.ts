@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+    revalidateBuild,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
@@ -48,6 +49,7 @@ export default async function handler(
                 coverImage: null
             }
         });
+        await revalidateBuild(res, "/");
         res.status(200).end("Deleted");
         return;
     }
@@ -62,6 +64,7 @@ export default async function handler(
                 coverImageSize: coverImageSize === "null" ? null : parseInt(coverImageSize as string)
             }
         });
+        await revalidateBuild(res, "/");
         res.status(200).end("Cover Image size stored!");
 
         return;
@@ -98,6 +101,7 @@ export default async function handler(
             }
         });
         await fs.promises.unlink(imageFile.filepath);
+        await revalidateBuild(res, "/");
         res.status(200).end("Cover image stored successfully!");
         return;
     }

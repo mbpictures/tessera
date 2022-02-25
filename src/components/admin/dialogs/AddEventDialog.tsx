@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useSnackbar } from "notistack";
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -11,6 +10,7 @@ import {
     TextField
 } from "@mui/material";
 import axios from "axios";
+import { SaveButton } from "../SaveButton";
 
 export const AddEventDialog = ({ open, onClose, onChange }) => {
     const [name, setName] = useState("");
@@ -57,7 +57,7 @@ export const AddEventDialog = ({ open, onClose, onChange }) => {
                             <MenuItem value={"free"}>Free</MenuItem>
                             <MenuItem value={"seatmap"}>Seat map</MenuItem>
                         </Select>
-                        <Button onClick={handleAdd}>Add Event</Button>
+                        <SaveButton action={handleAdd}>Add Event</SaveButton>
                     </Stack>
                 </DialogContent>
             </Dialog>

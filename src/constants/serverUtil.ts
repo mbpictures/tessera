@@ -129,3 +129,16 @@ export const formatPrice = (
         currency: currency
     }).format(price);
 };
+
+export const revalidateBuild = async (res: NextApiResponse, page: string | string[]) => {
+    if (Array.isArray(page)) {
+        await Promise.all(page.map(async (a) => await revalidateBuild(res, a)));
+        return;
+    }
+
+    try {
+        await res.unstable_revalidate(page);
+    } catch (e) {
+        console.log(e);
+    }
+};

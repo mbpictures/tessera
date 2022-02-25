@@ -28,7 +28,7 @@ export default async function handler(
 
     if (req.method === "POST") {
         const { value } = req.body;
-        await setOption(key, value);
+        await setOption(key, value, res);
         res.status(200).end("Updated");
         return;
     }

@@ -116,7 +116,7 @@ export default function Information({ direction, deliveryMethods }) {
     );
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps() {
     const deliveryMethods = await getOption(Options.Delivery);
     return {
         props: {

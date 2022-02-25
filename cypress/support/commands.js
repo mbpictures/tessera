@@ -155,3 +155,24 @@ Cypress.Commands.add("createEvents", () => {
         });
     });
 });
+
+Cypress.Commands.add("setOption", (key, value) => {
+    cy.fixture("admin/user").then((userFixture) => {
+        cy.task("getAdminToken").then((token) => {
+            cy.request(
+                {
+                    url: "/api/admin/options",
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${userFixture.username}:${token}`
+                    },
+                    body: {
+                        key,
+                        value
+                    }
+                }
+            );
+        });
+    })
+
+});

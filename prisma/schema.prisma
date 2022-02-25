@@ -106,5 +106,5 @@ model AdminApiKeys {
 
 model Option {
     key             String      @unique
-    value           String      @unique
+    value           String
 }

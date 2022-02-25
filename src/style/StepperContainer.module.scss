@@ -13,3 +13,14 @@
         flex: 1;
     }
 }
+
+.stepperStep {
+    > span {
+        > span {
+            > svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+}
