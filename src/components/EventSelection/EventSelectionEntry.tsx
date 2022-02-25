@@ -24,10 +24,14 @@ const useStyles = makeStyles((theme: Theme) => ({
         }
     },
     box: {
-        backgroundColor: theme.palette.primary.light
+        backgroundColor: theme.palette.primary.light,
+        borderRadius: `${theme.shape.borderRadius}px 0 0 ${theme.shape.borderRadius}px`,
+        padding: theme.spacing(1)
     },
     p: {
         backgroundColor: theme.palette.action.selected,
+        borderRadius: `0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0`,
+        padding: `${theme.spacing(1)} 0 ${theme.spacing(1)} ${theme.spacing(1)}`,
         "&:hover": {
             backgroundColor: theme.palette.action.hover
         }

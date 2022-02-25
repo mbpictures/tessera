@@ -25,14 +25,11 @@
         cursor: pointer;
         width: 100%;
         display: flex;
-        border-radius: 3px;
         align-items: center;
 
         > div {
             display: flex;
             align-items: center;
-            padding: 10px 10px;
-            border-radius: 3px 0 0 3px;
             transition: 0.3s ease;
 
             > * {
@@ -43,8 +40,6 @@
 
         > p {
             flex-grow: 1;
-            padding: 10px 0 10px 10px;
-            border-radius: 0 3px 3px 0;
             transition: 0.3s ease;
         }
 
