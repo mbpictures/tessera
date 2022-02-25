@@ -72,7 +72,7 @@ export const StepperContainer = (props: Props) => {
                     const stepProps = {};
                     const labelProps = {};
                     return (
-                        <Step key={label} {...stepProps}>
+                        <Step key={label} {...stepProps} className={style.stepperStep}>
                             <StepLabel {...labelProps}>{label}</StepLabel>
                         </Step>
                     );
