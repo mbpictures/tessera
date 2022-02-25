@@ -6,6 +6,7 @@ import { useAppSelector } from "../../store/hooks";
 import { SeatOrder, selectOrder } from "../../store/reducers/orderReducer";
 import { SEAT_COLORS } from "../../constants/Constants";
 import { formatPrice } from "../../constants/util";
+import { useTheme } from "@mui/system";
 
 export interface Seat {
     type: "seat" | "space";
@@ -38,6 +39,7 @@ export const SeatMapSeat = ({
 }) => {
     const [isSelected, setIsSelected] = useState(false);
     const reduxOrder = (useAppSelector(selectOrder) as SeatOrder);
+    const theme = useTheme();
     const orders = !forceNoRedux
         ? reduxOrder
         : null;
@@ -93,10 +95,12 @@ export const SeatMapSeat = ({
             <motion.div
                 className={`${style.seat} seat-selection-seatmap-seat`}
                 style={{
-                    height: 40,
+                    height: theme.spacing(5),
                     width:
-                        (seat.amount ?? 1) * 40 + ((seat.amount ?? 1) - 1) * 10,
-                    backgroundColor: color
+                        (seat.amount ?? 1) * parseInt(theme.spacing(5).replace("px", "")) + ((seat.amount ?? 1) - 1) * parseInt(theme.spacing(1).replace("px", "")),
+                    backgroundColor: color,
+                    borderRadius: theme.shape.borderRadius + "px",
+                    margin: theme.spacing(0.5)
                 }}
                 whileHover={{
                     opacity: 0.6,
@@ -111,13 +115,15 @@ export const SeatMapSeat = ({
 };
 
 export const SeatMapSpace = ({ seat }: { seat: Seat }) => {
+    const theme = useTheme();
     return (
         <div
             className={style.seat}
             style={{
-                height: 40,
-                width: (seat.amount ?? 1) * 40,
-                cursor: "initial"
+                height: theme.spacing(5),
+                width: (seat.amount ?? 1) * parseInt(theme.spacing(5).replace("px", "")),
+                cursor: "initial",
+                margin: theme.spacing(0.5)
             }}
         />
     );
