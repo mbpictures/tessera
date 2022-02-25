@@ -114,7 +114,9 @@ export const SeatSelectionFree = ({ categories }) => {
             <Typography suppressHydrationWarning>
                 Total Price:{" "}
                 <b id={"seat-selection-free-total-price"}>
-                    {formatPrice(order.totalPrice, categories[0].currency)}
+                    {
+                        categories.length > 0 && formatPrice(order.totalPrice, categories[0]?.currency)
+                    }
                 </b>
             </Typography>
         </Grid>
