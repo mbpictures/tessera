@@ -21,6 +21,7 @@ import { SelectionList } from "../SelectionList";
 import ImageIcon from '@mui/icons-material/Image';
 import Image from "next/image";
 import containImageStyle from "../../../style/ContainImage.module.scss";
+import { SaveButton } from "../SaveButton";
 
 export const EditEventDialog = ({
     event,
@@ -130,8 +131,6 @@ export const EditEventDialog = ({
         seatMap !== event.seatMapId ||
         !arrayEquals(originalSelectedCategories, selectedCategories) ||
         coverImage !== event.coverImage;
-
-    console.log(coverImageSize);
 
     return (
         <>
@@ -315,14 +314,14 @@ export const EditEventDialog = ({
                             }
                         </Grid>
                         <Stack direction={"row"}>
-                            <Button
+                            <SaveButton
                                 color={"success"}
                                 disabled={!hasChanges}
                                 fullWidth
-                                onClick={handleSave}
+                                action={handleSave}
                             >
                                 Save
-                            </Button>
+                            </SaveButton>
                             <Button
                                 color={"error"}
                                 fullWidth

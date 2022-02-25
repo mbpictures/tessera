@@ -18,6 +18,7 @@ import { ColorPicker } from "mui-color";
 import currencyToSymbolMap from "currency-symbol-map/map";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { SaveButton } from "../SaveButton";
 
 export const EditCategoryDialog = ({ category, onClose, onChange }) => {
     const [currency, setCurrency] = useState("");
@@ -191,14 +192,14 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
                         </Stack>
 
                         <Stack direction={"row"}>
-                            <Button
+                            <SaveButton
                                 color={"success"}
                                 disabled={!hasChanges}
                                 fullWidth
-                                onClick={handleSave}
+                                action={handleSave}
                             >
                                 Save Changes
-                            </Button>
+                            </SaveButton>
                             <Button
                                 color={"error"}
                                 fullWidth

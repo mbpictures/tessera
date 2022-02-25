@@ -8,7 +8,6 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
-    Button,
     Stack,
     TextField,
     Typography
@@ -20,6 +19,7 @@ import { SelectionList } from "../../components/admin/SelectionList";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import { useRouter } from "next/router";
 import { ShippingType } from "../../store/factories/shipping/ShippingFactory";
+import { SaveButton } from "../../components/admin/SaveButton";
 
 export default function Options({options, permissionDenied}) {
     const [title, setTitle] = useState("");
@@ -53,7 +53,6 @@ export default function Options({options, permissionDenied}) {
         try {
             await storeSetting(OptionsEnum.ShopTitle, title);
             await storeSetting(OptionsEnum.ShopSubtitle, subtitle);
-            await refreshProps();
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -64,7 +63,6 @@ export default function Options({options, permissionDenied}) {
     const handleSavePayment = async () => {
         try {
             await storeSetting(OptionsEnum.PaymentProviders, paymentProviders);
-            await refreshProps();
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -75,7 +73,6 @@ export default function Options({options, permissionDenied}) {
     const handleSaveShipping = async () => {
         try {
             await storeSetting(OptionsEnum.Delivery, shippingProviders);
-            await refreshProps();
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -105,12 +102,13 @@ export default function Options({options, permissionDenied}) {
                                 onChange={(event) => setSubtitle(event.target.value)}
                                 id={"shop-subtitle-input"}
                             />
-                            <Button
-                                onClick={handleSaveGeneral}
+                            <SaveButton
+                                action={handleSaveGeneral}
                                 id={"general-save"}
+                                onComplete={refreshProps}
                             >
                                 Save
-                            </Button>
+                            </SaveButton>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
@@ -136,12 +134,13 @@ export default function Options({options, permissionDenied}) {
                                     height: "fit-content"
                                 }}
                             />
-                            <Button
-                                onClick={handleSavePayment}
+                            <SaveButton
+                                action={handleSavePayment}
                                 id={"payment-save"}
+                                onComplete={refreshProps}
                             >
                                 Save
-                            </Button>
+                            </SaveButton>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
@@ -167,12 +166,13 @@ export default function Options({options, permissionDenied}) {
                                     height: "fit-content"
                                 }}
                             />
-                            <Button
-                                onClick={handleSaveShipping}
+                            <SaveButton
+                                action={handleSaveShipping}
+                                onComplete={refreshProps}
                                 id={"delivery-save"}
                             >
                                 Save
-                            </Button>
+                            </SaveButton>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
