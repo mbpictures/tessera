@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+    revalidateBuild,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
@@ -60,6 +61,20 @@ export default async function handler(
                 ...(definition && { definition: JSON.stringify(definition) })
             }
         });
+
+        const seatMaps = await prisma.seatMap.findMany({
+            where: {
+                id: parseInt(id as string)
+            },
+            include: {
+                events: true
+            }
+        });
+        const paths = seatMaps
+            .map(seatMap => seatMap.events.map(event => `/seatselection/${event.id}`))
+            .flat(2)
+            .filter((item, index, array) => array.indexOf(item) === index);
+        await revalidateBuild(res, paths);
         res.status(200).end("Updated");
         return;
     }
