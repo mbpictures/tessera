@@ -1,10 +1,11 @@
 import { Box } from "@mui/system";
-import { Typography } from "@mui/material";
+import { Theme, Typography } from "@mui/material";
 import styles from "../../style/EventSelection.module.scss";
 import { Check } from "@mui/icons-material";
 import { ChangeEventHandler } from "react";
 import { useAppSelector } from "../../store/hooks";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
+import { makeStyles } from "@mui/styles";
 
 interface Props {
     label: string;
@@ -12,6 +13,26 @@ interface Props {
     index: number;
     onChange?: (index: number) => unknown;
 }
+
+const useStyles = makeStyles((theme: Theme) => ({
+    input: {
+        "&:checked ~ label > div": {
+            backgroundColor: theme.palette.primary.main
+        },
+        "&:checked ~ label > p": {
+            backgroundColor: theme.palette.action.disabled
+        }
+    },
+    box: {
+        backgroundColor: theme.palette.primary.light
+    },
+    p: {
+        backgroundColor: theme.palette.action.selected,
+        "&:hover": {
+            backgroundColor: theme.palette.action.hover
+        }
+    }
+}));
 
 export const EventSelectionEntry = (props: Props) => {
     const currentSelectedEvent = useAppSelector(selectEventSelected);
@@ -22,6 +43,8 @@ export const EventSelectionEntry = (props: Props) => {
         props.onChange(props.index);
     };
 
+    const classes = useStyles();
+
     return (
         <Box className={styles.eventSelection}>
             <input
@@ -31,12 +54,13 @@ export const EventSelectionEntry = (props: Props) => {
                 id={`${props.name}${props.index}`}
                 defaultChecked={currentSelectedEvent === props.index}
                 onChange={handleChange}
+                className={classes.input}
             />
             <label htmlFor={`${props.name}${props.index}`}>
-                <Box>
+                <Box className={classes.box}>
                     <Check />
                 </Box>
-                <Typography>{props.label}</Typography>
+                <Typography className={classes.p}>{props.label}</Typography>
             </label>
         </Box>
     );

@@ -1,10 +1,14 @@
 import { EventSelectionEntry } from "./EventSelectionEntry";
 import { Stack } from "@mui/material";
 import React from "react";
+import style from "../../style/EventSelection.module.scss";
 
 export const EventSelection = ({events, onChange}) => {
     return (
-        <Stack spacing={2}>
+        <Stack
+            spacing={2}
+            className={style.eventSelectionWrapper}
+        >
             {events.map((event, index) => {
                 return (
                     <EventSelectionEntry

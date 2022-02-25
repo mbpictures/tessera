@@ -2,8 +2,6 @@ import { getStripe } from "../../lib/stripe";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckboxAccordion } from "../CheckboxAccordion";
 import { useEffect, useState } from "react";
-import { ThemeProvider } from "@mui/system";
-import { createTheme } from "@mui/material/styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectPayment, setPayment } from "../../store/reducers/paymentReducer";
 import {
@@ -36,25 +34,23 @@ export const PaymentMethods = ({ paymentMethods }) => {
 
     return (
         <Elements stripe={getStripe()}>
-            <ThemeProvider theme={createTheme()}>
-                {
-                    PaymentFactory.getAllPaymentInstances()
-                        .filter(payment => paymentMethods.includes(payment.data.type))
-                        .map((value, index) => {
-                            return (
-                                <CheckboxAccordion
-                                    label={value.getHeaderComponent()}
-                                    name={value.data.type}
-                                    selectedItem={selectedPaymentMethod}
-                                    onSelect={handleChangeSelectedPaymentMethod}
-                                    key={index}
-                                >
-                                    {value.getComponent()}
-                                </CheckboxAccordion>
-                            );
-                        })
-                }
-            </ThemeProvider>
+            {
+                PaymentFactory.getAllPaymentInstances()
+                    .filter(payment => paymentMethods.includes(payment.data.type))
+                    .map((value, index) => {
+                        return (
+                            <CheckboxAccordion
+                                label={value.getHeaderComponent()}
+                                name={value.data.type}
+                                selectedItem={selectedPaymentMethod}
+                                onSelect={handleChangeSelectedPaymentMethod}
+                                key={index}
+                            >
+                                {value.getComponent()}
+                            </CheckboxAccordion>
+                        );
+                    })
+            }
         </Elements>
     );
 };
