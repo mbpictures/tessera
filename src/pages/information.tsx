@@ -120,7 +120,8 @@ export async function getStaticProps() {
     const deliveryMethods = await getOption(Options.Delivery);
     return {
         props: {
-            deliveryMethods
+            deliveryMethods,
+            theme: await getOption(Options.Theme)
         }
     };
 }

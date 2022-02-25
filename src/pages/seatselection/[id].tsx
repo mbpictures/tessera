@@ -8,6 +8,8 @@ import {
     SeatSelectionMap
 } from "../../components/seatmap/SeatSelectionMap";
 import { SeatOrder } from "../../store/reducers/orderReducer";
+import { getOption } from "../../lib/options";
+import { Options } from "../../constants/Constants";
 
 export default function SeatSelection({
     categories,
@@ -110,7 +112,8 @@ export async function getStaticProps({ params }) {
         props: {
             categories,
             seatType: event.seatType,
-            seatMap: seatmap
+            seatMap: seatmap,
+            theme: await getOption(Options.Theme)
         }
     };
 }
