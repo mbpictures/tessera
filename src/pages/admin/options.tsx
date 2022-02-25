@@ -7,7 +7,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Box, Button,
+    Box, Button, Link,
     Stack,
     TextField,
     Typography
@@ -206,6 +206,15 @@ export default function Options({options, permissionDenied}) {
                         Theme
                     </AccordionSummary>
                     <AccordionDetails>
+                        <Typography>
+                            Here you can edit the default theme of the shop page.
+                            To do so, overwrite all desired values as described&nbsp;
+                            <Link href="https://mui.com/customization/theming/#theme-configuration-variables" target="_blank">here.</Link>
+                            Alternatively you can use a&nbsp;
+                            <Link href="https://bareynol.github.io/mui-theme-creator" target="_blank">theme creator</Link>
+                            and paste the configuration using the button below
+                            (hint: only copy the JSON starting from equal sign until the semicolon in the last line).
+                        </Typography>
                         <Button
                             onClick={handleGetThemeFromClipboard}
                             fullWidth
