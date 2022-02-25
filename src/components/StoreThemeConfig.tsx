@@ -12,10 +12,8 @@ const DEFAULT_VALUES = {
 };
 
 export const StoreThemeConfig = ({ customTheme, children }) => {
-    customTheme = Object.keys(customTheme).length === 0 ? null : customTheme;
-    console.log(customTheme);
     const themeOptions = useMemo(
-        () => (customTheme ?? DEFAULT_VALUES),
+        () => Object.keys(customTheme ?? {}).length === 0 ? DEFAULT_VALUES : customTheme,
         []
     );
 
