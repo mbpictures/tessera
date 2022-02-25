@@ -7,7 +7,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Box,
+    Box, Button,
     Stack,
     TextField,
     Typography
@@ -20,12 +20,17 @@ import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import { useRouter } from "next/router";
 import { ShippingType } from "../../store/factories/shipping/ShippingFactory";
 import { SaveButton } from "../../components/admin/SaveButton";
+import ContentPasteGoIcon from '@mui/icons-material/ContentPaste';
+import dynamic from "next/dynamic";
+
+const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
 export default function Options({options, permissionDenied}) {
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [paymentProviders, setPaymentProviders] = useState([]);
     const [shippingProviders, setShippingProviders] = useState([]);
+    const [theme, setTheme] = useState({})
     const router = useRouter();
 
     const {enqueueSnackbar} = useSnackbar();
@@ -36,6 +41,7 @@ export default function Options({options, permissionDenied}) {
         setSubtitle(options[OptionsEnum.ShopSubtitle]);
         setPaymentProviders(options[OptionsEnum.PaymentProviders]);
         setShippingProviders(options[OptionsEnum.Delivery]);
+        setTheme(options[OptionsEnum.Theme]);
     }, [options]);
 
     const refreshProps = async () => {
@@ -79,6 +85,25 @@ export default function Options({options, permissionDenied}) {
             })
         }
     };
+
+    const handleGetThemeFromClipboard = async () => {
+        const clipboard = await navigator.clipboard.readText();
+        const validJson = clipboard
+            .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ') // add
+            .replaceAll("'", "\"")
+            .replace(/\,(?!\s*?[\{\[\"\'\w])/g, '');
+        setTheme(JSON.parse(validJson));
+    };
+
+    const handleSaveTheme = async () => {
+        try {
+            await storeSetting(OptionsEnum.Theme, theme);
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    }
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
@@ -174,6 +199,34 @@ export default function Options({options, permissionDenied}) {
                                 Save
                             </SaveButton>
                         </Stack>
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary id={"accordion-theme"}>
+                        Theme
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Button
+                            onClick={handleGetThemeFromClipboard}
+                            fullWidth
+                            startIcon={<ContentPasteGoIcon />}
+                        >
+                            Get From Clipboard
+                        </Button>
+                        <ReactJson
+                            src={theme}
+                            onEdit={(edit) => setTheme(edit.updated_src)}
+                            onAdd={(edit) => setTheme(edit.updated_src)}
+                            onDelete={(edit) => setTheme(edit.updated_src)}
+                            name={false}
+                        />
+                        <SaveButton
+                            action={handleSaveTheme}
+                            onComplete={refreshProps}
+                            fullWidth
+                        >
+                            Save
+                        </SaveButton>
                     </AccordionDetails>
                 </Accordion>
             </Box>
