@@ -18,5 +18,18 @@ import './commands'
 import '@cypress/code-coverage/support'
 import "cypress-real-events/support";
 
+Cypress.on('window:before:load', (win) => {
+    let copyText;
+
+    if (!win.navigator.clipboard) {
+        win.navigator.clipboard = {
+            __proto__: {},
+        };
+    }
+
+    win.navigator.clipboard.__proto__.writeText = (text) => (copyText = text);
+    win.navigator.clipboard.__proto__.readText = () => copyText;
+});
+
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
