@@ -45,7 +45,6 @@ export default async function handler(
         await Promise.all(promises);
         res.status(200).end("Deleted");
     } catch (e) {
-        console.log(e);
         res.status(500).json(e);
     }
 }

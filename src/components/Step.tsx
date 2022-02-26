@@ -71,7 +71,6 @@ export const Step = ({
         if (orderId && orderId !== "") {
             getStoreWithOrderId(orderId)
                 .then(({ personalInformation, order, eventId }) => {
-                    console.log(personalInformation);
                     dispatch(setOrder(order));
                     dispatch(setEvent(eventId));
                     dispatch(setUserId(personalInformation.userId));

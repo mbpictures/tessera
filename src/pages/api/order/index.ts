@@ -52,8 +52,6 @@ export default async function handler(
             shipping: JSON.parse(order.shipping) as IShipping
         };
 
-        console.log(user);
-
         res.status(200).json({
             user: user,
             order: JSON.parse(order.order) as IOrder,

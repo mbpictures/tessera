@@ -35,7 +35,6 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
 
     useEffect(() => {
         if (category == null) return;
-        console.log(category);
         setCurrency(category.currency);
         setCategoryName(category.label);
         setPrice(category.price);
