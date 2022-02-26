@@ -9,7 +9,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box } from "@mui/system";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -36,16 +36,9 @@ export const SeatSelectionFreeEntry = ({
     currentOrder: FreeSeatOrder;
     onRemove?: (index: number) => unknown;
 }) => {
-    const [ticketAmount, setTicketAmount] = useState<number>(0);
-    const [category, setCategory] = useState<number>(categories[0].id);
-
-    useEffect(() => {
-        if (!currentOrder.orders || currentOrder.orders.length <= index) return;
-        if (currentOrder.orders[index].amount > 0)
-            setTicketAmount(currentOrder.orders[index].amount);
-        if (currentOrder.orders[index].categoryId != -1)
-            setCategory(currentOrder.orders[index].categoryId);
-    }, []);
+    const order = !currentOrder?.orders || currentOrder.orders.length <= index ? null : currentOrder.orders[index]
+    const [ticketAmount, setTicketAmount] = useState<number>((order?.categoryId ?? -1) > 0 ? order.categoryId : 0);
+    const [category, setCategory] = useState<number>((order?.categoryId ?? -1) !== -1  ? order.categoryId : categories[0].id);
 
     const handleChange = (event) => {
         if (event.target.value === "") {
