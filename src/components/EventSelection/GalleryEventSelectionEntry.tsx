@@ -62,7 +62,7 @@ export const GalleryEventSelectionEntry = ({event, index, onChange}) => {
                         setClickFeedback(false)
                     }}
                 />
-                <Image src={event.coverImage} layout={"fill"} />
+                <Image src={event.coverImage} layout={"fill"} alt="Event Preview" />
                 <Typography
                     variant={"h4"}
                 >

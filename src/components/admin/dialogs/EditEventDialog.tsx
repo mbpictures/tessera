@@ -237,7 +237,7 @@ export const EditEventDialog = ({
                             {
                                coverImageUrl && (
                                     <Grid item lg={6} md={12} xs={12} className={containImageStyle.containImage} height={120}>
-                                        <Image src={coverImageUrl} layout={"fill"} />
+                                        <Image src={coverImageUrl} layout={"fill"} alt="Event Preview" />
                                     </Grid>
                                 )
                             }
