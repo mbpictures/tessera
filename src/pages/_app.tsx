@@ -12,6 +12,7 @@ import { store } from "../store/store";
 import { SessionProviderProps } from "next-auth/react";
 import { SnackbarProviderProps } from "notistack";
 import dynamic from "next/dynamic";
+import { StoreThemeConfig } from "../components/StoreThemeConfig";
 
 export default function Global({ Component, pageProps }) {
     const router = useRouter();
@@ -45,20 +46,22 @@ export default function Global({ Component, pageProps }) {
 
     return (
         <Provider store={store}>
-            <StepperContainer
-                onBack={() => setDirection(-1)}
-                onNext={() => setDirection(1)}
-                disableOverflow={pageProps.disableOverflow ?? false}
-                noNext={pageProps.noNext ?? false}
-            >
-                <AnimatePresence exitBeforeEnter initial={false}>
-                    <Component
-                        {...pageProps}
-                        key={router.pathname}
-                        direction={direction}
-                    />
-                </AnimatePresence>
-            </StepperContainer>
+            <StoreThemeConfig customTheme={pageProps.theme}>
+                <StepperContainer
+                    onBack={() => setDirection(-1)}
+                    onNext={() => setDirection(1)}
+                    disableOverflow={pageProps.disableOverflow ?? false}
+                    noNext={pageProps.noNext ?? false}
+                >
+                    <AnimatePresence exitBeforeEnter initial={false}>
+                        <Component
+                            {...pageProps}
+                            key={router.pathname}
+                            direction={direction}
+                        />
+                    </AnimatePresence>
+                </StepperContainer>
+            </StoreThemeConfig>
         </Provider>
     );
 }

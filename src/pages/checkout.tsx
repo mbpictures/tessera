@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import { Step } from "../components/Step";
 import { Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, useTheme } from "@mui/system";
+import { getOption } from "../lib/options";
+import { Options } from "../constants/Constants";
 
 export default function Checkout({ direction }) {
+    const theme = useTheme();
+
     return (
         <Step
             direction={direction}
@@ -23,7 +27,7 @@ export default function Checkout({ direction }) {
                     <motion.path
                         fill="none"
                         strokeWidth="2"
-                        stroke="rgb(1,141,0)"
+                        stroke={theme.palette.success.main}
                         d="M 0, 20 a 20, 20 0 1,0 40,0 a 20, 20 0 1,0 -40,0"
                         style={{ translateX: 5, translateY: 5 }}
                         animate={{
@@ -40,7 +44,7 @@ export default function Checkout({ direction }) {
                     <motion.path
                         fill="none"
                         strokeWidth="2"
-                        stroke="rgb(1,141,0)"
+                        stroke={theme.palette.success.main}
                         d="M14,26 L 22,33 L 35,16"
                         strokeDasharray="0 1"
                         animate={{
@@ -61,4 +65,12 @@ export default function Checkout({ direction }) {
             </Box>
         </Step>
     );
+}
+
+export async function getStaticProps() {
+    return {
+        props: {
+            theme: await getOption(Options.Theme)
+        }
+    }
 }

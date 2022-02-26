@@ -1,3 +1,15 @@
+.eventSelectionWrapper {
+    width: 80%;
+    max-width: 500px;
+    margin: 0 auto;
+
+    @media (max-width: 700px) {
+        & {
+            width: 100%;
+        }
+    }
+}
+
 .eventSelection {
     clear: both;
     overflow: hidden;
@@ -9,20 +21,15 @@
     label {
         position: relative;
         line-height: 2.5em;
-        text-indent: 3.25em;
         margin-top: 10px;
         cursor: pointer;
         width: 100%;
         display: flex;
-        border-radius: 3px;
         align-items: center;
 
         > div {
             display: flex;
             align-items: center;
-            padding: 10px 10px;
-            border-radius: 3px 0 0 3px;
-            background-color: lighten(#1976d2, 50);
             transition: 0.3s ease;
 
             > * {
@@ -33,14 +40,7 @@
 
         > p {
             flex-grow: 1;
-            padding: 10px 0;
-            background-color: rgba(180, 180, 180, 1);
-            border-radius: 0 3px 3px 0;
             transition: 0.3s ease;
-
-            &:hover {
-                background-color: rgba(190, 190, 190, 1);
-            }
         }
 
         &:hover {
@@ -53,15 +53,10 @@
 
     input[type="radio"]:checked ~ label {
         > div {
-            background-color: #1976d2;
-
             > * {
                 opacity: 1;
                 color: #fff !important;
             }
-        }
-        > p {
-            background-color: rgba(210, 210, 210, 1) !important;
         }
     }
 }

@@ -104,4 +104,72 @@ describe("Configuration in admin dashboard", () => {
             });
         });
     });
+
+    it("Theme", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.login(userFixture.email, userFixture.password);
+            cy.url().should("eq", Cypress.config().baseUrl + "/admin");
+
+            const theme = {
+                palette: {
+                    mode: "dark",
+                    primary: {
+                        main: "#ff0000"
+                    }
+                }
+            };
+
+            cy.visit("/admin/options");
+            cy.get("#accordion-theme").click();
+
+            cy.window().focus();
+            cy.window()
+                .then((win) => {
+                    return win.navigator.clipboard.writeText(JSON.stringify(theme));
+                })
+                .then(() => {
+                    cy.get("#get-theme-from-clipboard").focus().click();
+                    cy.get("#theme-save").click();
+
+                    cy.visit("/admin/options");
+
+                    cy.request({
+                        method: "GET",
+                        url: "api/admin/options",
+                        body: {
+                            key: "shop.theme"
+                        }
+                    }).then(({body}) => {
+                        expect(body.value).to.deep.equal(theme);
+
+                        cy.request({
+                            method: "POST",
+                            url: "api/admin/options",
+                            body: {
+                                key: "shop.theme",
+                                value: null
+                            }
+                        }).then(() => {
+                            cy.visit("/admin/options");
+                            cy.get("#accordion-theme").click();
+
+                            cy.get("#enter-theme-input-dialog").click();
+                            cy.get("#text-input-dialog-input").type(JSON.stringify(theme), {parseSpecialCharSequences: false});
+                            cy.get("#text-input-dialog-continue").click();
+
+                            cy.get("#theme-save").click();
+                            cy.request({
+                                method: "GET",
+                                url: "api/admin/options",
+                                body: {
+                                    key: "shop.theme"
+                                }
+                            }).then(({body}) => {
+                                expect(body.value).to.deep.equal(theme);
+                            });
+                        });
+                    });
+                });
+        });
+    })
 });

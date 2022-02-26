@@ -19,7 +19,7 @@ export default function Home({ events, direction, title, subtitle }) {
     const gallery = events.filter(event => !event.coverImage).length === 0;
 
     return (
-        <Step direction={direction} style={{width: gallery ? "100%" : "auto"}}>
+        <Step direction={direction} style={{width: "100%"}}>
             <Typography variant={"h1"} align={"center"} id={"shop-title"}>
                 {title}
             </Typography>
@@ -47,7 +47,8 @@ export async function getStaticProps() {
         props: {
             events,
             title: await getOption(Options.ShopTitle),
-            subtitle: await getOption(Options.ShopSubtitle)
+            subtitle: await getOption(Options.ShopSubtitle),
+            theme: await getOption(Options.Theme)
         }
     };
 }

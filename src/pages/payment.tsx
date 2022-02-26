@@ -142,7 +142,8 @@ export async function getStaticProps() {
             disableOverflow: true,
             noNext: true,
             categories: categories,
-            paymentMethods
+            paymentMethods,
+            theme: await getOption(Options.Theme)
         }
     };
 }

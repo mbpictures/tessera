@@ -24,5 +24,6 @@ export enum Options {
     ShopTitle = "shop.title",
     ShopSubtitle = "shop.subtitle",
     PaymentProviders = "shop.payment-provider",
-    Delivery = "shop.delivery"
+    Delivery = "shop.delivery",
+    Theme = "shop.theme"
 }

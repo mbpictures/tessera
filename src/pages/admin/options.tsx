@@ -7,7 +7,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Box,
+    Box, Button, Link,
     Stack,
     TextField,
     Typography
@@ -20,12 +20,19 @@ import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import { useRouter } from "next/router";
 import { ShippingType } from "../../store/factories/shipping/ShippingFactory";
 import { SaveButton } from "../../components/admin/SaveButton";
+import ContentPasteGoIcon from '@mui/icons-material/ContentPaste';
+import dynamic from "next/dynamic";
+import { TextInputDialog } from "../../components/TextInputDialog";
+
+const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
 export default function Options({options, permissionDenied}) {
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [paymentProviders, setPaymentProviders] = useState([]);
     const [shippingProviders, setShippingProviders] = useState([]);
+    const [theme, setTheme] = useState({})
+    const [inputThemeOpen, setInputThemeOpen] = useState(false);
     const router = useRouter();
 
     const {enqueueSnackbar} = useSnackbar();
@@ -36,7 +43,8 @@ export default function Options({options, permissionDenied}) {
         setSubtitle(options[OptionsEnum.ShopSubtitle]);
         setPaymentProviders(options[OptionsEnum.PaymentProviders]);
         setShippingProviders(options[OptionsEnum.Delivery]);
-    }, [options]);
+        setTheme(options[OptionsEnum.Theme] ?? {});
+    }, [options, permissionDenied]);
 
     const refreshProps = async () => {
         await router.replace(router.asPath);
@@ -80,8 +88,43 @@ export default function Options({options, permissionDenied}) {
         }
     };
 
+    const applyTheme = (theme: string) => {
+        const validJson = theme
+            .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ') // add
+            .replaceAll("'", "\"")
+            .replace(/\,(?!\s*?[\{\[\"\'\w])/g, '');
+        try {
+            const json = JSON.parse(validJson);
+            setTheme(json);
+        } catch (e) {
+            enqueueSnackbar("JSON not parseable", {variant: "error"});
+        }
+    }
+
+    const handleGetThemeFromClipboard = async () => {
+        const clipboard = await navigator.clipboard.readText();
+        applyTheme(clipboard);
+    };
+
+    const handleSaveTheme = async () => {
+        try {
+            await storeSetting(OptionsEnum.Theme, theme);
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    }
+
     return (
         <AdminLayout permissionDenied={permissionDenied}>
+            <TextInputDialog
+                open={inputThemeOpen}
+                onTextInput={applyTheme}
+                onClose={() => setInputThemeOpen(false)}
+                title="Enter Theme in JSON format"
+                placeholder="JSON Theme"
+            />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Options</Typography>
                 <Accordion>
@@ -174,6 +217,55 @@ export default function Options({options, permissionDenied}) {
                                 Save
                             </SaveButton>
                         </Stack>
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary id={"accordion-theme"}>
+                        Theme
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            Here you can edit the default theme of the shop page.
+                            To do so, overwrite all desired values as described&nbsp;
+                            <Link href="https://mui.com/customization/theming/#theme-configuration-variables" target="_blank">here.</Link>
+                            Alternatively you can use a&nbsp;
+                            <Link href="https://bareynol.github.io/mui-theme-creator" target="_blank">theme creator</Link>
+                            and paste the configuration using the button below
+                            (hint: only copy the JSON starting from equal sign until the semicolon in the last line).
+                        </Typography>
+                        <Button
+                            onClick={handleGetThemeFromClipboard}
+                            fullWidth
+                            startIcon={<ContentPasteGoIcon />}
+                            id={"get-theme-from-clipboard"}
+                        >
+                            Get From Clipboard
+                        </Button>
+                        <Typography>
+                            If your browser doesn&apos;t support clipboard usage, you can enter the JSON theme using this button.
+                        </Typography>
+                        <Button
+                            onClick={() => setInputThemeOpen(true)}
+                            id={"enter-theme-input-dialog"}
+                            fullWidth
+                        >
+                            Open Theme Input
+                        </Button>
+                        <ReactJson
+                            src={theme}
+                            onEdit={(edit) => setTheme(edit.updated_src)}
+                            onAdd={(edit) => setTheme(edit.updated_src)}
+                            onDelete={(edit) => setTheme(edit.updated_src)}
+                            name={false}
+                        />
+                        <SaveButton
+                            action={handleSaveTheme}
+                            onComplete={refreshProps}
+                            fullWidth
+                            id={"theme-save"}
+                        >
+                            Save
+                        </SaveButton>
                     </AccordionDetails>
                 </Accordion>
             </Box>
