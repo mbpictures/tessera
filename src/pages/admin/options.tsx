@@ -41,7 +41,7 @@ export default function Options({options, permissionDenied}) {
         setSubtitle(options[OptionsEnum.ShopSubtitle]);
         setPaymentProviders(options[OptionsEnum.PaymentProviders]);
         setShippingProviders(options[OptionsEnum.Delivery]);
-        setTheme(options[OptionsEnum.Theme]);
+        setTheme(options[OptionsEnum.Theme] ?? {});
     }, [options]);
 
     const refreshProps = async () => {
