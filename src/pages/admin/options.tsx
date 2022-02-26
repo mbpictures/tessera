@@ -88,12 +88,16 @@ export default function Options({options, permissionDenied}) {
 
     const handleGetThemeFromClipboard = async () => {
         const clipboard = await navigator.clipboard.readText();
-        console.log(clipboard);
         const validJson = clipboard
             .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ') // add
             .replaceAll("'", "\"")
             .replace(/\,(?!\s*?[\{\[\"\'\w])/g, '');
-        setTheme(JSON.parse(validJson));
+        try {
+            const json = JSON.parse(validJson);
+            setTheme(json);
+        } catch (e) {
+            enqueueSnackbar("JSON not parseable", {variant: "error"});
+        }
     };
 
     const handleSaveTheme = async () => {
