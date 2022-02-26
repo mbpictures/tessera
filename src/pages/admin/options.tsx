@@ -88,6 +88,7 @@ export default function Options({options, permissionDenied}) {
 
     const handleGetThemeFromClipboard = async () => {
         const clipboard = await navigator.clipboard.readText();
+        console.log(clipboard);
         const validJson = clipboard
             .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ') // add
             .replaceAll("'", "\"")
@@ -219,6 +220,7 @@ export default function Options({options, permissionDenied}) {
                             onClick={handleGetThemeFromClipboard}
                             fullWidth
                             startIcon={<ContentPasteGoIcon />}
+                            id={"get-theme-from-clipboard"}
                         >
                             Get From Clipboard
                         </Button>
@@ -233,6 +235,7 @@ export default function Options({options, permissionDenied}) {
                             action={handleSaveTheme}
                             onComplete={refreshProps}
                             fullWidth
+                            id={"theme-save"}
                         >
                             Save
                         </SaveButton>
