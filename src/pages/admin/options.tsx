@@ -44,7 +44,7 @@ export default function Options({options, permissionDenied}) {
         setPaymentProviders(options[OptionsEnum.PaymentProviders]);
         setShippingProviders(options[OptionsEnum.Delivery]);
         setTheme(options[OptionsEnum.Theme] ?? {});
-    }, [options]);
+    }, [options, permissionDenied]);
 
     const refreshProps = async () => {
         await router.replace(router.asPath);
