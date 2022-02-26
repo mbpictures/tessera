@@ -1,7 +1,8 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const nextTranslate = require("next-translate");
 
-module.exports = {
+module.exports = nextTranslate({
     future: {
         webpack5: true,
     },
@@ -31,4 +32,4 @@ module.exports = {
 
         return config
     },
-}
+});
