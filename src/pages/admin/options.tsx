@@ -22,6 +22,7 @@ import { ShippingType } from "../../store/factories/shipping/ShippingFactory";
 import { SaveButton } from "../../components/admin/SaveButton";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPaste';
 import dynamic from "next/dynamic";
+import { TextInputDialog } from "../../components/TextInputDialog";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -31,6 +32,7 @@ export default function Options({options, permissionDenied}) {
     const [paymentProviders, setPaymentProviders] = useState([]);
     const [shippingProviders, setShippingProviders] = useState([]);
     const [theme, setTheme] = useState({})
+    const [inputThemeOpen, setInputThemeOpen] = useState(false);
     const router = useRouter();
 
     const {enqueueSnackbar} = useSnackbar();
@@ -86,9 +88,8 @@ export default function Options({options, permissionDenied}) {
         }
     };
 
-    const handleGetThemeFromClipboard = async () => {
-        const clipboard = await navigator.clipboard.readText();
-        const validJson = clipboard
+    const applyTheme = (theme: string) => {
+        const validJson = theme
             .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ') // add
             .replaceAll("'", "\"")
             .replace(/\,(?!\s*?[\{\[\"\'\w])/g, '');
@@ -98,6 +99,11 @@ export default function Options({options, permissionDenied}) {
         } catch (e) {
             enqueueSnackbar("JSON not parseable", {variant: "error"});
         }
+    }
+
+    const handleGetThemeFromClipboard = async () => {
+        const clipboard = await navigator.clipboard.readText();
+        applyTheme(clipboard);
     };
 
     const handleSaveTheme = async () => {
@@ -112,6 +118,13 @@ export default function Options({options, permissionDenied}) {
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
+            <TextInputDialog
+                open={inputThemeOpen}
+                onTextInput={applyTheme}
+                onClose={() => setInputThemeOpen(false)}
+                title="Enter Theme in JSON format"
+                placeholder="JSON Theme"
+            />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Options</Typography>
                 <Accordion>
@@ -227,6 +240,16 @@ export default function Options({options, permissionDenied}) {
                             id={"get-theme-from-clipboard"}
                         >
                             Get From Clipboard
+                        </Button>
+                        <Typography>
+                            If your browser doesn&apos;t support clipboard usage, you can enter the JSON theme using this button.
+                        </Typography>
+                        <Button
+                            onClick={() => setInputThemeOpen(true)}
+                            id={"enter-theme-input-dialog"}
+                            fullWidth
+                        >
+                            Open Theme Input
                         </Button>
                         <ReactJson
                             src={theme}
