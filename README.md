@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="http://projects.marius-butz.de/ticketshop/TicketshopLogo.png" width="100%" />
+  <img alt="Logo" src="http://projects.marius-butz.de/ticketshop/TicketshopLogo.png" width="100%" />
   Welcome to Tessera 👋<br />
   Your open source ticket shop
   <p>
@@ -56,11 +56,11 @@ npm install
 - Sending emails (with templates) containing invoice and/or tickets
 - Easy to use admin section with event management, seat map editor, viewing orders, marking invoices as payed
 - RESTful API to manage events and orders with third party tools or webhooks
+- Customizable ticket shop UI with import function for [MUI themes](https://mui.com/customization/theming/)
 
 ### 🔜 Planned
 - Ticket control webapp (to scan and verify downloaded tickets)
 - Notifications (e.g. for new orders) and configurable webhooks
-- Customizable ticket shop UI with import function for [MUI themes](https://mui.com/customization/theming/)
 - Event scheduling
 
 If you miss some features, which are not planned, please create an [issue ❗](https://github.com/mbpictures/tessera/issues)
