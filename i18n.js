@@ -11,9 +11,9 @@ module.exports = {
     },
     "loadLocaleFrom": async (lang, ns) => {
         const prisma = new PrismaClient();
-        let result = {};
+        let result = (await import(`./locale/${DEFAULT_LANG}/${ns}.json`)).default;
         try {
-            result = (await import(`./locale/${lang}/${ns}.json`)).default;
+            result = {...result , ...(await import(`./locale/${lang}/${ns}.json`)).default};
         } catch (e) {
             throw e;
         }
