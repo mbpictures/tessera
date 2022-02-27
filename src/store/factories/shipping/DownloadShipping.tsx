@@ -8,7 +8,7 @@ export class DownloadShipping extends Shipping {
     }
 
     get DisplayName(): string {
-        return "Download";
+        return "download";
     }
 
     get Component(): React.ReactElement {

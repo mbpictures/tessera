@@ -9,12 +9,14 @@ import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
+import useTranslation from "next-translate/useTranslation";
 
 export const StripeCard = () => {
     const selector = useAppSelector(selectPayment);
     const selectorOrder = useAppSelector(selectOrder);
     const selectorEvent = useAppSelector(selectEventSelected);
     const dispatch = useAppDispatch();
+    const { t } = useTranslation();
 
     const stripe = useStripe();
 
@@ -111,7 +113,7 @@ export const StripeCard = () => {
         <Grid container spacing={2}>
             <Grid item xs={12} md={12}>
                 <TextField
-                    label={"Card Holder Name"}
+                    label={t("payment:credit-card-name")}
                     required
                     onChange={(event) => setCardHolderName(event.target.value)}
                     value={cardHolderName}
@@ -129,6 +131,7 @@ export const StripeCard = () => {
                         "cardNumberError"
                     )}
                     id={"stripe-card-number"}
+                    label={t("payment:credit-card-number")}
                 />
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -140,6 +143,7 @@ export const StripeCard = () => {
                         "expiredError"
                     )}
                     id={"stripe-card-expire"}
+                    label={t("payment:credit-card-expires")}
                 />
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -148,6 +152,7 @@ export const StripeCard = () => {
                     labelErrorMessage={cvcError}
                     onChange={onElementChange("cvcComplete", "cvcError")}
                     id={"stripe-card-cvc"}
+                    label={t("payment:credit-card-cvc")}
                 />
             </Grid>
         </Grid>
@@ -155,5 +160,6 @@ export const StripeCard = () => {
 };
 
 export const StripeCardHeader = () => {
-    return <Typography>Credit Card</Typography>;
+    const { t } = useTranslation();
+    return <Typography>{t("payment:credit-card")}</Typography>;
 };

@@ -4,15 +4,16 @@ import { ZIP } from "./ZIP";
 import { useState } from "react";
 import countryRegionData, { Country, Region } from "country-region-data";
 import { addressValidatorMap } from "../../constants/util";
+import useTranslation from "next-translate/useTranslation";
 
 const validateAddressComponent = (address: IAddress, property: string) => {
     if (addressValidatorMap[property](address)) return null;
-    if (property === "firstName") return "Please enter your firstname here!";
-    if (property === "lastName") return "Please enter your lastname here!";
-    if (property === "address") return "Please enter street and house number!";
-    if (property === "city") return "Please enter your city!";
-    if (property === "country") return "Select your country!";
-    if (property === "region") return "Select your region!";
+    if (property === "firstName") return "information:firstname-error";
+    if (property === "lastName") return "information:lastname-error";
+    if (property === "address") return "information:address-error";
+    if (property === "city") return "information:city-error";
+    if (property === "country") return "information:country-error";
+    if (property === "region") return "information:region-error";
 };
 
 export const AddressComponent = ({
@@ -22,6 +23,7 @@ export const AddressComponent = ({
     value: IAddress;
     onChange: (newAddress: IAddress) => unknown;
 }) => {
+    const { t } = useTranslation();
     const [localZip, setLocalZip] = useState<string>(value.zip ?? "");
     const [firstNameError, setFirstNameError] = useState<string>(null);
     const [lastNameError, setLastNameError] = useState<string>(null);
@@ -32,14 +34,16 @@ export const AddressComponent = ({
         const newAddress: IAddress = Object.assign({}, value);
         newAddress[property] = newValue;
         onChange(newAddress);
+
+        const error = validateAddressComponent(newAddress, property);
         if (property === "firstName")
-            setFirstNameError(validateAddressComponent(newAddress, property));
+            setFirstNameError(error ? t(error) : null);
         if (property === "lastName")
-            setLastNameError(validateAddressComponent(newAddress, property));
+            setLastNameError(error ? t(error) : null);
         if (property === "address")
-            setAddressError(validateAddressComponent(newAddress, property));
+            setAddressError(error ? t(error) : null);
         if (property === "city")
-            setCityError(validateAddressComponent(newAddress, property));
+            setCityError(error ? t(error) : null);
     };
 
     const handleChangeZip = (newValue: string, valid: boolean) => {
@@ -67,7 +71,7 @@ export const AddressComponent = ({
     return (
         <Stack spacing={1}>
             <TextField
-                label="Firstname"
+                label={t("information:firstname")}
                 value={value.firstName ?? ""}
                 onChange={(event) =>
                     handleUpdate("firstName", event.target.value)
@@ -77,7 +81,7 @@ export const AddressComponent = ({
                 name={"address-firstname"}
             />
             <TextField
-                label="Lastname"
+                label={t("information:lastname")}
                 value={value.lastName ?? ""}
                 onChange={(event) =>
                     handleUpdate("lastName", event.target.value)
@@ -87,7 +91,7 @@ export const AddressComponent = ({
                 name={"address-lastname"}
             />
             <TextField
-                label="Address"
+                label={t("information:address")}
                 value={value.address ?? ""}
                 onChange={(event) =>
                     handleUpdate("address", event.target.value)
@@ -106,7 +110,7 @@ export const AddressComponent = ({
                 </Grid>
                 <Grid item md={8} xs={12}>
                     <TextField
-                        label="City"
+                        label={t("information:city")}
                         fullWidth
                         value={value.city ?? ""}
                         onChange={(event) =>
@@ -124,7 +128,7 @@ export const AddressComponent = ({
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                label="Country"
+                                label={t("information:country")}
                                 name={"address-country-text"}
                             />
                         )}
@@ -146,7 +150,7 @@ export const AddressComponent = ({
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
-                                        label="Region"
+                                        label={t("information:region")}
                                         name={"address-region-text"}
                                     />
                                 )}

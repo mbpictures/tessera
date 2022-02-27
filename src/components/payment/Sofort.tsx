@@ -10,11 +10,14 @@ import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import Image from "next/image";
 import logo from "../../assets/payment/klarna.svg";
+import useTranslation from "next-translate/useTranslation";
 
 export const Sofort = () => {
     const selector = useAppSelector(selectPayment);
     const selectorOrder = useAppSelector(selectOrder);
     const dispatch = useAppDispatch();
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (
@@ -37,12 +40,11 @@ export const Sofort = () => {
 
     return (
         <Typography>
-            After clicking on &quot;pay now&quot; you will be redirected to
-            &quot;sofort&quot; payment.
+            {t("payment:klarna-description")}
         </Typography>
     );
 };
 
 export const SofortHeader = () => {
-    return <Image src={logo} height={50} alt="Sofort Logo" />;
+    return <Image src={logo} height={50} alt="Klarna Logo" />;
 };

@@ -1,6 +1,7 @@
 import { TextField } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import zip from "zippo";
+import useTranslation from "next-translate/useTranslation";
 
 export const ZIP = ({
     value,
@@ -12,6 +13,7 @@ export const ZIP = ({
     name?: string;
 }) => {
     const [error, setError] = useState<string | undefined>(undefined);
+    const { t } = useTranslation();
 
     const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         const isValid = zip.validate(event.target.value);
@@ -20,12 +22,12 @@ export const ZIP = ({
             setError(undefined);
             return;
         }
-        setError("Please enter a valid ZIP Code");
+        setError(t("information:zip-error"));
     };
 
     return (
         <TextField
-            label="ZIP"
+            label={t("information:zip")}
             fullWidth
             error={error != undefined}
             helperText={error}

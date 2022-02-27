@@ -47,7 +47,7 @@ export class PostalDeliveryShipping extends Shipping {
     }
 
     get DisplayName(): string {
-        return "Postal Delivery";
+        return "postal-delivery";
     }
 
     get Component(): React.ReactElement {

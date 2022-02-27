@@ -11,10 +11,12 @@ import {
 } from "../store/reducers/orderReducer";
 import { useDispatch } from "react-redux";
 import { calculateTotalPrice, formatPrice } from "../constants/util";
+import useTranslation from "next-translate/useTranslation";
 
 export const SeatSelectionFree = ({ categories }) => {
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (order.orders && order.orders.length > 0) return;
@@ -80,7 +82,7 @@ export const SeatSelectionFree = ({ categories }) => {
             flexDirection="column"
         >
             <Typography variant={"body1"} alignSelf={"center"}>
-                This event has no seat reservation
+                {t("seatselection:no-seat-reservation")}
             </Typography>
             <Grid container spacing={2} justifyContent={"center"}>
                 {order.orders &&
@@ -108,11 +110,11 @@ export const SeatSelectionFree = ({ categories }) => {
                     order.orders && order.orders.length >= categories.length
                 }
             >
-                <AddIcon /> Add Category
+                <AddIcon /> {t("seatselection:add-category")}
             </Button>
             <Box height={20} />
             <Typography suppressHydrationWarning>
-                Total Price:{" "}
+                {t("common:total-price")}:{" "}
                 <b id={"seat-selection-free-total-price"}>
                     {
                         categories.length > 0 && formatPrice(order.totalPrice, categories[0]?.currency)

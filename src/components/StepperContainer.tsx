@@ -7,6 +7,7 @@ import { selectNextStateAvailable } from "../store/reducers/nextStepAvailableRed
 import { useAppSelector } from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
+import useTranslation from "next-translate/useTranslation";
 
 interface Props {
     onNext?: () => unknown;
@@ -23,6 +24,7 @@ export const StepperContainer = (props: Props) => {
     const selectedEvent = useAppSelector(selectEventSelected);
     const bottomBar = useRef<HTMLDivElement>(null);
     const container = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation("common");
 
     useEffect(() => {
         if (!bottomBar.current || !container.current) return;
@@ -64,7 +66,7 @@ export const StepperContainer = (props: Props) => {
             ref={container}
         >
             <Head>
-                <title>Ticket Shop - {STEPS[currentStep]}</title>
+                <title>Ticket Shop - {t(STEPS[currentStep])}</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Stepper activeStep={currentStep} alternativeLabel>
@@ -73,7 +75,7 @@ export const StepperContainer = (props: Props) => {
                     const labelProps = {};
                     return (
                         <Step key={label} {...stepProps} className={style.stepperStep}>
-                            <StepLabel {...labelProps}>{label}</StepLabel>
+                            <StepLabel {...labelProps}>{t(label)}</StepLabel>
                         </Step>
                     );
                 })}
@@ -108,7 +110,7 @@ export const StepperContainer = (props: Props) => {
                                 onClick={handleBack}
                                 id={"stepper-back-button"}
                             >
-                                Back
+                                {t("back")}
                             </Button>
                         )}
 
@@ -119,7 +121,7 @@ export const StepperContainer = (props: Props) => {
                                 disabled={!nextDisabled}
                                 id={"stepper-next-button"}
                             >
-                                Next
+                                {t("next")}
                             </Button>
                         )}
                     </Box>

@@ -8,7 +8,7 @@ export class BoxOfficeShipping extends Shipping {
     }
 
     get DisplayName(): string {
-        return "Box Office";
+        return "box-office";
     }
 
     get Component(): React.ReactElement {
