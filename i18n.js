@@ -7,7 +7,10 @@ module.exports = {
     "locales": locales,
     "defaultLocale": DEFAULT_LANG,
     "pages": {
-        "*": ["common"]
+        "*": ["common"],
+        "/information": ["information"],
+        "/payment": ["payment"],
+        "/seatselection/[id]": ["seatselection"]
     },
     "loadLocaleFrom": async (lang, ns) => {
         const prisma = new PrismaClient();

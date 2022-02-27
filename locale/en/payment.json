@@ -1,0 +1,15 @@
+{
+    "pay-now": "Pay now",
+    "processing": "Processing",
+    "credit-card": "Credit Card",
+    "credit-card-name": "Card Holder Name",
+    "credit-card-number": "Credit Card Number",
+    "credit-card-expires": "Expires",
+    "credit-card-cvc": "CVC Code",
+    "sepa-direct-debit": "SEPA Direct Debit",
+    "sepa-direct-debit-iban": "IBAN",
+    "klarna-description": "After clicking on \"pay now\" you will be redirected to \"klarna\" payment.",
+    "invoice": "You will receive an invoice containing the recipient's bank details by e-mail.",
+    "invoice-description": "Ihnen wird eine Rechnung per E-Mail zu gesendet!",
+    "paypal-description": ""
+}
