@@ -10,6 +10,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import EventIcon from "@mui/icons-material/Event";
 import SettingsIcon from '@mui/icons-material/Settings';
+import TranslateIcon from '@mui/icons-material/Translate';
 
 const RootStyle = styled("div")(({ theme }) => ({
     [theme.breakpoints.up("lg")]: {
@@ -58,6 +59,11 @@ export const sidebarConfig = [
         title: "Options",
         icon: <SettingsIcon />,
         path: "/admin/options"
+    },
+    {
+        title: "Translations",
+        icon: <TranslateIcon />,
+        path: "/admin/localization"
     }
 ];
 
