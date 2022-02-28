@@ -142,3 +142,10 @@ export const revalidateBuild = async (res: NextApiResponse, page: string | strin
         console.log(e);
     }
 };
+
+export const revalidateEventPages = async (res, additionalPages: string[]) => {
+    const events = await prisma.event.findMany();
+    const eventPaths = events.map(event => `/seatselection/${event.id}`);
+
+    await revalidateBuild(res, eventPaths.concat(additionalPages));
+};
