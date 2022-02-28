@@ -11,7 +11,8 @@ const APP_BAR_DESKTOP = 92;
 const RootStyle = styled("div")({
     display: "flex",
     minHeight: "100%",
-    overflow: "hidden"
+    overflow: "hidden",
+    maxHeight: "100%"
 });
 
 const MainStyle = styled("div")(({ theme }) => ({
