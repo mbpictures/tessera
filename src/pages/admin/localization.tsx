@@ -91,6 +91,7 @@ export default function Localization({localization, locales, defaultLocale, perm
                                                                     defaultValue={localization[namespace][locale][key]}
                                                                     style={{minWidth: 200}}
                                                                     onChange={(event) => handleChange(namespace, locale, key, event.target.value)}
+                                                                    id={`translation-${namespace}-${locale}-${key}`}
                                                                 />
                                                             </TableCell>
                                                         ))
@@ -108,6 +109,7 @@ export default function Localization({localization, locales, defaultLocale, perm
                     action={handleSave}
                     onComplete={refreshProps}
                     fullWidth
+                    id={"localization-save"}
                 >
                     Save
                 </SaveButton>
