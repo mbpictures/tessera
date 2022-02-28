@@ -12,6 +12,7 @@ module.exports = {
         "/payment": ["payment"],
         "/seatselection/[id]": ["seatselection"]
     },
+    "logBuild": false,
     "loadLocaleFrom": async (lang, ns) => {
         const prisma = new PrismaClient();
         let result = (await import(`./locale/${DEFAULT_LANG}/${ns}.json`)).default;
