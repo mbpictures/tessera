@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 import { Prisma } from "@prisma/client";
+import { revalidateEventPages } from "../../../../constants/serverUtil";
 
 export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
     const {param} = req.query;
@@ -23,6 +24,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
                 key: param[1]
             }
         });
+        await revalidateEventPages(res, ["/", "information", "/payment", "/checkout"]);
         return res.status(200).end("Deleted");
     }
 
@@ -35,6 +37,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
                     translations: req.body
                 }
             });
+            await revalidateEventPages(res, ["/", "information", "/payment", "/checkout"]);
             return res.status(200).end(translation.id);
         }
 
@@ -51,6 +54,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
                 translations: newBody
             }
         });
+        await revalidateEventPages(res, ["/", "information", "/payment", "/checkout"]);
         return res.status(200).end("Updated");
     }
 

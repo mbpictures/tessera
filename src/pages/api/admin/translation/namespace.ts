@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
+import { revalidateEventPages } from "../../../../constants/serverUtil";
 
 export const namespace = async(req: NextApiRequest, res: NextApiResponse) => {
     const {param} = req.query;
@@ -18,6 +19,7 @@ export const namespace = async(req: NextApiRequest, res: NextApiResponse) => {
                 namespace: param[0]
             }
         });
+        await revalidateEventPages(res, ["/", "information", "/payment", "/checkout"]);
         return res.status(200).end("Deleted");
     }
 
