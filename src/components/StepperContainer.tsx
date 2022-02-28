@@ -8,6 +8,7 @@ import { useAppSelector } from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
 import useTranslation from "next-translate/useTranslation";
+import { LanguageSelection } from "./LanguageSelection";
 
 interface Props {
     onNext?: () => unknown;
@@ -103,27 +104,32 @@ export const StepperContainer = (props: Props) => {
                             padding: "5px 0"
                         }}
                     >
-                        {currentStep > 0 && (
-                            <Button
-                                color="inherit"
-                                sx={{ mr: 1 }}
-                                onClick={handleBack}
-                                id={"stepper-back-button"}
-                            >
-                                {t("back")}
-                            </Button>
-                        )}
+                        <Button
+                            color="inherit"
+                            sx={{ mr: 1 }}
+                            onClick={handleBack}
+                            id={"stepper-back-button"}
+                            style={{
+                                opacity: currentStep > 0 ? 1 : 0
+                            }}
+                        >
+                            {t("back")}
+                        </Button>
 
-                        <Box sx={{ flex: "1 1 auto" }} />
-                        {!props.noNext && (
-                            <Button
-                                onClick={handleNext}
-                                disabled={!nextDisabled}
-                                id={"stepper-next-button"}
-                            >
-                                {t("next")}
-                            </Button>
-                        )}
+                        <Box sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+                            <LanguageSelection />
+                        </Box>
+
+                        <Button
+                            onClick={handleNext}
+                            disabled={!nextDisabled}
+                            id={"stepper-next-button"}
+                            style={{
+                                opacity: !props.noNext ? 1 : 0
+                            }}
+                        >
+                            {t("next")}
+                        </Button>
                     </Box>
                 </Paper>
             </React.Fragment>

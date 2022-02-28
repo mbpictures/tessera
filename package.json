@@ -84,6 +84,7 @@
     "raw-body": "^2.5.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-flag-kit": "^1.0.0",
     "react-json-view": "^1.21.3",
     "react-json-viewer": "^3.0.1",
     "react-parallax-tilt": "^1.6.0",
