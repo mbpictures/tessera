@@ -17,6 +17,7 @@ describe("Configuration in admin dashboard", () => {
             cy.get("#general-save").click();
 
             cy.wait("@options"); // to store general, two requests are required
+            cy.wait(0);
             cy.wait("@options");
 
             cy.request({
@@ -34,6 +35,7 @@ describe("Configuration in admin dashboard", () => {
                 cy.get("#general-save").click();
 
                 cy.wait("@options"); // to store general, two requests are required
+                cy.wait(0);
                 cy.wait("@options");
                 cy.request({
                     method: "GET",
