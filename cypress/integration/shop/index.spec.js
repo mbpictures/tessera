@@ -194,21 +194,21 @@ describe("Buy tickets", () => {
         cy.get("#pay-button").should("be.disabled");
         cy.get("#checkbox-creditcard").click();
         cy.get("#stripe-card-name").type(faker.name.findName());
-        cy.get("#stripe-card-number iframe").then(iframe => {
-            cy.wrap(iframe.contents().find("input[name=cardnumber]"))
-                .type(`4242424242424242`)
-        });
+        cy.get("#stripe-card-number iframe")
+            .iframe()
+            .find("input[name=cardnumber]")
+            .type(`4242424242424242`);
 
         const expirationData = new Date(Date.now() + 1000*60*60*24*30*6);
-        cy.get("#stripe-card-expire iframe").then(iframe => {
-            cy.wrap(iframe.contents().find("input[name=exp-date]"))
-                .type(`${expirationData.getMonth()}-${expirationData.getFullYear().toString().substr(-2)}`)
-        });
+        cy.get("#stripe-card-expire iframe")
+            .iframe()
+            .find("input[name=exp-date]")
+            .type(`${expirationData.getMonth()}-${expirationData.getFullYear().toString().substr(-2)}`);
 
-        cy.get("#stripe-card-cvc iframe").then(iframe => {
-            cy.wrap(iframe.contents().find("input[name=cvc]"))
-                .type(faker.finance.creditCardCVV())
-        });
+        cy.get("#stripe-card-cvc iframe")
+            .iframe()
+            .find("input[name=cvc]")
+            .type(faker.finance.creditCardCVV());
 
         cy.get("#pay-button").should("be.enabled");
     });
