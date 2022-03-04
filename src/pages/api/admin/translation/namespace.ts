@@ -19,7 +19,7 @@ export const namespace = async(req: NextApiRequest, res: NextApiResponse) => {
                 namespace: param[0]
             }
         });
-        await revalidateEventPages(res, ["/", "information", "/payment", "/checkout"]);
+        await revalidateEventPages(res, ["/", "/information", "/payment", "/checkout"]);
         return res.status(200).end("Deleted");
     }
 
