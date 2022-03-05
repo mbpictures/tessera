@@ -38,7 +38,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
                 }
             });
             await revalidateEventPages(res, ["/", "/information", "/payment", "/checkout"]);
-            return res.status(200).end(translation.id);
+            return res.status(200).end(translation.id.toString());
         }
 
         const newBody = {
