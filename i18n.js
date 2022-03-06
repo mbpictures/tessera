@@ -4,6 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const DEFAULT_LANG = "en";
 
 module.exports = {
+    "loader": false,
     "locales": locales,
     "defaultLocale": DEFAULT_LANG,
     "pages": {

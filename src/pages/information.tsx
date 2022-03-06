@@ -15,6 +15,7 @@ import { Box, useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import useTranslation from "next-translate/useTranslation";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 const validateEmail = (email) => {
     const re =
@@ -118,12 +119,13 @@ export default function Information({ direction, deliveryMethods }) {
     );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ locale }) {
     const deliveryMethods = await getOption(Options.Delivery);
     return {
         props: {
             deliveryMethods,
-            theme: await getOption(Options.Theme)
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/information' }))
         }
     };
 }

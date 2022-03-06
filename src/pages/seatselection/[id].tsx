@@ -10,6 +10,7 @@ import {
 import { SeatOrder } from "../../store/reducers/orderReducer";
 import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 export default function SeatSelection({
     categories,
@@ -66,7 +67,7 @@ export async function getStaticPaths() {
     return { paths, fallback: "blocking"};
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, locale }) {
     if (params.id === "[id]") return {props: { fallback: true }};
     const categories = await prisma.category.findMany({
         where: {
@@ -113,7 +114,8 @@ export async function getStaticProps({ params }) {
             categories,
             seatType: event.seatType,
             seatMap: seatmap,
-            theme: await getOption(Options.Theme)
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' }))
         }
     };
 }
