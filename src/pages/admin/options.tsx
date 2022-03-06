@@ -39,10 +39,10 @@ export default function Options({options, permissionDenied}) {
 
     useEffect(() => {
         if (permissionDenied) return;
-        setTitle(options[OptionsEnum.ShopTitle]);
-        setSubtitle(options[OptionsEnum.ShopSubtitle]);
-        setPaymentProviders(options[OptionsEnum.PaymentProviders]);
-        setShippingProviders(options[OptionsEnum.Delivery]);
+        setTitle(options[OptionsEnum.ShopTitle] ?? "");
+        setSubtitle(options[OptionsEnum.ShopSubtitle] ?? "");
+        setPaymentProviders(options[OptionsEnum.PaymentProviders] ?? []);
+        setShippingProviders(options[OptionsEnum.Delivery] ?? []);
         setTheme(options[OptionsEnum.Theme] ?? {});
     }, [options, permissionDenied]);
 

@@ -14,6 +14,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import { LoadingButton } from "@mui/lab";
 import React from "react";
 import { selectNextStateAvailable } from "../../../store/reducers/nextStepAvailableReducer";
+import useTranslation from "next-translate/useTranslation";
 
 export const PayButton = () => {
     const order = useAppSelector(selectOrder);
@@ -22,6 +23,7 @@ export const PayButton = () => {
     const userInformation = useAppSelector(selectPersonalInformation);
     const nextEnabled = useAppSelector(selectNextStateAvailable);
     const dispatch = useAppDispatch();
+    const { t } = useTranslation();
 
     const onPay = async () => {
         dispatch(setPaymentStatus("persist"));
@@ -62,8 +64,8 @@ export const PayButton = () => {
             {payment.state === "processing" ||
             payment.state === "persist" ||
             payment.state === "initiate"
-                ? "Processing"
-                : "Pay now"}
+                ? t("payment:processing")
+                : t("payment:pay-now")}
         </LoadingButton>
     );
 };

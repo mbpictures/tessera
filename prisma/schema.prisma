@@ -108,3 +108,10 @@ model Option {
     key             String      @unique
     value           String
 }
+
+model Translation {
+    id              Int         @default(autoincrement()) @id
+    key             String
+    namespace       String
+    translations    Json?
+}

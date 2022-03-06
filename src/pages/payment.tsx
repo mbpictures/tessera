@@ -22,6 +22,7 @@ import { PaymentOverview } from "../components/PaymentOverview";
 import { PayButton } from "../components/payment/button/PayButton";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 export default function Payment({ categories, direction, paymentMethods }) {
     const payment = useAppSelector(selectPayment);
@@ -133,7 +134,7 @@ export default function Payment({ categories, direction, paymentMethods }) {
     );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ locale }) {
     const categories = await prisma.category.findMany();
     const paymentMethods = await getOption(Options.PaymentProviders);
 
@@ -143,7 +144,8 @@ export async function getStaticProps() {
             noNext: true,
             categories: categories,
             paymentMethods,
-            theme: await getOption(Options.Theme)
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/payment' }))
         }
     };
 }

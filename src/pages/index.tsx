@@ -8,6 +8,7 @@ import { GalleryEventSelection } from "../components/EventSelection/GalleryEvent
 import { EventSelection } from "../components/EventSelection/EventSelection";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 export default function Home({ events, direction, title, subtitle }) {
     const dispatch = useAppDispatch();
@@ -41,14 +42,15 @@ export default function Home({ events, direction, title, subtitle }) {
     );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ locale }) {
     const events = await prisma.event.findMany();
     return {
         props: {
             events,
             title: await getOption(Options.ShopTitle),
             subtitle: await getOption(Options.ShopSubtitle),
-            theme: await getOption(Options.Theme)
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/' }))
         }
     };
 }

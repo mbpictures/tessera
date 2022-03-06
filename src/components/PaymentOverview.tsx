@@ -16,6 +16,7 @@ import {
     selectOrder
 } from "../store/reducers/orderReducer";
 import { formatPrice } from "../constants/util";
+import useTranslation from "next-translate/useTranslation";
 
 export const PaymentOverview = ({
     categories,
@@ -37,6 +38,7 @@ export const PaymentOverview = ({
     displayColor?: boolean;
 }) => {
     const order = useAppSelector(selectOrder);
+    const { t } = useTranslation();
 
     const handleEdit = () => {
         if (!onEdit) return;
@@ -67,7 +69,7 @@ export const PaymentOverview = ({
         <List
             subheader={
                 <ListSubheader>
-                    <Typography variant="h5">Summary</Typography>
+                    <Typography variant="h5">{t("common:summary")}</Typography>
                 </ListSubheader>
             }
         >
@@ -125,7 +127,7 @@ export const PaymentOverview = ({
                 categories.length > 0 && (
                     <ListItem>
                         <ListItemText
-                            primary={<strong>Total:</strong>}
+                            primary={<strong>{t("common:total-price")}:</strong>}
                             secondary={
                                 <span id="payment-overview-total-price">
                             {formatPrice(

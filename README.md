@@ -57,6 +57,7 @@ npm install
 - Easy to use admin section with event management, seat map editor, viewing orders, marking invoices as payed
 - RESTful API to manage events and orders with third party tools or webhooks
 - Customizable ticket shop UI with import function for [MUI themes](https://mui.com/customization/theming/)
+- Multi-Language Support and translation editor
 
 ### 🔜 Planned
 - Ticket control webapp (to scan and verify downloaded tickets)

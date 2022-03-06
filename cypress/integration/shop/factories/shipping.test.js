@@ -74,7 +74,7 @@ describe("Shipping Factories", () => {
             }
         };
         expect(post.isValid()).to.equal(true);
-        expect(post.DisplayName).to.equal("Postal Delivery");
+        expect(post.DisplayName).to.equal("postal-delivery");
     })
 
     it("Download", () => {
@@ -83,7 +83,7 @@ describe("Shipping Factories", () => {
             data: null
         });
         expect(download.isValid()).to.equal(true);
-        expect(download.DisplayName).to.equal("Download");
+        expect(download.DisplayName).to.equal("download");
     })
 
     it("Box Office", () => {
@@ -92,6 +92,6 @@ describe("Shipping Factories", () => {
             data: null
         });
         expect(boxoffice.isValid()).to.equal(true);
-        expect(boxoffice.DisplayName).to.equal("Box Office");
+        expect(boxoffice.DisplayName).to.equal("box-office");
     })
 })

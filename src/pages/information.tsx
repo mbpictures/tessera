@@ -14,6 +14,8 @@ import { AddressComponent } from "../components/form/AddressComponent";
 import { Box, useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
+import useTranslation from "next-translate/useTranslation";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 const validateEmail = (email) => {
     const re =
@@ -24,6 +26,7 @@ const validateEmail = (email) => {
 export default function Information({ direction, deliveryMethods }) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
+    const { t } = useTranslation();
 
     const [selectedShippingMethod, setSelectedShippingMethod] =
         useState<ShippingType | null>(selector.shipping?.type ?? null);
@@ -40,7 +43,7 @@ export default function Information({ direction, deliveryMethods }) {
         setEmailError(
             selector.email.length == 0 || emailValid
                 ? null
-                : "Please enter valid email address"
+                : t("information:e-mail-error")
         );
     }, [selector]);
 
@@ -71,10 +74,10 @@ export default function Information({ direction, deliveryMethods }) {
                 <Card>
                     <Stack padding={1} spacing={1}>
                         <Typography>
-                            These address given will be used for invoice.
+                            {t("information:address-for-invoice")}
                         </Typography>
                         <TextField
-                            label="E-Mail Address"
+                            label={t("information:e-mail")}
                             type="email"
                             value={selector.email}
                             onChange={(event) =>
@@ -100,7 +103,7 @@ export default function Information({ direction, deliveryMethods }) {
                             const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
                             return (
                                 <CheckboxAccordion
-                                    label={instance.DisplayName}
+                                    label={t(`information:${instance.DisplayName}`)}
                                     name={shippingType}
                                     selectedItem={selectedShippingMethod}
                                     onSelect={setSelectedShippingMethod}
@@ -116,12 +119,13 @@ export default function Information({ direction, deliveryMethods }) {
     );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ locale }) {
     const deliveryMethods = await getOption(Options.Delivery);
     return {
         props: {
             deliveryMethods,
-            theme: await getOption(Options.Theme)
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/information' }))
         }
     };
 }

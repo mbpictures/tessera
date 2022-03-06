@@ -7,6 +7,8 @@ import { selectNextStateAvailable } from "../store/reducers/nextStepAvailableRed
 import { useAppSelector } from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
+import useTranslation from "next-translate/useTranslation";
+import { LanguageSelection } from "./LanguageSelection";
 
 interface Props {
     onNext?: () => unknown;
@@ -23,6 +25,7 @@ export const StepperContainer = (props: Props) => {
     const selectedEvent = useAppSelector(selectEventSelected);
     const bottomBar = useRef<HTMLDivElement>(null);
     const container = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation("common");
 
     useEffect(() => {
         if (!bottomBar.current || !container.current) return;
@@ -64,7 +67,7 @@ export const StepperContainer = (props: Props) => {
             ref={container}
         >
             <Head>
-                <title>Ticket Shop - {STEPS[currentStep]}</title>
+                <title>Ticket Shop - {t(STEPS[currentStep])}</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Stepper activeStep={currentStep} alternativeLabel>
@@ -73,7 +76,7 @@ export const StepperContainer = (props: Props) => {
                     const labelProps = {};
                     return (
                         <Step key={label} {...stepProps} className={style.stepperStep}>
-                            <StepLabel {...labelProps}>{label}</StepLabel>
+                            <StepLabel {...labelProps}>{t(label)}</StepLabel>
                         </Step>
                     );
                 })}
@@ -101,27 +104,32 @@ export const StepperContainer = (props: Props) => {
                             padding: "5px 0"
                         }}
                     >
-                        {currentStep > 0 && (
-                            <Button
-                                color="inherit"
-                                sx={{ mr: 1 }}
-                                onClick={handleBack}
-                                id={"stepper-back-button"}
-                            >
-                                Back
-                            </Button>
-                        )}
+                        <Button
+                            color="inherit"
+                            sx={{ mr: 1 }}
+                            onClick={handleBack}
+                            id={"stepper-back-button"}
+                            style={{
+                                opacity: currentStep > 0 ? 1 : 0
+                            }}
+                        >
+                            {t("back")}
+                        </Button>
 
-                        <Box sx={{ flex: "1 1 auto" }} />
-                        {!props.noNext && (
-                            <Button
-                                onClick={handleNext}
-                                disabled={!nextDisabled}
-                                id={"stepper-next-button"}
-                            >
-                                Next
-                            </Button>
-                        )}
+                        <Box sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+                            <LanguageSelection />
+                        </Box>
+
+                        <Button
+                            onClick={handleNext}
+                            disabled={!nextDisabled}
+                            id={"stepper-next-button"}
+                            style={{
+                                opacity: !props.noNext ? 1 : 0
+                            }}
+                        >
+                            {t("next")}
+                        </Button>
                     </Box>
                 </Paper>
             </React.Fragment>

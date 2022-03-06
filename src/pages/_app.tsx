@@ -4,7 +4,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "../style/Global.scss";
 import { StepperContainer } from "../components/StepperContainer";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { AnimatePresence } from "framer-motion";
 import { Provider } from "react-redux";
@@ -13,8 +13,10 @@ import { SessionProviderProps } from "next-auth/react";
 import { SnackbarProviderProps } from "notistack";
 import dynamic from "next/dynamic";
 import { StoreThemeConfig } from "../components/StoreThemeConfig";
+import appWithI18n from "next-translate/appWithI18n";
+import i18nConfig from "../../i18n";
 
-export default function Global({ Component, pageProps }) {
+const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pageProps }) => {
     const router = useRouter();
     const [direction, setDirection] = useState<number>(0);
 
@@ -65,3 +67,8 @@ export default function Global({ Component, pageProps }) {
         </Provider>
     );
 }
+
+export default appWithI18n(Global, {
+    ...i18nConfig,
+    skipInitialProps: false
+});

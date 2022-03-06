@@ -1,0 +1,13 @@
+{
+    "next": "Next",
+    "back": "Back",
+    "select-event": "Select Event",
+    "choose-seat": "Choose Seat",
+    "personal-information": "Personal Information",
+    "payment": "Payment",
+    "checkout": "Checkout Order",
+    "amount": "Amount",
+    "total-price": "Total Price",
+    "category": "Category",
+    "summary": "Zusammenfassung"
+}

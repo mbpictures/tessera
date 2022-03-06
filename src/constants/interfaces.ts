@@ -23,7 +23,8 @@ export enum PermissionSection {
     EventSeatMaps = "EventSeatMaps",
     Orders = "Orders",
     OrderMarkAsPayed = "OrderMarkAsPayed",
-    Options = "Options"
+    Options = "Options",
+    Translation = "Translation"
 }
 
 export interface Permission {

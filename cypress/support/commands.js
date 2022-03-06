@@ -174,5 +174,12 @@ Cypress.Commands.add("setOption", (key, value) => {
             );
         });
     })
-
 });
+
+Cypress.Commands.add('iframe', { prevSubject: 'element' }, ($iframe, callback = () => { }) => {
+    return cy
+        .wrap($iframe)
+        .should(iframe => expect(iframe.contents().find('body')).to.exist)
+        .then(iframe => cy.wrap(iframe.contents().find('body')))
+        .within({}, callback)
+})

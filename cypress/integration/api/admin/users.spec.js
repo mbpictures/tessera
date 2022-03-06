@@ -64,6 +64,7 @@ describe("Admin Users", () => {
             cy.get("#confirm-confirm-button").click();
             cy.get("#confirm-confirm-button").should("not.exist");
 
+            cy.visit("/admin/user/settings");
             cy.get(".MuiAccordion-root").last().click();
             cy.get(".delete-api-key-button").should("have.length", 1);
         });

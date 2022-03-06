@@ -17,6 +17,7 @@ import { FreeSeatOrder } from "../store/reducers/orderReducer";
 import { motion } from "framer-motion";
 import { Delete } from "@mui/icons-material";
 import { formatPrice } from "../constants/util";
+import useTranslation from "next-translate/useTranslation";
 
 export const SeatSelectionFreeEntry = ({
     onChange,
@@ -39,6 +40,7 @@ export const SeatSelectionFreeEntry = ({
     const order = !currentOrder?.orders || currentOrder.orders.length <= index ? null : currentOrder.orders[index]
     const [ticketAmount, setTicketAmount] = useState<number>((order?.categoryId ?? -1) > 0 ? order.categoryId : 0);
     const [category, setCategory] = useState<number>((order?.categoryId ?? -1) !== -1  ? order.categoryId : categories[0].id);
+    const { t } = useTranslation();
 
     const handleChange = (event) => {
         if (event.target.value === "") {
@@ -89,7 +91,7 @@ export const SeatSelectionFreeEntry = ({
                 >
                     <TextField
                         id="outlined-basic"
-                        label="Amount"
+                        label={t("common:amount")}
                         variant="outlined"
                         value={ticketAmount === -1 ? "" : ticketAmount}
                         onChange={handleChange}
@@ -113,7 +115,7 @@ export const SeatSelectionFreeEntry = ({
                         </IconButton>
                     </Stack>
                 </Box>
-                <InputLabel id={"category-selection" + index}>Category</InputLabel>
+                <InputLabel id={"category-selection" + index}>{t("common:category")}</InputLabel>
                 <Select
                     value={category}
                     onChange={handleCategoryChange}
@@ -149,7 +151,7 @@ export const SeatSelectionFreeEntry = ({
                     variant="outlined"
                     style={{ alignSelf: "center" }}
                 >
-                    Remove Category
+                    {t("seatselection:remove-category")}
                 </Button>
             </Paper>
         </motion.div>

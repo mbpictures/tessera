@@ -8,11 +8,14 @@ import {
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
 import { IOrder, selectOrder } from "../../store/reducers/orderReducer";
+import useTranslation from "next-translate/useTranslation";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);
     const order: IOrder = useAppSelector(selectOrder);
     const dispatch = useAppDispatch();
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (
@@ -32,12 +35,12 @@ export const Invoice = () => {
 
     return (
         <Typography>
-            You will receive an invoice containing the recipient&apos;s bank details
-            by e-mail.
+            {t("payment:invoice-description")}
         </Typography>
     );
 };
 
 export const InvoiceHeader = () => {
-    return <Typography>Invoice</Typography>;
+    const { t } = useTranslation();
+    return <Typography>{t("payment:invoice")}</Typography>;
 };

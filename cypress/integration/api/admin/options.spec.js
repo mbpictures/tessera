@@ -6,6 +6,8 @@ describe("Configuration in admin dashboard", () => {
 
     it("Title/Subtitle", () => {
         cy.fixture("admin/user").then((userFixture) => {
+            cy.intercept('POST', '/api/admin/options').as('options');
+
             cy.login(userFixture.email, userFixture.password);
             cy.url().should("eq", Cypress.config().baseUrl + "/admin");
             cy.visit("/admin/options");
@@ -14,7 +16,9 @@ describe("Configuration in admin dashboard", () => {
             cy.get("#shop-title-input").clear().type("Test Title");
             cy.get("#general-save").click();
 
-            cy.visit("/admin/options");
+            cy.wait("@options"); // to store general, two requests are required
+            cy.wait(0);
+            cy.wait("@options");
 
             cy.request({
                 method: "GET",
@@ -25,11 +29,14 @@ describe("Configuration in admin dashboard", () => {
             }).then(({body}) => {
                 expect(body.value).to.equal("Test Title");
 
+                cy.visit("/admin/options");
                 cy.get("#accordion-general").click();
                 cy.get("#shop-subtitle-input").clear().type("Test Subtitle");
                 cy.get("#general-save").click();
 
-                cy.visit("/admin/options");
+                cy.wait("@options"); // to store general, two requests are required
+                cy.wait(0);
+                cy.wait("@options");
                 cy.request({
                     method: "GET",
                     url: "api/admin/options",
@@ -45,6 +52,7 @@ describe("Configuration in admin dashboard", () => {
 
     it("Payment Methods", () => {
         cy.fixture("admin/user").then((userFixture) => {
+            cy.intercept('POST', '/api/admin/options').as('options');
             cy.login(userFixture.email, userFixture.password);
             cy.url().should("eq", Cypress.config().baseUrl + "/admin");
 
@@ -60,7 +68,7 @@ describe("Configuration in admin dashboard", () => {
                 cy.wrap(elem).check({force: true});
             });
             cy.get("#payment-save").click();
-            cy.visit("/admin/options");
+            cy.wait("@options");
 
             cy.request({
                 method: "GET",
@@ -76,6 +84,7 @@ describe("Configuration in admin dashboard", () => {
 
     it("Delivery Methods", () => {
         cy.fixture("admin/user").then((userFixture) => {
+            cy.intercept('POST', '/api/admin/options').as('options');
             cy.login(userFixture.email, userFixture.password);
             cy.url().should("eq", Cypress.config().baseUrl + "/admin");
 
@@ -91,7 +100,7 @@ describe("Configuration in admin dashboard", () => {
                 cy.wrap(elem).check({force: true});
             });
             cy.get("#delivery-save").click();
-            cy.visit("/admin/options");
+            cy.wait("@options");
 
             cy.request({
                 method: "GET",
@@ -107,6 +116,7 @@ describe("Configuration in admin dashboard", () => {
 
     it("Theme", () => {
         cy.fixture("admin/user").then((userFixture) => {
+            cy.intercept('POST', '/api/admin/options').as('options');
             cy.login(userFixture.email, userFixture.password);
             cy.url().should("eq", Cypress.config().baseUrl + "/admin");
 
@@ -131,7 +141,7 @@ describe("Configuration in admin dashboard", () => {
                     cy.get("#get-theme-from-clipboard").focus().click();
                     cy.get("#theme-save").click();
 
-                    cy.visit("/admin/options");
+                    cy.wait("@options");
 
                     cy.request({
                         method: "GET",
@@ -158,6 +168,8 @@ describe("Configuration in admin dashboard", () => {
                             cy.get("#text-input-dialog-continue").click();
 
                             cy.get("#theme-save").click();
+
+                            cy.wait("@options");
                             cy.request({
                                 method: "GET",
                                 url: "api/admin/options",

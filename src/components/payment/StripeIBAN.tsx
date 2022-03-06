@@ -14,6 +14,7 @@ import { selectEventSelected } from "../../store/reducers/eventSelectionReducer"
 import { selectPersonalInformation } from "../../store/reducers/personalInformationReducer";
 import { StripeIBANPayment } from "../../store/factories/payment/StripeIBANPayment";
 import { Typography } from "@mui/material";
+import useTranslation from "next-translate/useTranslation";
 
 export const StripeIBAN = () => {
     const selector = useAppSelector(selectPayment);
@@ -21,6 +22,7 @@ export const StripeIBAN = () => {
     const selectorEvent = useAppSelector(selectEventSelected);
     const selectorInformation = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
+    const { t } = useTranslation();
 
     const stripe = useStripe();
 
@@ -111,10 +113,12 @@ export const StripeIBAN = () => {
             labelErrorMessage={ibanError}
             onChange={onElementChange("ibanComplete", "ibanError")}
             fullWidth
+            label={t("payment:sepa-direct-debit-iban")}
         />
     );
 };
 
 export const StripeIBANHeader = () => {
-    return <Typography>SEPA Direct Debit</Typography>;
+    const { t } = useTranslation();
+    return <Typography>{t("payment:sepa-direct-debit")}</Typography>;
 };
