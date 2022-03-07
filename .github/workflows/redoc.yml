@@ -23,13 +23,12 @@ jobs:
           node-version: '12.x'
           cache: 'npm'
       - run: npm i -g redoc-cli
-      - run: ls -l
       - run: redoc-cli bundle --output "docs/api/index.html" docs/api/swagger.yaml
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "generate redoc api documentation" docs/api/index.html
+          git commit -m "generate redoc api documentation" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
