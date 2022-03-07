@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   version: "1.0.0"
   title: Tessera API
-  description: Welcome to the API documentation of the tessera ticketshop. For the full documentation, please visit [this page](http://mbpictures.github.io/tessera)
+  description: Welcome to the API documentation of the tessera ticketshop. For the full documentation, please visit [this page](https://mbpictures.github.io/tessera/)
 host: yourdomain.com
 basePath: /api
 schemes:
