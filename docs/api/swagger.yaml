@@ -1,0 +1,956 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: Tessera API
+  description: Welcome to the API documentation of the tessera ticketshop. For the full documentation, please visit [this page](http://mbpictures.github.io/tessera)
+host: yourdomain.com
+basePath: /api
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    description: Provides access to all paths starting with `/admin` with API Keys. Use api key obtained from admin dashboard and prefix with `Bearer`
+    in: header
+paths:
+  /admin/user:
+    get:
+      description: get all admin users
+      responses:
+        200:
+          description: Array of all registered users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: []
+    post:
+      description: Create new user. The first admin user can be registered without api key
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              username:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: User created
+          schema:
+            type: number
+            description: ID of the created user
+        401:
+          description: Not authorized to access these contents
+        400:
+          description: User with the given email address or username already exists.
+      security:
+        - api_key: []
+  /admin/user/{id}:
+    get:
+      description: get specific admin user
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: User information
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No user found with provided id
+      security:
+        - api_key: [ ]
+    put:
+      description: Modify extisting admin user
+      security:
+        - api_key: [ ]
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+        - name: user
+          required: true
+          in: body
+          schema:
+            type: object
+            description: "Subset of User"
+            properties:
+              email:
+                type: string
+              username:
+                type: string
+              readRights:
+                type: array
+                description: Array (string) of read rights
+              writeRights:
+                type: array
+                description: Array (string) of write rights
+              password:
+                type: string
+                description: Change password (needs oldPassword parameter!)
+              oldPassword:
+                type: string
+                description: Confirmation of old password, when changing password
+      responses:
+        200:
+          description: Successfully updated user
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No user found with provided id
+    delete:
+      description: Delete an admin user
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: User deleted
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No user found with provided id
+      security:
+        - api_key: [ ]
+  /admin/category:
+    get:
+      description: get all categories
+      responses:
+        200:
+          description: Array of all categories
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Category'
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+    post:
+      description: Create a new category
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            $ref: '#/definitions/Category'
+      responses:
+        200:
+          description: Category created
+          schema:
+            type: number
+            description: ID of the created category
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /admin/category/{id}:
+    get:
+      description: get specific category
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: Category
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No category found with provided id
+      security:
+        - api_key: [ ]
+    put:
+      description: Modify category
+      security:
+        - api_key: [ ]
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+        - name: category
+          required: true
+          in: body
+          schema:
+            type: object
+            description: "Subset of Category (only provided values will be updated)"
+            $ref: '#/definitions/Category'
+      responses:
+        200:
+          description: Successfully updated category
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No category found with provided id
+    delete:
+      description: Delete a category
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: Category deleted
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No category found with provided id
+      security:
+        - api_key: [ ]
+  /admin/events:
+    get:
+      description: get all events
+      responses:
+        200:
+          description: Array of all events
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+    post:
+      description: Create a new event
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            $ref: '#/definitions/Event'
+      responses:
+        200:
+          description: Event created
+          schema:
+            type: number
+            description: ID of the created category
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /admin/events/{id}:
+    get:
+      description: get specific event
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: Event
+          schema:
+            $ref: '#/definitions/Event'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No event found with provided id
+      security:
+        - api_key: [ ]
+    put:
+      description: Modify event
+      security:
+        - api_key: [ ]
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+        - name: event
+          required: true
+          in: body
+          schema:
+            type: object
+            description: "Subset of event (only provided values will be updated). Categories for `seatType` `seatmap` will be calculated automatically. Categories only need to be provided with `seatType` `free`"
+            $ref: '#/definitions/Event'
+      responses:
+        200:
+          description: Successfully updated event
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No event found with provided id
+    delete:
+      description: Delete a event
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: Event deleted
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No event found with provided id
+      security:
+        - api_key: [ ]
+  /admin/events/coverimage:
+    delete:
+      description: Delete preview image for event
+      parameters:
+          - name: eventId
+            in: query
+            type: number
+            required: true
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No event found with provided id
+      security:
+        - api_key: [ ]
+    post:
+      description: Upload preview image for event
+      parameters:
+        - name: eventId
+          in: query
+          type: number
+          required: true
+        - name: coverImage
+          in: formData
+          type: file
+          required: true
+      responses:
+        200:
+          description: Image stored successfully
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No event found with provided id
+      security:
+        - api_key: [ ]
+    put:
+      description: Update cover image size
+      parameters:
+        - name: eventId
+          in: query
+          type: number
+          required: true
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              coverImageSize:
+                description: Size of the Cover image (should be between 1 and 4)
+                type: number
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No event found with provided id
+      security:
+        - api_key: [ ]
+  /admin/options:
+    get:
+      description: Retrieve current value of option
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Key of the option value
+      responses:
+        200:
+          description: Value of the option
+          schema:
+            properties:
+              value:
+                description: Value of the option. Can be of any type. Is null when no option with given key was found.
+        401:
+          description: Not authorized to access these contents
+        400:
+          description: No option key provided
+      security:
+        - api_key: [ ]
+    post:
+      description: Update value of option
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Key of the option value
+              value:
+                description: New value of the option. Can be of any type
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Not authorized to access these contents
+        400:
+          description: No option key provided
+      security:
+        - api_key: [ ]
+  /admin/order:
+    get:
+      description: get all orders
+      responses:
+        200:
+          description: Array of all orders
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /admin/order/all:
+    delete:
+      description: Delete all orders of all events
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /admin/order/{id}:
+    get:
+      description: get order information
+      parameters:
+        - name: id
+          in: path
+          description: ID of the order
+          required: true
+          type: string
+      responses:
+        200:
+          description: Order information
+          schema:
+            type: object
+            $ref: '#/definitions/Order'
+            additionalProperties:
+              items:
+                $ref: '#/definitions/Ticket'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No order found with provided id
+      security:
+        - api_key: [ ]
+    delete:
+      description: delete order
+      parameters:
+        - name: id
+          in: path
+          description: ID of the order
+          required: true
+          type: string
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No order found with provided id
+      security:
+        - api_key: [ ]
+  /admin/order/paid:
+    put:
+      description: Mark order as paid. When selected shipping method is download, an email containing the digital tickets will be sent to the customer
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              orderId:
+                type: string
+                description: ID of the order
+              invoicePurpose:
+                type: string
+                description: Purpose of the payment
+              multiple:
+                type: boolean
+                description: Force to mark multiple orders as payed, when filter matches more than one order. This property should never be neccessary!
+      responses:
+        200:
+          description: Updated
+        400:
+          description: No order with selected filters found or multiple orders were found, but `multiple` property was `undefined` or `false`
+        401:
+          description: Not authorized to access these contents
+  /admin/seatmap:
+    get:
+      description: get all seat maps
+      responses:
+        200:
+          description: Array of all seat maps
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+    post:
+      description: Create a new seatmap
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            $ref: '#/definitions/Seatmap'
+      responses:
+        200:
+          description: Seatmap created
+          schema:
+            type: number
+            description: ID of the created seat map
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /admin/seatmap/{id}:
+    get:
+      description: get specific seat map
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: Seat map
+          schema:
+            $ref: '#/definitions/Seatmap'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No seat map found with provided id
+      security:
+        - api_key: [ ]
+    put:
+      description: Modify seat map
+      security:
+        - api_key: [ ]
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+        - name: event
+          required: true
+          in: body
+          schema:
+            type: object
+            description: "New seat map definition"
+            $ref: '#/definitions/Seatmap'
+      responses:
+        200:
+          description: Successfully updated seat map
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No seat map found with provided id
+    delete:
+      description: Delete a seat map
+      parameters:
+        - name: id
+          required: true
+          type: number
+          in: path
+      responses:
+        200:
+          description: Seat map deleted
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No seat map found with provided id
+      security:
+        - api_key: [ ]
+  /admin/translation/{namespace}:
+    get:
+      description: Retrieve all translation of a namespace
+      parameters:
+        - name: namespace
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Translations
+          schema:
+            additionalProperties:
+              $ref: '#/definitions/Translation'
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+    delete:
+      description: Delete all translation of a namespace
+      parameters:
+        - name: namespace
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /admin/translation/{namespace}/{key}:
+    get:
+      description: Retrieve all translation of a namespace
+      parameters:
+        - name: namespace
+          in: path
+          type: string
+          required: true
+        - name: key
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Translations for key
+          schema:
+            $ref: '#/definitions/Translation'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No translations for this key found
+      security:
+        - api_key: [ ]
+    delete:
+      description: Delete all translation of a namespace
+      parameters:
+        - name: namespace
+          in: path
+          type: string
+          required: true
+        - name: key
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+    post:
+      description: Create a new or update an existing translation
+      parameters:
+        - name: namespace
+          in: path
+          type: string
+          required: true
+        - name: key
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          description: "Key-Value-Pairs of language and translation. Only provide languages you want to update, all other translations will stay as they are"
+          schema:
+            $ref: '#/definitions/Translation'
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Not authorized to access these contents
+      security:
+        - api_key: [ ]
+  /order:
+    post:
+      description: Get user information, order and event id of order id
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              orderId:
+                type: string
+      responses:
+        200:
+          description: Information
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: '#/definitions/Translation'
+              order:
+                type: object
+                description: Order information
+              eventId:
+                type: number
+        500:
+          description: Server Error
+  /order/store:
+    post:
+      description: Store current order for payment processing
+      parameters:
+        - name: body
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              order:
+                type: object
+                description: Order Information
+              user:
+                type: object
+                description: Personal Information of the user
+              eventId:
+                type: number
+              paymentType:
+                type: string
+              locale:
+                type: string
+                description: Browser locale of the customer
+      responses:
+        200:
+          description: UserID and OrderID
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              orderId:
+                type: string
+        500:
+          description: Server error
+  /order/validate_intent:
+    post:
+      description: Check if payment intent is valid
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              orderId:
+                type: string
+      responses:
+        200:
+          description: Status of payment intent
+          schema:
+            type: object
+            properties:
+              valid:
+                type: boolean
+        500:
+          description: Server error
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      email:
+        type: string
+      username:
+        type: string
+      readRights:
+        type: array
+        items:
+          type: string
+        description: Array (string) of read rights
+      writeRights:
+        type: array
+        items:
+          type: string
+        description: Array (string) of write rights
+    example:
+      id: 1
+      email: test@user.com
+      username: admin
+      readRights: ["UserManagement"]
+      writeRights: ["UserManagement"]
+  Category:
+    type: object
+    required:
+      - label
+      - price
+      - currency
+    properties:
+      id:
+        type: number
+      label:
+        type: string
+      price:
+        type: number
+      color:
+        type: string
+        description: HEX Color Code representing this category
+      activeColor:
+        type: string
+        description: HEX Color code when the place is selected
+      occupiedColor:
+        type: string
+        description: HEX Color Code when a place of this category is already booked
+      currency:
+        type: string
+        description: Currency code of the entered price
+  Event:
+    type: object
+    required:
+      - title
+      - seatType
+    properties:
+      id:
+        type: number
+      title:
+        type: string
+      seatType:
+        type: string
+        description: Type of seating. Values are `seatmap` or `free`
+      seatMapId:
+        type: number
+        description: ID of the seat map for the event (if `seatType` is `seatmap`)
+      coverImage:
+        type: string
+        description: Link to the cover image which will be used on event selection page
+      coverImageSize:
+        type: number
+        description: Fixed size for event preview (if not set, size will be random)
+  Order:
+    type: object
+    required:
+      - id
+      - userId
+      - order
+      - paymentType
+      - paymentIntent
+      - paymentResult
+      - eventId
+      - shipping
+      - locale
+    properties:
+      id:
+        type: string
+        description: UUID of the order
+      userId:
+        type: string
+        description: UUID of the user
+      order:
+        type: string
+        description: JSON string containing order information
+      paymentType:
+        type: string
+        description: Type of payment the user has choosen
+      paymentIntent:
+        type: string
+        description: Information of the payment intent. Sensitive to selected payment method
+      paymentResult:
+        type: string
+        description: Information of the payment result. Sensitive to selected payment method
+      seatMapId:
+        type: number
+        description: ID of the seat map, where this order belongs to.
+      eventId:
+        type: number
+        description: ID of the event, where this order belongs to.
+      shipping:
+        type: string
+        description: JSON string of the shipping information.
+      locale:
+        type: string
+        description: Browser language of the user
+  Ticket:
+    properties:
+      id:
+        type: string
+        description: UUID of the ticket
+      orderId:
+        type: string
+        description: UUID of the event this ticket belongs to
+      used:
+        type: boolean
+        description: Check wether this ticket already has been used for entry
+  Seatmap:
+    type: object
+    required:
+      - definition
+    properties:
+      id:
+        type: number
+        description: ID of the seat map
+      definition:
+        type: string
+        description: JSON string containing the definition of the seat map
+  Translation:
+    type: object
+    additionalProperties:
+      type: string
+      description: keys are language, value translation
+    example:
+      en: "Next"
+      de: "Back"
+  Customer:
+    description: Customer information
+    type: object
+    properties:
+      id:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      address:
+        type: string
+      zip:
+        type: string
+      countryCode:
+        type: string
+      regionCode:
+        type: string
