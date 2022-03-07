@@ -7,34 +7,31 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ documentation ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  redoc:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: '12.x'
-        cache: 'npm'
-    - run: npm i -g redoc-cli
-    - run: redoc-cli bundle --output "docs/api/index.html" docs/api/swagger.yaml
-    - name: Commit files
-      run: |
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git commit -m "generate redoc api documentation" docs/api/index.html
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: documentation
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
+          cache: 'npm'
+      - run: npm i -g redoc-cli
+      - run: ls -l
+      - run: redoc-cli bundle --output "docs/api/index.html" docs/api/swagger.yaml
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "generate redoc api documentation" docs/api/index.html
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: documentation
