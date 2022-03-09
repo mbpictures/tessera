@@ -75,7 +75,7 @@ If you miss some features, which are not planned, please create an [issue ❗](h
 - Continuous Integration using [GitHub Actions](https://github.com/features/actions)
 
 ## 📝 Documentation
-A detailed documentation will follow soon!
+You can find a detailed documentation [here](https://mbpictures.github.io/tessera/)
 
 ## 👥 Author
 
