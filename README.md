@@ -9,6 +9,9 @@
     <img alt="Build Status" src="https://github.com/mbpictures/ticketshop/actions/workflows/build.yml/badge.svg" />
     <img alt="CI Status" src="https://github.com/mbpictures/ticketshop/actions/workflows/node.js.yml/badge.svg" />
     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/mbpictures/tessera?style=for-the-badge&token=R7CJUK2K1X">
+    <a href="https://mbpictures.github.io/tessera" target="_blank">
+        <img alt="Docs badge" src="https://readthedocs.org/projects/pip/badge/?version=latest&style=for-the-badge" />
+    </a>
   </p>
 </h1>
 
