@@ -1,33 +1,66 @@
-import {motion, MotionStyle} from "framer-motion";
-import React, {useEffect} from "react";
-import {useAppDispatch, useAppSelector} from "../store/hooks";
-import {selectEventSelected, setEvent} from "../store/reducers/eventSelectionReducer";
-import {useRouter} from "next/router";
-import {STEP_URLS} from "../constants/Constants";
-import {disableNextStep, enableNextStep} from "../store/reducers/nextStepAvailableReducer";
-import {getStoreWithOrderId} from "../constants/util";
-import {setOrder} from "../store/reducers/orderReducer";
-import {setAddress, setEmail, setShipping, setUserId} from "../store/reducers/personalInformationReducer";
-import {NextAvailableFactory} from "../store/factories/nextAvailable/NextAvailableFactory";
+import { motion, MotionStyle } from "framer-motion";
+import React, { useCallback, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+    selectEventSelected,
+    setEvent
+} from "../store/reducers/eventSelectionReducer";
+import { useRouter } from "next/router";
+import { STEP_URLS } from "../constants/Constants";
+import {
+    disableNextStep,
+    enableNextStep
+} from "../store/reducers/nextStepAvailableReducer";
+import { getStoreWithOrderId } from "../constants/util";
+import { setOrder } from "../store/reducers/orderReducer";
+import {
+    setAddress,
+    setEmail,
+    setShipping,
+    setUserId
+} from "../store/reducers/personalInformationReducer";
+import { NextAvailableFactory } from "../store/factories/nextAvailable/NextAvailableFactory";
 
-export const Step = ({children, direction, style}: {children?: React.ReactNode, direction: number, style?: MotionStyle}) => {
+export const Step = ({
+    children,
+    direction,
+    style
+}: {
+    children?: React.ReactNode;
+    direction: number;
+    style?: MotionStyle;
+}) => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const currentSelectedEvent = useAppSelector(selectEventSelected);
     const state = useAppSelector((state) => state);
 
-    const updateNextAvailable = () => {
-        if (NextAvailableFactory.getInstance(router.pathname, state)?.isNextAvailable() ?? false) {
-            dispatch(enableNextStep());
-        }
-        else {
-            dispatch(disableNextStep());
-        }
-    }
+    const updateNextAvailable = useCallback(
+        () => {
+            if (
+                NextAvailableFactory.getInstance(
+                    router.pathname,
+                    state
+                )?.isNextAvailable() ??
+                false
+            ) {
+                dispatch(enableNextStep());
+            } else {
+                dispatch(disableNextStep());
+            }
+        },
+        [dispatch, router, state]
+    );
 
     useEffect(() => {
         updateNextAvailable();
-    }, [state.order, state.payment, state.personalInformation, state.selectedEvent]);
+    }, [
+        state.order,
+        state.payment,
+        state.personalInformation,
+        state.selectedEvent,
+        updateNextAvailable
+    ]);
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -37,8 +70,7 @@ export const Step = ({children, direction, style}: {children?: React.ReactNode, 
 
         if (orderId && orderId !== "") {
             getStoreWithOrderId(orderId)
-                .then(({personalInformation, order, eventId}) => {
-                    console.log(personalInformation);
+                .then(({ personalInformation, order, eventId }) => {
                     dispatch(setOrder(order));
                     dispatch(setEvent(eventId));
                     dispatch(setUserId(personalInformation.userId));
@@ -56,17 +88,18 @@ export const Step = ({children, direction, style}: {children?: React.ReactNode, 
             return;
         }
         if (currentSelectedEvent >= 0) return;
+        if (router.pathname === STEP_URLS[0]) return;
         router.push(STEP_URLS[0]).catch(console.log);
-    }, [router.isReady]);
+    }, [router.isReady, currentSelectedEvent, dispatch, router, updateNextAvailable]);
 
     const variants = {
-        visible: {x: 0},
+        visible: { x: 0 },
         exit: (direction) => {
-            return {x: direction < 0 ? "100vw" : "-100vw"}
+            return { x: direction < 0 ? "100vw" : "-100vw" };
         },
         initial: (direction) => {
-            return {x: direction < 0 ? "-100vw" : "100vw"}
-        },
+            return { x: direction < 0 ? "-100vw" : "100vw" };
+        }
     };
 
     return (
@@ -85,5 +118,5 @@ export const Step = ({children, direction, style}: {children?: React.ReactNode, 
         >
             {children}
         </motion.div>
-    )
+    );
 };

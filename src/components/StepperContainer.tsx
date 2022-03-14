@@ -1,12 +1,14 @@
-import {Box, Button, Paper, Step, StepLabel, Stepper} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
-import {STEP_URLS, STEPS} from "../constants/Constants";
-import {useRouter} from "next/router";
+import { Box, Button, Paper, Step, StepLabel, Stepper } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { STEP_URLS, STEPS } from "../constants/Constants";
+import { useRouter } from "next/router";
 import Head from "next/head";
-import {selectNextStateAvailable} from "../store/reducers/nextStepAvailableReducer";
-import {useAppSelector} from "../store/hooks";
+import { selectNextStateAvailable } from "../store/reducers/nextStepAvailableReducer";
+import { useAppSelector } from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
-import {selectEventSelected} from "../store/reducers/eventSelectionReducer";
+import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
+import useTranslation from "next-translate/useTranslation";
+import { LanguageSelection } from "./LanguageSelection";
 
 interface Props {
     onNext?: () => unknown;
@@ -23,6 +25,7 @@ export const StepperContainer = (props: Props) => {
     const selectedEvent = useAppSelector(selectEventSelected);
     const bottomBar = useRef<HTMLDivElement>(null);
     const container = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation("common");
 
     useEffect(() => {
         if (!bottomBar.current || !container.current) return;
@@ -30,69 +33,106 @@ export const StepperContainer = (props: Props) => {
     }, [bottomBar, container]);
 
     useEffect(() => {
-        setCurrentStep(STEP_URLS.findIndex(val => val === router.pathname));
+        setCurrentStep(STEP_URLS.findIndex((val) => val.startsWith(router.pathname)));
     }, [router]);
 
     const handleNext = async () => {
         if (currentStep + 1 >= STEP_URLS.length) return;
-        if (props.onNext)
-            props.onNext();
-        await router.push(`${STEP_URLS[currentStep + 1]}?event=${selectedEvent}`);
-    }
+        if (props.onNext) props.onNext();
+        const url = STEP_URLS[currentStep + 1].replace("[id]", selectedEvent.toString());
+        await router.push(
+            `${url}?event=${selectedEvent}`
+        );
+    };
 
     const handleBack = async () => {
         if (currentStep <= 0) return;
-        if (props.onBack)
-            props.onBack();
-        await router.push(`${STEP_URLS[currentStep - 1]}?event=${selectedEvent}`);
-    }
+        if (props.onBack) props.onBack();
+        const url = STEP_URLS[currentStep - 1].replace("[id]", selectedEvent.toString());
+        const query = currentStep - 1 === 0 ? "" : `?event=${selectedEvent}`;
+        await router.push(`${url}${query}`);
+    };
 
     return (
-        <Box sx={{ width: '90%', margin: "auto", padding: "10px", display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }} ref={container}>
+        <Box
+            sx={{
+                width: "90%",
+                margin: "auto",
+                padding: "10px",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                overflow: "hidden"
+            }}
+            ref={container}
+        >
             <Head>
-                <title>Ticket Shop - {STEPS[currentStep]}</title>
-                <link rel="icon" href="/favicon.ico"/>
+                <title>Ticket Shop - {t(STEPS[currentStep])}</title>
+                <link rel="icon" href="/favicon.ico" />
             </Head>
             <Stepper activeStep={currentStep} alternativeLabel>
                 {STEPS.map((label) => {
                     const stepProps = {};
                     const labelProps = {};
                     return (
-                        <Step key={label} {...stepProps}>
-                            <StepLabel {...labelProps}>{label}</StepLabel>
+                        <Step key={label} {...stepProps} className={style.stepperStep}>
+                            <StepLabel {...labelProps}>{t(label)}</StepLabel>
                         </Step>
                     );
                 })}
             </Stepper>
             <React.Fragment>
-                <Box className={style.content} ref={container} style={{overflowY: props.disableOverflow ? "hidden" : "auto"}}>
+                <Box
+                    className={style.content}
+                    ref={container}
+                    style={{
+                        overflowY: props.disableOverflow ? "hidden" : "auto"
+                    }}
+                >
                     {props.children}
                 </Box>
-                <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={20} ref={bottomBar}>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, padding: "5px 0" }}>
-                        {
-                            currentStep > 0 && (
-                                <Button
-                                    color="inherit"
-                                    sx={{ mr: 1 }}
-                                    onClick={handleBack}
-                                >
-                                    Back
-                                </Button>
-                            )
-                        }
+                <Paper
+                    sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+                    elevation={20}
+                    ref={bottomBar}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            pt: 2,
+                            padding: "5px 0"
+                        }}
+                    >
+                        <Button
+                            color="inherit"
+                            sx={{ mr: 1 }}
+                            onClick={handleBack}
+                            id={"stepper-back-button"}
+                            style={{
+                                opacity: currentStep > 0 ? 1 : 0
+                            }}
+                        >
+                            {t("back")}
+                        </Button>
 
-                        <Box sx={{ flex: '1 1 auto' }} />
-                        {
-                            !props.noNext && (
-                                <Button onClick={handleNext} disabled={!nextDisabled}>
-                                    Next
-                                </Button>
-                            )
-                        }
+                        <Box sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+                            <LanguageSelection />
+                        </Box>
+
+                        <Button
+                            onClick={handleNext}
+                            disabled={!nextDisabled}
+                            id={"stepper-next-button"}
+                            style={{
+                                opacity: !props.noNext ? 1 : 0
+                            }}
+                        >
+                            {t("next")}
+                        </Button>
                     </Box>
                 </Paper>
             </React.Fragment>
         </Box>
-    )
+    );
 };

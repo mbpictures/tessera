@@ -1,16 +1,20 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
+import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const user = await serverAuthenticate(req);
-    if (!user) {
-        res.status(401).end("Unauthenticated");
-        return;
-    }
+    const user = await serverAuthenticate(req, res, {
+        permission: PermissionSection.EventCategories,
+        permissionType:
+            req.method === "GET" ? PermissionType.Read : PermissionType.Write
+    });
+    if (!user) return;
 
     if (req.method === "GET") {
         const categories = await prisma.category.findMany();
@@ -19,7 +23,8 @@ export default async function handler(
     }
 
     if (req.method === "POST") {
-        const {label, price, color, activeColor, occupiedColor, currency} = req.body;
+        const { label, price, color, activeColor, occupiedColor, currency } =
+            req.body;
         const category = await prisma.category.create({
             data: {
                 label: label,

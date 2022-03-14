@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/.nyc_output
+/cypress/videos
 
 # next.js
 /.next/
@@ -33,3 +35,4 @@ yarn-error.log*
 .vs/
 .code/
 .vscode/
+/.env

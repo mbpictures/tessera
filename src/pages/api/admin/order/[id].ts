@@ -1,13 +1,20 @@
-import {serverAuthenticate} from "../../../../constants/serverUtil";
-import {NextApiRequest, NextApiResponse} from "next";
+import {
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
+import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const user = await serverAuthenticate(req);
-    if (!user) {
-        res.status(401).end("Unauthorized");
-        return;
-    }
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
+    const user = await serverAuthenticate(req, res, {
+        permission: PermissionSection.Orders,
+        permissionType:
+            req.method === "GET" ? PermissionType.Read : PermissionType.Write
+    });
+    if (!user) return;
     const { id } = req.query;
     const order = await prisma.order.findUnique({
         where: {
@@ -24,13 +31,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.method === "DELETE") {
-        await Promise.all(order.tickets.map(async (ticket) => {
-            await prisma.ticket.delete({
-                where: {
-                    id: ticket.id
-                }
-            });
-        }));
+        await Promise.all(
+            order.tickets.map(async (ticket) => {
+                await prisma.ticket.delete({
+                    where: {
+                        id: ticket.id
+                    }
+                });
+            })
+        );
         await prisma.order.delete({
             where: {
                 id: id as string

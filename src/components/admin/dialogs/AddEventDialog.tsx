@@ -1,9 +1,18 @@
-import {useState} from "react";
-import {useSnackbar} from "notistack";
-import {Button, Dialog, DialogContent, DialogTitle, MenuItem, Select, Stack, TextField} from "@mui/material";
+import { useState } from "react";
+import { useSnackbar } from "notistack";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    MenuItem,
+    Select,
+    Stack,
+    TextField
+} from "@mui/material";
 import axios from "axios";
+import { SaveButton } from "../SaveButton";
 
-export const AddEventDialog = ({open, onClose, onChange}) => {
+export const AddEventDialog = ({ open, onClose, onChange }) => {
     const [name, setName] = useState("");
     const [seatType, setSeatType] = useState("free");
     const { enqueueSnackbar } = useSnackbar();
@@ -15,11 +24,16 @@ export const AddEventDialog = ({open, onClose, onChange}) => {
 
     const handleAdd = async () => {
         try {
-            await axios.post("/api/admin/events", {title: name, seatType: seatType});
+            await axios.post("/api/admin/events", {
+                title: name,
+                seatType: seatType
+            });
             onChange();
             handleClose();
         } catch (e) {
-            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {variant: "error"});
+            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {
+                variant: "error"
+            });
         }
     };
 
@@ -31,14 +45,19 @@ export const AddEventDialog = ({open, onClose, onChange}) => {
                     <Stack pt={1} pb={1} spacing={1}>
                         <TextField
                             value={name}
-                            onChange={event => setName(event.target.value)}
+                            onChange={(event) => setName(event.target.value)}
                             label={"Name"}
                         />
-                        <Select value={seatType} onChange={(event) => setSeatType(event.target.value)}>
+                        <Select
+                            value={seatType}
+                            onChange={(event) =>
+                                setSeatType(event.target.value)
+                            }
+                        >
                             <MenuItem value={"free"}>Free</MenuItem>
                             <MenuItem value={"seatmap"}>Seat map</MenuItem>
                         </Select>
-                        <Button onClick={handleAdd}>Add Event</Button>
+                        <SaveButton action={handleAdd}>Add Event</SaveButton>
                     </Stack>
                 </DialogContent>
             </Dialog>

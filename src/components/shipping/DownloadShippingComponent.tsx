@@ -1,7 +1,11 @@
-import {Typography} from "@mui/material";
+import { Typography } from "@mui/material";
+import useTranslation from "next-translate/useTranslation";
 
 export const DownloadShippingComponent = () => {
+    const { t } = useTranslation();
     return (
-        <Typography variant="body2">The ticket will be sent to your email address.</Typography>
+        <Typography variant="body2">
+            {t("information:download-description")}
+        </Typography>
     );
-}
+};

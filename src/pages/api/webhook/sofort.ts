@@ -1,18 +1,18 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {XMLBuilder, XMLParser} from "fast-xml-parser";
+import { NextApiRequest, NextApiResponse } from "next";
+import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import axios from "axios";
-import requestIp from 'request-ip';
-import {sofortApiCall} from "../../../lib/sofort";
+import requestIp from "request-ip";
+import { sofortApiCall } from "../../../lib/sofort";
 import prisma from "../../../lib/prisma";
-import {send} from "../../../lib/send";
+import { send } from "../../../lib/send";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        res.status(405).end('Method Not Allowed');
+    if (req.method !== "POST") {
+        res.setHeader("Allow", "POST");
+        res.status(405).end("Method Not Allowed");
         return;
     }
 
@@ -21,7 +21,9 @@ export default async function handler(
     const xmlParser = new XMLParser({});
 
     try {
-        const ipAddressResponse = await axios.get("https://www.sofort.com/payment/status/ipList");
+        const ipAddressResponse = await axios.get(
+            "https://www.sofort.com/payment/status/ipList"
+        );
         const ipList: Array<string> = ipAddressResponse.data.split("|");
         if (!ipList.includes(requestIp.getClientIp(req))) {
             res.status(400).end("Wrong sender");
@@ -37,19 +39,28 @@ export default async function handler(
             ]
         });
 
-        const response = await sofortApiCall("https://api.sofort.com/api/xml", requestData);
+        const response = await sofortApiCall(
+            "https://api.sofort.com/api/xml",
+            requestData
+        );
         const parsedResponse = xmlParser.parse(response.data);
 
-        const orderId = parsedResponse.transactions.transaction_details.user_variables.user_variable;
+        const orderId =
+            parsedResponse.transactions.transaction_details.user_variables
+                .user_variable;
         const status = parsedResponse.transactions.transaction_details.status;
-        const statusReason = parsedResponse.transactions.transaction_details.status_reason;
+        const statusReason =
+            parsedResponse.transactions.transaction_details.status_reason;
 
         await prisma.order.update({
             where: {
                 id: orderId
             },
             data: {
-                paymentResult: JSON.stringify({status: status, reason: statusReason})
+                paymentResult: JSON.stringify({
+                    status: status,
+                    reason: statusReason
+                })
             }
         });
 
@@ -70,8 +81,7 @@ export default async function handler(
         // TODO: handle refunded
 
         res.status(200).end();
-    }
-    catch (e) {
+    } catch (e) {
         res.status(500).end("Server error");
     }
 }

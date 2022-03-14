@@ -1,17 +1,19 @@
-import {useEffect} from "react";
-import {useRouter} from "next/router";
-import {Scrollbar} from "../../util/Scrollbar";
-import {Box} from "@mui/system";
-import HomeIcon from '@mui/icons-material/Home';
-import {MHidden} from "../../util/MHidden";
-import {Drawer, styled} from "@mui/material";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { Scrollbar } from "../../util/Scrollbar";
+import { Box } from "@mui/system";
+import HomeIcon from "@mui/icons-material/Home";
+import { MHidden } from "../../util/MHidden";
+import { Drawer, styled } from "@mui/material";
 import NavSection from "./NavSection";
-import GroupIcon from '@mui/icons-material/Group';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
-import EventIcon from '@mui/icons-material/Event';
+import GroupIcon from "@mui/icons-material/Group";
+import BookOnlineIcon from "@mui/icons-material/BookOnline";
+import EventIcon from "@mui/icons-material/Event";
+import SettingsIcon from '@mui/icons-material/Settings';
+import TranslateIcon from '@mui/icons-material/Translate';
 
-const RootStyle = styled('div')(({ theme }) => ({
-    [theme.breakpoints.up('lg')]: {
+const RootStyle = styled("div")(({ theme }) => ({
+    [theme.breakpoints.up("lg")]: {
         flexShrink: 0,
         width: DRAWER_WIDTH
     }
@@ -21,18 +23,18 @@ const DRAWER_WIDTH = 280;
 
 export const sidebarConfig = [
     {
-        title: 'Dashboard',
-        path: '/admin',
+        title: "Dashboard",
+        path: "/admin",
         icon: <HomeIcon />
     },
     {
-        title: 'User',
-        path: '/admin/users',
+        title: "User",
+        path: "/admin/users",
         icon: <GroupIcon />
     },
     {
-        title: 'Orders',
-        path: '/admin/orders',
+        title: "Orders",
+        path: "/admin/orders",
         icon: <BookOnlineIcon />
     },
     {
@@ -52,6 +54,16 @@ export const sidebarConfig = [
                 path: "/admin/events/seatmaps"
             }
         ]
+    },
+    {
+        title: "Options",
+        icon: <SettingsIcon />,
+        path: "/admin/options"
+    },
+    {
+        title: "Translations",
+        icon: <TranslateIcon />,
+        path: "/admin/localization"
     }
 ];
 
@@ -68,8 +80,13 @@ export const Sidebar = ({ isOpen, onClose }) => {
     const renderContent = (
         <Scrollbar
             sx={{
-                height: '100%',
-                '& .simplebar-content': { height: '100%', display: 'flex', flexDirection: 'column', justifyContent: "center" }
+                height: "100%",
+                "& .simplebar-content": {
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center"
+                }
             }}
         >
             <Box sx={{ flexGrow: 1 }} />
@@ -98,7 +115,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                     PaperProps={{
                         sx: {
                             width: DRAWER_WIDTH,
-                            bgcolor: 'background.default'
+                            bgcolor: "background.default"
                         }
                     }}
                 >
@@ -107,4 +124,4 @@ export const Sidebar = ({ isOpen, onClose }) => {
             </MHidden>
         </RootStyle>
     );
-}
+};

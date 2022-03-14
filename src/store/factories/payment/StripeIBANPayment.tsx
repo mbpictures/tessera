@@ -1,15 +1,17 @@
-import {Payment} from "./Payment";
+import { Payment } from "./Payment";
 import React from "react";
-import {PaymentType} from "./PaymentFactory";
-import {StripeIBAN, StripeIBANHeader} from "../../../components/payment/StripeIBAN";
-import {PayButton} from "../../../components/payment/button/PayButton";
+import { PaymentType } from "./PaymentFactory";
+import {
+    StripeIBAN,
+    StripeIBANHeader
+} from "../../../components/payment/StripeIBAN";
+import { PayButton } from "../../../components/payment/button/PayButton";
 
 export interface StripeIBANPaymentData {
     ibanComplete: boolean;
 }
 
 export class StripeIBANPayment extends Payment {
-
     getComponent(): React.ReactNode {
         return <StripeIBAN />;
     }
@@ -21,7 +23,10 @@ export class StripeIBANPayment extends Payment {
     }
 
     setData(data: StripeIBANPaymentData) {
-        this.data = {type: PaymentType.CreditCard, data: JSON.stringify(data)};
+        this.data = {
+            type: PaymentType.CreditCard,
+            data: JSON.stringify(data)
+        };
     }
 
     getHeaderComponent(): React.ReactNode {
@@ -35,5 +40,9 @@ export class StripeIBANPayment extends Payment {
 
     getPaymentButton(): React.ReactNode {
         return <PayButton />;
+    }
+
+    getValidPaymentResult(data?: any): Object {
+        return { event: "charge.succeeded" };
     }
 }

@@ -1,7 +1,9 @@
-import {IAddress} from "../../../constants/interfaces";
-import {validateAddress} from "../../../constants/util";
-import {Shipping} from "./Shipping";
-import {ShippingType} from "./ShippingFactory";
+import { IAddress } from "../../../constants/interfaces";
+import { validateAddress } from "../../../constants/util";
+import { Shipping } from "./Shipping";
+import { ShippingType } from "./ShippingFactory";
+import { PostalDeliveryShippingComponent } from "../../../components/shipping/PostalDeliveryShippingComponent";
+import React from "react";
 
 export interface PostalDeliveryData {
     differentAddress: boolean;
@@ -23,11 +25,15 @@ const DEFAULT: PostalDeliveryData = {
 
 export class PostalDeliveryShipping extends Shipping {
     set data(data: PostalDeliveryData) {
-        this.shippingData = {type: ShippingType.Post, data: JSON.stringify(data)};
+        this.shippingData = {
+            type: ShippingType.Post,
+            data: JSON.stringify(data)
+        };
     }
 
     isValid(): boolean {
         const data: PostalDeliveryData = this.postalData;
+        if (!data) return false;
         return data.differentAddress ? validateAddress(data.address) : true;
     }
 
@@ -41,6 +47,10 @@ export class PostalDeliveryShipping extends Shipping {
     }
 
     get DisplayName(): string {
-        return "Postal Delivery";
+        return "postal-delivery";
+    }
+
+    get Component(): React.ReactElement {
+        return <PostalDeliveryShippingComponent />;
     }
 }

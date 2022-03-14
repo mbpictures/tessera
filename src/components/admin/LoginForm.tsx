@@ -1,24 +1,37 @@
 // @ts-ignore
-import * as Yup from 'yup';
-import {useState} from "react";
-import {Checkbox, FormControlLabel, IconButton, InputAdornment, Stack, TextField} from "@mui/material";
-import { useFormik, Form, FormikProvider } from 'formik';
-import {LoadingButton} from "@mui/lab";
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import * as Yup from "yup";
+import { useState } from "react";
+import {
+    Checkbox,
+    FormControlLabel,
+    IconButton,
+    InputAdornment,
+    Stack,
+    TextField
+} from "@mui/material";
+import { useFormik, Form, FormikProvider } from "formik";
+import { LoadingButton } from "@mui/lab";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
-export default function LoginForm({onSubmit}: {onSubmit?: (userName, password) => unknown}) {
+export default function LoginForm({
+    onSubmit
+}: {
+    onSubmit?: (userName, password) => unknown;
+}) {
     const [showPassword, setShowPassword] = useState(false);
 
     const LoginSchema = Yup.object().shape({
-        email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-        password: Yup.string().required('Password is required')
+        email: Yup.string()
+            .email("Email must be a valid email address")
+            .required("Email is required"),
+        password: Yup.string().required("Password is required")
     });
 
     const formik = useFormik({
         initialValues: {
-            email: '',
-            password: '',
+            email: "",
+            password: "",
             remember: true
         },
         validationSchema: LoginSchema,
@@ -28,7 +41,14 @@ export default function LoginForm({onSubmit}: {onSubmit?: (userName, password) =
         }
     });
 
-    const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+    const {
+        errors,
+        touched,
+        values,
+        isSubmitting,
+        handleSubmit,
+        getFieldProps
+    } = formik;
 
     const handleShowPassword = () => {
         setShowPassword((show) => !show);
@@ -43,7 +63,7 @@ export default function LoginForm({onSubmit}: {onSubmit?: (userName, password) =
                         autoComplete="username"
                         type="email"
                         label="Email address"
-                        {...getFieldProps('email')}
+                        {...getFieldProps("email")}
                         error={Boolean(touched.email && errors.email)}
                         helperText={touched.email && errors.email}
                     />
@@ -51,14 +71,21 @@ export default function LoginForm({onSubmit}: {onSubmit?: (userName, password) =
                     <TextField
                         fullWidth
                         autoComplete="current-password"
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         label="Password"
-                        {...getFieldProps('password')}
+                        {...getFieldProps("password")}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    <IconButton onClick={handleShowPassword} edge="end">
-                                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                    <IconButton
+                                        onClick={handleShowPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? (
+                                            <VisibilityOffIcon />
+                                        ) : (
+                                            <VisibilityIcon />
+                                        )}
                                     </IconButton>
                                 </InputAdornment>
                             )
@@ -68,9 +95,19 @@ export default function LoginForm({onSubmit}: {onSubmit?: (userName, password) =
                     />
                 </Stack>
 
-                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    sx={{ my: 2 }}
+                >
                     <FormControlLabel
-                        control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
+                        control={
+                            <Checkbox
+                                {...getFieldProps("remember")}
+                                checked={values.remember}
+                            />
+                        }
                         label="Remember me"
                     />
                 </Stack>

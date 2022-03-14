@@ -1,68 +1,132 @@
-import {Step} from "../components/Step";
-import React, {useEffect} from "react";
+import { Step } from "../components/Step";
+import React, { useEffect } from "react";
 import {
     Button,
-    Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+    Card,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Grid,
-    useMediaQuery,
+    useMediaQuery
 } from "@mui/material";
-import {Box, useTheme} from "@mui/system";
-import {useAppDispatch, useAppSelector} from "../store/hooks";
-import {useRouter} from "next/router";
-import {PaymentMethods} from "../components/payment/PaymentMethods";
-import {selectPayment, setPaymentStatus} from "../store/reducers/paymentReducer";
+import { Box, useTheme } from "@mui/system";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { useRouter } from "next/router";
+import { PaymentMethods } from "../components/payment/PaymentMethods";
+import { selectPayment, setPaymentStatus } from "../store/reducers/paymentReducer";
 import prisma from "../lib/prisma";
-import {PaymentFactory} from "../store/factories/payment/PaymentFactory";
-import {PaymentOverview} from "../components/PaymentOverview";
-import {PayButton} from "../components/payment/button/PayButton";
+import { PaymentFactory } from "../store/factories/payment/PaymentFactory";
+import { PaymentOverview } from "../components/PaymentOverview";
+import { PayButton } from "../components/payment/button/PayButton";
+import { getOption } from "../lib/options";
+import { Options } from "../constants/Constants";
+import loadNamespaces from "next-translate/loadNamespaces";
 
-
-export default function Payment({categories, direction}) {
+export default function Payment({ categories, direction, paymentMethods }) {
     const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
     const theme = useTheme();
-    const containerStyling: React.CSSProperties = useMediaQuery(theme.breakpoints.up("md")) ? {flexWrap: "nowrap"} : {flexDirection: "column-reverse", overflowY: "auto", flexWrap: "nowrap"};
+    const containerStyling: React.CSSProperties = useMediaQuery(
+        theme.breakpoints.up("md")
+    )
+        ? { flexWrap: "nowrap" }
+        : {
+              flexDirection: "column-reverse",
+              overflowY: "auto",
+              flexWrap: "nowrap"
+          };
 
     useEffect(() => {
         if (payment.state !== "finished") return;
-        router.push("/checkout")
-    }, [payment]);
+        router.push("/checkout").catch(console.log);
+    }, [payment, router]);
 
     const openSeatSelectionPage = () => {
-        router.push("/seatselection");
+        router.push("/seatselection").catch(console.log);
     };
 
     return (
-        <Step direction={direction} style={{width: "100%", maxHeight: "100%", flex: "1 1 auto", display: "flex", justifyContent: "center", alignItems: "center"}}>
+        <Step
+            direction={direction}
+            style={{
+                width: "100%",
+                maxHeight: "100%",
+                flex: "1 1 auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            }}
+        >
             <>
                 <Dialog open={payment.state === "failure"}>
                     <DialogTitle>Payment failed!</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            An error occured while processing your payment. Please try again, choose a different payment method or contact us!
+                            An error occured while processing your payment.
+                            Please try again, choose a different payment method
+                            or contact us!
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button variant={"outlined"} onClick={() => dispatch(setPaymentStatus("none"))}>Close</Button>
+                        <Button
+                            variant={"outlined"}
+                            onClick={() => dispatch(setPaymentStatus("none"))}
+                        >
+                            Close
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </>
-            <Grid container spacing={2} style={{ ...containerStyling, maxHeight: "100%"}}>
-                <Grid item md={12} lg={8} style={{maxHeight: "100%", display: "flex", alignItems: "center"}}>
-                    <Box style={{maxHeight: "100%", overflowY: "auto", padding: "2px 5px", width: "100%"}}>
+            <Grid
+                container
+                spacing={2}
+                style={{ ...containerStyling, maxHeight: "100%" }}
+            >
+                <Grid
+                    item
+                    md={12}
+                    lg={8}
+                    style={{
+                        maxHeight: "100%",
+                        display: "flex",
+                        alignItems: "center"
+                    }}
+                >
+                    <Box
+                        style={{
+                            maxHeight: "100%",
+                            overflowY: "auto",
+                            padding: "2px 5px",
+                            width: "100%"
+                        }}
+                    >
                         <Card>
-                            <PaymentMethods />
+                            <PaymentMethods paymentMethods={paymentMethods} />
                         </Card>
                     </Box>
                 </Grid>
-                <Grid item md={12} lg={4} display="flex" alignItems="center" style={{paddingLeft: "21px", marginRight: "5px"}}>
-                    <Card style={{flex: "1 1 auto", padding: "10px"}}>
-                        <PaymentOverview categories={categories} hideEmptyCategories withEditButton onEdit={openSeatSelectionPage} />
-                        {
-                            PaymentFactory.getPaymentInstance(payment.payment)?.getPaymentButton() ?? <PayButton />
-                        }
+                <Grid
+                    item
+                    md={12}
+                    lg={4}
+                    display="flex"
+                    alignItems="center"
+                    style={{ paddingLeft: "21px", marginRight: "5px" }}
+                >
+                    <Card style={{ flex: "1 1 auto", padding: "10px" }}>
+                        <PaymentOverview
+                            categories={categories}
+                            hideEmptyCategories
+                            withEditButton
+                            onEdit={openSeatSelectionPage}
+                        />
+                        {PaymentFactory.getPaymentInstance(
+                            payment.payment
+                        )?.getPaymentButton() ?? <PayButton />}
                     </Card>
                 </Grid>
             </Grid>
@@ -70,14 +134,18 @@ export default function Payment({categories, direction}) {
     );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ locale }) {
     const categories = await prisma.category.findMany();
+    const paymentMethods = await getOption(Options.PaymentProviders);
 
     return {
         props: {
             disableOverflow: true,
             noNext: true,
-            categories: categories
+            categories: categories,
+            paymentMethods,
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/payment' }))
         }
-    }
+    };
 }

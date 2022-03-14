@@ -1,26 +1,34 @@
-import {alpha, Box} from "@mui/system";
-import {useState} from "react";
-import {Button, ClickAwayListener, IconButton, Input, InputAdornment, Slide, styled} from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import { alpha, Box } from "@mui/system";
+import { useState } from "react";
+import {
+    Button,
+    ClickAwayListener,
+    IconButton,
+    Input,
+    InputAdornment,
+    Slide,
+    styled
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const APPBAR_MOBILE = 64;
 const APPBAR_DESKTOP = 92;
 
-const SearchbarStyle = styled('div')(({ theme }) => ({
+const SearchbarStyle = styled("div")(({ theme }) => ({
     top: 0,
     left: 0,
     zIndex: 99,
-    width: '100%',
-    display: 'flex',
-    position: 'absolute',
-    alignItems: 'center',
+    width: "100%",
+    display: "flex",
+    position: "absolute",
+    alignItems: "center",
     height: APPBAR_MOBILE,
-    backdropFilter: 'blur(6px)',
-    WebkitBackdropFilter: 'blur(6px)', // Fix on Mobile
+    backdropFilter: "blur(6px)",
+    WebkitBackdropFilter: "blur(6px)", // Fix on Mobile
     padding: theme.spacing(0, 3),
     boxShadow: theme.shadows[2],
     backgroundColor: `${alpha(theme.palette.background.default, 0.72)}`,
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up("md")]: {
         height: APPBAR_DESKTOP,
         padding: theme.spacing(0, 5)
     }
@@ -63,13 +71,17 @@ export const Searchbar = () => {
                             startAdornment={
                                 <InputAdornment position="start">
                                     <Box
-                                        sx={{ color: 'text.disabled', width: 20, height: 20 }}
+                                        sx={{
+                                            color: "text.disabled",
+                                            width: 20,
+                                            height: 20
+                                        }}
                                     >
                                         <SearchIcon />
                                     </Box>
                                 </InputAdornment>
                             }
-                            sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
+                            sx={{ mr: 1, fontWeight: "fontWeightBold" }}
                         />
                         <Button variant="contained" onClick={handleSearch}>
                             Search
@@ -79,4 +91,4 @@ export const Searchbar = () => {
             </div>
         </ClickAwayListener>
     );
-}
+};

@@ -1,4 +1,4 @@
-import {configureStore} from '@reduxjs/toolkit';
+import { configureStore } from "@reduxjs/toolkit";
 import nextStepAvailableReducer from "./reducers/nextStepAvailableReducer";
 import eventSelectionReducer from "./reducers/eventSelectionReducer";
 import orderReducer from "./reducers/orderReducer";
@@ -13,8 +13,8 @@ export function makeStore() {
             order: orderReducer,
             personalInformation: personalInformationReducer,
             payment: paymentReducer
-        },
-    })
+        }
+    });
 }
 
 export const store = makeStore();

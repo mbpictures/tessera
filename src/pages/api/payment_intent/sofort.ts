@@ -1,17 +1,17 @@
-import {NextApiRequest, NextApiResponse} from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import {IOrder} from "../../../store/reducers/orderReducer";
-import {sofortApiCall} from "../../../lib/sofort";
-import {XMLBuilder, XMLParser} from "fast-xml-parser";
-import absoluteUrl from 'next-absolute-url';
+import { IOrder } from "../../../store/reducers/orderReducer";
+import { sofortApiCall } from "../../../lib/sofort";
+import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import absoluteUrl from "next-absolute-url";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        res.status(405).end('Method Not Allowed');
+    if (req.method !== "POST") {
+        res.setHeader("Allow", "POST");
+        res.status(405).end("Method Not Allowed");
         return;
     }
 
@@ -43,15 +43,23 @@ export default async function handler(
             }
         };
         // localhost doesnt work for sofort notifiaction
-        if (process.env.NODE_ENV === 'production' && !req.headers.host.includes("localhost")){
-            data.multipay.notification_urls.push({notification_url: `${origin}/api/webhook/sofort`});
+        if (
+            process.env.NODE_ENV === "production" &&
+            !req.headers.host.includes("localhost")
+        ) {
+            data.multipay.notification_urls.push({
+                notification_url: `${origin}/api/webhook/sofort`
+            });
         }
 
         // bug in fast-xml-parser typescript declarations
         // @ts-ignore
         const sofortRequestData = xmlBuilder.build(data);
 
-        const response = await sofortApiCall("https://api.sofort.com/api/xml", sofortRequestData);
+        const response = await sofortApiCall(
+            "https://api.sofort.com/api/xml",
+            sofortRequestData
+        );
         const responseXML = xmlParser.parse(response.data);
 
         await prisma.order.update({
@@ -59,13 +67,16 @@ export default async function handler(
                 id: order.orderId
             },
             data: {
-                paymentIntent: JSON.stringify({transactionID: responseXML.new_transaction.transaction})
+                paymentIntent: JSON.stringify({
+                    transactionID: responseXML.new_transaction.transaction
+                })
             }
         });
 
-        res.status(200).json({redirectUrl: responseXML.new_transaction.payment_url});
-    }
-    catch (e) {
+        res.status(200).json({
+            redirectUrl: responseXML.new_transaction.payment_url
+        });
+    } catch (e) {
         console.log(e);
         res.status(500).end(e);
     }

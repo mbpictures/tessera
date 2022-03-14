@@ -1,4 +1,4 @@
-import {IPayment} from "../../reducers/paymentReducer";
+import { IPayment } from "../../reducers/paymentReducer";
 import React from "react";
 
 export abstract class Payment {
@@ -17,10 +17,10 @@ export abstract class Payment {
     abstract getHeaderComponent(): React.ReactNode;
     abstract getPaymentButton(): React.ReactNode;
     abstract paymentResultValid(data: any): boolean;
+    abstract getValidPaymentResult(data?: any): Object;
 
     get component(): React.ReactNode {
-        if (!Payment._component)
-            Payment._component = this.getComponent();
+        if (!Payment._component) Payment._component = this.getComponent();
         return Payment._component;
     }
 

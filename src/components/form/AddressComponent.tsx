@@ -1,21 +1,29 @@
-import {Autocomplete, Grid, Stack, TextField} from "@mui/material";
-import {IAddress} from "../../constants/interfaces";
-import {ZIP} from "./ZIP";
-import {useState} from "react";
-import countryRegionData, {Country, Region} from "country-region-data";
-import {addressValidatorMap} from "../../constants/util";
+import { Autocomplete, Grid, Stack, TextField } from "@mui/material";
+import { IAddress } from "../../constants/interfaces";
+import { ZIP } from "./ZIP";
+import { useState } from "react";
+import countryRegionData, { Country, Region } from "country-region-data";
+import { addressValidatorMap } from "../../constants/util";
+import useTranslation from "next-translate/useTranslation";
 
 const validateAddressComponent = (address: IAddress, property: string) => {
     if (addressValidatorMap[property](address)) return null;
-    if (property === "firstName") return "Please enter your firstname here!";
-    if (property === "lastName") return "Please enter your lastname here!";
-    if (property === "address") return "Please enter street and house number!";
-    if (property === "city") return "Please enter your city!";
-    if (property === "country") return "Select your country!";
-    if (property === "region") return "Select your region!";
-}
+    if (property === "firstName") return "information:firstname-error";
+    if (property === "lastName") return "information:lastname-error";
+    if (property === "address") return "information:address-error";
+    if (property === "city") return "information:city-error";
+    if (property === "country") return "information:country-error";
+    if (property === "region") return "information:region-error";
+};
 
-export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: (newAddress: IAddress) => unknown}) => {
+export const AddressComponent = ({
+    value,
+    onChange
+}: {
+    value: IAddress;
+    onChange: (newAddress: IAddress) => unknown;
+}) => {
+    const { t } = useTranslation();
     const [localZip, setLocalZip] = useState<string>(value.zip ?? "");
     const [firstNameError, setFirstNameError] = useState<string>(null);
     const [lastNameError, setLastNameError] = useState<string>(null);
@@ -26,17 +34,23 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
         const newAddress: IAddress = Object.assign({}, value);
         newAddress[property] = newValue;
         onChange(newAddress);
-        if (property === "firstName") setFirstNameError(validateAddressComponent(newAddress, property));
-        if (property === "lastName") setLastNameError(validateAddressComponent(newAddress, property));
-        if (property === "address") setAddressError(validateAddressComponent(newAddress, property));
-        if (property === "city") setCityError(validateAddressComponent(newAddress, property));
+
+        const error = validateAddressComponent(newAddress, property);
+        if (property === "firstName")
+            setFirstNameError(error ? t(error) : null);
+        if (property === "lastName")
+            setLastNameError(error ? t(error) : null);
+        if (property === "address")
+            setAddressError(error ? t(error) : null);
+        if (property === "city")
+            setCityError(error ? t(error) : null);
     };
 
     const handleChangeZip = (newValue: string, valid: boolean) => {
         setLocalZip(newValue);
         if (!valid) return;
         handleUpdate("zip", newValue);
-    }
+    };
 
     const handleChangeCountry = (event: any, newValue: Country) => {
         const newAddress: IAddress = Object.assign({}, value);
@@ -52,74 +66,107 @@ export const AddressComponent = ({value, onChange}: {value: IAddress, onChange: 
 
     const handleChangeRegion = (event: any, newValue: Region) => {
         handleUpdate("region", newValue);
-    }
+    };
 
     return (
         <Stack spacing={1}>
             <TextField
-                label="Firstname"
+                label={t("information:firstname")}
                 value={value.firstName ?? ""}
-                onChange={event => handleUpdate("firstName", event.target.value)}
+                onChange={(event) =>
+                    handleUpdate("firstName", event.target.value)
+                }
                 helperText={firstNameError}
                 error={firstNameError !== null}
+                name={"address-firstname"}
             />
             <TextField
-                label="Lastname"
+                label={t("information:lastname")}
                 value={value.lastName ?? ""}
-                onChange={event => handleUpdate("lastName", event.target.value)}
+                onChange={(event) =>
+                    handleUpdate("lastName", event.target.value)
+                }
                 helperText={lastNameError}
                 error={lastNameError !== null}
+                name={"address-lastname"}
             />
             <TextField
-                label="Address"
+                label={t("information:address")}
                 value={value.address ?? ""}
-                onChange={event => handleUpdate("address", event.target.value)}
+                onChange={(event) =>
+                    handleUpdate("address", event.target.value)
+                }
                 helperText={addressError}
                 error={addressError !== null}
+                name={"address-address"}
             />
             <Grid container rowSpacing={1}>
                 <Grid item md={4} xs={12}>
-                    <ZIP value={localZip} onChange={handleChangeZip} />
+                    <ZIP
+                        value={localZip}
+                        onChange={handleChangeZip}
+                        name={"address-zip"}
+                    />
                 </Grid>
                 <Grid item md={8} xs={12}>
                     <TextField
-                        label="City"
+                        label={t("information:city")}
                         fullWidth
                         value={value.city ?? ""}
-                        onChange={event => handleUpdate("city", event.target.value)}
+                        onChange={(event) =>
+                            handleUpdate("city", event.target.value)
+                        }
                         helperText={cityError}
                         error={cityError !== null}
+                        name={"address-city"}
                     />
                 </Grid>
             </Grid>
             <Grid container rowSpacing={1}>
                 <Grid item md={6} xs={12}>
                     <Autocomplete
-                        renderInput={(params) => <TextField {...params} label="Country" />}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label={t("information:country")}
+                                name={"address-country-text"}
+                            />
+                        )}
                         options={countryRegionData}
                         fullWidth
                         onChange={handleChangeCountry}
                         getOptionLabel={(option: Country) => option.countryName}
-                        isOptionEqualToValue={(option, value) => option?.countryName === value?.countryName && option?.countryShortCode === value?.countryShortCode}
+                        isOptionEqualToValue={(option, value) =>
+                            option?.countryName === value?.countryName &&
+                            option?.countryShortCode === value?.countryShortCode
+                        }
                         value={value.country}
                     />
                 </Grid>
                 <Grid item md={6} xs={12}>
-                    {
-                        (value.country != null && value.country.regions.length > 0) && (
+                    {value.country != null &&
+                        value.country.regions.length > 0 && (
                             <Autocomplete
-                                renderInput={(params) => <TextField {...params} label="Region" />}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label={t("information:region")}
+                                        name={"address-region-text"}
+                                    />
+                                )}
                                 options={value.country.regions}
                                 fullWidth
                                 onChange={handleChangeRegion}
                                 getOptionLabel={(option: Region) => option.name}
-                                isOptionEqualToValue={(option, value) => option?.name === value?.name && option?.shortCode === value?.shortCode}
+                                isOptionEqualToValue={(option, value) =>
+                                    option?.name === value?.name &&
+                                    option?.shortCode === value?.shortCode
+                                }
                                 value={value.region}
                             />
-                        )
-                    }
+                        )}
                 </Grid>
             </Grid>
         </Stack>
     );
-}
+};

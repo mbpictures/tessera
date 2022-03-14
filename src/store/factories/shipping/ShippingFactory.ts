@@ -1,8 +1,8 @@
-import {IShipping} from "../../reducers/personalInformationReducer";
-import {Shipping} from "./Shipping";
-import {PostalDeliveryShipping} from "./PostalDeliveryShipping";
-import {DownloadShipping} from "./DownloadShipping";
-import {BoxOfficeShipping} from "./BoxOfficeShipping";
+import { IShipping } from "../../reducers/personalInformationReducer";
+import { Shipping } from "./Shipping";
+import { PostalDeliveryShipping } from "./PostalDeliveryShipping";
+import { DownloadShipping } from "./DownloadShipping";
+import { BoxOfficeShipping } from "./BoxOfficeShipping";
 
 export enum ShippingType {
     Post = "post",
@@ -17,7 +17,7 @@ export class ShippingFactory {
             return new PostalDeliveryShipping(data);
         if (data.type === ShippingType.Download)
             return new DownloadShipping(data);
-        if (data.type ===ShippingType.BoxOffice)
+        if (data.type === ShippingType.BoxOffice)
             return new BoxOfficeShipping(data);
         return null;
     }

@@ -1,44 +1,50 @@
-import {Step} from "../components/Step";
-import {
-    Card, Stack,
-    TextField,
-    Typography, useMediaQuery
-} from "@mui/material";
-import React, {useEffect, useState} from "react";
-import {CheckboxAccordion} from "../components/CheckboxAccordion";
-import {useAppDispatch, useAppSelector} from "../store/hooks";
+import { Step } from "../components/Step";
+import { Card, Stack, TextField, Typography, useMediaQuery } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { CheckboxAccordion } from "../components/CheckboxAccordion";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
     selectPersonalInformation,
     setAddress,
     setEmail,
-    setShipping,
+    setShipping
 } from "../store/reducers/personalInformationReducer";
-import {ShippingType} from "../store/factories/shipping/ShippingFactory";
-import {AddressComponent} from "../components/form/AddressComponent";
-import {PostalDeliveryShippingComponent} from "../components/shipping/PostalDeliveryShippingComponent";
-import {BoxOfficeShippingComponent} from "../components/shipping/BoxOfficeShippingComponent";
-import {DownloadShippingComponent} from "../components/shipping/DownloadShippingComponent";
-import {Box, useTheme} from "@mui/system";
+import { ShippingFactory, ShippingType } from "../store/factories/shipping/ShippingFactory";
+import { AddressComponent } from "../components/form/AddressComponent";
+import { Box, useTheme } from "@mui/system";
+import { getOption } from "../lib/options";
+import { Options } from "../constants/Constants";
+import useTranslation from "next-translate/useTranslation";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 const validateEmail = (email) => {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const re =
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
-}
+};
 
-export default function Information({direction}) {
+export default function Information({ direction, deliveryMethods }) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
+    const { t } = useTranslation();
 
-    const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingType | null>(selector.shipping?.type ?? null);
+    const [selectedShippingMethod, setSelectedShippingMethod] =
+        useState<ShippingType | null>(selector.shipping?.type ?? null);
     const [emailError, setEmailError] = useState<string>(null);
 
     const theme = useTheme();
-    const boxStyling = useMediaQuery(theme.breakpoints.up("md")) ? {width: "60%"} : {width: "100%"};
+    const boxStyling = useMediaQuery(theme.breakpoints.up("md"))
+        ? { width: "60%" }
+        : { width: "100%" };
 
     useEffect(() => {
         const emailValid = validateEmail(selector.email);
 
-        setEmailError(selector.email.length == 0 || emailValid ? null : "Please enter valid email address");
+        setEmailError(
+            selector.email.length == 0 || emailValid
+                ? null
+                : t("information:e-mail-error")
+        );
     }, [selector]);
 
     useEffect(() => {
@@ -46,54 +52,80 @@ export default function Information({direction}) {
             dispatch(setShipping(null));
             return;
         }
-        dispatch(setShipping({
-            type: selectedShippingMethod,
-            data: "mock"
-        }));
-    }, [selectedShippingMethod]);
+        dispatch(
+            setShipping({
+                type: selectedShippingMethod,
+                data: "mock"
+            })
+        );
+    }, [selectedShippingMethod, dispatch]);
 
     return (
-        <Step direction={direction} style={{width: "100%", maxHeight: "100%", display: "flex", justifyContent: "center"}}>
-            <Box style={boxStyling} sx={{py: 2}}>
+        <Step
+            direction={direction}
+            style={{
+                width: "100%",
+                maxHeight: "100%",
+                display: "flex",
+                justifyContent: "center"
+            }}
+        >
+            <Box style={boxStyling} sx={{ py: 2 }}>
                 <Card>
                     <Stack padding={1} spacing={1}>
-                        <Typography>These address given will be used for invoice.</Typography>
+                        <Typography>
+                            {t("information:address-for-invoice")}
+                        </Typography>
                         <TextField
-                            label="E-Mail Address"
+                            label={t("information:e-mail")}
                             type="email"
                             value={selector.email}
-                            onChange={event => dispatch(setEmail(event.target.value))}
+                            onChange={(event) =>
+                                dispatch(setEmail(event.target.value))
+                            }
                             error={emailError != null}
                             helperText={emailError}
+                            name={"address-email"}
                         />
-                        <AddressComponent value={selector.address} onChange={newValue => dispatch(setAddress(newValue))} />
+                        <AddressComponent
+                            value={selector.address}
+                            onChange={(newValue) =>
+                                dispatch(setAddress(newValue))
+                            }
+                        />
                     </Stack>
                 </Card>
-                <CheckboxAccordion
-                    label={"Postal delivery"}
-                    name={ShippingType.Post}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <PostalDeliveryShippingComponent />
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Download"}
-                    name={ShippingType.Download}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <DownloadShippingComponent />
-                </CheckboxAccordion>
-                <CheckboxAccordion
-                    label={"Box-Office"}
-                    name={ShippingType.BoxOffice}
-                    selectedItem={selectedShippingMethod}
-                    onSelect={setSelectedShippingMethod}
-                >
-                    <BoxOfficeShippingComponent />
-                </CheckboxAccordion>
+                {
+                    // iterate through enum and filter to keep order constant
+                    Object.values(ShippingType)
+                        .filter((type) => deliveryMethods.includes(type))
+                        .map((shippingType) => {
+                            const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
+                            return (
+                                <CheckboxAccordion
+                                    label={t(`information:${instance.DisplayName}`)}
+                                    name={shippingType}
+                                    selectedItem={selectedShippingMethod}
+                                    onSelect={setSelectedShippingMethod}
+                                    key={shippingType}
+                                >
+                                    {instance.Component}
+                                </CheckboxAccordion>
+                            )
+                        })
+                }
             </Box>
         </Step>
     );
+}
+
+export async function getStaticProps({ locale }) {
+    const deliveryMethods = await getOption(Options.Delivery);
+    return {
+        props: {
+            deliveryMethods,
+            theme: await getOption(Options.Theme),
+            ...(await loadNamespaces({ locale, pathname: '/information' }))
+        }
+    };
 }

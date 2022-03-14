@@ -1,19 +1,31 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {IOrder} from "../../../store/reducers/orderReducer";
-import {PersonalInformationState} from "../../../store/reducers/personalInformationReducer";
+import { NextApiRequest, NextApiResponse } from "next";
+import { IOrder } from "../../../store/reducers/orderReducer";
+import { PersonalInformationState } from "../../../store/reducers/personalInformationReducer";
 import prisma from "../../../lib/prisma";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        res.status(405).end('Method Not Allowed');
+    if (req.method !== "POST") {
+        res.setHeader("Allow", "POST");
+        res.status(405).end("Method Not Allowed");
         return;
     }
 
-    const { order, user, eventId, paymentType, locale }: { order: IOrder, user: PersonalInformationState, eventId: number, paymentType: string, locale: string } = req.body;
+    const {
+        order,
+        user,
+        eventId,
+        paymentType,
+        locale
+    }: {
+        order: IOrder;
+        user: PersonalInformationState;
+        eventId: number;
+        paymentType: string;
+        locale: string;
+    } = req.body;
     try {
         const createUser = await prisma.user.create({
             data: {
@@ -24,7 +36,7 @@ export default async function handler(
                 zip: user.address.zip,
                 city: user.address.city,
                 countryCode: user.address.country.countryShortCode,
-                regionCode: user.address.region.shortCode,
+                regionCode: user.address.region.shortCode
             }
         });
 
@@ -45,11 +57,13 @@ export default async function handler(
                 shipping: JSON.stringify(user.shipping),
                 locale: locale
             }
-        })
-        res.status(200).json({userId: createUser.id, orderId: createOrder.id});
-    }
-    catch (e) {
-        console.log(e)
+        });
+        res.status(200).json({
+            userId: createUser.id,
+            orderId: createOrder.id
+        });
+    } catch (e) {
+        console.log(e);
         res.status(500).end("Server error");
     }
 }

@@ -1,9 +1,9 @@
-import {Payment} from "./Payment";
+import { Payment } from "./Payment";
 import React from "react";
-import {Invoice, InvoiceHeader} from "../../../components/payment/Invoice";
-import {PayButton} from "../../../components/payment/button/PayButton";
+import { Invoice, InvoiceHeader } from "../../../components/payment/Invoice";
+import { PayButton } from "../../../components/payment/button/PayButton";
 
-export class InvoicePayment extends Payment{
+export class InvoicePayment extends Payment {
     getComponent(): React.ReactNode {
         return <Invoice />;
     }
@@ -23,5 +23,9 @@ export class InvoicePayment extends Payment{
 
     getPaymentButton(): React.ReactNode {
         return <PayButton />;
+    }
+
+    getValidPaymentResult(data?: any): Object {
+        return { payed: true };
     }
 }

@@ -1,17 +1,17 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import {IOrder} from "../../../store/reducers/orderReducer";
+import { NextApiRequest, NextApiResponse } from "next";
+import { IOrder } from "../../../store/reducers/orderReducer";
 import prisma from "../../../lib/prisma";
-import {paypalClient} from "../../../lib/paypal";
+import { paypalClient } from "../../../lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
-import {calculateTotalPrice} from "../../../constants/util";
+import { calculateTotalPrice } from "../../../constants/util";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        res.status(405).end('Method Not Allowed');
+    if (req.method !== "POST") {
+        res.setHeader("Allow", "POST");
+        res.status(405).end("Method Not Allowed");
     }
     const { order }: { order: IOrder } = req.body;
 
@@ -29,12 +29,12 @@ export default async function handler(
 
         let request = new paypal.orders.OrdersCreateRequest();
         request.requestBody({
-            "intent": "CAPTURE",
-            "purchase_units": [
+            intent: "CAPTURE",
+            purchase_units: [
                 {
-                    "amount": {
-                        "currency_code": currency,
-                        "value": amount.toFixed(2)
+                    amount: {
+                        currency_code: currency,
+                        value: amount.toFixed(2)
                     }
                 }
             ]
@@ -51,7 +51,7 @@ export default async function handler(
             }
         });
 
-        res.status(200).json({orderId: response.result.id});
+        res.status(200).json({ orderId: response.result.id });
     } catch (err) {
         console.log(err);
         res.status(500).end("Server error");

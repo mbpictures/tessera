@@ -1,40 +1,56 @@
-import React, {useState} from "react";
-import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, styled, useTheme} from "@mui/material";
-import {alpha} from "@mui/system";
-import Link from 'next/link';
-import {useRouter} from "next/router";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import React, { useState } from "react";
+import {
+    Box,
+    Collapse,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    styled,
+    useTheme
+} from "@mui/material";
+import { alpha } from "@mui/system";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const ListItemStyle = styled(React.forwardRef<HTMLDivElement, {onClick?: any}>((props, ref) => <ListItemButton ref={ref} disableGutters {...props} />))(
-    ({ theme }) => ({
-        ...theme.typography.body2,
-        height: 48,
-        position: 'relative',
-        textTransform: 'capitalize',
-        paddingLeft: theme.spacing(5),
-        paddingRight: theme.spacing(2.5),
-        color: theme.palette.text.secondary,
-        '&:before': {
-            top: 0,
-            right: 0,
-            width: 3,
-            bottom: 0,
-            content: "''",
-            display: 'none',
-            position: 'absolute',
-            borderTopLeftRadius: 4,
-            borderBottomLeftRadius: 4,
-            backgroundColor: theme.palette.primary.main
-        }
-    })
-);
+const ListItemElement = React.forwardRef<HTMLDivElement, { onClick?: any }>((props, ref) => (
+    <ListItemButton ref={ref} disableGutters {...props} />
+));
+ListItemElement.displayName = "ListItemElement";
+
+const ListItemStyle = styled(
+    ListItemElement
+)(({ theme }) => ({
+    ...theme.typography.body2,
+    height: 48,
+    position: "relative",
+    textTransform: "capitalize",
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(2.5),
+    color: theme.palette.text.secondary,
+    "&:before": {
+        top: 0,
+        right: 0,
+        width: 3,
+        bottom: 0,
+        content: "''",
+        display: "none",
+        position: "absolute",
+        borderTopLeftRadius: 4,
+        borderBottomLeftRadius: 4,
+        backgroundColor: theme.palette.primary.main
+    }
+}));
+
+ListItemStyle.displayName = "ListItem";
 
 const ListItemIconStyle = styled(ListItemIcon)({
     width: 22,
     height: 22,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
 });
 
 function NavItem({ item, active }) {
@@ -42,7 +58,7 @@ function NavItem({ item, active }) {
     const isActiveRoot = active(item.path);
     const { title, path, icon, info, children } = item;
 
-    const hasActiveSub = children?.some(child => active(child.path)) ?? false;
+    const hasActiveSub = children?.some((child) => active(child.path)) ?? false;
 
     const [open, setOpen] = useState(isActiveRoot || hasActiveSub);
 
@@ -51,15 +67,18 @@ function NavItem({ item, active }) {
     };
 
     const activeRootStyle = {
-        color: 'primary.main',
-        fontWeight: 'fontWeightMedium',
-        bgcolor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
-        '&:before': { display: 'block' }
+        color: "primary.main",
+        fontWeight: "fontWeightMedium",
+        bgcolor: alpha(
+            theme.palette.primary.main,
+            theme.palette.action.selectedOpacity
+        ),
+        "&:before": { display: "block" }
     };
 
     const activeSubStyle = {
-        color: 'text.primary',
-        fontWeight: 'fontWeightMedium'
+        color: "text.primary",
+        fontWeight: "fontWeightMedium"
     };
 
     if (children) {
@@ -74,10 +93,13 @@ function NavItem({ item, active }) {
                     <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
                     <ListItemText disableTypography primary={title} />
                     {info && info}
-                    <Box
-                        sx={{ width: 16, height: 16, ml: 1 }}
-                    >
-                        <ChevronRightIcon style={{transform: `rotate(${open ? 90 : 0}deg)`, transition: ".3s ease"}} />
+                    <Box sx={{ width: 16, height: 16, ml: 1 }}>
+                        <ChevronRightIcon
+                            style={{
+                                transform: `rotate(${open ? 90 : 0}deg)`,
+                                transition: ".3s ease"
+                            }}
+                        />
                     </Box>
                 </ListItemStyle>
 
@@ -95,18 +117,30 @@ function NavItem({ item, active }) {
                                         padding: 0
                                     }}
                                 >
-                                    <Link href={path}>
+                                    <Link href={path} passHref>
                                         <ListItemStyle
                                             sx={{
                                                 ...(isActiveSub && {
-                                                    color: 'primary.main',
-                                                    fontWeight: 'fontWeightMedium',
-                                                    bgcolor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+                                                    color: "primary.main",
+                                                    fontWeight:
+                                                        "fontWeightMedium",
+                                                    bgcolor: alpha(
+                                                        theme.palette.primary
+                                                            .main,
+                                                        theme.palette.action
+                                                            .selectedOpacity
+                                                    )
                                                 })
                                             }}
                                         >
-                                            <ListItemText disableTypography primary={title} sx={{
-                                                paddingLeft: theme.spacing(10)}} />
+                                            <ListItemText
+                                                disableTypography
+                                                primary={title}
+                                                sx={{
+                                                    paddingLeft:
+                                                        theme.spacing(10)
+                                                }}
+                                            />
                                         </ListItemStyle>
                                     </Link>
                                 </ListItemStyle>
@@ -119,7 +153,7 @@ function NavItem({ item, active }) {
     }
 
     return (
-        <Link href={path}>
+        <Link href={path} passHref>
             <ListItemStyle
                 sx={{
                     ...(isActiveRoot && activeRootStyle)

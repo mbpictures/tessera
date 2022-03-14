@@ -1,8 +1,8 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../store";
-import {Country, Region} from "country-region-data";
-import {IAddress} from "../../constants/interfaces";
-import {ShippingType} from "../factories/shipping/ShippingFactory";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { Country, Region } from "country-region-data";
+import { IAddress } from "../../constants/interfaces";
+import { ShippingType } from "../factories/shipping/ShippingFactory";
 
 export interface PersonalInformationState {
     address: IAddress;
@@ -71,6 +71,19 @@ export const personalInformationSlice = createSlice({
     }
 });
 
-export const {setFirstName, setLastName, setEmail, setAddress, setAddressAddress, setZip, setCity, setCountry, setRegion, setShipping, setUserId} = personalInformationSlice.actions;
-export const selectPersonalInformation = (state: RootState) => state.personalInformation;
+export const {
+    setFirstName,
+    setLastName,
+    setEmail,
+    setAddress,
+    setAddressAddress,
+    setZip,
+    setCity,
+    setCountry,
+    setRegion,
+    setShipping,
+    setUserId
+} = personalInformationSlice.actions;
+export const selectPersonalInformation = (state: RootState) =>
+    state.personalInformation;
 export default personalInformationSlice.reducer;

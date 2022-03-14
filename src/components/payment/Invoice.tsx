@@ -1,36 +1,46 @@
-import {Typography} from "@mui/material";
-import React, {useEffect} from "react";
-import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import {selectPayment, setPaymentStatus} from "../../store/reducers/paymentReducer";
-import {PaymentType} from "../../store/factories/payment/PaymentFactory"
+import { Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+    selectPayment,
+    setPaymentStatus
+} from "../../store/reducers/paymentReducer";
+import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
-import {IOrder, selectOrder} from "../../store/reducers/orderReducer";
+import { IOrder, selectOrder } from "../../store/reducers/orderReducer";
+import useTranslation from "next-translate/useTranslation";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);
     const order: IOrder = useAppSelector(selectOrder);
     const dispatch = useAppDispatch();
 
+    const { t } = useTranslation();
+
     useEffect(() => {
-        if (selector.state !== "initiate" || selector.payment.type !== PaymentType.Invoice)
+        if (
+            selector.state !== "initiate" ||
+            selector.payment.type !== PaymentType.Invoice
+        )
             return;
 
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
-            await axios.post("api/payment_intent/invoice", {order: order});
+            await axios.post("api/payment_intent/invoice", { order: order });
             dispatch(setPaymentStatus("finished"));
         }
 
         processPayment().catch(() => dispatch(setPaymentStatus("failure")));
-    }, [selector]);
+    }, [selector, dispatch, order]);
 
     return (
-        <Typography>You will receive an invoice containing the recipient's bank details by e-mail.</Typography>
-    )
+        <Typography>
+            {t("payment:invoice-description")}
+        </Typography>
+    );
 };
 
 export const InvoiceHeader = () => {
-    return (
-        <Typography>Invoice</Typography>
-    )
-}
+    const { t } = useTranslation();
+    return <Typography>{t("payment:invoice")}</Typography>;
+};

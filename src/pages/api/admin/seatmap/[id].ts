@@ -1,18 +1,23 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    revalidateBuild,
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
+import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
-){
-    const user = await serverAuthenticate(req);
-    if (!user) {
-        res.status(401).end("Unauthenticated");
-        return;
-    }
+) {
+    const user = await serverAuthenticate(req, res, {
+        permission: PermissionSection.EventSeatMaps,
+        permissionType:
+            req.method === "GET" ? PermissionType.Read : PermissionType.Write
+    });
+    if (!user) return;
 
-    const {id} = req.query;
+    const { id } = req.query;
     const seatMap = await prisma.seatMap.findUnique({
         where: {
             id: parseInt(id as string)
@@ -26,7 +31,6 @@ export default async function handler(
         res.status(404).end("Category not found");
         return;
     }
-
 
     if (req.method === "GET") {
         res.status(200).json(seatMap);
@@ -48,15 +52,29 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        const {definition} = req.body;
+        const { definition } = req.body;
         await prisma.seatMap.update({
             where: {
                 id: parseInt(id as string)
             },
             data: {
-                ...(definition && {definition: JSON.stringify(definition)}),
+                ...(definition && { definition: JSON.stringify(definition) })
             }
         });
+
+        const seatMaps = await prisma.seatMap.findMany({
+            where: {
+                id: parseInt(id as string)
+            },
+            include: {
+                events: true
+            }
+        });
+        const paths = seatMaps
+            .map(seatMap => seatMap.events.map(event => `/seatselection/${event.id}`))
+            .flat(2)
+            .filter((item, index, array) => array.indexOf(item) === index);
+        await revalidateBuild(res, paths);
         res.status(200).end("Updated");
         return;
     }

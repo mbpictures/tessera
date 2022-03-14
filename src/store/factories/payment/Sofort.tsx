@@ -1,9 +1,9 @@
-import {Payment} from "./Payment";
-import {Sofort, SofortHeader} from "../../../components/payment/Sofort";
+import { Payment } from "./Payment";
+import { Sofort, SofortHeader } from "../../../components/payment/Sofort";
 import React from "react";
-import {PayButton} from "../../../components/payment/button/PayButton";
+import { PayButton } from "../../../components/payment/button/PayButton";
 
-export class SofortPayment extends Payment{
+export class SofortPayment extends Payment {
     getComponent(): React.ReactNode {
         return <Sofort />;
     }
@@ -22,5 +22,9 @@ export class SofortPayment extends Payment{
 
     getPaymentButton(): React.ReactNode {
         return <PayButton />;
+    }
+
+    getValidPaymentResult(data?: any): Object {
+        return { status: true };
     }
 }

@@ -8,8 +8,8 @@ import {
     IbanElement,
     IdealBankElement
 } from "@stripe/react-stripe-js";
-import {TextField, TextFieldProps} from "@mui/material";
-import {StripeInput} from "./StripeInput";
+import { TextField, TextFieldProps } from "@mui/material";
+import { StripeInput } from "./StripeInput";
 
 type StripeElement =
     | typeof AuBankAccountElement
@@ -105,10 +105,6 @@ export function StripeTextFieldIBAN(
     props: StripeTextFieldProps<typeof IbanElement>
 ) {
     return (
-        <StripeTextField
-            label="IBAN"
-            stripeElement={IbanElement}
-            {...props}
-        />
+        <StripeTextField label="IBAN" stripeElement={IbanElement} {...props} />
     );
 }

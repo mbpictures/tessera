@@ -7,9 +7,20 @@
     overflow-y: auto;
     padding: 10px;
 
-    &::before ,
+    &::before,
     &::after {
-        content:'';
-        flex:1;
+        content: "";
+        flex: 1;
+    }
+}
+
+.stepperStep {
+    > span {
+        > span {
+            > svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
     }
 }

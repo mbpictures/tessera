@@ -1,4 +1,4 @@
-import {Country, Region} from "country-region-data";
+import { Country, Region } from "country-region-data";
 
 export interface IAddress {
     firstName: string;
@@ -8,4 +8,26 @@ export interface IAddress {
     zip: string;
     country: Country;
     region: Region;
+}
+
+export enum PermissionType {
+    Read = "Read",
+    Write = "Write"
+}
+
+export enum PermissionSection {
+    None = "none",
+    UserManagement = "UserManagement",
+    EventManagement = "EventManagement",
+    EventCategories = "EventCategories",
+    EventSeatMaps = "EventSeatMaps",
+    Orders = "Orders",
+    OrderMarkAsPayed = "OrderMarkAsPayed",
+    Options = "Options",
+    Translation = "Translation"
+}
+
+export interface Permission {
+    permissionType: PermissionType;
+    permission: PermissionSection;
 }

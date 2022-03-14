@@ -1,6 +1,6 @@
-import {Payment} from "./Payment";
+import { Payment } from "./Payment";
 import React from "react";
-import {PayPal, PayPalHeader} from "../../../components/payment/PayPal";
+import { PayPal, PayPalHeader } from "../../../components/payment/PayPal";
 
 export class PayPalPayment extends Payment {
     getComponent(): React.ReactNode {
@@ -21,5 +21,9 @@ export class PayPalPayment extends Payment {
 
     getPaymentButton(): React.ReactNode {
         return <PayPal />;
+    }
+
+    getValidPaymentResult(data?: any): Object {
+        return { status: "COMPLETED" };
     }
 }

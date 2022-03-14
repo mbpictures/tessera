@@ -1,16 +1,20 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {serverAuthenticate} from "../../../../constants/serverUtil";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+    serverAuthenticate
+} from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
+import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const user = await serverAuthenticate(req);
-    if (!user) {
-        res.status(401).end("Unauthenticated");
-        return;
-    }
+    const user = await serverAuthenticate(req, res, {
+        permission: PermissionSection.EventSeatMaps,
+        permissionType:
+            req.method === "GET" ? PermissionType.Read : PermissionType.Write
+    });
+    if (!user) return;
 
     if (req.method === "GET") {
         const seatMaps = await prisma.seatMap.findMany();
@@ -19,7 +23,7 @@ export default async function handler(
     }
 
     if (req.method === "POST") {
-        const {definition} = req.body;
+        const { definition } = req.body;
         const seatMap = await prisma.seatMap.create({
             data: {
                 definition: definition ? JSON.stringify(definition) : ""
