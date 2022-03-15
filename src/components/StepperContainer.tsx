@@ -24,13 +24,15 @@ export const StepperContainer = (props: Props) => {
     const nextDisabled = useAppSelector(selectNextStateAvailable);
     const selectedEvent = useAppSelector(selectEventSelected);
     const bottomBar = useRef<HTMLDivElement>(null);
+    const topBar = useRef<HTMLDivElement>(null);
     const container = useRef<HTMLDivElement>(null);
     const { t } = useTranslation("common");
 
     useEffect(() => {
-        if (!bottomBar.current || !container.current) return;
+        if (!bottomBar.current || !container.current || !topBar.current) return;
         container.current.style.paddingBottom = `${bottomBar.current.clientHeight}px`;
-    }, [bottomBar, container]);
+        container.current.style.paddingTop = `${topBar.current.clientHeight}px`;
+    }, [bottomBar, container, topBar]);
 
     useEffect(() => {
         setCurrentStep(STEP_URLS.findIndex((val) => val.startsWith(router.pathname)));
@@ -56,13 +58,11 @@ export const StepperContainer = (props: Props) => {
     return (
         <Box
             sx={{
-                width: "90%",
+                width: "100%",
                 margin: "auto",
-                padding: "10px",
-                display: "flex",
-                flexDirection: "column",
+                padding: "10px 0",
                 height: "100%",
-                overflow: "hidden"
+                overflowX: "hidden"
             }}
             ref={container}
         >
@@ -70,7 +70,13 @@ export const StepperContainer = (props: Props) => {
                 <title>Ticket Shop - {t(STEPS[currentStep])}</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Stepper activeStep={currentStep} alternativeLabel>
+            <Stepper activeStep={currentStep} alternativeLabel style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                padding: "5px 0"
+            }} ref={topBar}>
                 {STEPS.map((label) => {
                     const stepProps = {};
                     const labelProps = {};
