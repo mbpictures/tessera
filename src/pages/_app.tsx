@@ -15,10 +15,17 @@ import dynamic from "next/dynamic";
 import { StoreThemeConfig } from "../components/StoreThemeConfig";
 import appWithI18n from "next-translate/appWithI18n";
 import i18nConfig from "../../i18n";
+import axios from "axios";
 
 const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pageProps }) => {
     const router = useRouter();
     const [direction, setDirection] = useState<number>(0);
+
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.origin;
+        console.log(hostname);
+        axios.defaults.baseURL = hostname;
+    }
 
     if (router.pathname.startsWith("/admin")) {
         const SessionProvider = dynamic<SessionProviderProps>(() =>
