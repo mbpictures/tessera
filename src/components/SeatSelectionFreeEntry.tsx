@@ -144,15 +144,19 @@ export const SeatSelectionFreeEntry = ({
                         </Typography>
                     )}
                 </motion.div>
-                <Button
-                    startIcon={<Delete />}
-                    color={"error"}
-                    onClick={() => onRemove(index)}
-                    variant="outlined"
-                    style={{ alignSelf: "center" }}
-                >
-                    {t("seatselection:remove-category")}
-                </Button>
+                {
+                    index > 0 && (
+                        <Button
+                            startIcon={<Delete />}
+                            color={"error"}
+                            onClick={() => onRemove(index)}
+                            variant="outlined"
+                            style={{ alignSelf: "center" }}
+                        >
+                            {t("seatselection:remove-category")}
+                        </Button>
+                    )
+                }
             </Paper>
         </motion.div>
     );
