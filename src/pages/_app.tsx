@@ -22,9 +22,7 @@ const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pa
     const [direction, setDirection] = useState<number>(0);
 
     if (typeof window !== 'undefined') {
-        const hostname = window.location.origin;
-        console.log(hostname);
-        axios.defaults.baseURL = hostname;
+        axios.defaults.baseURL = window.location.origin;
     }
 
     if (router.pathname.startsWith("/admin")) {
