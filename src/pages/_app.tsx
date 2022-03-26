@@ -75,5 +75,5 @@ const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pa
 
 export default appWithI18n(Global, {
     ...i18nConfig,
-    skipInitialProps: false
+    skipInitialProps: true
 });
