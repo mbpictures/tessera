@@ -139,10 +139,10 @@ describe("Buy tickets", () => {
         cy.url().should("include", "information");
 
         const testInputField = (element, notValidInput, validInput, errorText) => {
-            cy.get(element).type(notValidInput);
+            cy.get(element).type(notValidInput).blur();
             cy.contains(errorText).should("exist");
             cy.get(element).clear();
-            cy.get(element).type(validInput);
+            cy.get(element).type(validInput).blur();
             cy.contains(errorText).should("not.exist");
         }
 
