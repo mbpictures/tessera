@@ -29,6 +29,7 @@ export const AddressComponent = ({
     const [lastNameError, setLastNameError] = useState<string>(null);
     const [addressError, setAddressError] = useState<string>(null);
     const [cityError, setCityError] = useState<string>(null);
+    const [touched, setTouched] = useState<string[]>([]);
 
     const handleUpdate = (property, newValue) => {
         const newAddress: IAddress = Object.assign({}, value);
@@ -64,6 +65,13 @@ export const AddressComponent = ({
         onChange(newAddress);
     };
 
+    const handleTouched = (name) => {
+        if (touched.includes(name)) return;
+        const newPush = touched.map(x => x);
+        newPush.push(name);
+        setTouched(newPush);
+    }
+
     const handleChangeRegion = (event: any, newValue: Region) => {
         handleUpdate("region", newValue);
     };
@@ -76,9 +84,10 @@ export const AddressComponent = ({
                 onChange={(event) =>
                     handleUpdate("firstName", event.target.value)
                 }
-                helperText={firstNameError}
+                helperText={touched.includes("firstname") && firstNameError}
                 error={firstNameError !== null}
                 name={"address-firstname"}
+                onBlur={() => handleTouched("firstname")}
             />
             <TextField
                 label={t("information:lastname")}
@@ -86,9 +95,10 @@ export const AddressComponent = ({
                 onChange={(event) =>
                     handleUpdate("lastName", event.target.value)
                 }
-                helperText={lastNameError}
+                helperText={touched.includes("lastname") && lastNameError}
                 error={lastNameError !== null}
                 name={"address-lastname"}
+                onBlur={() => handleTouched("lastname")}
             />
             <TextField
                 label={t("information:address")}
@@ -96,9 +106,10 @@ export const AddressComponent = ({
                 onChange={(event) =>
                     handleUpdate("address", event.target.value)
                 }
-                helperText={addressError}
+                helperText={touched.includes("address") && addressError}
                 error={addressError !== null}
                 name={"address-address"}
+                onBlur={() => handleTouched("address")}
             />
             <Grid container rowSpacing={1}>
                 <Grid item md={4} xs={12}>
@@ -116,9 +127,10 @@ export const AddressComponent = ({
                         onChange={(event) =>
                             handleUpdate("city", event.target.value)
                         }
-                        helperText={cityError}
+                        helperText={touched.includes("city") && cityError}
                         error={cityError !== null}
                         name={"address-city"}
+                        onBlur={() => handleTouched("city")}
                     />
                 </Grid>
             </Grid>

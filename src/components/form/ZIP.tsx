@@ -14,6 +14,7 @@ export const ZIP = ({
 }) => {
     const [error, setError] = useState<string | undefined>(undefined);
     const { t } = useTranslation();
+    const [touched, setTouched] = useState<boolean>(false);
 
     const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         const isValid = zip.validate(event.target.value);
@@ -30,10 +31,11 @@ export const ZIP = ({
             label={t("information:zip")}
             fullWidth
             error={error != undefined}
-            helperText={error}
+            helperText={touched && error}
             onChange={handleChange}
             value={value}
             name={name}
+            onBlur={() => setTouched(true)}
         />
     );
 };

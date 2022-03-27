@@ -31,6 +31,7 @@ export default function Information({ direction, deliveryMethods }) {
     const [selectedShippingMethod, setSelectedShippingMethod] =
         useState<ShippingType | null>(selector.shipping?.type ?? null);
     const [emailError, setEmailError] = useState<string>(null);
+    const [emailTouched, setEmailTouched] = useState<boolean>(false);
 
     const theme = useTheme();
     const boxStyling = useMediaQuery(theme.breakpoints.up("md"))
@@ -84,8 +85,9 @@ export default function Information({ direction, deliveryMethods }) {
                                 dispatch(setEmail(event.target.value))
                             }
                             error={emailError != null}
-                            helperText={emailError}
+                            helperText={emailTouched && emailError}
                             name={"address-email"}
+                            onBlur={() => setEmailTouched(true)}
                         />
                         <AddressComponent
                             value={selector.address}

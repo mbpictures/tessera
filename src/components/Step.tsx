@@ -93,12 +93,12 @@ export const Step = ({
     }, [router.isReady, currentSelectedEvent, dispatch, router, updateNextAvailable]);
 
     const variants = {
-        visible: { x: 0 },
+        visible: { x: 0, scale: 1 },
         exit: (direction) => {
-            return { x: direction < 0 ? "100vw" : "-100vw" };
+            return { x: direction < 0 ? "100vw" : "-100vw", scale: 0.7 };
         },
         initial: (direction) => {
-            return { x: direction < 0 ? "-100vw" : "100vw" };
+            return { x: direction < 0 ? "-100vw" : "100vw", scale: 0.7 };
         }
     };
 
@@ -112,7 +112,8 @@ export const Step = ({
             custom={direction}
             transition={{
                 type: "spring",
-                duration: 0.6
+                duration: 1,
+                bounce: 0.15
             }}
             style={style}
         >
