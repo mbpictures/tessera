@@ -88,6 +88,7 @@
     "react-json-view": "^1.21.3",
     "react-json-viewer": "^3.0.1",
     "react-parallax-tilt": "^1.6.0",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-redux": "^7.2.5",
     "react-zoom-pan-pinch": "^2.1.3",
     "request-ip": "^2.1.3",
