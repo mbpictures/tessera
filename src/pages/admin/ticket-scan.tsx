@@ -33,9 +33,10 @@ export default function TicketScan({permissionDenied}){
     const [devices, setDevices] = useState(null);
 
     useEffect(() => {
+        if (!navigator.mediaDevices) return;
         navigator.mediaDevices.enumerateDevices().then((devices) => setDevices(devices));
     }, []);
-    
+
     const onBack = () => {
         router.back();
     };
