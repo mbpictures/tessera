@@ -151,18 +151,29 @@ export default function TicketScan({permissionDenied}){
                     position: "absolute"
                 }} />
             </Box>
-            <IconButton
-                onClick={onBack}
-                style={{position: "absolute", top: 0, left: 0}}
+            <Box
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor: "rgba(255, 255, 255, 0.7)"
+                }}
             >
-                <ArrowBackIcon />
-            </IconButton>
-            <IconButton
-                onClick={() => setSettingsOpen(true)}
-                style={{position: "absolute", top: 0, right: 0}}
-            >
-                <SettingsIcon />
-            </IconButton>
+                <IconButton
+                    onClick={onBack}
+                >
+                    <ArrowBackIcon />
+                </IconButton>
+                <IconButton
+                    onClick={() => setSettingsOpen(true)}
+                    color={"primary"}
+                >
+                    <SettingsIcon />
+                </IconButton>
+            </Box>
 
             <QrReader
                 constraints={!deviceId ? {facingMode: "environment"} : {deviceId}}
