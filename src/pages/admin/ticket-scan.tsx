@@ -192,7 +192,7 @@ export default function TicketScan({permissionDenied}){
                     p: 1
                 }}
             >
-                <Typography align={"center"}>Please center the QR-Code of the ticket in the cameras viewport</Typography>
+                <Typography align={"center"} color={"#fff"}>Please center the QR-Code of the ticket in the cameras viewport</Typography>
             </Box>
         </RootStyle>
     );
