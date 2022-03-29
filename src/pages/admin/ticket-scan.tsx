@@ -139,7 +139,7 @@ export default function TicketScan({permissionDenied}){
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Box style={{width: "100%", height: "100%", overflow: "hidden"}}>
+            <Box style={{width: "100%", height: "100%", overflow: "hidden", position: "absolute"}}>
                 <video id={"video"} style={{
                     minWidth: "100%",
                     minHeight: "100%",
