@@ -62,7 +62,17 @@ export default function TicketScan({permissionDenied}){
         isError.current = error;
         if (error) return;
 
-        ticketId.current = result.getText();
+        const text: string = result.getText();
+        if (!text.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
+            ticketId.current = "N/A";
+            setTimeout(() => {
+                ticketId.current = null;
+            }, 1000)
+            enqueueSnackbar("Scanned QR-Code is no ticket", {variant: "info"});
+            return;
+        }
+
+        ticketId.current = text;
         if (autoSend) {
             await accept();
             return;
