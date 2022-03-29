@@ -20,6 +20,7 @@ import {Box} from "@mui/system";
 import {useSnackbar} from "notistack";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
+import style from "../../style/TicketScan.module.scss";
 
 export default function TicketScan({permissionDenied}){
     const router = useRouter();
@@ -174,7 +175,7 @@ export default function TicketScan({permissionDenied}){
                     <SettingsIcon />
                 </IconButton>
             </Box>
-
+            <div id={style.qrMarker}><div /></div>
             <QrReader
                 constraints={!deviceId ? {facingMode: "environment"} : {deviceId}}
                 videoId={"video"}
