@@ -3,9 +3,9 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
+    DialogTitle, FormControl,
     FormControlLabel,
-    IconButton, MenuItem, Select, Stack,
+    IconButton, InputLabel, MenuItem, Select, Stack,
     Switch,
     Typography
 } from "@mui/material";
@@ -96,20 +96,25 @@ export default function TicketScan({permissionDenied}){
             <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)}>
                 <DialogTitle>Settings</DialogTitle>
                 <DialogContent>
-                    <Select fullWidth value={deviceId} onChange={(event) => setDeviceId(event.target.value)} label={"Device"}>
-                        {
-                            devices?.map((device) => <MenuItem value={device.deviceId} key={device.deviceId}>{device.label}</MenuItem>)
-                        }
-                    </Select>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={autoSend}
-                                onChange={(event) => setAutoSend(event.target.checked)}
-                            />
-                        }
-                        label="Auto. Send Tickets"
-                    />
+                    <Stack pt={2} pb={2} spacing={2}>
+                        <FormControl fullWidth>
+                            <InputLabel id="options-devices-label">Device</InputLabel>
+                            <Select fullWidth value={deviceId} onChange={(event) => setDeviceId(event.target.value)} label={"Device"} labelId={"options-devices-label"}>
+                                {
+                                    devices?.filter((device) => device.kind === "videoinput").map((device) => <MenuItem value={device.deviceId} key={device.deviceId}>{device.label ?? device.deviceId}</MenuItem>)
+                                }
+                            </Select>
+                        </FormControl>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={autoSend}
+                                    onChange={(event) => setAutoSend(event.target.checked)}
+                                />
+                            }
+                            label="Auto. Send Tickets"
+                        />
+                    </Stack>
                 </DialogContent>
             </Dialog>
             <Dialog open={ticket !== null}>
