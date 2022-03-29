@@ -179,6 +179,7 @@ export default function TicketScan({permissionDenied}){
                 constraints={!deviceId ? {facingMode: "environment"} : {deviceId}}
                 videoId={"video"}
                 onResult={onScan}
+                key={deviceId ?? "default"}
             />
             <Box
                 sx={{
