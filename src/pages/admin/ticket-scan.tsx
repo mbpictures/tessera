@@ -95,7 +95,7 @@ export default function TicketScan({permissionDenied}){
 
         try {
             const ticket = await axios.get("/api/admin/ticket/" + ticketId.current);
-            setTicket(ticket);
+            setTicket(ticket.data);
         } catch (e) {
             enqueueSnackbar("Error loading ticket information. You can enable auto accept tickets in settings.", {variant: "error"})
         }
@@ -138,9 +138,9 @@ export default function TicketScan({permissionDenied}){
                     {
                         ticket && (
                             <Stack>
-                                <Typography>Ticket valid: {ticket.used ? <ClearIcon /> : <CheckIcon />}</Typography>
+                                <Typography>Ticket valid: {ticket.used ? <ClearIcon color={"error"} /> : <CheckIcon color={"success"} />}</Typography>
                                 <Typography>Name: {ticket.order.user.firstName} {ticket.order.user.lastName}</Typography>
-                                <Typography>Id: {ticket.id}</Typography>
+                                <Typography>Ticket-Id: {ticket.id}</Typography>
                             </Stack>
                         )
                     }
