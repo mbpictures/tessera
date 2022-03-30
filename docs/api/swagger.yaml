@@ -459,7 +459,7 @@ paths:
           description: No ticket found with ID
       security:
         - api_key: [ ]
-    post:
+    put:
       description: marks the ticket of the provided id as used
       parameters:
         - name: id
