@@ -50,3 +50,21 @@ set active payment or delivery methods and customize the shop theme by uploading
 
 > [!NOTE]
 > Payment methods need to be configured using environment variables for security reasons.
+
+## Translations
+You can change translations inside the ```Translations``` page. To add more languages (German and English are available by default),
+you have to add a new entry in the ```locales.json``` file in the root directory. After that, rebuild the ticket shop using the
+commands of the quickstart guide. After that, you can add your translations for the new language in the admin dashboard or
+override the existing translations. Press the ```Save``` button at the bottom of the page, when you are happy with your changes.
+
+> [!WARNING]
+> After you changes are stored, you have to rebuild the ticket shop again.
+
+## Tickets scanning
+To check, if tickets are valid and to mark them as used, you can open the ```Ticket Scan``` page on the device with a camera.
+Place the QR-Code of the ticket in the center of the rectangle. By default, tickets are accepted by default. When you
+see a green toast with ```Ticket accepted```, the ticket is valid, hasn't been used already and was marked as used now.
+When the ticket is used or isn't valid, you'll get an information toast in blue.
+To disable the automatic manner of marking tickets as used, open the settings (button in the top right corner) and deactivate
+```Auto send tickets``` switch. Here you can also change the camera which should be used.
+By default, the back camera of your smartphone will be used.

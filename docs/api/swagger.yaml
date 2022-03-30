@@ -440,6 +440,43 @@ paths:
           description: Not authorized to access these contents
       security:
         - api_key: [ ]
+  /admin/ticket/{id}:
+    get:
+      description: get all information of the ticket provided including order and user information
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        200:
+          description: Ticket Information with additional properties for order
+          schema:
+            $ref: '#/definitions/Ticket'
+        401:
+          description: Not authorized to access these contents
+        404:
+          description: No ticket found with ID
+      security:
+        - api_key: [ ]
+    post:
+      description: marks the ticket of the provided id as used
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Not authorized to access these contents
+        400:
+          description: Ticket already marked as used
+        404:
+          description: No ticket found with ID
+      security:
+        - api_key: [ ]
   /admin/order/all:
     delete:
       description: Delete all orders of all events
