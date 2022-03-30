@@ -27,6 +27,7 @@ export default function TicketScan({permissionDenied}){
     const {enqueueSnackbar} = useSnackbar();
     const isError = useRef<boolean>(false);
     const [autoSend, setAutoSend] = useState(true);
+    const autoSendRef = useRef(autoSend);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [ticket, setTicket] = useState(null);
     const ticketId = useRef(null);
@@ -41,6 +42,16 @@ export default function TicketScan({permissionDenied}){
     const onBack = () => {
         router.back();
     };
+
+    const updateAutoSend = (value) => {
+        autoSendRef.current = value;
+        setAutoSend(value);
+    };
+
+    const closeTicketDetails = () => {
+        ticketId.current = null;
+        setTicket(null);
+    }
 
     const accept = async () => {
         try {
@@ -59,9 +70,9 @@ export default function TicketScan({permissionDenied}){
     }
 
     const onScan = async (result, error) => {
-        if (ticketId.current) return;
         isError.current = error;
         if (error) return;
+        if (ticketId.current) return;
 
         const text: string = result.getText();
         if (!text.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
@@ -74,7 +85,7 @@ export default function TicketScan({permissionDenied}){
         }
 
         ticketId.current = text;
-        if (autoSend) {
+        if (autoSendRef.current) {
             await accept();
             return;
         }
@@ -110,7 +121,7 @@ export default function TicketScan({permissionDenied}){
                             control={
                                 <Switch
                                     checked={autoSend}
-                                    onChange={(event) => setAutoSend(event.target.checked)}
+                                    onChange={(event) => updateAutoSend(event.target.checked)}
                                 />
                             }
                             label="Auto. Send Tickets"
@@ -132,7 +143,7 @@ export default function TicketScan({permissionDenied}){
                     }
                 </DialogContent>
                 <DialogActions>
-                    <Button color={"error"} onClick={() => setTicket(null)}>
+                    <Button color={"error"} onClick={closeTicketDetails}>
                         Cancel
                     </Button>
                     <Button color={"success"} onClick={accept}>
