@@ -56,16 +56,19 @@ export default function TicketScan({permissionDenied}){
     const accept = async () => {
         try {
             await axios.put("/api/admin/ticket/" + ticketId.current);
-            enqueueSnackbar("Ticket accepted", {variant: "success"})
-            setTimeout(() => {
-                ticketId.current = null;
-            }, 500);
+            enqueueSnackbar("Ticket accepted", {variant: "success"});
+            setTicket(null);
         } catch (e) {
             if (e.response.status === 400) {
                 enqueueSnackbar("Ticket already used", {variant: "info"});
+                setTicket(null);
                 return;
             }
             enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {variant: "error"})
+        } finally {
+            setTimeout(() => {
+                ticketId.current = null;
+            }, 500);
         }
     }
 
