@@ -64,6 +64,11 @@ export default function TicketScan({permissionDenied}){
                 setTicket(null);
                 return;
             }
+            if (e.response.status === 404) {
+                enqueueSnackbar("Ticket not found", {variant: "info"});
+                setTicket(null);
+                return;
+            }
             enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {variant: "error"})
         } finally {
             setTimeout(() => {
@@ -97,6 +102,10 @@ export default function TicketScan({permissionDenied}){
             const ticket = await axios.get("/api/admin/ticket/" + ticketId.current);
             setTicket(ticket.data);
         } catch (e) {
+            if (e.response.status === 404) {
+                enqueueSnackbar("Ticket not found", {variant: "info"});
+                return;
+            }
             enqueueSnackbar("Error loading ticket information. You can enable auto accept tickets in settings.", {variant: "error"})
         }
     };
