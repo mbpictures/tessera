@@ -1,12 +1,9 @@
 import { PDFDocument } from "pdf-lib";
 import prisma from "./prisma";
 import QRCode from "qrcode";
-import {
-    FreeSeatOrder,
-    IOrder,
-    SeatOrder
-} from "../store/reducers/orderReducer";
+import { IOrder } from "../store/reducers/orderReducer";
 import { formatPrice } from "../constants/serverUtil";
+import { OrderFactory } from "../store/factories/order/OrderFactory";
 
 const fillTextField = (form, fieldName, value) => {
     const field = form.getTextField(fieldName);
@@ -83,36 +80,7 @@ export const generateTickets = async (
 
     const categories = await prisma.category.findMany();
 
-    let orders: Array<{ categoryId: number; seatInformation: string }> = [];
-    // TODO: replace by factory
-    if ("seats" in order) {
-        orders = (order as SeatOrder).seats
-            .map((seat) =>
-                Array.from(Array(seat.amount).keys()).map(() => {
-                    return {
-                        categoryId: seat.category,
-                        seatInformation: `Seat ${seat.id}` // TODO: add seat id to seat information factory
-                    };
-                })
-            )
-            .flat();
-    }
-    if ("orders" in order) {
-        orders = (order as FreeSeatOrder).orders
-            .map((order) =>
-                Array.from(Array(order.amount).keys()).map(() => {
-                    return {
-                        categoryId: order.categoryId,
-                        seatInformation: `Category: ${
-                            categories.find(
-                                (category) => category.id === order.categoryId
-                            ).label
-                        }`
-                    };
-                })
-            )
-            .flat();
-    }
+    let orders: Array<{ categoryId: number; seatInformation: string }> = OrderFactory.getInstance(order, categories).information;
 
     return await Promise.all(
         orders.map(async (order) => {

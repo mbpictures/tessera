@@ -1,14 +1,11 @@
 import prisma from "./prisma";
 import ejs from "ejs";
 import htmlPdf from "html-pdf";
-import {
-    FreeSeatOrder,
-    IOrder,
-    SeatOrder
-} from "../store/reducers/orderReducer";
+import { IOrder } from "../store/reducers/orderReducer";
 import { calculateTotalPrice } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
+import { OrderFactory } from "../store/factories/order/OrderFactory";
 
 export const generateInvoice = async (
     template,
@@ -33,24 +30,7 @@ export const generateInvoice = async (
         const categories = await prisma.category.findMany();
         const totalPrice = calculateTotalPrice(parsedOrder, categories);
 
-        let orders: Array<{ categoryId: number; amount: number }> = [];
-        // TODO: replace by factory
-        if ("seats" in parsedOrder) {
-            orders = (parsedOrder as SeatOrder).seats.map((seat) => {
-                return {
-                    categoryId: seat.category,
-                    amount: seat.amount
-                };
-            });
-        }
-        if ("orders" in parsedOrder) {
-            orders = (parsedOrder as FreeSeatOrder).orders.map((order) => {
-                return {
-                    categoryId: order.categoryId,
-                    amount: order.amount
-                };
-            });
-        }
+        let orders: Array<{ categoryId: number; amount: number }> = OrderFactory.getInstance(parsedOrder, categories).summary;
 
         let purpose = undefined;
         if (orderDB.paymentType === PaymentType.Invoice) {

@@ -10,13 +10,10 @@ import {
 import { Edit } from "@mui/icons-material";
 import React from "react";
 import { useAppSelector } from "../store/hooks";
-import {
-    FreeSeatOrder,
-    SeatOrder,
-    selectOrder
-} from "../store/reducers/orderReducer";
+import { selectOrder } from "../store/reducers/orderReducer";
 import { formatPrice } from "../constants/util";
 import useTranslation from "next-translate/useTranslation";
+import { OrderFactory } from "../store/factories/order/OrderFactory";
 
 export const PaymentOverview = ({
     categories,
@@ -45,23 +42,7 @@ export const PaymentOverview = ({
         onEdit();
     };
 
-    let items: Array<{ categoryId: number; amount: number }> = [];
-    if ("seats" in order) {
-        const seats = (order as SeatOrder).seats;
-        items = categories.map((category) => {
-            return {
-                categoryId: category.id,
-                amount: seats
-                    .filter((seat) => seat.category === category.id)
-                    .reduce((a, seat) => a + seat.amount, 0)
-            };
-        });
-    }
-    if ("orders" in order) {
-        items = (order as FreeSeatOrder).orders.map((order) => {
-            return { categoryId: order.categoryId, amount: order.amount };
-        });
-    }
+    let items: Array<{ categoryId: number; amount: number }> = OrderFactory.getInstance(order, categories)?.summary ?? [];
 
     if (hideEmptyCategories) items = items.filter((val) => val.amount > 0);
 
