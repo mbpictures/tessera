@@ -70,7 +70,6 @@ export const validatePayment = async (orderId): Promise<boolean> => {
     return response.data.valid;
 };
 
-// TODO: replace by factory
 export const calculateTotalPrice = (
     order: IOrder,
     categories: Array<{ id: number; price: number }>

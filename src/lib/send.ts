@@ -56,7 +56,6 @@ export const send = async (orderId) => {
         const shipping = ShippingFactory.getShippingInstance(
             JSON.parse(order.shipping)
         );
-        // TODO: Replace by factory
         const ticketsAlreadySent =
             totalTicketAmount(JSON.parse(order.order) as IOrder) <=
             order.tickets.length;
