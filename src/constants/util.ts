@@ -1,8 +1,9 @@
 import { IAddress } from "./interfaces";
 import zippo from "zippo";
-import { FreeSeatOrder, IOrder, SeatOrder } from "../store/reducers/orderReducer";
+import { IOrder } from "../store/reducers/orderReducer";
 import { PersonalInformationState } from "../store/reducers/personalInformationReducer";
 import axios from "axios";
+import { OrderFactory } from "../store/factories/order/OrderFactory";
 
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
@@ -69,49 +70,15 @@ export const validatePayment = async (orderId): Promise<boolean> => {
     return response.data.valid;
 };
 
-// TODO: replace by factory
 export const calculateTotalPrice = (
     order: IOrder,
     categories: Array<{ id: number; price: number }>
 ): number => {
-    if ("seats" in order) {
-        return (order as SeatOrder).seats
-            .map((seat) => {
-                return {
-                    amount: seat.amount,
-                    price: categories.find((cat) => cat.id === seat.category)
-                        .price
-                };
-            })
-            .reduce((a, seat) => a + seat.price * seat.amount, 0);
-    }
-    if ("orders" in order) {
-        return (order as FreeSeatOrder).orders.reduce(
-            (total, order) => {
-                const category = categories.find(cat => cat.id === order.categoryId)
-                if (!category) return total + order.price;
-                return total + category.price * order.amount
-            },
-            0
-        );
-    }
-    return -1;
+    return OrderFactory.getInstance(order, categories)?.price ?? -1;
 };
 
 export const totalTicketAmount = (order: IOrder): number => {
-    if ("seats" in order) {
-        return (order as SeatOrder).seats.reduce(
-            (a, seat) => a + seat.amount,
-            0
-        );
-    }
-    if ("orders" in order) {
-        return (order as FreeSeatOrder).orders.reduce(
-            (a, seat) => a + seat.amount,
-            0
-        );
-    }
-    return -1;
+    return OrderFactory.getInstance(order, undefined)?.ticketAmount ?? -1;
 };
 
 export const formatPrice = (price: number, currency: string): string => {

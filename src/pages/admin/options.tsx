@@ -23,6 +23,7 @@ import { SaveButton } from "../../components/admin/SaveButton";
 import ContentPasteGoIcon from '@mui/icons-material/ContentPaste';
 import dynamic from "next/dynamic";
 import { TextInputDialog } from "../../components/TextInputDialog";
+import { TextfieldList } from "../../components/admin/TextfieldList";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -31,6 +32,7 @@ export default function Options({options, permissionDenied}) {
     const [subtitle, setSubtitle] = useState("");
     const [paymentProviders, setPaymentProviders] = useState([]);
     const [shippingProviders, setShippingProviders] = useState([]);
+    const [bankInformation, setBankInformation] = useState([]);
     const [theme, setTheme] = useState({})
     const [inputThemeOpen, setInputThemeOpen] = useState(false);
     const router = useRouter();
@@ -44,6 +46,7 @@ export default function Options({options, permissionDenied}) {
         setPaymentProviders(options[OptionsEnum.PaymentProviders] ?? []);
         setShippingProviders(options[OptionsEnum.Delivery] ?? []);
         setTheme(options[OptionsEnum.Theme] ?? {});
+        setBankInformation(options[OptionsEnum.PaymentDetails] ?? []);
     }, [options, permissionDenied]);
 
     const refreshProps = async () => {
@@ -71,6 +74,7 @@ export default function Options({options, permissionDenied}) {
     const handleSavePayment = async () => {
         try {
             await storeSetting(OptionsEnum.PaymentProviders, paymentProviders);
+            await storeSetting(OptionsEnum.PaymentDetails, bankInformation);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -177,6 +181,15 @@ export default function Options({options, permissionDenied}) {
                                     height: "fit-content"
                                 }}
                             />
+                            {
+                                paymentProviders.includes(PaymentType.Invoice) && (
+                                    <TextfieldList
+                                        values={bankInformation}
+                                        onChange={setBankInformation}
+                                        header={"Bank Information"}
+                                    />
+                                )
+                            }
                             <SaveButton
                                 action={handleSavePayment}
                                 id={"payment-save"}

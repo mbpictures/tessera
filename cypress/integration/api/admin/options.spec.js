@@ -11,6 +11,7 @@ describe("Configuration in admin dashboard", () => {
             cy.login(userFixture.email, userFixture.password);
             cy.url().should("eq", Cypress.config().baseUrl + "/admin");
             cy.visit("/admin/options");
+            cy.visit("/admin/options");
 
             cy.get("#accordion-general").click();
             cy.get("#shop-title-input").clear().type("Test Title");

@@ -1,14 +1,13 @@
 import prisma from "./prisma";
 import ejs from "ejs";
 import htmlPdf from "html-pdf";
-import {
-    FreeSeatOrder,
-    IOrder,
-    SeatOrder
-} from "../store/reducers/orderReducer";
+import { IOrder } from "../store/reducers/orderReducer";
 import { calculateTotalPrice } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
+import { OrderFactory } from "../store/factories/order/OrderFactory";
+import { getOption } from "./options";
+import { Options } from "../constants/Constants";
 
 export const generateInvoice = async (
     template,
@@ -33,24 +32,7 @@ export const generateInvoice = async (
         const categories = await prisma.category.findMany();
         const totalPrice = calculateTotalPrice(parsedOrder, categories);
 
-        let orders: Array<{ categoryId: number; amount: number }> = [];
-        // TODO: replace by factory
-        if ("seats" in parsedOrder) {
-            orders = (parsedOrder as SeatOrder).seats.map((seat) => {
-                return {
-                    categoryId: seat.category,
-                    amount: seat.amount
-                };
-            });
-        }
-        if ("orders" in parsedOrder) {
-            orders = (parsedOrder as FreeSeatOrder).orders.map((order) => {
-                return {
-                    categoryId: order.categoryId,
-                    amount: order.amount
-                };
-            });
-        }
+        let orders: Array<{ categoryId: number; amount: number }> = OrderFactory.getInstance(parsedOrder, categories).summary;
 
         let purpose = undefined;
         if (orderDB.paymentType === PaymentType.Invoice) {
@@ -96,15 +78,9 @@ export const generateInvoice = async (
                 categories[0].currency,
                 orderDB.locale
             ),
-            bank_information: [
-                "Jon Doe",
-                "Demo Bank",
-                "IBAN: EN23 2133 2343 2343 2343"
-            ],
+            bank_information: (await getOption(Options.PaymentDetails)),
             ...(purpose && {purpose})
         });
-
-        // TODO: replace bank information by database
 
         htmlPdf
             .create(html, { format: "A4" })

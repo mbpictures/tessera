@@ -8,7 +8,12 @@ import { NextApiResponse } from "next";
 const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
     "shop.title": "Ticket shop",
     "shop.payment-provider": Object.values(PaymentType),
-    "shop.delivery": Object.values(ShippingType)
+    "shop.delivery": Object.values(ShippingType),
+    "payment.information": [
+        "Jon Doe",
+        "Demo Bank",
+        "IBAN: EN23 2133 2343 2343 2343"
+    ]
 }
 
 const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
