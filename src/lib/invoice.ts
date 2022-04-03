@@ -6,6 +6,8 @@ import { calculateTotalPrice } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
 import { OrderFactory } from "../store/factories/order/OrderFactory";
+import { getOption } from "./options";
+import { Options } from "../constants/Constants";
 
 export const generateInvoice = async (
     template,
@@ -76,15 +78,9 @@ export const generateInvoice = async (
                 categories[0].currency,
                 orderDB.locale
             ),
-            bank_information: [
-                "Jon Doe",
-                "Demo Bank",
-                "IBAN: EN23 2133 2343 2343 2343"
-            ],
+            bank_information: (await getOption(Options.PaymentDetails)),
             ...(purpose && {purpose})
         });
-
-        // TODO: replace bank information by database
 
         htmlPdf
             .create(html, { format: "A4" })
