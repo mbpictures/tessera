@@ -289,4 +289,46 @@ describe("Buy tickets", () => {
         cy.get(".paypal-buttons").should("have.length.at.least", 1);
         cy.get("#pay-button").should("not.exist");
     });
+
+    it("Process Payment", () => {
+        cy.visit("/seatselection/1?event=1");
+        cy.get(".seat-selection-free-add").first().click();
+        cy.get("#stepper-next-button").click();
+        cy.url().should("include", "information");
+
+        const email = faker.internet.email();
+        const firstName = faker.name.firstName();
+        const lastName = faker.name.lastName();
+        cy.get("input[name=address-email]").type(email);
+        cy.get("input[name=address-firstname]").type(firstName);
+        cy.get("input[name=address-lastname]").type(lastName);
+        cy.get("input[name=address-address]").type(faker.address.streetAddress());
+        cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
+        cy.get("input[name=address-city]").type(faker.address.city());
+
+        cy.get("input[name=address-country-text").type("Germany");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("input[name=address-region-text").type("Rheinland");
+        cy.get(".MuiAutocomplete-popper").children().first().click();
+
+        cy.get("#checkbox-download").click();
+        cy.get("#stepper-next-button").click();
+
+        cy.url().should("include", "payment");
+
+        cy.get("#checkbox-invoice").click();
+        cy.get("#pay-button").click();
+
+        cy.url().should("include", "/checkout");
+
+        cy.task("getLastEmail", email).then(result => {
+            cy.state('document').write(result.html)
+            cy.get("body").should("contain.text", `Hello ${firstName} ${lastName}`);
+            cy.get("body").should("not.contain.text", 'As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
+            cy.get("body").should("contain.text", 'We hereby confirm your\n' +
+                '                                                    order. Enclosed you will\n' +
+                '                                                    find an invoice.');
+        });
+    });
 });
