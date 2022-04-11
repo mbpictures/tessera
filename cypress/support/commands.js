@@ -23,6 +23,7 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import ejs from "ejs";
 
 Cypress.Commands.add("login", (email, password) => {
     cy.visit("/admin/login");
@@ -62,6 +63,19 @@ Cypress.Commands.add("createToken", () => {
             cy.task("setAdminToken", text.text());
         })
     });
+});
+
+Cypress.Commands.add("getEmailHtml", (firstName, lastName, containsTickets, invoicePath) => {
+    cy.readFile("src/assets/email/template.html").then((file) => {
+        return ejs.render(
+            file,
+            {
+                customerName: firstName + " " + lastName,
+                containsTickets: containsTickets,
+                containsInvoice: invoicePath === undefined ? undefined : true
+            }
+        )
+    })
 });
 
 Cypress.Commands.add("createEvents", () => {
