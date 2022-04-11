@@ -58,7 +58,7 @@ jobs:
       uses: cypress-io/github-action@v2
       with:
         build: npm run cypress:build
-        start: npm run start:default
+        start: npm run start:test
         record: true
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
