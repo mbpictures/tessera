@@ -49,25 +49,18 @@ describe("Admin Users", () => {
     });
 
     it("Delete API Key", () => {
-        cy.fixture("admin/user").then((userFixture) => {
-            cy.login(userFixture.email, userFixture.password);
-            cy.url().should("eq", Cypress.config().baseUrl + "/admin")
-            cy.visit("/admin/user/settings");
-            cy.get(".MuiAccordion-root").last().click();
-            cy.get("#add-api-key-button").click();
-            cy.get("#api-key-name").type("test");
-            cy.get("#api-key-generate").click();
-            cy.get("#api-key-close-button").click();
-            cy.get(".delete-api-key-button").should("have.length", 2);
-            cy.get(".MuiAccordion-root").last().click();
-            cy.get(".delete-api-key-button").last().click();
-            cy.get("#confirm-confirm-button").click();
-            cy.get("#confirm-confirm-button").should("not.exist");
+        cy.createToken(true);
 
-            cy.visit("/admin/user/settings");
-            cy.get(".MuiAccordion-root").last().click();
-            cy.get(".delete-api-key-button").should("have.length", 1);
-        });
+        cy.get("#api-key-close-button").click();
+        cy.get(".delete-api-key-button").should("have.length", 2);
+        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".delete-api-key-button").last().click();
+        cy.get("#confirm-confirm-button").click();
+        cy.get("#confirm-confirm-button").should("not.exist");
+
+        cy.visit("/admin/user/settings");
+        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".delete-api-key-button").should("have.length", 1);
     });
 
     it("Rename own user", () => {
