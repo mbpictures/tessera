@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
+    "dev:test": "cross-env EMAIL_PROVIDER= EMAIL_HOST=localhost EMAIL_PORT=7777 next dev",
     "build": "next build",
     "start": "next start -p $PORT",
     "start:default": "next start -p 3000",
