@@ -115,6 +115,10 @@ describe("Buy tickets", () => {
             cy.get("#stepper-next-button").should("be.disabled");
             cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("2");
             cy.get("#stepper-next-button").should("not.be.disabled");
+
+            cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("0");
+            cy.get(".seat-selection-free-remove").last().click();
+            cy.get("#stepper-next-button").should("be.disabled");
         });
     });
 
