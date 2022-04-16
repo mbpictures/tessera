@@ -120,7 +120,7 @@ describe("Buy tickets", () => {
 
     it("Select Seat Map", () => {
         cy.fixture("admin/events").then((eventsFixture) => {
-            const seats = eventsFixture.events[1].seatMap.flat(2);
+            const seats = eventsFixture.events[1].seatMap.flat(2).filter((seat) => seat.type !== "space");
             cy.visit("/seatselection/2?event=2");
 
             const selectedIndexes = [0, 1, 2, 3];
