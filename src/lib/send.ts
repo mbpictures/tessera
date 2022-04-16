@@ -10,6 +10,17 @@ import { getStaticAssetFile } from "../constants/serverUtil";
 import { totalTicketAmount } from "../constants/util";
 import { IOrder } from "../store/reducers/orderReducer";
 
+export const getEmailHtml = (firstName, lastName, containsTickets, invoicePath) => {
+    return ejs.render(
+      getStaticAssetFile("email/template.html", "utf-8"),
+      {
+          customerName: firstName + " " + lastName,
+          containsTickets: containsTickets,
+          containsInvoice: invoicePath === undefined ? undefined : true
+      }
+    );
+}
+
 export const send = async (orderId) => {
     return new Promise<void>(async (resolve, reject) => {
         const order = await prisma.order.findUnique({
@@ -97,14 +108,7 @@ export const send = async (orderId) => {
             attachments
         };
 
-        message.html = ejs.render(
-            getStaticAssetFile("email/template.html", "utf-8"),
-            {
-                customerName: order.user.firstName + " " + order.user.lastName,
-                containsTickets: containsTickets,
-                containsInvoice: invoicePath === undefined ? undefined : true
-            }
-        );
+        message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, invoicePath);
 
         (await getEmailTransporter()).sendMail(message, (error) => {
             if (error) {

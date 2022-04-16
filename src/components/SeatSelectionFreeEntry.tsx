@@ -152,6 +152,7 @@ export const SeatSelectionFreeEntry = ({
                             onClick={() => onRemove(index)}
                             variant="outlined"
                             style={{ alignSelf: "center" }}
+                            className={'seat-selection-free-remove-category'}
                         >
                             {t("seatselection:remove-category")}
                         </Button>

@@ -113,6 +113,7 @@ export const SeatSelectionFree = ({ categories }) => {
                     disabled={
                         order.orders && order.orders.length >= categories.length
                     }
+                    id={"seat-selection-free-add-category"}
                 >
                     <AddIcon /> {t("seatselection:add-category")}
                 </Button>

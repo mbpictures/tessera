@@ -23,6 +23,9 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import ejs from "ejs";
+
+import { faker } from "@faker-js/faker";
 
 Cypress.Commands.add("login", (email, password) => {
     cy.visit("/admin/login");
@@ -49,7 +52,7 @@ Cypress.Commands.add("registerInitialAdminUser", () => {
     });
 });
 
-Cypress.Commands.add("createToken", () => {
+Cypress.Commands.add("createToken", (skipStoreToken) => {
     cy.fixture("admin/user").then((userFixture) => {
         cy.login(userFixture.email, userFixture.password);
         cy.url().should("eq", Cypress.config().baseUrl + "/admin")
@@ -58,10 +61,24 @@ Cypress.Commands.add("createToken", () => {
         cy.get("#add-api-key-button").click();
         cy.get("#api-key-name").type("test");
         cy.get("#api-key-generate").click();
+        if (skipStoreToken) return;
         cy.get("#api-key-token").then((text) => {
             cy.task("setAdminToken", text.text());
         })
     });
+});
+
+Cypress.Commands.add("getEmailHtml", (firstName, lastName, containsTickets, invoicePath) => {
+    cy.readFile("src/assets/email/template.html").then((file) => {
+        return ejs.render(
+            file,
+            {
+                customerName: firstName + " " + lastName,
+                containsTickets: containsTickets,
+                containsInvoice: invoicePath === undefined ? undefined : true
+            }
+        )
+    })
 });
 
 Cypress.Commands.add("createEvents", () => {
@@ -175,6 +192,60 @@ Cypress.Commands.add("setOption", (key, value) => {
         });
     })
 });
+
+Cypress.Commands.add("purchaseTicket", (options) => {
+    const event = options?.event ? options.event : 1;
+    cy.visit(`/seatselection/${event}?event=${event}`);
+
+    if (options?.selectSeatFunction) {
+        options.selectSeatFunction();
+    } else {
+        cy.get(".seat-selection-free-add").first().click();
+    }
+    cy.get("#stepper-next-button").click();
+    cy.url().should("include", "information");
+
+    if (options?.information !== undefined && !options?.information) return;
+
+    cy.personalInformation().then((information) => {
+        if (options?.shippingMethod !== undefined && !options?.shippingMethod) return cy.wrap(information);
+        const shipping = options?.shippingMethod ? options.shippingMethod : "download";
+        cy.get("#checkbox-" + shipping).click();
+        cy.get("#stepper-next-button").click();
+
+        cy.url().should("include", "payment");
+
+        if (options?.paymentMethod !== undefined && !options?.paymentMethod) return cy.wrap(information);
+        const payment = options?.paymentMethod ?? "invoice";
+        cy.get("#checkbox-" + payment).click();
+        cy.get("#pay-button").click();
+
+        cy.url().should("include", "/checkout");
+        return cy.wrap(information);
+    });
+});
+
+Cypress.Commands.add("personalInformationCountry", () => {
+    cy.get("input[name=address-country-text").type("Germany");
+    cy.get(".MuiAutocomplete-popper").children().first().click();
+
+    cy.get("input[name=address-region-text").type("Rheinland");
+    cy.get(".MuiAutocomplete-popper").children().first().click();
+});
+
+Cypress.Commands.add("personalInformation", () => {
+    const email = faker.internet.email();
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    cy.get("input[name=address-email]").type(email);
+    cy.get("input[name=address-firstname]").type(firstName);
+    cy.get("input[name=address-lastname]").type(lastName);
+    cy.get("input[name=address-address]").type(faker.address.streetAddress());
+    cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
+    cy.get("input[name=address-city]").type(faker.address.city());
+
+    cy.personalInformationCountry().then(() => ({email, firstName, lastName}));
+})
 
 Cypress.Commands.add('iframe', { prevSubject: 'element' }, ($iframe, callback = () => { }) => {
     return cy

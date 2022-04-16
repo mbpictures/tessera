@@ -13,11 +13,13 @@
 // the project's config changing)
 const injectNextDevServer = require('@cypress/react/plugins/next')
 const codeCoverageTask = require('@cypress/code-coverage/task')
+const ms = require('smtp-tester')
 /**
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
+    let lastEmail = {};
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
     on("task", {
@@ -38,12 +40,31 @@ module.exports = (on, config) => {
         "getAdminToken": () => {
             return global.adminToken;
         },
+        "getLastEmail": (email) => {
+            return lastEmail[email] || null
+        },
+        "resetEmails": (email) => {
+            if (email) {
+                delete lastEmail[email]
+            } else {
+                lastEmail = {}
+            }
+            return null
+        },
     })
 
     if (config.testingType === 'component') {
         injectNextDevServer(on, config);
     }
     codeCoverageTask(on, config);
+
+    const mailServer = ms.init(7777)
+    mailServer.bind((addr, id, email) => {
+        lastEmail[email.headers.to] = {
+            body: email.body,
+            html: email.html,
+        };
+    });
 
     return config;
 }

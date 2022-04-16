@@ -98,12 +98,33 @@ describe("Buy tickets", () => {
             cy.get("#stepper-next-button").should("not.be.disabled");
             cy.get(".seat-selection-free-remove").first().click();
             cy.get("#stepper-next-button").should("be.disabled");
+            cy.get(".seat-selection-free-add").first().click();
+            cy.get("#stepper-next-button").should("not.be.disabled");
+
+            cy.get("#seat-selection-free-add-category").click();
+            cy.get("#stepper-next-button").should("be.disabled");
+            cy.get(".seat-selection-free-add").last().click();
+            cy.get("#stepper-next-button").should("not.be.disabled");
+            cy.get(".seat-selection-free-remove").last().click();
+            cy.get("#stepper-next-button").should("be.disabled");
+
+            cy.get(".seat-selection-free-remove-category").first().click();
+            cy.get("#stepper-next-button").should("not.be.disabled");
+
+            cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("abc");
+            cy.get("#stepper-next-button").should("be.disabled");
+            cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("2");
+            cy.get("#stepper-next-button").should("not.be.disabled");
+
+            cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("0");
+            cy.get(".seat-selection-free-remove").last().click();
+            cy.get("#stepper-next-button").should("be.disabled");
         });
     });
 
     it("Select Seat Map", () => {
         cy.fixture("admin/events").then((eventsFixture) => {
-            const seats = eventsFixture.events[1].seatMap.flat(2);
+            const seats = eventsFixture.events[1].seatMap.flat(2).filter((seat) => seat.type !== "space");
             cy.visit("/seatselection/2?event=2");
 
             const selectedIndexes = [0, 1, 2, 3];
@@ -133,11 +154,7 @@ describe("Buy tickets", () => {
     });
 
     it("Enter Information", () => {
-        cy.visit("/seatselection/1?event=1");
-        cy.get(".seat-selection-free-add").first().click();
-        cy.get("#stepper-next-button").click();
-        cy.url().should("include", "information");
-
+        cy.purchaseTicket({information: false});
         const testInputField = (element, notValidInput, validInput, errorText) => {
             cy.get(element).type(notValidInput).blur();
             cy.contains(errorText).should("exist");
@@ -153,11 +170,7 @@ describe("Buy tickets", () => {
         testInputField("input[name=address-zip]", "5445", faker.address.zipCode("#####"), "Please enter a valid ZIP Code");
         testInputField("input[name=address-city]", "aa", faker.address.city(), "Please enter your city!");
 
-        cy.get("input[name=address-country-text").type("Germany");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
-
-        cy.get("input[name=address-region-text").type("Rheinland");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
+        cy.personalInformationCountry();
 
         cy.get("#checkbox-download").click();
         cy.get("#stepper-next-button").should("be.enabled");
@@ -168,28 +181,7 @@ describe("Buy tickets", () => {
     });
 
     it("Select Payment", () => {
-        cy.visit("/seatselection/1?event=1");
-        cy.get(".seat-selection-free-add").first().click();
-        cy.get("#stepper-next-button").click();
-        cy.url().should("include", "information");
-
-        cy.get("input[name=address-email]").type(faker.internet.email());
-        cy.get("input[name=address-firstname]").type(faker.name.firstName());
-        cy.get("input[name=address-lastname]").type(faker.name.lastName());
-        cy.get("input[name=address-address]").type(faker.address.streetAddress());
-        cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
-        cy.get("input[name=address-city]").type(faker.address.city());
-
-        cy.get("input[name=address-country-text").type("Germany");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
-
-        cy.get("input[name=address-region-text").type("Rheinland");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
-
-        cy.get("#checkbox-download").click();
-        cy.get("#stepper-next-button").click();
-
-        cy.url().should("include", "payment");
+        cy.purchaseTicket({paymentMethod: false});
 
         cy.get("#pay-button").should("be.disabled");
         cy.get("#checkbox-creditcard").click();
@@ -215,23 +207,7 @@ describe("Buy tickets", () => {
 
     it("Check Delivery Variants", () => {
         cy.setOption("shop.delivery", ["boxoffice", "download", "post"]).then(() => {
-            cy.visit("/seatselection/1?event=1");
-            cy.get(".seat-selection-free-add").first().click();
-            cy.get("#stepper-next-button").click();
-            cy.url().should("include", "information");
-
-            cy.get("input[name=address-email]").type(faker.internet.email());
-            cy.get("input[name=address-firstname]").type(faker.name.firstName());
-            cy.get("input[name=address-lastname]").type(faker.name.lastName());
-            cy.get("input[name=address-address]").type(faker.address.streetAddress());
-            cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
-            cy.get("input[name=address-city]").type(faker.address.city());
-
-            cy.get("input[name=address-country-text").type("Germany");
-            cy.get(".MuiAutocomplete-popper").children().first().click();
-
-            cy.get("input[name=address-region-text").type("Rheinland");
-            cy.get(".MuiAutocomplete-popper").children().first().click();
+            cy.purchaseTicket({shippingMethod: false});
 
             cy.get("#checkbox-boxoffice").click();
             cy.get("#stepper-next-button").should("be.enabled");
@@ -257,28 +233,7 @@ describe("Buy tickets", () => {
     });
 
     it("Check Payment Variants", () => {
-        cy.visit("/seatselection/1?event=1");
-        cy.get(".seat-selection-free-add").first().click();
-        cy.get("#stepper-next-button").click();
-        cy.url().should("include", "information");
-
-        cy.get("input[name=address-email]").type(faker.internet.email());
-        cy.get("input[name=address-firstname]").type(faker.name.firstName());
-        cy.get("input[name=address-lastname]").type(faker.name.lastName());
-        cy.get("input[name=address-address]").type(faker.address.streetAddress());
-        cy.get("input[name=address-zip]").type(faker.address.zipCode("#####"));
-        cy.get("input[name=address-city]").type(faker.address.city());
-
-        cy.get("input[name=address-country-text").type("Germany");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
-
-        cy.get("input[name=address-region-text").type("Rheinland");
-        cy.get(".MuiAutocomplete-popper").children().first().click();
-
-        cy.get("#checkbox-download").click();
-        cy.get("#stepper-next-button").click();
-
-        cy.url().should("include", "payment");
+        cy.purchaseTicket({paymentMethod: false});
 
         cy.get("#pay-button").should("be.disabled");
         cy.get("#checkbox-invoice").click();
@@ -288,5 +243,18 @@ describe("Buy tickets", () => {
         cy.get("#checkbox-paypal").click();
         cy.get(".paypal-buttons").should("have.length.at.least", 1);
         cy.get("#pay-button").should("not.exist");
+    });
+
+    it("Process Payment", () => {
+        cy.purchaseTicket().then(({email, firstName, lastName}) => {
+            cy.task("getLastEmail", email).then(result => {
+                cy.state('document').write(result.html)
+                cy.get("body").should("contain.text", `Hello ${firstName} ${lastName}`);
+                cy.get("body").should("not.contain.text", 'As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
+                cy.get("body").should("contain.text", 'We hereby confirm your\n' +
+                    '                                                    order. Enclosed you will\n' +
+                    '                                                    find an invoice.');
+            });
+        });
     });
 });

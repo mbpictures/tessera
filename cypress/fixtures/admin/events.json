@@ -12,12 +12,14 @@
                 [
                     {"id":1,"category":0,"amount":1,"type":"seat"},
                     {"id":2,"category":0,"amount":1,"type":"seat"},
+                    {"amount":1,"type":"space"},
                     {"id":3,"category":0,"amount":1,"type":"seat"},
                     {"id":4,"category":0,"amount":1,"type":"seat"}
                 ],
                 [
                     {"id":5,"category":1,"amount":1,"type":"seat"},
                     {"id":6,"category":1,"amount":1,"type":"seat"},
+                    {"amount":1,"type":"space"},
                     {"id":7,"category":1,"amount":1,"type":"seat"},
                     {"id":8,"category":1,"amount":1,"type":"seat"}
                 ]
