@@ -98,6 +98,23 @@ describe("Buy tickets", () => {
             cy.get("#stepper-next-button").should("not.be.disabled");
             cy.get(".seat-selection-free-remove").first().click();
             cy.get("#stepper-next-button").should("be.disabled");
+            cy.get(".seat-selection-free-add").first().click();
+            cy.get("#stepper-next-button").should("not.be.disabled");
+
+            cy.get("#seat-selection-free-add-category").click();
+            cy.get("#stepper-next-button").should("be.disabled");
+            cy.get(".seat-selection-free-add").last().click();
+            cy.get("#stepper-next-button").should("not.be.disabled");
+            cy.get(".seat-selection-free-remove").last().click();
+            cy.get("#stepper-next-button").should("be.disabled");
+
+            cy.get(".seat-selection-free-remove-category").first().click();
+            cy.get("#stepper-next-button").should("not.be.disabled");
+
+            cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("abc");
+            cy.get("#stepper-next-button").should("be.disabled");
+            cy.get(".seat-selection-free-ticket-amount").find("input").clear().type("2");
+            cy.get("#stepper-next-button").should("not.be.disabled");
         });
     });
 
