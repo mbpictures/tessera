@@ -29,6 +29,8 @@ import { AddApiKeyDialog } from "../../../components/admin/dialogs/AddApiKeyDial
 import AddIcon from "@mui/icons-material/Add";
 import { ConfirmDialog } from "../../../components/admin/dialogs/ConfirmDialog";
 import { useSnackbar } from "notistack";
+import { ManageNotificationDialog } from "../../../components/admin/dialogs/ManageNotificationDialog";
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function UserSettings({ user }) {
     const { data: session } = useSession();
@@ -39,6 +41,9 @@ export default function UserSettings({ user }) {
     const [changePasswordOpen, setChangePasswordOpen] = useState(false);
     const [addApiKeyOpen, setAddApiKeyOpen] = useState(false);
     const [deleteApiKeyIndex, setDeleteApiKeyIndex] = useState(null);
+    const [notificationDeleteIndex, setNotificationDeleteIndex] = useState(null);
+    const [addNotificationOpen, setAddNotificationOpen] = useState(false);
+    const [notificationChange, setNotificationChange] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
     const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 
@@ -62,6 +67,21 @@ export default function UserSettings({ user }) {
         }
     };
 
+    const deleteNotification = async () => {
+        try {
+            await axios.delete(
+                "/api/admin/notifications/" + notificationDeleteIndex.id
+            );
+            setDeleteApiKeyIndex(null);
+            await refreshProps();
+        } catch (e) {
+            setDeleteApiKeyIndex(null);
+            enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    }
+
     const refreshProps = async () => {
         await router.replace(router.asPath);
     };
@@ -84,6 +104,15 @@ export default function UserSettings({ user }) {
 
     return (
         <AdminLayout>
+            <ManageNotificationDialog
+                notification={notificationChange}
+                open={notificationChange !== null || addNotificationOpen}
+                onClose={() => {
+                    setNotificationChange(null);
+                    setAddNotificationOpen(false);
+                }}
+                onChange={refreshProps}
+            />
             <ChangePasswordDialog
                 open={changePasswordOpen}
                 onClose={() => setChangePasswordOpen(false)}
@@ -99,6 +128,12 @@ export default function UserSettings({ user }) {
                 open={deleteApiKeyIndex !== null}
                 onConfirm={deleteApiKey}
                 onClose={() => setDeleteApiKeyIndex(null)}
+            />
+            <ConfirmDialog
+                text={`Delete <b>${notificationDeleteIndex?.type}</b> Notification`}
+                open={notificationDeleteIndex !== null}
+                onConfirm={deleteNotification}
+                onClose={() => setNotificationDeleteIndex(null)}
             />
             <Stack>
                 <Typography variant={"h4"}>Account Settings</Typography>
@@ -210,6 +245,84 @@ export default function UserSettings({ user }) {
                         )}
                     </AccordionDetails>
                 </Accordion>
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant={"h6"}>Notifications</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Stack
+                            direction={
+                                isLgUp ? "row" : "column"
+                            }
+                            pb={2}
+                        >
+                            <Box flexGrow={1}>
+                                <Typography>
+                                    With notifications, you can set up immediate
+                                    feedback on new orders, purchase
+                                    confirmations and others stuff
+                                </Typography>
+                            </Box>
+                            <Button
+                                onClick={() => setAddNotificationOpen(true)}
+                                style={{ minWidth: 50 }}
+                                id={"add-notification-button"}
+                            >
+                                <AddIcon /> Add Notification
+                            </Button>
+                        </Stack>
+                        {user?.notifications.length === 0 ? (
+                            <Typography>
+                                You don&apos;t have any notifications set up yet!
+                            </Typography>
+                        ) : (
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Type</TableCell>
+                                        <TableCell>Edit</TableCell>
+                                        <TableCell>Delete</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {user?.notifications.map((notification, index) => {
+                                        return (
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    {notification.type}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        color={"secondary"}
+                                                        onClick={() =>
+                                                            setNotificationChange(notification)
+                                                        }
+                                                        className={"edit-notification-button"}
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        color={"error"}
+                                                        onClick={() =>
+                                                            setNotificationDeleteIndex(
+                                                                notification
+                                                            )
+                                                        }
+                                                        className={"delete-notification-button"}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </AccordionDetails>
+                </Accordion>
             </Stack>
         </AdminLayout>
     );
@@ -222,7 +335,8 @@ export async function getServerSideProps(context) {
                 email: session.user.email
             },
             include: {
-                apiKeys: true
+                apiKeys: true,
+                notifications: true
             }
         });
         return {
