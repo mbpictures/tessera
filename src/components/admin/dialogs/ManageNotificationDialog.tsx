@@ -15,6 +15,22 @@ import { NotificationHandler, Notifications } from "../../../lib/notifications/N
 import axios from "axios";
 import { useSnackbar } from "notistack";
 
+const encodeServices = (services) => {
+    const encodedServices = Object.keys(Notifications).reduce((obj, val) => {
+        if (val in obj) return obj;
+        obj[val] = [];
+        return obj;
+    }, {});
+    for (let service of services) {
+        encodedServices[service[0]].push(service[1]);
+    }
+    return encodedServices;
+};
+
+const decodeServices = (services) => {
+    return Object.entries(services).map((val: [string, Array<string>]) => val[1].map(a => [val[0], a])).flat(1);
+};
+
 export const ManageNotificationDialog = ({open, notification, onClose, onChange}) => {
     const [type, setType] = useState("");
     const [currentServices, setCurrentServices] = useState(Object.keys(Notifications).reduce((obj, val) => {
@@ -25,25 +41,15 @@ export const ManageNotificationDialog = ({open, notification, onClose, onChange}
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        console.log(notification)
         if (!notification) return;
         const services = JSON.parse(notification?.data).services;
-        const encodedServices = Object.keys(Notifications).reduce((obj, val) => {
-            if (val in obj) return obj;
-            obj[val] = [];
-            return obj;
-        }, {});
-        for (let service in services) {
-            encodedServices[service] = services[service];
-        }
-        console.log(encodedServices);
-        setCurrentServices(encodedServices);
+        setCurrentServices(encodeServices(services));
         setType(notification?.type);
     }, [notification]);
 
     const handleSave = async () => {
         try {
-            const data = {type, data: {services: currentServices}};
+            const data = {type, data: {services: decodeServices(currentServices)}};
             if (notification)
                 await axios.put("/api/admin/notifications/" + notification.id, data);
             else
