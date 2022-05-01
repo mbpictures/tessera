@@ -4,11 +4,12 @@ import { IOrder } from "../../../store/reducers/orderReducer";
 import Stripe from "stripe";
 import prisma from "../../../lib/prisma";
 import { calculateTotalPrice } from "../../../constants/util";
+import { withNotification } from "../../../lib/notifications/withNotification";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2020-08-27"
 });
 
-export default async function handler(
+async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
@@ -57,3 +58,5 @@ export default async function handler(
         res.status(405).end("Method Not Allowed");
     }
 }
+
+export default withNotification(handler, ["payment_intent", "stripe"]);

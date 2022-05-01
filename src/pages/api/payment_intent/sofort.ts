@@ -4,8 +4,9 @@ import { IOrder } from "../../../store/reducers/orderReducer";
 import { sofortApiCall } from "../../../lib/sofort";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import absoluteUrl from "next-absolute-url";
+import { withNotification } from "../../../lib/notifications/withNotification";
 
-export default async function handler(
+async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
@@ -81,3 +82,5 @@ export default async function handler(
         res.status(500).end(e);
     }
 }
+
+export default withNotification(handler, ["payment_intent", "sofort"]);

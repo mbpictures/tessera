@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { send } from "../../../lib/send";
+import { withNotification } from "../../../lib/notifications/withNotification";
 
-export default async function handler(
+async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
@@ -14,3 +15,5 @@ export default async function handler(
         res.status(500).end("Server error");
     }
 }
+
+export default withNotification(handler, ["webhook", "invoice"]);

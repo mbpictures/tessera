@@ -3,6 +3,7 @@ import { send } from "../../../lib/send";
 import prisma from "../../../lib/prisma";
 import paypal from "@paypal/checkout-server-sdk";
 import { paypalClient } from "../../../lib/paypal";
+import { withNotification } from "../../../lib/notifications/withNotification";
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== "POST") {
@@ -45,4 +46,4 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-export default handler;
+export default withNotification(handler, ["webhook", "paypal"]);

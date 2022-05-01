@@ -4,8 +4,9 @@ import prisma from "../../../lib/prisma";
 import { paypalClient } from "../../../lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
 import { calculateTotalPrice } from "../../../constants/util";
+import { withNotification } from "../../../lib/notifications/withNotification";
 
-export default async function handler(
+async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
@@ -57,3 +58,5 @@ export default async function handler(
         res.status(500).end("Server error");
     }
 }
+
+export default withNotification(handler, ["payment_intent", "paypal"]);

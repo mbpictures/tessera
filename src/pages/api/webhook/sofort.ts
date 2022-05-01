@@ -5,8 +5,9 @@ import requestIp from "request-ip";
 import { sofortApiCall } from "../../../lib/sofort";
 import prisma from "../../../lib/prisma";
 import { send } from "../../../lib/send";
+import { withNotification } from "../../../lib/notifications/withNotification";
 
-export default async function handler(
+async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
@@ -85,3 +86,5 @@ export default async function handler(
         res.status(500).end("Server error");
     }
 }
+
+export default withNotification(handler, ["webhook", "sofort"]);
