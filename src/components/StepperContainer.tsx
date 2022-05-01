@@ -75,14 +75,15 @@ export const StepperContainer = (props: Props) => {
                 top: 0,
                 left: 0,
                 width: "100%",
-                padding: "5px 0"
+                padding: "5px 0",
+                overflow: "hidden"
             }} ref={topBar}>
                 {STEPS.map((label) => {
                     const stepProps = {};
                     const labelProps = {};
                     return (
                         <Step key={label} {...stepProps} className={style.stepperStep}>
-                            <StepLabel {...labelProps}>{t(label)}</StepLabel>
+                            <StepLabel {...labelProps}><span dangerouslySetInnerHTML={{__html: t(label)}} /></StepLabel>
                         </Step>
                     );
                 })}
