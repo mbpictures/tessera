@@ -28,10 +28,17 @@ export const StepperContainer = (props: Props) => {
     const container = useRef<HTMLDivElement>(null);
     const { t } = useTranslation("common");
 
-    useEffect(() => {
-        if (!bottomBar.current || !container.current || !topBar.current) return;
+    const updateContainerPaddings = () => {
         container.current.style.paddingBottom = `${bottomBar.current.clientHeight}px`;
         container.current.style.paddingTop = `${topBar.current.clientHeight}px`;
+    };
+
+    useEffect(() => {
+        if (!bottomBar.current || !container.current || !topBar.current) return;
+        updateContainerPaddings();
+        document.addEventListener("resize", updateContainerPaddings);
+
+        return () => document.removeEventListener("resize", updateContainerPaddings);
     }, [bottomBar, container, topBar]);
 
     useEffect(() => {
