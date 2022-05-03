@@ -1,11 +1,13 @@
 .content {
     display: flex;
     flex-direction: column;
-    align-items: center;
     overflow-x: hidden;
     height: 100%;
     padding: 10px 5%;
-    justify-content: center;
+
+    > * {
+        margin: auto;
+    }
 }
 
 .stepperStep {
