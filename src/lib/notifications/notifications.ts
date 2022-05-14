@@ -23,7 +23,8 @@ export const sendNotifications = async (request: any) => {
                 {
                     data: JSON.parse(notification.data),
                     serviceType: [serviceType, service]
-                }
+                },
+                request
             ).sendNotification()
         );
     await Promise.all(promises);
