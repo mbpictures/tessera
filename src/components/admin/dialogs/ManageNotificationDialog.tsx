@@ -1,4 +1,5 @@
 import {
+    Accordion, AccordionDetails, AccordionSummary,
     Button,
     Dialog,
     DialogContent,
@@ -7,13 +8,19 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    Stack
+    Stack, Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { CategorySelection } from "../CategorySelection";
-import { NotificationHandler, Notifications } from "../../../lib/notifications/NotificationTypes";
+import {
+    NotificationDataFields,
+    NotificationHandler,
+    Notifications
+} from "../../../lib/notifications/NotificationTypes";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { GenericDataCollector } from "../../GenericDataCollector";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const encodeServices = (services) => {
     const encodedServices = Object.keys(Notifications).reduce((obj, val) => {
@@ -38,6 +45,7 @@ export const ManageNotificationDialog = ({open, notification, onClose, onChange}
         obj[val] = [];
         return obj;
     }, {}));
+    const [data, setData] = useState({});
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -45,15 +53,16 @@ export const ManageNotificationDialog = ({open, notification, onClose, onChange}
         const services = JSON.parse(notification?.data).services;
         setCurrentServices(encodeServices(services));
         setType(notification?.type);
+        setData(JSON.parse(notification?.data).data);
     }, [notification]);
 
     const handleSave = async () => {
         try {
-            const data = {type, data: {services: decodeServices(currentServices)}};
+            const body = {type, data: {services: decodeServices(currentServices), data: data}};
             if (notification)
-                await axios.put("/api/admin/notifications/" + notification.id, data);
+                await axios.put("/api/admin/notifications/" + notification.id, body);
             else
-                await axios.post("/api/admin/notifications", data);
+                await axios.post("/api/admin/notifications", body);
 
             onChange();
             onClose();
@@ -86,6 +95,28 @@ export const ManageNotificationDialog = ({open, notification, onClose, onChange}
                             }
                         </Select>
                     </FormControl>
+                    {
+                        type !== "" && (
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    <Typography>Details</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <GenericDataCollector
+                                        currentData={data}
+                                        data={NotificationDataFields[type]}
+                                        onChange={(name, newValue) => {
+                                            const newObject = Object.assign({}, data);
+                                            newObject[name] = newValue;
+                                            setData(newObject);
+                                        }}
+                                    />
+                                </AccordionDetails>
+                            </Accordion>
+                        )
+                    }
                     <CategorySelection onChange={setCurrentServices} currentValues={currentServices} selectionValues={Notifications} />
                     <Button color={"primary"} onClick={handleSave} disabled={!Object.values(currentServices).some((val: Array<string>) => val.length > 0)}>Save</Button>
                 </Stack>

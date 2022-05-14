@@ -21,7 +21,16 @@ export interface NotificationData {
 }
 
 export enum NotificationHandler {
-    "Email" = "email"
+    "Email" = "email",
+    "WebMessage" = "webmessage"
+}
+
+export const NotificationDataFields = {
+    "webmessage": {
+        "url": "string",
+        "authorization": "boolean",
+        "request": "boolean"
+    }
 }
 
 export const notificationRoutes = Object.entries(Notifications)
