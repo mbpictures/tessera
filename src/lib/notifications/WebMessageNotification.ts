@@ -14,12 +14,12 @@ export class WebMessageNotification implements NotificationHandler {
     async sendNotification(): Promise<void> {
         const body = {
             type: this.data.serviceType,
-            request: this.data.data.request ? this.request : {}
+            request: this.data.data.data.request ? this.request : {}
         };
 
-        await fetch(this.data.data.url, {
+        await fetch(this.data.data.data.url, {
             headers: {
-                "Authorization": this.data.data.authorization ? process.env.NOTIFICATION_SECRET : ""
+                "Authorization": this.data.data.data.authorization ? process.env.NOTIFICATION_SECRET : ""
             },
             method: "POST",
             body: JSON.stringify(body)
