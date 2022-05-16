@@ -34,7 +34,7 @@ describe("Admin Users", () => {
                     cy.spy(win.navigator.clipboard, "writeText").as("copy");
                 }
             });
-            cy.get(".MuiAccordion-root").last().click();
+            cy.get(".MuiAccordion-root").eq(1).click();
             cy.get("#add-api-key-button").click();
             cy.get("#api-key-name").type("test");
             cy.get("#api-key-generate").click();
@@ -53,13 +53,13 @@ describe("Admin Users", () => {
 
         cy.get("#api-key-close-button").click();
         cy.get(".delete-api-key-button").should("have.length", 2);
-        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".MuiAccordion-root").eq(1).click();
         cy.get(".delete-api-key-button").last().click();
         cy.get("#confirm-confirm-button").click();
         cy.get("#confirm-confirm-button").should("not.exist");
 
         cy.visit("/admin/user/settings");
-        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".MuiAccordion-root").eq(1).click();
         cy.get(".delete-api-key-button").should("have.length", 1);
     });
 
