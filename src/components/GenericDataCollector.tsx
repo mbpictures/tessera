@@ -26,12 +26,12 @@ export const GenericDataCollector = ({currentData, data, onChange}: {currentData
 
 const StringCollector = ({name, value, onChange}) => {
     return (
-        <TextField value={value ?? ""} label={name} onChange={(event) => onChange(event.target.value)} />
+        <TextField id={"generic-" + name} value={value ?? ""} label={name} onChange={(event) => onChange(event.target.value)} />
     )
 }
 
 const BooleanCollector = ({name, value, onChange}) => {
     return (
-        <FormControlLabel control={<Checkbox checked={value} onChange={(event) => onChange(event.target.checked)} />} label={name} />
+        <FormControlLabel control={<Checkbox id={"generic-" + name} checked={value} onChange={(event) => onChange(event.target.checked)} />} label={name} />
     )
 };

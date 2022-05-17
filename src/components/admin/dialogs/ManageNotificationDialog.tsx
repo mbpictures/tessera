@@ -85,23 +85,24 @@ export const ManageNotificationDialog = ({open, notification, onClose, onChange}
                             onChange={(event) => setType(event.target.value)}
                             labelId={"notification-dialog-type-label"}
                             label={"Notification Type"}
+                            id={"notification-type"}
                         >
                             {
                                 Object.entries(NotificationHandler).map((entry, index) => {
                                     return (
-                                        <MenuItem key={index} value={entry[1]}>{entry[0]}</MenuItem>
+                                        <MenuItem key={index} value={entry[1]} id={"notification-type-" + entry[1]}>{entry[0]}</MenuItem>
                                     )
                                 })
                             }
                         </Select>
                     </FormControl>
                     {
-                        type !== "" && (
+                        (type !== "" && NotificationDataFields[type] && Object.entries(NotificationDataFields[type]).length > 0) && (
                             <Accordion>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                 >
-                                    <Typography>Details</Typography>
+                                    <Typography id={"manage-notification-details"}>Details</Typography>
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <GenericDataCollector
@@ -118,7 +119,7 @@ export const ManageNotificationDialog = ({open, notification, onClose, onChange}
                         )
                     }
                     <CategorySelection onChange={setCurrentServices} currentValues={currentServices} selectionValues={Notifications} />
-                    <Button color={"primary"} onClick={handleSave} disabled={!Object.values(currentServices).some((val: Array<string>) => val.length > 0)}>Save</Button>
+                    <Button color={"primary"} id={"save-notification"} onClick={handleSave} disabled={!Object.values(currentServices).some((val: Array<string>) => val.length > 0)}>Save</Button>
                 </Stack>
             </DialogContent>
         </Dialog>

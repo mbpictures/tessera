@@ -58,6 +58,7 @@ export const CategorySelection = ({currentValues, selectionValues, onChange}) =>
                             checked={allItemsSelected}
                             indeterminate={!allItemsSelected && Object.values(currentValues).some((val: Array<string>) => val.length > 0)}
                             onChange={handleCheckAll}
+                            id={"category-selection-check-all"}
                         />
                     }
                 />
