@@ -63,6 +63,34 @@ describe("Admin Users", () => {
         cy.get(".delete-api-key-button").should("have.length", 1);
     });
 
+    it("Manage notification", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.intercept('POST', '/api/admin/notifications').as('notifications');
+
+            cy.login(userFixture.email, userFixture.password);
+            cy.url().should("eq", Cypress.config().baseUrl + "/admin");
+            cy.visit("/admin/user/settings");
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("not.exist");
+            cy.get("#add-notification-button").click();
+
+            cy.get("#notification-type").click();
+            cy.get("#notification-type-email").click();
+            cy.get("#manage-notification-details").should("not.exist");
+            cy.get("#notification-type-webmessage").click();
+            cy.get("#manage-notification-details").should("exist");
+
+            cy.get("#manage-notification-details").click();
+            cy.get("#generic-url").type("http://localhost:7000");
+            cy.get("#category-selection-check-all").click();
+            cy.get("#save-notification").click();
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("have.length", 1);
+        });
+    });
+
     it("Rename own user", () => {
         cy.fixture("admin/user").then((userFixture) => {
             cy.login(userFixture.email, userFixture.password);
