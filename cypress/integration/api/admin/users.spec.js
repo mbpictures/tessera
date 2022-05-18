@@ -93,10 +93,14 @@ describe("Admin Users", () => {
             cy.get(".edit-notification-button").first().click();
             cy.get("#notification-type").click();
             cy.get("#notification-type-email").click();
+            cy.get("#selection-list-0").click();
             cy.get("#save-notification").click();
             cy.visit("/admin/user/settings");
 
             cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("have.length", 1);
+            cy.get(".delete-notification-button").click();
+            cy.get("#confirm-cancel-button").click();
             cy.get(".delete-notification-button").should("have.length", 1);
             cy.get(".delete-notification-button").click();
             cy.get("#confirm-confirm-button").click();
