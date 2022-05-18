@@ -53,6 +53,7 @@ export const SelectionList = ({
                         <ListItemIcon>
                             <Checkbox
                                 checked={selection.indexOf(option.value) !== -1}
+                                id={"selection-list-" + index}
                             />
                         </ListItemIcon>
                         <ListItemText

@@ -95,6 +95,7 @@ model AdminUser {
     apiKeys         AdminApiKeys[]
     readRights      String[]
     writeRights     String[]
+    notifications   Notification[]
 }
 
 model AdminApiKeys {
@@ -115,4 +116,12 @@ model Translation {
     key             String
     namespace       String
     translations    Json?
+}
+
+model Notification {
+    id              Int         @default(autoincrement()) @id
+    user            AdminUser   @relation(fields: [userId], references: [id])
+    userId          Int
+    data            String?
+    type            String
 }

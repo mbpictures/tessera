@@ -57,7 +57,7 @@ Cypress.Commands.add("createToken", (skipStoreToken) => {
         cy.login(userFixture.email, userFixture.password);
         cy.url().should("eq", Cypress.config().baseUrl + "/admin")
         cy.visit("/admin/user/settings");
-        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".MuiAccordion-root").eq(1).click();
         cy.get("#add-api-key-button").click();
         cy.get("#api-key-name").type("test");
         cy.get("#api-key-generate").click();

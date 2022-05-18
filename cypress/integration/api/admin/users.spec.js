@@ -34,7 +34,7 @@ describe("Admin Users", () => {
                     cy.spy(win.navigator.clipboard, "writeText").as("copy");
                 }
             });
-            cy.get(".MuiAccordion-root").last().click();
+            cy.get(".MuiAccordion-root").eq(1).click();
             cy.get("#add-api-key-button").click();
             cy.get("#api-key-name").type("test");
             cy.get("#api-key-generate").click();
@@ -53,14 +53,62 @@ describe("Admin Users", () => {
 
         cy.get("#api-key-close-button").click();
         cy.get(".delete-api-key-button").should("have.length", 2);
-        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".MuiAccordion-root").eq(1).click();
         cy.get(".delete-api-key-button").last().click();
         cy.get("#confirm-confirm-button").click();
         cy.get("#confirm-confirm-button").should("not.exist");
 
         cy.visit("/admin/user/settings");
-        cy.get(".MuiAccordion-root").last().click();
+        cy.get(".MuiAccordion-root").eq(1).click();
         cy.get(".delete-api-key-button").should("have.length", 1);
+    });
+
+    it("Manage notification", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.intercept('POST', '/api/admin/notifications').as('notifications');
+
+            cy.login(userFixture.email, userFixture.password);
+            cy.url().should("eq", Cypress.config().baseUrl + "/admin");
+            cy.visit("/admin/user/settings");
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("not.exist");
+            cy.get("#add-notification-button").click();
+
+            cy.get("#notification-type").click();
+            cy.get("#notification-type-email").click();
+            cy.get("#manage-notification-details").should("not.exist");
+            cy.get("#notification-type-webmessage").click();
+            cy.get("#manage-notification-details").should("exist");
+
+            cy.get("#manage-notification-details").click();
+            cy.get("#generic-url").type("http://localhost:7000");
+            cy.get("#category-selection-check-all").click();
+            cy.get("#save-notification").click();
+
+            cy.visit("/admin/user/settings");
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("have.length", 1);
+
+            cy.get(".edit-notification-button").first().click();
+            cy.get("#notification-type").click();
+            cy.get("#notification-type-email").click();
+            cy.get("#selection-list-0").click();
+            cy.get("#save-notification").click();
+            cy.visit("/admin/user/settings");
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("have.length", 1);
+            cy.get(".delete-notification-button").click();
+            cy.get("#confirm-cancel-button").click();
+            cy.get(".delete-notification-button").should("have.length", 1);
+            cy.get(".delete-notification-button").click();
+            cy.get("#confirm-confirm-button").click();
+            cy.visit("/admin/user/settings");
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("not.exist");
+        });
     });
 
     it("Rename own user", () => {
