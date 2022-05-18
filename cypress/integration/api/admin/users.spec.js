@@ -86,8 +86,24 @@ describe("Admin Users", () => {
             cy.get("#category-selection-check-all").click();
             cy.get("#save-notification").click();
 
+            cy.visit("/admin/user/settings");
             cy.get(".MuiAccordion-root").eq(2).click();
             cy.get(".delete-notification-button").should("have.length", 1);
+
+            cy.get(".edit-notification-button").first().click();
+            cy.get("#notification-type").click();
+            cy.get("#notification-type-email").click();
+            cy.get("#save-notification").click();
+            cy.visit("/admin/user/settings");
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("have.length", 1);
+            cy.get(".delete-notification-button").click();
+            cy.get("#confirm-confirm-button").click();
+            cy.visit("/admin/user/settings");
+
+            cy.get(".MuiAccordion-root").eq(2).click();
+            cy.get(".delete-notification-button").should("not.exist");
         });
     });
 
