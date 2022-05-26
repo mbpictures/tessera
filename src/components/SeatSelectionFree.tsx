@@ -10,7 +10,7 @@ import {
     setOrder
 } from "../store/reducers/orderReducer";
 import { useDispatch } from "react-redux";
-import { calculateTotalPrice, formatPrice } from "../constants/util";
+import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { motion } from "framer-motion";
 
@@ -43,10 +43,7 @@ export const SeatSelectionFree = ({ categories }) => {
             price: price
         };
         newOrder.totalPrice = calculateTotalPrice(newOrder, categories);
-        newOrder.ticketAmount = newOrder.orders.reduce(
-            (total, order) => total + order.amount,
-            0
-        );
+        newOrder.ticketAmount = totalTicketAmount(newOrder);
         dispatch(setOrder(newOrder));
     };
 
@@ -69,6 +66,8 @@ export const SeatSelectionFree = ({ categories }) => {
             totalPrice: order.totalPrice
         };
         newOrder.orders.splice(index, 1);
+        newOrder.totalPrice = calculateTotalPrice(newOrder, categories);
+        newOrder.ticketAmount = totalTicketAmount(newOrder);
         dispatch(setOrder(newOrder));
     };
 
