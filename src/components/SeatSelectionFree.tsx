@@ -30,6 +30,7 @@ export const SeatSelectionFree = ({ categories }) => {
     }, [dispatch, order.orders]);
 
     const handleChange = (index, amount: number, categoryId) => {
+        if (categoryId === -1) return;
         const price: number =
             amount * categories.find((cat) => cat.id === categoryId).price;
         const newOrder: FreeSeatOrder = {

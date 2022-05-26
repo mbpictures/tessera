@@ -37,9 +37,12 @@ export const SeatSelectionFreeEntry = ({
     currentOrder: FreeSeatOrder;
     onRemove?: (index: number) => unknown;
 }) => {
+    const alreadyUsedCategories = currentOrder.orders.filter((_, i) => i !== index).map(order => order.categoryId);
+    const categoriesFiltered = categories.filter(category => !alreadyUsedCategories.includes(category.id));
+
     const order = !currentOrder?.orders || currentOrder.orders.length <= index ? null : currentOrder.orders[index]
     const [ticketAmount, setTicketAmount] = useState<number>((order?.categoryId ?? -1) > 0 ? order.categoryId : 0);
-    const [category, setCategory] = useState<number>((order?.categoryId ?? -1) !== -1  ? order.categoryId : categories[0].id);
+    const [category, setCategory] = useState<number>((order?.categoryId ?? -1) !== -1  ? order.categoryId : -1);
     const { t } = useTranslation();
 
     const handleChange = (event) => {
@@ -69,7 +72,7 @@ export const SeatSelectionFreeEntry = ({
     };
 
     const price =
-        ticketAmount * categories.find((value) => value.id === category).price;
+        ticketAmount * categories.find((value) => value.id === category)?.price ?? 0;
 
     return (
         <motion.div layout>
@@ -117,12 +120,12 @@ export const SeatSelectionFreeEntry = ({
                 </Box>
                 <InputLabel id={"category-selection" + index}>{t("common:category")}</InputLabel>
                 <Select
-                    value={category}
+                    value={category === -1 ? "" : category}
                     onChange={handleCategoryChange}
                     id={"category-selection" + index}
                     className={"category-selection"}
                 >
-                    {categories.map((category) => (
+                    {categoriesFiltered.map((category) => (
                         <MenuItem
                             value={category.id}
                             key={category.id}
