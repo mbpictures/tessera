@@ -9,5 +9,6 @@
     "amount": "Anzahl",
     "total-price": "Gesamtpreis",
     "category": "Kategorie",
-    "summary": "Zusammenfassung"
+    "summary": "Zusammenfassung",
+    "price": "Preis"
 }

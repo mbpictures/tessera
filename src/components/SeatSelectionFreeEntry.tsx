@@ -142,7 +142,7 @@ export const SeatSelectionFreeEntry = ({
                 >
                     {price > 0 && (
                         <Typography variant={"body1"}>
-                            Price:{" "}
+                            {t("common:price")}:{" "}
                             <b>{formatPrice(price, categories[0].currency)}</b>
                         </Typography>
                     )}
