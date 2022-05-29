@@ -201,6 +201,8 @@ Cypress.Commands.add("purchaseTicket", (options) => {
         options.selectSeatFunction();
     } else {
         cy.get(".seat-selection-free-add").first().click();
+        cy.get(".category-selection").first().click();
+        cy.get("#category-selection-entry0-1").click();
     }
     cy.get("#stepper-next-button").click();
     cy.url().should("include", "information");

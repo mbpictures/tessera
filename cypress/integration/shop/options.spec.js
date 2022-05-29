@@ -81,6 +81,8 @@ describe("Admin Configuration on store page", () => {
                 }).then(() => {
                     cy.visit("/seatselection/1?event=1");
                     cy.get(".seat-selection-free-add").first().click();
+                    cy.get(".category-selection").last().click();
+                    cy.get("#category-selection-entry0-1").click();
                     cy.get("#stepper-next-button").click();
                     cy.url().should("include", "information");
 
@@ -111,6 +113,8 @@ describe("Admin Configuration on store page", () => {
                 }).then(() => {
                     cy.visit("/seatselection/1?event=1");
                     cy.get(".seat-selection-free-add").first().click();
+                    cy.get(".category-selection").last().click();
+                    cy.get("#category-selection-entry0-1").click();
                     cy.get("#stepper-next-button").click();
                     cy.url().should("include", "information");
 
