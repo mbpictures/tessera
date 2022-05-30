@@ -27,6 +27,9 @@ You either assign categories directly (when using ```free``` as seat type) or in
 > [!WARNING]
 > Never edit category prices or currency for running events, as this has an influence on already booked but not yet paid orders.
 
+> [!TIP]
+> To update prices on running categories, create a new category with the new price and assign this category to your running event and remove the old category.
+
 ### Seat Maps
 To edit and add new seat maps, please select ```Event Maangement > Seat Maps``` in the sidebar.
 Here you can view, which seat map is used in which event. Also, you can edit or add seat maps.
