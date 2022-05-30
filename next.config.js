@@ -32,4 +32,7 @@ module.exports = nextTranslate({
 
         return config
     },
+    experimental: {
+        outputStandalone: true,
+    },
 });
