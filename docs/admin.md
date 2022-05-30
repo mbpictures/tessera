@@ -9,6 +9,13 @@ If you have no registered user yet, you can register the first admin user by cli
 ```Register now``` button. After registering the default user, which will be granted with all permissions automatically,
 you can now log in.
 
+## Profile settings
+To access your profile settings, click the Avatar-Button in the top right corner in the admin dashboard. Here You can change the E-Mail Address and Username of your account. You can change the password of your account also, by providing the currently used password.
+Here you can also create [API keys](/api.md#Creating-an-api-key) which are used to authenticate you against the [admin API](https://mbpictures.github.io/tessera/api/).
+To never miss placed orders or paid invoices, you can create notifications in the ```Notifications```-Section. Click the Add Button and select the type of notification you want to add (currently web request and email available).
+E-Mail Notifications email the occurred event to the email address associated to your account. Web Request Notifications generate a POST HTTP request to the specified URL with all available information (e.g. event type, parameters, body, ...).
+Below the notification type, you can select which types of events should trigger this notification.
+
 ## Managing events
 Select ```Event Management > Events``` in the sidebar. Here you can edit already existing events by clicking the 🖊️ button.
 ![Edit Event Dialog](images/admin/edit-event.png)
