@@ -72,14 +72,14 @@ export default async function handler(
                 }
             });
 
-            await prisma.categoriesOnEvents.createMany({
-                data: categories.map((category) => {
-                    return {
+            for (const category of categories) {
+                await prisma.categoriesOnEvents.create({
+                    data: {
                         eventId: parseInt(id as string),
                         categoryId: category
-                    };
+                    }
                 })
-            });
+            }
         }
 
         await prisma.event.update({

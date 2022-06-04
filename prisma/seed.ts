@@ -1,21 +1,21 @@
 import prisma from "../src/lib/prisma";
 
 export async function main() {
-    await prisma.category.createMany({
-        data: [
-            {
-                label: "Premium",
-                price: 60.99,
-                currency: "USD",
-                color: "#59bb59"
-            },
-            {
-                label: "Economy",
-                price: 30.99,
-                currency: "USD",
-                color: "#59B8BB"
-            }
-        ]
+    await prisma.category.create({
+        data: {
+            label: "Premium",
+            price: 60.99,
+            currency: "USD",
+            color: "#59bb59"
+        }
+    })
+    await prisma.category.create({
+        data: {
+            label: "Economy",
+            price: 30.99,
+            currency: "USD",
+            color: "#59B8BB"
+        }
     })
 
     const seatmap = await prisma.seatMap.create({
