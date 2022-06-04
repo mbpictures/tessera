@@ -104,7 +104,8 @@ export async function getServerSideProps(context) {
     return await getAdminServerSideProps(
         context,
         async () => {
-            const users = await prisma.adminUser.findMany();
+            let users = await prisma.adminUser.findMany();
+            users = users.map(user => ({...user, readRights: JSON.parse(user.readRights), writeRights: JSON.parse(user.writeRights)}))
             return {
                 props: {
                     users

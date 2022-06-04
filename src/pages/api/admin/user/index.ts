@@ -31,7 +31,8 @@ export default async function handler(
     }
 
     if (req.method === "GET") {
-        const users = await prisma.adminUser.findMany();
+        let users = await prisma.adminUser.findMany();
+        users = users.map(user => ({...user, writeRights: JSON.parse(user.writeRights), readRights: JSON.parse(user.readRights)}))
         res.status(200).json(users);
         return;
     }
@@ -56,16 +57,19 @@ export default async function handler(
             return;
         }
 
-        let additionalData = {};
+        let additionalData = {
+            readRights: JSON.stringify([]),
+            writeRights: JSON.stringify([])
+        };
         if (canRegister) {
             // first user needs to have all rights (otherwise he can't do anything)
             additionalData = {
-                readRights: Object.values(PermissionSection).filter(
+                readRights: JSON.stringify(Object.values(PermissionSection).filter(
                     (permission) => permission !== PermissionSection.None
-                ),
-                writeRights: Object.values(PermissionSection).filter(
+                )),
+                writeRights: JSON.stringify(Object.values(PermissionSection).filter(
                     (permission) => permission !== PermissionSection.None
-                )
+                ))
             };
         }
 
