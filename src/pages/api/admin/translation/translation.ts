@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
-import { Prisma } from "@prisma/client";
 import { revalidateEventPages } from "../../../../constants/serverUtil";
 
 export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
@@ -14,7 +13,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "GET") {
         if (translations.length === 0)
             return res.status(404).end("Not Found");
-        return res.status(200).json(translations[0].translations);
+        return res.status(200).json(JSON.parse(translations[0].translations));
     }
 
     if (req.method === "DELETE") {
@@ -42,7 +41,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const newBody = {
-            ...(translations[0].translations as Prisma.JsonObject),
+            ...(JSON.parse(translations[0].translations)),
             ...req.body
         };
         await prisma.translation.updateMany({

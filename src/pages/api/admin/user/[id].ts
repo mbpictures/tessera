@@ -31,7 +31,7 @@ export default async function handler(
     }
 
     if (req.method === "GET") {
-        res.status(200).json(user);
+        res.status(200).json(adminUser);
         return;
     }
 
@@ -50,8 +50,8 @@ export default async function handler(
         const data: any = {
             userName: username,
             email: email,
-            ...(readRights && {readRights}),
-            ...(writeRights && {writeRights})
+            ...(readRights && {readRights: JSON.stringify(readRights)}),
+            ...(writeRights && {writeRights: JSON.stringify(writeRights)})
         };
         if (password) {
             const current = await prisma.adminUser.findUnique({

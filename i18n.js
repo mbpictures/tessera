@@ -29,9 +29,9 @@ module.exports = {
                 }
             });
             const db = translations
-                .filter((translation) => translation.translations[lang])
+                .filter((translation) => JSON.parse(translation.translations)[lang])
                 .reduce((result, translation) => {
-                    return { ...result, [translation.key]: translation.translations[lang]};
+                    return { ...result, [translation.key]: JSON.parse(translation.translations)[lang]};
                 }, {});
             result = { ...result, ...db }; // override locales by database
         } catch (e) {

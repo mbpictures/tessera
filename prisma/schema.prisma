@@ -93,8 +93,8 @@ model AdminUser {
     email           String      @unique
     password        String
     apiKeys         AdminApiKeys[]
-    readRights      String[]
-    writeRights     String[]
+    readRights      String
+    writeRights     String
     notifications   Notification[]
 }
 
@@ -115,7 +115,7 @@ model Translation {
     id              Int         @default(autoincrement()) @id
     key             String
     namespace       String
-    translations    Json?
+    translations    String
 }
 
 model Notification {

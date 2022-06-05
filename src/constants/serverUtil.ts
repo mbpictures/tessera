@@ -40,7 +40,7 @@ const checkPermissions = async (
         permission.permissionType === PermissionType.Write
             ? user.writeRights
             : user.readRights;
-    return permissions.includes(permission.permission);
+    return JSON.parse(permissions).includes(permission.permission);
 };
 
 export const getAdminServerSideProps = async (

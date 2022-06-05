@@ -10,7 +10,7 @@ export const namespace = async(req: NextApiRequest, res: NextApiResponse) => {
         }
     });
     if (req.method === "GET") {
-        return res.status(200).json(translations.reduce((result, translation) => ({...result, [translation.key]: translation.translations}), {}));
+        return res.status(200).json(translations.reduce((result, translation) => ({...result, [translation.key]: JSON.parse(translation.translations)}), {}));
     }
 
     if (req.method === "DELETE") {
