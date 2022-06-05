@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  workflow_run:
+    workflows:
+      - "ci"
+    types:
+      - completed
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Check out code
+
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: Build & push Docker image
+        with:
+          image: mbpictures/nextjs-ticketshop
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_PASSWORD }}

@@ -52,6 +52,14 @@ npm install
 10. Open the admin page at URL/admin
 11. Create your first admin user with the register button (the first user is granted with admin permissions)
 
+### 🐳 Setup Docker
+1. Pull the image using ```docker pull ghcr.io/mbpictures/nextjs-ticketshop```
+2. Create a container ```docker create --name nextjs-ticketshop -p 3000:3000 --add-host=host.docker.internal:host-gateway nextjs-ticketshop```
+3. Update the host of your database URL to ```postgresql://USERNAME:PASSWORD@host.docker.internal:PORT/DATABASE?schema=public``` if you want to use the database running on your host OS. If you want to use a database container, replace ```host.docker.internal``` by the name of your database container and add a docker network.
+4. Copy your environments file inside the container: ```docker cp .env nextjs-ticketshop:/ticketshop/.env```
+5. Start the container ```docker start nextjs-ticketshop```
+6. You can access your ticketshop at ```http://localhost:3000```
+
 ## 🎯 Features
 - Select events, seats and collect customer information (address, e-mail, etc)
 - Three delivery possibilities: Download (Template Ticket with QR), Postal delivery and box office
