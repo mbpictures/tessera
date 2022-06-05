@@ -5,3 +5,8 @@ coverage
 .github
 .env
 .env.example
+temp
+gen
+vercel.json
+README.md
+.prettierrc
