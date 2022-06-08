@@ -6,7 +6,7 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableHead,
+    TableHead, TablePagination,
     TableRow,
     Typography
 } from "@mui/material";
@@ -26,8 +26,10 @@ import { OrderDetailsDialog } from "../../components/admin/dialogs/OrderDetailsD
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
 import { MarkOrderPayed } from "../../components/admin/MarkOrderPayed";
 import { useRouter } from "next/router";
+import { NextPageContext } from "next";
+import * as React from "react";
 
-export default function Orders({ orders, permissionDenied }) {
+export default function Orders({ orders, permissionDenied, count, page, amount}) {
     const { data: session } = useSession();
     const [order, setOrder] = useState(null);
     const router = useRouter();
@@ -58,6 +60,14 @@ export default function Orders({ orders, permissionDenied }) {
     const handleCloseDetails = () => {
         setOrder(null);
     };
+
+    const handlePageChange = async (_, page) => {
+        await router.replace(`${router.basePath}?page=${page}&amount=${amount}`);
+    }
+
+    const handlePageRowChange = async (event) => {
+        await router.replace(`${router.basePath}?page=${page}&amount=${event.target.value}`);
+    }
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
@@ -128,6 +138,14 @@ export default function Orders({ orders, permissionDenied }) {
                                 );
                             })}
                         </TableBody>
+                        <TablePagination
+                            count={count}
+                            page={page}
+                            rowsPerPage={amount}
+                            onPageChange={handlePageChange}
+                            onRowsPerPageChange={handlePageRowChange}
+                            rowsPerPageOptions={[1, 10, 25, 50, 100]}
+                        />
                     </Table>
                 )}
             </Box>
@@ -135,19 +153,36 @@ export default function Orders({ orders, permissionDenied }) {
     );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: NextPageContext) {
     return await getAdminServerSideProps(
         context,
         async () => {
+            let {page, amount}: any = context.query;
+            if (!page || !amount) {
+                return {
+                    redirect: {
+                        destination: "/admin/orders?amount=30&page=0",
+                        permanent: false
+                    }
+                };
+            }
+            page = parseInt(page as string);
+            amount = parseInt(amount as string);
             const orders = await prisma.order.findMany({
                 include: {
                     event: true,
                     user: true
-                }
+                },
+                take: amount,
+                skip: page * amount
             });
+            const count = await prisma.order.count();
             return {
                 props: {
-                    orders
+                    orders,
+                    count,
+                    page,
+                    amount
                 }
             };
         },
