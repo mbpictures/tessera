@@ -14,7 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { useEffect, useState } from "react";
 // @ts-ignore
-import { ColorPicker } from "mui-color";
+import { Color, ColorPicker } from "mui-color";
 import currencyToSymbolMap from "currency-symbol-map/map";
 import axios from "axios";
 import { useSnackbar } from "notistack";
@@ -149,7 +149,7 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
                             <ColorPicker
                                 value={normalColor}
                                 onChange={(value) =>
-                                    setNormalColor(value.css.backgroundColor)
+                                    setNormalColor((value as Color).css.backgroundColor)
                                 }
                                 disableAlpha
                                 hideTextfield
@@ -166,7 +166,7 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
                             <ColorPicker
                                 value={activeColor}
                                 onChange={(value) =>
-                                    setActiveColor(value.css.backgroundColor)
+                                    setActiveColor((value as Color).css.backgroundColor)
                                 }
                                 disableAlpha
                                 hideTextfield
@@ -183,7 +183,7 @@ export const EditCategoryDialog = ({ category, onClose, onChange }) => {
                             <ColorPicker
                                 value={occupiedColor}
                                 onChange={(value) =>
-                                    setOccupiedColor(value.css.backgroundColor)
+                                    setOccupiedColor((value as Color).css.backgroundColor)
                                 }
                                 disableAlpha
                                 hideTextfield
