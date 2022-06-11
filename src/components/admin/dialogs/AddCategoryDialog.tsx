@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import currencyToSymbolMap from "currency-symbol-map/map";
 import { SEAT_COLORS } from "../../../constants/Constants";
 // @ts-ignore
-import { ColorPicker } from "mui-color";
+import { Color, ColorPicker } from "mui-color";
 import { useSnackbar } from "notistack";
 
 export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
@@ -152,7 +152,7 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
                                         onChange={(value) =>
                                             setFieldValue(
                                                 "color",
-                                                value.css.backgroundColor
+                                                (value as Color).css.backgroundColor
                                             )
                                         }
                                         disableAlpha
@@ -172,7 +172,7 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
                                         onChange={(value) =>
                                             setFieldValue(
                                                 "activeColor",
-                                                value.css.backgroundColor
+                                                (value as Color).css.backgroundColor
                                             )
                                         }
                                         disableAlpha
@@ -192,7 +192,7 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
                                         onChange={(value) =>
                                             setFieldValue(
                                                 "occupiedColor",
-                                                value.css.backgroundColor
+                                                (value as Color).css.backgroundColor
                                             )
                                         }
                                         disableAlpha
