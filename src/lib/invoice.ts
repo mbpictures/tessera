@@ -40,6 +40,7 @@ export const generateInvoice = async (
         }
 
         const date = new Date();
+        const taxAmount = (await getOption(Options.TaxAmount));
         const html = ejs.render(template, {
             invoice_number: 1,
             creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
@@ -68,11 +69,11 @@ export const generateInvoice = async (
                 };
             }),
             total_net_price: formatPrice(
-                totalPrice * 0.81,
+                totalPrice * (1 - (taxAmount / 100)),
                 categories[0].currency,
                 orderDB.locale
             ),
-            tax_amount: "19%",
+            tax_amount: `${taxAmount}%`,
             total_price: formatPrice(
                 totalPrice,
                 categories[0].currency,

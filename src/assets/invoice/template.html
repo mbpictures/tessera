@@ -196,7 +196,7 @@
                     <td>Total: <%= total_price %></td>
                 </tr>
             </table>
-            <% if (purpose) { %>
+            <% if (typeof purpose !== 'undefined') { %>
                 <p>Use <b><%= purpose %></b> as payment purpose.</p>
             <% } %>
             <p>Please transfer the amount to the following bank account:</p>
