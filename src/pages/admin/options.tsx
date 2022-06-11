@@ -7,7 +7,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Box, Button, Link,
+    Box, Button, InputAdornment, Link,
     Stack,
     TextField,
     Typography
@@ -24,6 +24,7 @@ import ContentPasteGoIcon from '@mui/icons-material/ContentPaste';
 import dynamic from "next/dynamic";
 import { TextInputDialog } from "../../components/TextInputDialog";
 import { TextfieldList } from "../../components/admin/TextfieldList";
+import PercentIcon from '@mui/icons-material/Percent';
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -31,6 +32,7 @@ export default function Options({options, permissionDenied}) {
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [paymentProviders, setPaymentProviders] = useState([]);
+    const [taxAmount, setTaxAmount] = useState(0);
     const [shippingProviders, setShippingProviders] = useState([]);
     const [bankInformation, setBankInformation] = useState([]);
     const [theme, setTheme] = useState({})
@@ -47,6 +49,7 @@ export default function Options({options, permissionDenied}) {
         setShippingProviders(options[OptionsEnum.Delivery] ?? []);
         setTheme(options[OptionsEnum.Theme] ?? {});
         setBankInformation(options[OptionsEnum.PaymentDetails] ?? []);
+        setTaxAmount(options[OptionsEnum.TaxAmount] ?? 0);
     }, [options, permissionDenied]);
 
     const refreshProps = async () => {
@@ -75,6 +78,7 @@ export default function Options({options, permissionDenied}) {
         try {
             await storeSetting(OptionsEnum.PaymentProviders, paymentProviders);
             await storeSetting(OptionsEnum.PaymentDetails, bankInformation);
+            await storeSetting(OptionsEnum.TaxAmount, taxAmount);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -190,6 +194,19 @@ export default function Options({options, permissionDenied}) {
                                     />
                                 )
                             }
+                            <TextField
+                                type={"number"}
+                                label="Tax Amount"
+                                value={taxAmount}
+                                onChange={(event) => setTaxAmount(parseFloat(event.target.value))}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <PercentIcon />
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
                             <SaveButton
                                 action={handleSavePayment}
                                 id={"payment-save"}

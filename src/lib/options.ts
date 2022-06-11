@@ -13,7 +13,8 @@ const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
         "Jon Doe",
         "Demo Bank",
         "IBAN: EN23 2133 2343 2343 2343"
-    ]
+    ],
+    "payment.tax-amount": 19
 }
 
 const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
