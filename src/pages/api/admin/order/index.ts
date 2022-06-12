@@ -16,7 +16,30 @@ export default async function handler(
     if (!user) return;
 
     if (req.method === "GET") {
-        const orders = await prisma.order.findMany();
+        const request = {
+            include: {
+                event: true,
+                user: true
+            }
+        }
+        let {page, amount, shippingFilter, eventId, event}: any = req.query;
+
+        if (amount) {
+            request["take"] = parseInt(amount as string);
+            if (page)
+                request["skip"] = parseInt(page as string) * parseInt(amount as string);
+        }
+        if (shippingFilter) {
+            request["where"]["shipping"]["contains"] = `"type":"${shippingFilter}"`;
+        }
+        if (eventId) {
+            request["where"]["eventId"] = eventId;
+        }
+        if (event) {
+            request["where"]["event"]["title"] = event;
+        }
+
+        const orders = await prisma.order.findMany(request);
         res.status(200).json(orders);
         return;
     }
