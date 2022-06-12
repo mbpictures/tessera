@@ -2,10 +2,10 @@ import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
     Box, Button,
-    IconButton,
+    IconButton, Menu, MenuItem, Select,
     Table,
     TableBody,
-    TableCell,
+    TableCell, TableFooter,
     TableHead, TablePagination,
     TableRow,
     Typography
@@ -15,7 +15,7 @@ import {
 } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import InfoIcon from "@mui/icons-material/Info";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     PaymentFactory,
     PaymentType
@@ -28,14 +28,30 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import * as React from "react";
 import { MarkOrdersAsPayedDialog } from "../../components/admin/dialogs/MarkOrdersAsPayedDialog";
+import axios from "axios";
 
-export default function Orders({ orders, permissionDenied, count, page, amount}) {
+export default function Orders({ permissionDenied, count}) {
     const { data: session } = useSession();
+    const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
     const [markAsPaidOpen, setMarkAsPaidOpen] = useState(false);
+    const [filterAnchor, setFilterAnchor] = useState<null | HTMLElement>(null);
+    const filter = useRef<Record<string, string>>({
+        amount: "25",
+        page: "0"
+    });
     const router = useRouter();
 
     if (!session) return null;
+
+    useEffect(() => {
+        loadOrders().catch(console.log);
+    }, []);
+
+    const loadOrders = async () => {
+        const response = await axios.get("api/admin/order?" + new URLSearchParams(filter.current));
+        setOrders(response.data);
+    }
 
     const refreshProps = async () => {
         await router.replace(router.asPath);
@@ -62,12 +78,17 @@ export default function Orders({ orders, permissionDenied, count, page, amount})
         setOrder(null);
     };
 
+    const handleFilterChange = async (name: string, value: string) => {
+        filter.current[name] = value;
+        await loadOrders();
+    };
+
     const handlePageChange = async (_, page) => {
-        await router.replace(`${router.basePath}?page=${page}&amount=${amount}`);
+        await handleFilterChange("page", page);
     }
 
     const handlePageRowChange = async (event) => {
-        await router.replace(`${router.basePath}?page=${page}&amount=${event.target.value}`);
+        await handleFilterChange("amount", event.target.value);
     }
 
     return (
@@ -92,6 +113,16 @@ export default function Orders({ orders, permissionDenied, count, page, amount})
                 <Typography variant="h4">Orders</Typography>
             </Box>
             <Button onClick={() => setMarkAsPaidOpen(true)}>Mark orders as paid</Button>
+            <Button onClick={(event) => setFilterAnchor(event.currentTarget)}>
+                Filter
+            </Button>
+            <Menu open={filterAnchor !== null} onClose={() => setFilterAnchor(null)} anchorEl={filterAnchor}>
+                <MenuItem>
+                    <Select value={filter.current.shippingFilter}>
+                        <MenuItem>Download</MenuItem>
+                    </Select>
+                </MenuItem>
+            </Menu>
             <Box>
                 {(orders?.length ?? 0) === 0 ? (
                     <Typography variant="body1">
@@ -139,14 +170,18 @@ export default function Orders({ orders, permissionDenied, count, page, amount})
                                 );
                             })}
                         </TableBody>
-                        <TablePagination
-                            count={count}
-                            page={page}
-                            rowsPerPage={amount}
-                            onPageChange={handlePageChange}
-                            onRowsPerPageChange={handlePageRowChange}
-                            rowsPerPageOptions={[1, 10, 25, 50, 100]}
-                        />
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={count}
+                                    page={parseInt(filter.current.page)}
+                                    rowsPerPage={parseInt(filter.current.amount)}
+                                    onPageChange={handlePageChange}
+                                    onRowsPerPageChange={handlePageRowChange}
+                                    rowsPerPageOptions={[1, 10, 25, 50, 100]}
+                                />
+                            </TableRow>
+                        </TableFooter>
                     </Table>
                 )}
             </Box>
@@ -158,32 +193,10 @@ export async function getServerSideProps(context: NextPageContext) {
     return await getAdminServerSideProps(
         context,
         async () => {
-            let {page, amount}: any = context.query;
-            if (!page || !amount) {
-                return {
-                    redirect: {
-                        destination: "/admin/orders?amount=25&page=0",
-                        permanent: false
-                    }
-                };
-            }
-            page = parseInt(page as string);
-            amount = parseInt(amount as string);
-            const orders = await prisma.order.findMany({
-                include: {
-                    event: true,
-                    user: true
-                },
-                take: amount,
-                skip: page * amount
-            });
             const count = await prisma.order.count();
             return {
                 props: {
-                    orders,
-                    count,
-                    page,
-                    amount
+                    count
                 }
             };
         },
