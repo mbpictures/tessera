@@ -22,20 +22,19 @@ export default async function handler(
     if (!user) return;
 
     let orders;
-    const { orderId, invoicePurpose, multiple } = req.body;
-
-    if (orderId) {
+    const params = {...req.query, ...req.body};
+    if (params.orderId) {
         const order = await prisma.order.findUnique({
             where: {
-                id: orderId
+                id: params.orderId
             }
         });
         orders = [order];
-    } else if (invoicePurpose) {
+    } else if (params.invoicePurpose) {
         orders = await prisma.order.findMany({
             where: {
                 paymentIntent: JSON.stringify({
-                    invoicePurpose: invoicePurpose
+                    invoicePurpose: params.invoicePurpose
                 })
             }
         });
@@ -52,12 +51,12 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        if (orderId) {
+        if (params.orderId) {
             if (!orders || orders.length === 0)
                 return res.status(404).end("Order not found!");
             await prisma.order.update({
                 where: {
-                    id: orderId
+                    id: params.orderId
                 },
                 data: {
                     paymentResult: JSON.stringify(
@@ -68,8 +67,8 @@ export default async function handler(
                     )
                 }
             });
-        } else if (invoicePurpose) {
-            if (orders.length > 1 && !multiple)
+        } else if (params.invoicePurpose) {
+            if (orders.length > 1 && !params.multiple)
                 return res.status(400).end(
                     "More than one order matching invoicePurpose! However you can mark both as payed by providing a multiple flag with value true"
                 );
