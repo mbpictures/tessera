@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
-    Box, Grid,
+    Box, Button,
     IconButton,
     Table,
     TableBody,
@@ -24,14 +24,15 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { OrderDetailsDialog } from "../../components/admin/dialogs/OrderDetailsDialog";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
-import { MarkOrderPayed } from "../../components/admin/MarkOrderPayed";
 import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import * as React from "react";
+import { MarkOrdersAsPayedDialog } from "../../components/admin/dialogs/MarkOrdersAsPayedDialog";
 
 export default function Orders({ orders, permissionDenied, count, page, amount}) {
     const { data: session } = useSession();
     const [order, setOrder] = useState(null);
+    const [markAsPaidOpen, setMarkAsPaidOpen] = useState(false);
     const router = useRouter();
 
     if (!session) return null;
@@ -78,19 +79,19 @@ export default function Orders({ orders, permissionDenied, count, page, amount})
                 hasPayedIcon={hasPayedIcon}
                 onMarkAsPayed={refreshProps}
             />
+            <MarkOrdersAsPayedDialog
+                open={markAsPaidOpen}
+                onClose={async () => {
+                    await refreshProps();
+                    setMarkAsPaidOpen(false);
+                }}
+                hasPaid={hasPayed}
+                hasPaidIcon={hasPayedIcon}
+            />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
             </Box>
-            <Grid container>
-                <Grid item md={6} xs={12} display={"flex"} alignItems={"center"}>
-                    <Typography variant={"body1"}>
-                        Mark orders as payed by invoice purpose of your received bank transactions
-                    </Typography>
-                </Grid>
-                <Grid item md={6} xs={12}>
-                    <MarkOrderPayed onMarkAsPayed={refreshProps} />
-                </Grid>
-            </Grid>
+            <Button onClick={() => setMarkAsPaidOpen(true)}>Mark orders as paid</Button>
             <Box>
                 {(orders?.length ?? 0) === 0 ? (
                     <Typography variant="body1">
@@ -161,7 +162,7 @@ export async function getServerSideProps(context: NextPageContext) {
             if (!page || !amount) {
                 return {
                     redirect: {
-                        destination: "/admin/orders?amount=30&page=0",
+                        destination: "/admin/orders?amount=25&page=0",
                         permanent: false
                     }
                 };
