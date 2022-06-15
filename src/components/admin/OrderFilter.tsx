@@ -15,6 +15,7 @@ import * as React from "react";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useRef, useState } from "react";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
+import { WaitingTextField } from "../WaitingTextField";
 
 export const OrderFilter = ({filterChanged}) => {
     const filter = useRef<Record<string, string>>({});
@@ -26,6 +27,7 @@ export const OrderFilter = ({filterChanged}) => {
     };
 
     const handleFilterChange = async (name: string, value: string | undefined) => {
+        console.log("HANDLE FILTER " + value)
         if (value)
             filter.current[name] = value;
         else
@@ -80,7 +82,7 @@ export const OrderFilter = ({filterChanged}) => {
                     </ListItemIcon>
                 </MenuItem>
                 <MenuItem disableRipple disableTouchRipple>
-                    <TextField
+                    <WaitingTextField
                         value={filter.current?.event ?? ""}
                         label={"Event Title"}
                         onChange={async (event) => await handleFilterChange("event", event.target.value)}
