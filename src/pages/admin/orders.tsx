@@ -1,14 +1,14 @@
 import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
-    Box, Button,
+    Box, Button, Grid,
     IconButton,
     Table,
     TableBody,
     TableCell, TableFooter,
     TableHead, TablePagination,
     TableRow,
-    Typography
+    Typography, useMediaQuery
 } from "@mui/material";
 import {
     getAdminServerSideProps
@@ -30,6 +30,7 @@ import * as React from "react";
 import { MarkOrdersAsPayedDialog } from "../../components/admin/dialogs/MarkOrdersAsPayedDialog";
 import axios from "axios";
 import { OrderFilter } from "../../components/admin/OrderFilter";
+import { useTheme } from "@mui/system";
 
 const defaultFilter = {
     amount: "25",
@@ -41,6 +42,7 @@ export default function Orders({ permissionDenied, count}) {
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
     const [markAsPaidOpen, setMarkAsPaidOpen] = useState(false);
+    const theme = useTheme();
     const filter = useRef<Record<string, string>>({
         amount: "25",
         page: "0"
@@ -104,6 +106,8 @@ export default function Orders({ permissionDenied, count}) {
         await loadOrders();
     }
 
+    const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
+
     return (
         <AdminLayout permissionDenied={permissionDenied}>
             <OrderDetailsDialog
@@ -125,12 +129,18 @@ export default function Orders({ permissionDenied, count}) {
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
             </Box>
-            <Button onClick={() => setMarkAsPaidOpen(true)}>Mark orders as paid</Button>
-            <OrderFilter
-                filter={filter.current}
-                onFilterChange={handleFilterChange}
-                onResetFilters={resetFilters}
-            />
+            <Grid container>
+                <Grid item xs={12} md={6}>
+                    <Button fullWidth={isMdDown} onClick={() => setMarkAsPaidOpen(true)}>Mark orders as paid</Button>
+                </Grid>
+                <Grid item xs={12} md={6} display={"flex"} justifyContent={"flex-end"}>
+                    <OrderFilter
+                        filter={filter.current}
+                        onFilterChange={handleFilterChange}
+                        onResetFilters={resetFilters}
+                    />
+                </Grid>
+            </Grid>
             <Box>
                 {(orders?.length ?? 0) === 0 ? (
                     <Typography variant="body1">
