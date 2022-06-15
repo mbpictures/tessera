@@ -76,7 +76,6 @@ export const MarkOrdersAsPayedDialog = ({open, onClose, hasPaid, hasPaidIcon}) =
                             <Tooltip title={"Activate this checkbox, to automatically mark the provided order as paid, instead of searching first."}>
                                 <FormControlLabel
                                     control={<Checkbox
-                                        defaultChecked
                                         checked={autoMarkAsPaid}
                                         onChange={(event) => setAutoMarkAsPaid(event.target.checked)}
                                     />}
