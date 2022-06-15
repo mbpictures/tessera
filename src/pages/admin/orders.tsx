@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
     Box, Button,
-    IconButton, Menu, MenuItem, Select,
+    IconButton,
     Table,
     TableBody,
     TableCell, TableFooter,
@@ -29,13 +29,18 @@ import { NextPageContext } from "next";
 import * as React from "react";
 import { MarkOrdersAsPayedDialog } from "../../components/admin/dialogs/MarkOrdersAsPayedDialog";
 import axios from "axios";
+import { OrderFilter } from "../../components/admin/OrderFilter";
+
+const defaultFilter = {
+    amount: "25",
+    page: "0"
+};
 
 export default function Orders({ permissionDenied, count}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
     const [markAsPaidOpen, setMarkAsPaidOpen] = useState(false);
-    const [filterAnchor, setFilterAnchor] = useState<null | HTMLElement>(null);
     const filter = useRef<Record<string, string>>({
         amount: "25",
         page: "0"
@@ -91,6 +96,11 @@ export default function Orders({ permissionDenied, count}) {
         await handleFilterChange("amount", event.target.value);
     }
 
+    const resetFilters = async () => {
+        filter.current = defaultFilter;
+        await loadOrders();
+    }
+
     return (
         <AdminLayout permissionDenied={permissionDenied}>
             <OrderDetailsDialog
@@ -113,16 +123,11 @@ export default function Orders({ permissionDenied, count}) {
                 <Typography variant="h4">Orders</Typography>
             </Box>
             <Button onClick={() => setMarkAsPaidOpen(true)}>Mark orders as paid</Button>
-            <Button onClick={(event) => setFilterAnchor(event.currentTarget)}>
-                Filter
-            </Button>
-            <Menu open={filterAnchor !== null} onClose={() => setFilterAnchor(null)} anchorEl={filterAnchor}>
-                <MenuItem>
-                    <Select value={filter.current.shippingFilter}>
-                        <MenuItem>Download</MenuItem>
-                    </Select>
-                </MenuItem>
-            </Menu>
+            <OrderFilter
+                filter={filter.current}
+                onFilterChange={handleFilterChange}
+                onResetFilters={resetFilters}
+            />
             <Box>
                 {(orders?.length ?? 0) === 0 ? (
                     <Typography variant="body1">
