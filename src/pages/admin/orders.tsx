@@ -156,7 +156,7 @@ export default function Orders({ permissionDenied, count}) {
                                             }
                                         </TableCell>
                                         <TableCell>
-                                            {order.paymentType}
+                                            {Object.entries(PaymentType).find(type => type[1] === order.paymentType)[0]}
                                         </TableCell>
                                         <TableCell>
                                             {hasPayedIcon(order)}
