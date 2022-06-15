@@ -83,8 +83,11 @@ export default function Orders({ permissionDenied, count}) {
         setOrder(null);
     };
 
-    const handleFilterChange = async (name: string, value: string) => {
-        filter.current[name] = value;
+    const handleFilterChange = async (name: string, value: string | undefined) => {
+        if (value)
+            filter.current[name] = value;
+        else
+            delete filter.current[name];
         await loadOrders();
     };
 
