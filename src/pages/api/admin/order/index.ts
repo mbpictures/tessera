@@ -5,6 +5,20 @@ import {
 import prisma from "../../../../lib/prisma";
 import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 
+function setProperty(object, path, value) {
+    const pList = path.split(".");
+    const len = pList.length;
+    for(let i = 0; i < len-1; i++) {
+        const elem = pList[i];
+        if( !object[elem] ) object[elem] = {}
+        object = object[elem];
+    }
+
+    object[pList[len-1]] = value;
+    return object;
+}
+
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -22,21 +36,21 @@ export default async function handler(
                 user: true
             }
         }
-        let {page, amount, shippingFilter, eventId, event}: any = req.query;
+        let {page, amount, shipping, eventId, event}: any = req.query;
 
         if (amount) {
             request["take"] = parseInt(amount as string);
             if (page)
                 request["skip"] = parseInt(page as string) * parseInt(amount as string);
         }
-        if (shippingFilter) {
-            request["where"]["shipping"]["contains"] = `"type":"${shippingFilter}"`;
+        if (shipping) {
+            setProperty(request, "where.shipping.contains", `"type":"${shipping}"`);
         }
         if (eventId) {
-            request["where"]["eventId"] = eventId;
+            setProperty(request, "where.eventId", parseInt(eventId));
         }
         if (event) {
-            request["where"]["event"]["title"] = event;
+            setProperty(request, "where.event.title", event);
         }
 
         const orders = await prisma.order.findMany(request);
