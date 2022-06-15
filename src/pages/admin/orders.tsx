@@ -32,30 +32,29 @@ import axios from "axios";
 import { OrderFilter } from "../../components/admin/OrderFilter";
 import { useTheme } from "@mui/system";
 
-const defaultFilter = {
-    amount: "25",
-    page: "0"
-};
-
 export default function Orders({ permissionDenied, count}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
     const [markAsPaidOpen, setMarkAsPaidOpen] = useState(false);
+    const [amount, setAmount] = useState("25");
+    const [page, setPage] = useState("0");
     const theme = useTheme();
-    const filter = useRef<Record<string, string>>({
-        amount: "25",
-        page: "0"
-    });
     const router = useRouter();
+    const filter = useRef({});
 
     if (!session) return null;
 
     useEffect(() => {
-        loadOrders().catch(console.log);
+        loadOrders(filter.current).catch(console.log);
     }, []);
 
-    const loadOrders = async () => {
+    useEffect(() => {
+        loadOrders(filter.current).catch(console.log);
+    }, [page, amount]);
+
+    const loadOrders = async (newFilter) => {
+        filter.current = {...newFilter, ...({amount: amount, page: page})};
         const response = await axios.get("api/admin/order?" + new URLSearchParams(filter.current));
         setOrders(response.data);
     }
@@ -85,25 +84,12 @@ export default function Orders({ permissionDenied, count}) {
         setOrder(null);
     };
 
-    const handleFilterChange = async (name: string, value: string | undefined) => {
-        if (value)
-            filter.current[name] = value;
-        else
-            delete filter.current[name];
-        await loadOrders();
-    };
-
     const handlePageChange = async (_, page) => {
-        await handleFilterChange("page", page);
+        setPage(`${page}`);
     }
 
     const handlePageRowChange = async (event) => {
-        await handleFilterChange("amount", event.target.value);
-    }
-
-    const resetFilters = async () => {
-        filter.current = defaultFilter;
-        await loadOrders();
+        setAmount(`${event.target.value}`);
     }
 
     const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
@@ -135,9 +121,7 @@ export default function Orders({ permissionDenied, count}) {
                 </Grid>
                 <Grid item xs={12} md={6} display={"flex"} justifyContent={"flex-end"}>
                     <OrderFilter
-                        filter={filter.current}
-                        onFilterChange={handleFilterChange}
-                        onResetFilters={resetFilters}
+                        filterChanged={loadOrders}
                     />
                 </Grid>
             </Grid>
@@ -192,8 +176,8 @@ export default function Orders({ permissionDenied, count}) {
                             <TableRow>
                                 <TablePagination
                                     count={count}
-                                    page={parseInt(filter.current.page)}
-                                    rowsPerPage={parseInt(filter.current.amount)}
+                                    page={parseInt(page)}
+                                    rowsPerPage={parseInt(amount)}
                                     onPageChange={handlePageChange}
                                     onRowsPerPageChange={handlePageRowChange}
                                     rowsPerPageOptions={[1, 10, 25, 50, 100]}
