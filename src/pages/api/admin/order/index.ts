@@ -36,7 +36,7 @@ export default async function handler(
                 user: true
             }
         }
-        let {page, amount, shipping, eventId, event}: any = req.query;
+        let {page, amount, shipping, eventId, event, payment}: any = req.query;
 
         if (amount) {
             request["take"] = parseInt(amount as string);
@@ -52,6 +52,10 @@ export default async function handler(
         if (event) {
             setProperty(request, "where.event.title", event);
         }
+        if (payment) {
+            setProperty(request, "where.paymentType", payment);
+        }
+
 
         const orders = await prisma.order.findMany(request);
         res.status(200).json(orders);
