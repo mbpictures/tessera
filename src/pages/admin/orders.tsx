@@ -90,6 +90,9 @@ export default function Orders({ permissionDenied, count}) {
 
     const handlePageRowChange = async (event) => {
         setAmount(`${event.target.value}`);
+        if (parseInt(page) * event.target.value > count) {
+            setPage(`${Math.floor(count / event.target.value)}`)
+        }
     }
 
     const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
