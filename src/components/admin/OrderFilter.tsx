@@ -6,7 +6,7 @@ import {
     ListItemIcon,
     Menu,
     MenuItem,
-    Select,
+    Select, Stack,
     TextField, Typography
 } from "@mui/material";
 import { ShippingType } from "../../store/factories/shipping/ShippingFactory";
@@ -74,6 +74,7 @@ export const OrderFilter = ({filterChanged}) => {
                         type="number"
                         label={"Event Id"}
                         onChange={async (event) => await handleFilterChange("eventId", event.target.value)}
+                        fullWidth
                     />
                     <ListItemIcon>
                         <IconButton onClick={async () => await handleFilterChange("eventId", undefined)}>
@@ -86,9 +87,32 @@ export const OrderFilter = ({filterChanged}) => {
                         value={filter.current?.event ?? ""}
                         label={"Event Title"}
                         onChange={async (event) => await handleFilterChange("event", event.target.value)}
+                        fullWidth
                     />
                     <ListItemIcon>
                         <IconButton onClick={async () => await handleFilterChange("event", undefined)}>
+                            <Clear />
+                        </IconButton>
+                    </ListItemIcon>
+                </MenuItem>
+                <MenuItem disableRipple disableTouchRipple>
+                    <Stack direction="row">
+                        <WaitingTextField
+                            value={filter.current?.customerFirstName ?? ""}
+                            label={"Customer firstname"}
+                            onChange={async (event) => await handleFilterChange("customerFirstName", event.target.value)}
+                        />
+                        <WaitingTextField
+                            value={filter.current?.customerLastName ?? ""}
+                            label={"Customer lastname"}
+                            onChange={async (event) => await handleFilterChange("customerLastName", event.target.value)}
+                        />
+                    </Stack>
+                    <ListItemIcon>
+                        <IconButton onClick={async () => {
+                            await handleFilterChange("customerFirstName", undefined)
+                            await handleFilterChange("customerLastName", undefined)
+                        }}>
                             <Clear />
                         </IconButton>
                     </ListItemIcon>

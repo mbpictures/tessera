@@ -36,7 +36,7 @@ export default async function handler(
                 user: true
             }
         }
-        let {page, amount, shipping, eventId, event, payment}: any = req.query;
+        let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName}: any = req.query;
 
         if (amount) {
             request["take"] = parseInt(amount as string);
@@ -54,6 +54,12 @@ export default async function handler(
         }
         if (payment) {
             setProperty(request, "where.paymentType", payment);
+        }
+        if (customerFirstName) {
+            setProperty(request, "where.user.firstName.contains", customerFirstName);
+        }
+        if (customerLastName) {
+            setProperty(request, "where.user.lastName.contains", customerLastName);
         }
 
 
