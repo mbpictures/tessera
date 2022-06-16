@@ -120,7 +120,13 @@ export default function Orders({ permissionDenied, count}) {
             </Box>
             <Grid container>
                 <Grid item xs={12} md={6}>
-                    <Button fullWidth={isMdDown} onClick={() => setMarkAsPaidOpen(true)}>Mark orders as paid</Button>
+                    <Button
+                        fullWidth={isMdDown}
+                        onClick={() => setMarkAsPaidOpen(true)}
+                        variant={"outlined"}
+                    >
+                        Mark orders as paid
+                    </Button>
                 </Grid>
                 <Grid item xs={12} md={6} display={"flex"} justifyContent={"flex-end"}>
                     <OrderFilter
