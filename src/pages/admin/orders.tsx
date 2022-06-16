@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
     Box, Button, Grid,
-    IconButton,
+    IconButton, Menu,
     Table,
     TableBody,
     TableCell, TableFooter,
@@ -31,6 +31,33 @@ import { MarkOrdersAsPayedDialog } from "../../components/admin/dialogs/MarkOrde
 import axios from "axios";
 import { OrderFilter } from "../../components/admin/OrderFilter";
 import { useTheme } from "@mui/system";
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import { SelectionList } from "../../components/admin/SelectionList";
+
+const COLUMNS = [
+    "Event",
+    "Order",
+    "Payment",
+    "Paid",
+    "Details",
+    "Customer",
+    "Date",
+];
+
+const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element | Array<string>, list: string[], columnName: string}) => {
+    if (!list.includes(columnName)) return null;
+    if (Array.isArray(text))
+        return (
+            <TableCell>
+                {text.map(text => (
+                    <>{text}<br /></>
+                ))}
+            </TableCell>
+        )
+    return (
+        <TableCell>{text}</TableCell>
+    )
+}
 
 export default function Orders({ permissionDenied, count}) {
     const { data: session } = useSession();
@@ -42,6 +69,8 @@ export default function Orders({ permissionDenied, count}) {
     const theme = useTheme();
     const router = useRouter();
     const filter = useRef({});
+    const [visibleColumns, setVisibleColumns] = useState(["Event", "Order", "Payment", "Paid", "Details"]);
+    const [columnsActiveAnchor, setColumnsActiveAnchor] = useState<null | HTMLElement>(null);
 
     if (!session) return null;
 
@@ -132,6 +161,22 @@ export default function Orders({ permissionDenied, count}) {
                     <OrderFilter
                         filterChanged={loadOrders}
                     />
+                    <Button onClick={(event) => setColumnsActiveAnchor(event.currentTarget)}>
+                        <ViewColumnIcon />
+                    </Button>
+                    <Menu
+                        open={columnsActiveAnchor !== null}
+                        onClose={() => setColumnsActiveAnchor(null)}
+                        anchorEl={columnsActiveAnchor}
+                        disableAutoFocusItem
+                    >
+                        <SelectionList
+                            options={COLUMNS.map((column => ({primaryLabel: column, value: column})))}
+                            selection={visibleColumns}
+                            onChange={(newSelection) => setVisibleColumns(newSelection)}
+                            header={""}
+                        />
+                    </Menu>
                 </Grid>
             </Grid>
             <Box>
@@ -143,40 +188,36 @@ export default function Orders({ permissionDenied, count}) {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Event</TableCell>
-                                <TableCell>Order</TableCell>
-                                <TableCell>Payment Method</TableCell>
-                                <TableCell>Payed</TableCell>
-                                <TableCell>Details</TableCell>
+                                <ConditionalCell columnName="Event" text="event" list={visibleColumns} />
+                                <ConditionalCell columnName="Order" text="Order" list={visibleColumns} />
+                                <ConditionalCell columnName="Payment" text="Payment Method" list={visibleColumns} />
+                                <ConditionalCell columnName="Paid" text="Payed" list={visibleColumns} />
+                                <ConditionalCell columnName="Customer" text="Customer" list={visibleColumns} />
+                                <ConditionalCell columnName="Details" text="Details" list={visibleColumns} />
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {orders.map((order, index) => {
                                 return (
                                     <TableRow key={index}>
-                                        <TableCell>
-                                            {order.event.title}
-                                        </TableCell>
-                                        <TableCell>
-                                            Tickets booked:{" "}
-                                            {
-                                                JSON.parse(order.order)
-                                                    .ticketAmount
-                                            }
-                                        </TableCell>
-                                        <TableCell>
-                                            {Object.entries(PaymentType).find(type => type[1] === order.paymentType)[0]}
-                                        </TableCell>
-                                        <TableCell>
-                                            {hasPayedIcon(order)}
-                                        </TableCell>
-                                        <TableCell>
+                                        <ConditionalCell columnName="Event" text={order.event.title} list={visibleColumns} />
+                                        <ConditionalCell columnName="Order" text={
+                                            'Tickets booked: ' + JSON.parse(order.order).ticketAmount
+                                        } list={visibleColumns} />
+                                        <ConditionalCell columnName="Payment" text={Object.entries(PaymentType).find(type => type[1] === order.paymentType)[0]} list={visibleColumns} />
+                                        <ConditionalCell columnName="Paid" text={hasPayedIcon(order)} list={visibleColumns} />
+                                        <ConditionalCell columnName="Customer" text={[
+                                            order.user.firstName + " " + order.user.lastName,
+                                            order.user.address,
+                                            order.user.zip + " " + order.user.city
+                                        ]} list={visibleColumns} />
+                                        <ConditionalCell columnName="Paid" text={
                                             <IconButton
                                                 onClick={() => setOrder(order)}
                                             >
                                                 <InfoIcon />
                                             </IconButton>
-                                        </TableCell>
+                                        } list={visibleColumns} />
                                     </TableRow>
                                 );
                             })}
