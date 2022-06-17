@@ -188,7 +188,7 @@ export default function Orders({ permissionDenied, count}) {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <ConditionalCell columnName="Event" text="event" list={visibleColumns} />
+                                <ConditionalCell columnName="Event" text="Event" list={visibleColumns} />
                                 <ConditionalCell columnName="Order" text="Order" list={visibleColumns} />
                                 <ConditionalCell columnName="Payment" text="Payment Method" list={visibleColumns} />
                                 <ConditionalCell columnName="Paid" text="Payed" list={visibleColumns} />
