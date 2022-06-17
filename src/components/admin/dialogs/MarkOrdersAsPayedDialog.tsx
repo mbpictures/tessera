@@ -118,6 +118,7 @@ const OrderDisplay = ({order}) => {
             <Typography>OrderID: {order.id}</Typography>
             <Typography>TicketAmount: {JSON.parse(order.order)["ticketAmount"]}</Typography>
             <Typography>Total Price: {JSON.parse(order.order)["totalPrice"]}</Typography>
+            <Typography>Date: {new Date(order.date).toLocaleString()}</Typography>
         </Stack>
     )
 };

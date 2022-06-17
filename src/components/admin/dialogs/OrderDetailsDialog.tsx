@@ -83,6 +83,7 @@ export const OrderDetailsDialog = ({
                                     <br />
                                     OrderID: {order.id}
                                     <br />
+                                    Date: {new Date(order.date).toLocaleString()}
                                 </Typography>
                                 <Divider />
                                 <Typography>
