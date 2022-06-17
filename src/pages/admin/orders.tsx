@@ -193,6 +193,7 @@ export default function Orders({ permissionDenied, count}) {
                                 <ConditionalCell columnName="Payment" text="Payment Method" list={visibleColumns} />
                                 <ConditionalCell columnName="Paid" text="Payed" list={visibleColumns} />
                                 <ConditionalCell columnName="Customer" text="Customer" list={visibleColumns} />
+                                <ConditionalCell columnName="Date" text="Date" list={visibleColumns} />
                                 <ConditionalCell columnName="Details" text="Details" list={visibleColumns} />
                             </TableRow>
                         </TableHead>
@@ -211,7 +212,8 @@ export default function Orders({ permissionDenied, count}) {
                                             order.user.address,
                                             order.user.zip + " " + order.user.city
                                         ]} list={visibleColumns} />
-                                        <ConditionalCell columnName="Paid" text={
+                                        <ConditionalCell columnName="Date" text={new Date(order.date).toLocaleString()} list={visibleColumns} />
+                                        <ConditionalCell columnName="Details" text={
                                             <IconButton
                                                 onClick={() => setOrder(order)}
                                             >
