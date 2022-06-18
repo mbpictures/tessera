@@ -42,7 +42,8 @@ const COLUMNS = [
     "Details",
     "Customer",
     "Date",
-    "Invoice Sent"
+    "Invoice Sent",
+    "Ticket Amount Sent"
 ];
 
 const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element | Array<string>, list: string[], columnName: string}) => {
@@ -259,6 +260,15 @@ export default function Orders({ permissionDenied, count}) {
                                         Invoice Sent
                                     </TableSortLabel>
                                 } list={visibleColumns} />
+                                <ConditionalCell columnName="Ticket Amount Sent" text={
+                                    <TableSortLabel
+                                        active={getSortingActive("tickets._count")}
+                                        onClick={() => handleSortingChange("tickets._count")}
+                                        direction={getSortingDirection("tickets._count")}
+                                    >
+                                        Ticket Amount Sent
+                                    </TableSortLabel>
+                                } list={visibleColumns} />
                                 <ConditionalCell columnName="Details" text="Details" list={visibleColumns} />
                             </TableRow>
                         </TableHead>
@@ -283,6 +293,7 @@ export default function Orders({ permissionDenied, count}) {
                                                 <CheckIcon color={"success"} />
                                             ) : (<CloseIcon color={"error"} />)
                                         } list={visibleColumns} />
+                                        <ConditionalCell columnName="Ticket Amount Sent" text={order.tickets.length} list={visibleColumns} />
                                         <ConditionalCell columnName="Details" text={
                                             <IconButton
                                                 onClick={() => setOrder(order)}
