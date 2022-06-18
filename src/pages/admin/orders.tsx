@@ -42,6 +42,7 @@ const COLUMNS = [
     "Details",
     "Customer",
     "Date",
+    "Invoice Sent"
 ];
 
 const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element | Array<string>, list: string[], columnName: string}) => {
@@ -247,6 +248,15 @@ export default function Orders({ permissionDenied, count}) {
                                         Date
                                     </TableSortLabel>
                                 } list={visibleColumns} />
+                                <ConditionalCell columnName="Invoice Sent" text={
+                                    <TableSortLabel
+                                        active={getSortingActive("invoiceSent")}
+                                        onClick={() => handleSortingChange("invoiceSent")}
+                                        direction={getSortingDirection("invoiceSent")}
+                                    >
+                                        Invoice Sent
+                                    </TableSortLabel>
+                                } list={visibleColumns} />
                                 <ConditionalCell columnName="Details" text="Details" list={visibleColumns} />
                             </TableRow>
                         </TableHead>
@@ -266,6 +276,11 @@ export default function Orders({ permissionDenied, count}) {
                                             order.user.zip + " " + order.user.city
                                         ]} list={visibleColumns} />
                                         <ConditionalCell columnName="Date" text={new Date(order.date).toLocaleString()} list={visibleColumns} />
+                                        <ConditionalCell columnName="Invoice Sent" text={
+                                            order.invoiceSent ? (
+                                                <CheckIcon color={"success"} />
+                                            ) : (<CloseIcon color={"error"} />)
+                                        } list={visibleColumns} />
                                         <ConditionalCell columnName="Details" text={
                                             <IconButton
                                                 onClick={() => setOrder(order)}
