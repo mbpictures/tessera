@@ -74,15 +74,19 @@ export default function Orders({ permissionDenied, count}) {
     const [columnsActiveAnchor, setColumnsActiveAnchor] = useState<null | HTMLElement>(null);
     const [sorting, setSorting] = useState({});
 
-    if (!session) return null;
+    const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
+        if (!session) return;
         loadOrders(filter.current).catch(console.log);
     }, []);
 
     useEffect(() => {
+        if (!session) return;
         loadOrders(filter.current).catch(console.log);
     }, [page, amount, sorting]);
+
+    if (!session) return null;
 
     const loadOrders = async (newFilter) => {
         filter.current = {
@@ -153,8 +157,6 @@ export default function Orders({ permissionDenied, count}) {
         }
         setSorting(newSorting);
     }
-
-    const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
