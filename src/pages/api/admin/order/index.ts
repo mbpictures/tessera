@@ -67,7 +67,7 @@ export default async function handler(
             setProperty(request, "orderBy", sorting.split(",").map(sort => {
                 const split = sort.split(":");
                 const result = {};
-                result[split[0]] = split[1];
+                setProperty(result, split[0], split[1]);
                 return result;
             }));
         }
