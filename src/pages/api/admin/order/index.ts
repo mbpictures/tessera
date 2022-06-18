@@ -33,7 +33,8 @@ export default async function handler(
         const request = {
             include: {
                 event: true,
-                user: true
+                user: true,
+                tickets: true
             }
         }
         let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName, sorting}: any = req.query;
