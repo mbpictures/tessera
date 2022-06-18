@@ -7,7 +7,7 @@ import {
     TableBody,
     TableCell, TableFooter,
     TableHead, TablePagination,
-    TableRow,
+    TableRow, TableSortLabel,
     Typography, useMediaQuery
 } from "@mui/material";
 import {
@@ -71,6 +71,7 @@ export default function Orders({ permissionDenied, count}) {
     const filter = useRef({});
     const [visibleColumns, setVisibleColumns] = useState(["Event", "Order", "Payment", "Paid", "Details"]);
     const [columnsActiveAnchor, setColumnsActiveAnchor] = useState<null | HTMLElement>(null);
+    const [sorting, setSorting] = useState({});
 
     if (!session) return null;
 
@@ -80,10 +81,14 @@ export default function Orders({ permissionDenied, count}) {
 
     useEffect(() => {
         loadOrders(filter.current).catch(console.log);
-    }, [page, amount]);
+    }, [page, amount, sorting]);
 
     const loadOrders = async (newFilter) => {
-        filter.current = {...newFilter, ...({amount: amount, page: page})};
+        filter.current = {
+            ...newFilter,
+            ...({amount: amount, page: page}),
+            ...({"sorting": Object.entries(sorting).filter(sort => sort[1] !== false).map(sort => sort[0] + ":" + sort[1]).join(",")})
+        };
         const response = await axios.get("api/admin/order?" + new URLSearchParams(filter.current));
         setOrders(response.data);
     }
@@ -122,6 +127,30 @@ export default function Orders({ permissionDenied, count}) {
         if (parseInt(page) * event.target.value > count) {
             setPage(`${Math.floor(count / event.target.value)}`)
         }
+    }
+
+    const getSortingActive = (name): boolean => {
+        if (!(name in sorting)) return false;
+        return sorting[name] !== false;
+    }
+
+    const getSortingDirection = (name): undefined | "asc" | "desc" => {
+        if (!(name in sorting) || sorting[name] === false) return undefined;
+        return sorting[name];
+    }
+
+    const handleSortingChange = (name) => {
+        const newSorting = Object.assign({}, sorting);
+        if (!(name in newSorting) || newSorting[name] === false) {
+            newSorting[name] = "asc";
+        }
+        else if (newSorting[name] === "asc") {
+            newSorting[name] = "desc";
+        }
+        else if (newSorting[name] === "desc") {
+            newSorting[name] = false;
+        }
+        setSorting(newSorting);
     }
 
     const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
@@ -188,12 +217,36 @@ export default function Orders({ permissionDenied, count}) {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <ConditionalCell columnName="Event" text="Event" list={visibleColumns} />
+                                <ConditionalCell columnName="Event" text={
+                                    <TableSortLabel
+                                        active={getSortingActive("eventId")}
+                                        onClick={() => handleSortingChange("eventId")}
+                                        direction={getSortingDirection("eventId")}
+                                    >
+                                        Event
+                                    </TableSortLabel>
+                                } list={visibleColumns} />
                                 <ConditionalCell columnName="Order" text="Order" list={visibleColumns} />
-                                <ConditionalCell columnName="Payment" text="Payment Method" list={visibleColumns} />
+                                <ConditionalCell columnName="Payment" text={
+                                    <TableSortLabel
+                                        active={getSortingActive("paymentType")}
+                                        onClick={() => handleSortingChange("paymentType")}
+                                        direction={getSortingDirection("paymentType")}
+                                    >
+                                        Payment Method
+                                    </TableSortLabel>
+                                } list={visibleColumns} />
                                 <ConditionalCell columnName="Paid" text="Payed" list={visibleColumns} />
                                 <ConditionalCell columnName="Customer" text="Customer" list={visibleColumns} />
-                                <ConditionalCell columnName="Date" text="Date" list={visibleColumns} />
+                                <ConditionalCell columnName="Date" text={
+                                    <TableSortLabel
+                                        active={getSortingActive("date")}
+                                        onClick={() => handleSortingChange("date")}
+                                        direction={getSortingDirection("date")}
+                                    >
+                                        Date
+                                    </TableSortLabel>
+                                } list={visibleColumns} />
                                 <ConditionalCell columnName="Details" text="Details" list={visibleColumns} />
                             </TableRow>
                         </TableHead>

@@ -36,7 +36,7 @@ export default async function handler(
                 user: true
             }
         }
-        let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName}: any = req.query;
+        let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName, sorting}: any = req.query;
 
         if (amount) {
             request["take"] = parseInt(amount as string);
@@ -60,6 +60,15 @@ export default async function handler(
         }
         if (customerLastName) {
             setProperty(request, "where.user.lastName.contains", customerLastName);
+        }
+        if (sorting) {
+            sorting = decodeURIComponent(sorting);
+            setProperty(request, "orderBy", sorting.split(",").map(sort => {
+                const split = sort.split(":");
+                const result = {};
+                result[split[0]] = split[1];
+                return result;
+            }));
         }
 
 
