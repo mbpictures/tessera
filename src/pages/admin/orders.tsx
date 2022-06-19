@@ -33,6 +33,7 @@ import { OrderFilter } from "../../components/admin/OrderFilter";
 import { useTheme } from "@mui/system";
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { SelectionList } from "../../components/admin/SelectionList";
+import { FullSizeLoading } from "../../components/FullSizeLoading";
 
 const COLUMNS = [
     "Event",
@@ -72,6 +73,7 @@ export default function Orders({ permissionDenied, count}) {
     const router = useRouter();
     const filter = useRef({});
     const [visibleColumns, setVisibleColumns] = useState(["Event", "Order", "Payment", "Paid", "Details"]);
+    const [loading, setLoading] = useState(false);
     const [columnsActiveAnchor, setColumnsActiveAnchor] = useState<null | HTMLElement>(null);
     const [sorting, setSorting] = useState({});
 
@@ -90,6 +92,7 @@ export default function Orders({ permissionDenied, count}) {
     if (!session) return null;
 
     const loadOrders = async (newFilter) => {
+        setLoading(true);
         filter.current = {
             ...newFilter,
             ...({amount: amount, page: page}),
@@ -97,6 +100,7 @@ export default function Orders({ permissionDenied, count}) {
         };
         const response = await axios.get("api/admin/order?" + new URLSearchParams(filter.current));
         setOrders(response.data);
+        setLoading(false);
     }
 
     const refreshProps = async () => {
@@ -212,8 +216,8 @@ export default function Orders({ permissionDenied, count}) {
                     </Menu>
                 </Grid>
             </Grid>
-            <Box>
-                {(orders?.length ?? 0) === 0 ? (
+            <Box position={"relative"}>
+                {(orders?.length ?? 0) === 0 && !loading ? (
                     <Typography variant="body1">
                         No orders available yet
                     </Typography>
@@ -319,6 +323,7 @@ export default function Orders({ permissionDenied, count}) {
                         </TableFooter>
                     </Table>
                 )}
+                <FullSizeLoading isLoading={loading} />
             </Box>
         </AdminLayout>
     );
