@@ -71,7 +71,7 @@ export const MainCard = ({title, secondaryTitle, titleIcon, icon, color}: {title
                                         <Avatar
                                             sx={{
                                                 cursor: 'pointer',
-                                                backgroundColor: color[200],
+                                                backgroundColor: `rgba(255, 255, 255, 0.5)`,
                                                 color: color.dark
                                             }}
                                         >
