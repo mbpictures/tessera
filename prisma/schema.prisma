@@ -78,6 +78,7 @@ model Order {
     tickets         Ticket[]
     locale          String
     invoiceSent     Boolean     @default(false)
+    date            DateTime    @default(now())
 }
 
 model Ticket {
