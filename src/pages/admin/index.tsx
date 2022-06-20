@@ -6,7 +6,7 @@ import prisma from "../../lib/prisma";
 import { TotalRevenueCard } from "../../components/admin/layout/dashboard/TotalRevenueCard";
 import { TotalOrdersCard } from "../../components/admin/layout/dashboard/TotalOrdersCard";
 
-export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders}) {
+export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory}) {
     const { data: session } = useSession();
 
     if (!session) return null;
@@ -17,7 +17,7 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
                 <Typography variant="h4" pl={2}>Hi, Welcome back <b>{session.user.name}</b></Typography>
                 <Grid container spacing={2} maxWidth={"100%"}>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
-                        <TotalRevenueCard totalRevenue={totalEarning} earningPercentage={earningPercentage} />
+                        <TotalRevenueCard totalRevenue={totalEarning} earningPercentage={earningPercentage} firstCategory={firstCategory} />
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
                         <TotalOrdersCard totalOrders={totalOrders} totalTickets={totalTickets} />
@@ -47,12 +47,15 @@ export async function getServerSideProps(context) {
 
         const totalTickets = orders.map(order => JSON.parse(order.order).ticketAmount).reduce((a, b) => a + b, 0);
 
+        const firstCategory = await prisma.category.findFirst();
+
         return {
             props: {
                 totalEarning,
                 earningPercentage: 1 - earningsByDate.current / earningsByDate.before,
                 totalTickets,
-                totalOrders: orders.length
+                totalOrders: orders.length,
+                firstCategory
             }
         }
     });

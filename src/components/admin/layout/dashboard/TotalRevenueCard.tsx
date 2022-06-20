@@ -2,8 +2,9 @@ import { MainCard } from "../MainCard";
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import { Tooltip, useTheme } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { formatPrice } from "../../../../constants/util";
 
-export const TotalRevenueCard = ({totalRevenue, earningPercentage}) => {
+export const TotalRevenueCard = ({totalRevenue, earningPercentage, firstCategory}) => {
     const theme = useTheme();
 
     const earningPercentageRounded = earningPercentage?.toFixed(3) ?? 0;
@@ -13,7 +14,7 @@ export const TotalRevenueCard = ({totalRevenue, earningPercentage}) => {
 
     return (
         <MainCard
-            title={"$ " + totalRevenue.toFixed(2)}
+            title={formatPrice(totalRevenue, firstCategory.currency)}
             secondaryTitle={"Total Revenue"}
             icon={<LocalAtmIcon /> }
             color={theme.palette.primary}
