@@ -31,7 +31,10 @@ export default NextAuth({
                 );
                 if (!checkPassword) return null;
 
-                return user;
+                return {
+                    name: user.userName,
+                    email: user.email
+                };
             }
         }),
         CredentialsProvider({
@@ -41,9 +44,14 @@ export default NextAuth({
                 key: { label: "Api-Key", type: "text" }
             },
             async authorize(credentials, req) {
-                return await getUserByApiKey(
-                    credentials.key ?? req.headers["Api-Key"]
+                const user = await getUserByApiKey(
+                  credentials.key ?? req.headers["Api-Key"]
                 );
+                if (!user) return null;
+                return {
+                    name: user.userName,
+                    email: user.email
+                }
             }
         })
     ]
