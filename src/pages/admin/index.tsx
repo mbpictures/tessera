@@ -5,8 +5,9 @@ import { getAdminServerSideProps } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import { TotalRevenueCard } from "../../components/admin/layout/dashboard/TotalRevenueCard";
 import { TotalOrdersCard } from "../../components/admin/layout/dashboard/TotalOrdersCard";
+import { RevenueGraphCard } from "../../components/admin/layout/dashboard/RevenueGraphCard";
 
-export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory}) {
+export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory, oneYearOrdersGroup}) {
     const { data: session } = useSession();
 
     if (!session) return null;
@@ -26,6 +27,11 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
 
                     </Grid>
                 </Grid>
+                <Grid container spacing={2} maxWidth={"100%"}>
+                    <Grid item xs={12}>
+                        <RevenueGraphCard oneYearOrdersGroup={oneYearOrdersGroup} />
+                    </Grid>
+                </Grid>
             </Stack>
         </AdminLayout>
     );
@@ -34,6 +40,7 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
 export async function getServerSideProps(context) {
     return await getAdminServerSideProps(context, async () => {
         const orders = await prisma.order.findMany();
+        const currentDate = new Date();
         const sevenDays = new Date();
         sevenDays.setDate(sevenDays.getDate() - 7);
 
@@ -49,13 +56,41 @@ export async function getServerSideProps(context) {
 
         const firstCategory = await prisma.category.findFirst();
 
+        const endDate = new Date();
+        endDate.setFullYear(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())
+        const oneYearOrders = await prisma.order.findMany({
+            where: {
+                date: {
+                    lte: currentDate,
+                    gte: endDate
+                }
+            }
+        });
+        const oneYearOrdersGroup = oneYearOrders.reduce((group, order) => {
+            const date = order.date.toISOString().split("T")[0];
+            const price = JSON.parse(order.order).totalPrice;
+            const ticketAmount = JSON.parse(order.order).ticketAmount;
+            if (date in group) {
+                group[date].revenue += price;
+                group[date].ticketAmount += ticketAmount;
+            }
+            else{
+                group[date] = {
+                    revenue: price,
+                    ticketAmount: ticketAmount
+                };
+            }
+            return group;
+        }, {});
+
         return {
             props: {
                 totalEarning,
                 earningPercentage: 1 - earningsByDate.current / earningsByDate.before,
                 totalTickets,
                 totalOrders: orders.length,
-                firstCategory
+                firstCategory,
+                oneYearOrdersGroup
             }
         }
     });

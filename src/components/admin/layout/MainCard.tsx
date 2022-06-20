@@ -38,7 +38,7 @@ const CardWrapper = styled(Card)<{color: PaletteColor}>(({theme, color}: {theme:
     }
 }));
 
-export const MainCard = ({title, secondaryTitle, titleIcon, icon, color}: {title?: JSX.Element | string, secondaryTitle?: JSX.Element | string, titleIcon?: JSX.Element, icon?: JSX.Element, color?: PaletteColor}) => {
+export const MainCard = ({title, secondaryTitle, titleIcon, icon, color, children}: {title?: JSX.Element | string, secondaryTitle?: JSX.Element | string, titleIcon?: JSX.Element, icon?: JSX.Element, color?: PaletteColor, children?: JSX.Element}) => {
     return (
         <CardWrapper color={color} elevation={3}>
             <Box sx={{ p: 2.25 }}>
@@ -61,7 +61,7 @@ export const MainCard = ({title, secondaryTitle, titleIcon, icon, color}: {title
                     <Grid item>
                         <Grid container alignItems="center">
                             <Grid item>
-                                <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                                <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }} color={color.contrastText}>
                                     {title}
                                 </Typography>
                             </Grid>
@@ -94,6 +94,13 @@ export const MainCard = ({title, secondaryTitle, titleIcon, icon, color}: {title
                         </Typography>
                     </Grid>
                 </Grid>
+                {
+                    children && (
+                        <Box>
+                            {children}
+                        </Box>
+                    )
+                }
             </Box>
         </CardWrapper>
     );
