@@ -6,10 +6,10 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 export const TotalRevenueCard = ({totalRevenue, earningPercentage}) => {
     const theme = useTheme();
 
-    earningPercentage = earningPercentage.toFixed(3);
-    const rotation = earningPercentage === 0 ? 0 : earningPercentage < 0 ? 25 : -25;
-    const percentageChange = (Math.abs(earningPercentage) * 100).toFixed(1);
-    const text = "The total revenue within the last 7 days " + (earningPercentage === 0 ? "did not change" : earningPercentage < 0 ? `decreased by ${percentageChange}%` : `increased by ${percentageChange}%`)
+    const earningPercentageRounded = earningPercentage?.toFixed(3) ?? 0;
+    const rotation = earningPercentageRounded === 0 ? 0 : earningPercentageRounded < 0 ? 25 : -25;
+    const percentageChange = (Math.abs(earningPercentageRounded) * 100).toFixed(1);
+    const text = "The total revenue within the last 7 days " + (earningPercentageRounded === 0 ? "did not change" : earningPercentageRounded < 0 ? `decreased by ${percentageChange}%` : `increased by ${percentageChange}%`)
 
     return (
         <MainCard
@@ -17,9 +17,9 @@ export const TotalRevenueCard = ({totalRevenue, earningPercentage}) => {
             secondaryTitle={"Total Revenue"}
             icon={<LocalAtmIcon /> }
             color={theme.palette.primary}
-            titleIcon={<Tooltip title={text}>
+            titleIcon={earningPercentage && (<Tooltip title={text}>
                 <ArrowForwardIcon style={{transform: `rotate(${rotation}deg)`}} />
-            </Tooltip>}
+            </Tooltip>)}
         />
     )
 }
