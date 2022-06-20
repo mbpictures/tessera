@@ -40,7 +40,7 @@ const CardWrapper = styled(Card)<{color: PaletteColor}>(({theme, color}: {theme:
 
 export const MainCard = ({title, secondaryTitle, titleIcon, icon, color}: {title?: JSX.Element | string, secondaryTitle?: JSX.Element | string, titleIcon?: JSX.Element, icon?: JSX.Element, color?: PaletteColor}) => {
     return (
-        <CardWrapper color={color}>
+        <CardWrapper color={color} elevation={3}>
             <Box sx={{ p: 2.25 }}>
                 <Grid container direction="column">
                     <Grid item>
