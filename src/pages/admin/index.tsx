@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { getAdminServerSideProps } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import { TotalRevenueCard } from "../../components/admin/layout/dashboard/TotalRevenueCard";
@@ -12,10 +12,10 @@ export default function Dashboard({totalEarning, earningPercentage}) {
 
     return (
         <AdminLayout>
-            <Box sx={{ pb: 5 }}>
+            <Stack sx={{ pb: 5 }} spacing={2}>
                 <Typography variant="h4">Hi, Welcome back</Typography>
-                <Grid container spacing={2}>
-                    <Grid item lg={4} md={6} sm={6} xs={12}>
+                <Grid container spacing={2} maxWidth={"100%"}>
+                    <Grid item lg={4} md={6} sm={6} xs={12} style={{paddingLeft: 0}}>
                         <TotalRevenueCard totalRevenue={totalEarning} earningPercentage={earningPercentage} />
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -25,7 +25,7 @@ export default function Dashboard({totalEarning, earningPercentage}) {
 
                     </Grid>
                 </Grid>
-            </Box>
+            </Stack>
         </AdminLayout>
     );
 }
