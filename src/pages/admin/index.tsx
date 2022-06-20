@@ -4,8 +4,9 @@ import { Grid, Stack, Typography } from "@mui/material";
 import { getAdminServerSideProps } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import { TotalRevenueCard } from "../../components/admin/layout/dashboard/TotalRevenueCard";
+import { TotalOrdersCard } from "../../components/admin/layout/dashboard/TotalOrdersCard";
 
-export default function Dashboard({totalEarning, earningPercentage}) {
+export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders}) {
     const { data: session } = useSession();
 
     if (!session) return null;
@@ -19,7 +20,7 @@ export default function Dashboard({totalEarning, earningPercentage}) {
                         <TotalRevenueCard totalRevenue={totalEarning} earningPercentage={earningPercentage} />
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
-
+                        <TotalOrdersCard totalOrders={totalOrders} totalTickets={totalTickets} />
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
 
@@ -44,10 +45,14 @@ export async function getServerSideProps(context) {
             return groups;
         }, {"before": 0, "current": 0})
 
+        const totalTickets = orders.map(order => JSON.parse(order.order).ticketAmount).reduce((a, b) => a + b, 0);
+
         return {
             props: {
                 totalEarning,
-                earningPercentage: 1 - earningsByDate.current / earningsByDate.before
+                earningPercentage: 1 - earningsByDate.current / earningsByDate.before,
+                totalTickets,
+                totalOrders: orders.length
             }
         }
     });
