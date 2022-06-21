@@ -3,7 +3,7 @@ import { useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 import SsidChartIcon from '@mui/icons-material/SsidChart';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ToggleButtonGroup } from "@mui/material";
 import { ToggleButton } from "@mui/lab";
 
@@ -61,16 +61,41 @@ const lineYAxis = (theme) => [
     }
 ];
 
+const addDays = (date, days) => {
+    let newDate = new Date(date.valueOf());
+    newDate.setDate(date.getDate() + days);
+    return newDate;
+}
+
+const fillDatesOneYear = (object: Record<string, SamplePoint>): Record<string, SamplePoint> => {
+    const newObject = Object.assign({}, object);
+    const compareDate = new Date();
+    compareDate.setDate(compareDate.getDate() - 365);
+    let currentDate = compareDate;
+    let stopDate = new Date();
+    while (currentDate < stopDate) {
+        const date = currentDate.toISOString().split("T")[0];
+        if (!(date in newObject)) {
+            newObject[date] = {revenue: 0, ticketAmount: 0};
+        }
+        currentDate = addDays(currentDate, 1);
+    }
+    return newObject;
+}
+
 
 export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Record<string, SamplePoint>}) => {
     const theme = useTheme();
     const [chartType, setChartType] = useState<"line" | "bar">("line");
     const [duration, setDuration] = useState<number>(7);
+    const filledYearsGroup = useMemo(() => {
+        return fillDatesOneYear(oneYearOrdersGroup)
+    }, [oneYearOrdersGroup]);
 
     const compareDate = new Date();
     compareDate.setDate(compareDate.getDate() - duration);
     const milliseconds = compareDate.getTime();
-    const data: [number, {revenue: number; ticketAmount: number}][] = Object.entries(oneYearOrdersGroup)
+    const data: [number, {revenue: number; ticketAmount: number}][] = Object.entries(filledYearsGroup)
         .map((value) => [(new Date(value[0])).getTime(), value[1]] as [number, SamplePoint])
         .filter((value) => value[0] > milliseconds)
         .sort((a, b) => a[0] - b[0]);
