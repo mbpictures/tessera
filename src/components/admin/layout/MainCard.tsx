@@ -38,7 +38,7 @@ const CardWrapper = styled(Card)<{color: PaletteColor}>(({theme, color}: {theme:
     }
 }));
 
-export const MainCard = ({title, secondaryTitle, titleIcon, icon, color, children}: {title?: JSX.Element | string, secondaryTitle?: JSX.Element | string, titleIcon?: JSX.Element, icon?: JSX.Element, color?: PaletteColor, children?: JSX.Element}) => {
+export const MainCard = ({title, secondaryTitle, titleIcon, icon, color, navigations, children}: {title?: JSX.Element | string, secondaryTitle?: JSX.Element | string, titleIcon?: JSX.Element, icon?: JSX.Element, color?: PaletteColor, navigations?: Array<JSX.Element>, children?: JSX.Element}) => {
     return (
         <CardWrapper color={color} elevation={3}>
             <Box sx={{ p: 2.25 }}>
@@ -56,6 +56,13 @@ export const MainCard = ({title, secondaryTitle, titleIcon, icon, color, childre
                                     {icon}
                                 </Avatar>
                             </Grid>
+                            {
+                                navigations?.map((navigation, index) => (
+                                    <Grid key={index} item sx={{zIndex: 1}}>
+                                        {navigation}
+                                    </Grid>
+                                ))
+                            }
                         </Grid>
                     </Grid>
                     <Grid item>
