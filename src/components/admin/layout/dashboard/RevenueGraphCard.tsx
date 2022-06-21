@@ -135,8 +135,7 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
                         position: 'bottom',
                         offsetX: 20,
                         labels: {
-                            useSeriesColors: false,
-                            colors: theme.palette.grey[500]
+                            useSeriesColors: true
                         },
                         markers: {
                             width: 16,
