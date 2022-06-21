@@ -43,14 +43,17 @@ export async function getServerSideProps(context) {
         const currentDate = new Date();
         const sevenDays = new Date();
         sevenDays.setDate(sevenDays.getDate() - 7);
+        const fortyDays = new Date();
+        fortyDays.setDate(fortyDays.getDate() - 14);
 
         const totalEarning = orders.map(order => JSON.parse(order.order).totalPrice).reduce((a,b) => a + b, 0);
         const earningsByDate = orders.reduce((groups, order) => {
             const time = new Date(order.date);
-            const identifier = time.getSeconds() < sevenDays.getSeconds() ? "before" : "current";
+            if (time.getTime() < fortyDays.getTime()) return groups;
+            const identifier = time.getTime() < sevenDays.getTime() ? "before" : "current";
             groups[identifier] += JSON.parse(order.order).totalPrice;
             return groups;
-        }, {"before": 0, "current": 0})
+        }, {"before": 0, "current": 0});
 
         const totalTickets = orders.map(order => JSON.parse(order.order).ticketAmount).reduce((a, b) => a + b, 0);
 
