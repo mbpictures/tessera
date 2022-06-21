@@ -164,6 +164,9 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
                     },
                     tooltip: {
                         theme: 'dark'
+                    },
+                    dataLabels: {
+                        enabled: duration < 50
                     }
                 }}
             />
