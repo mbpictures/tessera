@@ -12,11 +12,11 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
 
     const compareDate = new Date();
     compareDate.setDate(compareDate.getDate() - 7);
-    const milliseconds = compareDate.getTime() * 1000;
+    const milliseconds = compareDate.getTime();
     const data: [number, {revenue: number; ticketAmount: number}][] = Object.entries(oneYearOrdersGroup)
-        .map((value) => [(new Date(value[0])).getTime() * 1000, value[1]] as [number, SamplePoint])
+        .map((value) => [(new Date(value[0])).getTime(), value[1]] as [number, SamplePoint])
         .filter((value) => value[0] > milliseconds)
-        .sort(d => d[0]);
+        .sort((a, b) => a[0] - b[0]);
 
     return (
         <MainCard
