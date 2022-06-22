@@ -191,7 +191,12 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
                         theme: 'dark'
                     },
                     dataLabels: {
-                        enabled: duration < 50
+                        enabled: duration < 50,
+                        formatter: (value: number, {seriesIndex, w}) => {
+                            if (w.config.series[seriesIndex].name === "Revenue")
+                                return value.toFixed(2);
+                            return value.toFixed(0);
+                        }
                     }
                 }}
             />
