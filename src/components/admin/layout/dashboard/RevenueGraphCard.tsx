@@ -176,6 +176,7 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
                 ]}
                 height={480}
                 options={{
+                    colors: [theme.palette.secondary.main, theme.palette.primary.main],
                     xaxis: {
                         type: "datetime"
                     },
