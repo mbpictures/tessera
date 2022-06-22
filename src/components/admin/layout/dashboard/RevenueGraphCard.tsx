@@ -95,7 +95,27 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
     const compareDate = new Date();
     compareDate.setDate(compareDate.getDate() - duration);
     const milliseconds = compareDate.getTime();
-    const data: [number, {revenue: number; ticketAmount: number}][] = Object.entries(filledYearsGroup)
+
+    let groupedData = filledYearsGroup;
+    if (duration > 50) {
+        groupedData = Object.entries(groupedData)
+            .reduce((group, value) => {
+                const split = value[0].split("-");
+                const monthDate = split[0] + "-" + split[1] + "-01";
+                if (monthDate in group) {
+                    group[monthDate].revenue += value[1].revenue;
+                    group[monthDate].ticketAmount += value[1].ticketAmount;
+                }
+                else {
+                    group[monthDate] = {
+                        revenue: value[1].revenue,
+                        ticketAmount: value[1].ticketAmount
+                    }
+                }
+                return group;
+            }, {});
+    }
+    const data: [number, {revenue: number; ticketAmount: number}][] = Object.entries(groupedData)
         .map((value) => [(new Date(value[0])).getTime(), value[1]] as [number, SamplePoint])
         .filter((value) => value[0] >= milliseconds)
         .sort((a, b) => a[0] - b[0]);
