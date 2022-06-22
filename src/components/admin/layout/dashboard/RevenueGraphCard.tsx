@@ -73,7 +73,7 @@ const fillDatesOneYear = (object: Record<string, SamplePoint>): Record<string, S
     compareDate.setDate(compareDate.getDate() - 365);
     let currentDate = compareDate;
     let stopDate = new Date();
-    while (currentDate < stopDate) {
+    while (currentDate <= stopDate) {
         const date = currentDate.toISOString().split("T")[0];
         if (!(date in newObject)) {
             newObject[date] = {revenue: 0, ticketAmount: 0};
@@ -97,7 +97,7 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
     const milliseconds = compareDate.getTime();
     const data: [number, {revenue: number; ticketAmount: number}][] = Object.entries(filledYearsGroup)
         .map((value) => [(new Date(value[0])).getTime(), value[1]] as [number, SamplePoint])
-        .filter((value) => value[0] > milliseconds)
+        .filter((value) => value[0] >= milliseconds)
         .sort((a, b) => a[0] - b[0]);
 
     return (
