@@ -115,7 +115,10 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
                     key="duration-group"
                     value={duration}
                     exclusive
-                    onChange={(_, value) => setDuration(value)}
+                    onChange={(_, value) => {
+                        if (value === null) return;
+                        setDuration(value)
+                    }}
                     aria-label="text alignment"
                 >
                     <ToggleButton value={365}>Year</ToggleButton>
@@ -126,7 +129,10 @@ export const RevenueGraphCard = ({oneYearOrdersGroup}: {oneYearOrdersGroup: Reco
                     key="type-group"
                     value={chartType}
                     exclusive
-                    onChange={(_, value) => setChartType(value)}
+                    onChange={(_, value) => {
+                        if (value === null) return;
+                        setChartType(value)
+                    }}
                     aria-label="text alignment"
                 >
                     <ToggleButton value={"line"}><SsidChartIcon /></ToggleButton>
