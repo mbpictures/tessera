@@ -106,7 +106,7 @@ export async function main() {
                     }
                 },
                 paymentType: "invoice",
-                shipping: "download",
+                shipping: JSON.stringify({type: "download", data: "mock"}),
                 order: JSON.stringify(order),
                 locale: "en-GB",
                 event: {
