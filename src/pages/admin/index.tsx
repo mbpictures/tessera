@@ -110,7 +110,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 totalEarning,
-                earningPercentage: 1 - earningsByDate.current / earningsByDate.before,
+                earningPercentage: earningsByDate.current / earningsByDate.before - 1,
                 totalTickets,
                 totalOrders: oneYearOrders.length,
                 firstCategory,
