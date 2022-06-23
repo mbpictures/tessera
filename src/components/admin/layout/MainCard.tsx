@@ -1,4 +1,4 @@
-import { Avatar, Card, Grid, PaletteColor, Theme, Typography } from "@mui/material";
+import { Avatar, Card, Grid, PaletteColor, Stack, Theme, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Box } from "@mui/system";
 
@@ -7,6 +7,7 @@ const CardWrapper = styled(Card)<{color: PaletteColor}>(({theme, color}: {theme:
     color: "#fff",
     overflow: "hidden",
     position: "relative",
+    height: "100%",
     '&:after': {
         content: '""',
         position: 'absolute',
@@ -41,7 +42,7 @@ const CardWrapper = styled(Card)<{color: PaletteColor}>(({theme, color}: {theme:
 export const MainCard = ({title, secondaryTitle, titleIcon, icon, color, navigations, children}: {title?: JSX.Element | string, secondaryTitle?: JSX.Element | string, titleIcon?: JSX.Element, icon?: JSX.Element, color?: PaletteColor, navigations?: Array<JSX.Element>, children?: JSX.Element}) => {
     return (
         <CardWrapper color={color} elevation={3}>
-            <Box sx={{ p: 2.25 }}>
+            <Stack p={2} justifyContent={"center"} display={"flex"} height={"100%"}>
                 <Grid container direction="column">
                     <Grid item>
                         <Grid container justifyContent="space-between">
@@ -108,7 +109,7 @@ export const MainCard = ({title, secondaryTitle, titleIcon, icon, color, navigat
                         </Box>
                     )
                 }
-            </Box>
+            </Stack>
         </CardWrapper>
     );
 }
