@@ -96,7 +96,7 @@ export async function getServerSideProps(context) {
             }
         })).reduce((total, order) => total + JSON.parse(order.order).totalPrice, 0);
 
-        const unresolvedTickets = (await prisma.order.findMany({
+        let unresolvedTickets = (await prisma.order.findMany({
             include: {
                 tickets: true
             },
@@ -105,7 +105,9 @@ export async function getServerSideProps(context) {
                     contains: "post"
                 }
             }
-        })).filter((order) => JSON.parse(order.order).ticketAmount < order.tickets.length).length;
+        }))
+            .filter((order) => order.tickets.length < JSON.parse(order.order).ticketAmount)
+            .reduce((amount, order) => amount + JSON.parse(order.order).ticketAmount, 0);
 
         return {
             props: {
