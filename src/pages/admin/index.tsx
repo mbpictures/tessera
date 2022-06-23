@@ -6,8 +6,9 @@ import prisma from "../../lib/prisma";
 import { TotalRevenueCard } from "../../components/admin/layout/dashboard/TotalRevenueCard";
 import { TotalOrdersCard } from "../../components/admin/layout/dashboard/TotalOrdersCard";
 import { RevenueGraphCard } from "../../components/admin/layout/dashboard/RevenueGraphCard";
+import { WeekOrdersCards } from "../../components/admin/layout/dashboard/WeekOrdersCards";
 
-export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory, oneYearOrdersGroup}) {
+export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory, oneYearOrdersGroup, weekRevenue, unresolvedTickets}) {
     const { data: session } = useSession();
 
     if (!session) return null;
@@ -23,8 +24,8 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
                     <Grid item lg={4} md={6} sm={6} xs={12}>
                         <TotalOrdersCard totalOrders={totalOrders} totalTickets={totalTickets} />
                     </Grid>
-                    <Grid item lg={4} md={6} sm={6} xs={12}>
-
+                    <Grid item lg={4} md={12} sm={12} xs={12}>
+                        <WeekOrdersCards weekRevenue={weekRevenue} firstCategory={firstCategory} unresolvedTickets={unresolvedTickets} />
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} maxWidth={"100%"}>
@@ -39,26 +40,7 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
 
 export async function getServerSideProps(context) {
     return await getAdminServerSideProps(context, async () => {
-        const orders = await prisma.order.findMany();
         const currentDate = new Date();
-        const sevenDays = new Date();
-        sevenDays.setDate(sevenDays.getDate() - 7);
-        const fortyDays = new Date();
-        fortyDays.setDate(fortyDays.getDate() - 14);
-
-        const totalEarning = orders.map(order => JSON.parse(order.order).totalPrice).reduce((a,b) => a + b, 0);
-        const earningsByDate = orders.reduce((groups, order) => {
-            const time = new Date(order.date);
-            if (time.getTime() < fortyDays.getTime()) return groups;
-            const identifier = time.getTime() < sevenDays.getTime() ? "before" : "current";
-            groups[identifier] += JSON.parse(order.order).totalPrice;
-            return groups;
-        }, {"before": 0, "current": 0});
-
-        const totalTickets = orders.map(order => JSON.parse(order.order).ticketAmount).reduce((a, b) => a + b, 0);
-
-        const firstCategory = await prisma.category.findFirst();
-
         const endDate = new Date();
         endDate.setFullYear(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())
         const oneYearOrders = await prisma.order.findMany({
@@ -69,6 +51,25 @@ export async function getServerSideProps(context) {
                 }
             }
         });
+
+        const sevenDays = new Date();
+        sevenDays.setDate(sevenDays.getDate() - 7);
+        const fortyDays = new Date();
+        fortyDays.setDate(fortyDays.getDate() - 14);
+
+        const totalEarning = oneYearOrders.map(order => JSON.parse(order.order).totalPrice).reduce((a,b) => a + b, 0);
+        const earningsByDate = oneYearOrders.reduce((groups, order) => {
+            const time = new Date(order.date);
+            if (time.getTime() < fortyDays.getTime()) return groups;
+            const identifier = time.getTime() < sevenDays.getTime() ? "before" : "current";
+            groups[identifier] += JSON.parse(order.order).totalPrice;
+            return groups;
+        }, {"before": 0, "current": 0});
+
+        const totalTickets = oneYearOrders.map(order => JSON.parse(order.order).ticketAmount).reduce((a, b) => a + b, 0);
+
+        const firstCategory = await prisma.category.findFirst();
+
         const oneYearOrdersGroup = oneYearOrders.reduce((group, order) => {
             const date = order.date.toISOString().split("T")[0];
             const price = JSON.parse(order.order).totalPrice;
@@ -86,14 +87,36 @@ export async function getServerSideProps(context) {
             return group;
         }, {});
 
+        const weekRevenue = (await prisma.order.findMany({
+            where: {
+                date: {
+                    lte: currentDate,
+                    gte: sevenDays
+                }
+            }
+        })).reduce((total, order) => total + JSON.parse(order.order).totalPrice, 0);
+
+        const unresolvedTickets = (await prisma.order.findMany({
+            include: {
+                tickets: true
+            },
+            where: {
+                shipping: {
+                    contains: "post"
+                }
+            }
+        })).filter((order) => JSON.parse(order.order).ticketAmount < order.tickets.length).length;
+
         return {
             props: {
                 totalEarning,
                 earningPercentage: 1 - earningsByDate.current / earningsByDate.before,
                 totalTickets,
-                totalOrders: orders.length,
+                totalOrders: oneYearOrders.length,
                 firstCategory,
-                oneYearOrdersGroup
+                oneYearOrdersGroup,
+                weekRevenue,
+                unresolvedTickets
             }
         }
     });
