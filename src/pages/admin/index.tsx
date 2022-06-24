@@ -16,7 +16,7 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
 
     return (
         <AdminLayout>
-            <Stack sx={{ pb: 5 }} spacing={2}>
+            <Stack sx={{ pb: 5 }} spacing={1}>
                 <Typography variant="h4" pl={2}>Hi, Welcome back <b>{session.user.name}</b></Typography>
                 <Grid container spacing={2} maxWidth={"100%"}>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -30,10 +30,10 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} maxWidth={"100%"}>
-                    <Grid item xs={12} md={8}>
+                    <Grid item xs={12} sm={12} md={8}>
                         <RevenueGraphCard oneYearOrdersGroup={oneYearOrdersGroup} />
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} sm={12} md={4}>
                         <PopularCard dataByEvent={dataByEvent} currency={firstCategory.currency} />
                     </Grid>
                 </Grid>
