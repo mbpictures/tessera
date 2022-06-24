@@ -4,7 +4,6 @@ import {
     Card,
     ListItem,
     List,
-    PaletteColor,
     Stack,
     ListItemAvatar,
     ListItemText,
@@ -14,7 +13,7 @@ import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
 import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
 import { formatPrice } from "../../../../constants/util";
 
-const CardWrapper = styled(Card)<{color: PaletteColor}>(({color}: {color: PaletteColor}) => ({
+const CardWrapper = styled(Card)<{color: string}>(({color}: {color: string}) => ({
     overflow: 'hidden',
     position: 'relative',
     '&:after': {
