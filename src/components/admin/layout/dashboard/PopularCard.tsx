@@ -19,7 +19,9 @@ export const PopularCard = ({dataByEvent, currency}) => {
         >
             <Grid item xs={12}>
                 {
-                    Object.entries(dataByEvent).map((data, index) => <PopularListItem key={index} eventName={data[0]} data={data[1]} index={index} currency={currency} totalRevenue={totalRevenue} />)
+                    Object.entries(dataByEvent)
+                        .sort((a: [string, {revenue: number}], b: [string, {revenue: number}]) => b[1].revenue - a[1].revenue)
+                        .map((data, index) => <PopularListItem key={index} eventName={data[0]} data={data[1]} index={index} currency={currency} totalRevenue={totalRevenue} />)
                 }
             </Grid>
         </MainCard>
