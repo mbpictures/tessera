@@ -4,7 +4,7 @@ import { Box } from "@mui/system";
 
 const CardWrapper = styled(Card)<{color: PaletteColor}>(({theme, color}: {theme: Theme, color: PaletteColor}) => ({
     backgroundColor: color.dark,
-    color: "#fff",
+    color: color.contrastText,
     overflow: "hidden",
     position: "relative",
     height: "100%",
