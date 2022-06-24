@@ -43,7 +43,7 @@ export const WeekOrdersCards = ({weekRevenue, firstCategory, unresolvedTickets})
     const theme = useTheme();
     return (
         <Stack spacing={2}>
-            <CardWrapper color={theme.palette.warning.light}>
+            <CardWrapper color={theme.palette.warning.light} style={{backgroundColor: "#fdfaec"}}>
                 <Box sx={{ p: 2 }}>
                     <List sx={{ py: 0 }}>
                         <ListItem alignItems="center" disableGutters sx={{ py: 0 }}>
@@ -81,7 +81,7 @@ export const WeekOrdersCards = ({weekRevenue, firstCategory, unresolvedTickets})
                     </List>
                 </Box>
             </CardWrapper>
-            <CardWrapper color={theme.palette.error.light}>
+            <CardWrapper color={theme.palette.error.light} style={{backgroundColor: "#fdefed"}}>
                 <Box sx={{ p: 2 }}>
                     <List sx={{ py: 0 }}>
                         <ListItem alignItems="center" disableGutters sx={{ py: 0 }}>
