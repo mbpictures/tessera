@@ -7,8 +7,9 @@ import { TotalRevenueCard } from "../../components/admin/layout/dashboard/TotalR
 import { TotalOrdersCard } from "../../components/admin/layout/dashboard/TotalOrdersCard";
 import { RevenueGraphCard } from "../../components/admin/layout/dashboard/RevenueGraphCard";
 import { WeekOrdersCards } from "../../components/admin/layout/dashboard/WeekOrdersCards";
+import { PopularCard } from "../../components/admin/layout/dashboard/PopularCard";
 
-export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory, oneYearOrdersGroup, weekRevenue, unresolvedTickets}) {
+export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory, oneYearOrdersGroup, weekRevenue, unresolvedTickets, dataByEvent}) {
     const { data: session } = useSession();
 
     if (!session) return null;
@@ -29,8 +30,11 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} maxWidth={"100%"}>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} md={8}>
                         <RevenueGraphCard oneYearOrdersGroup={oneYearOrdersGroup} />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <PopularCard dataByEvent={dataByEvent} currency={firstCategory.currency} />
                     </Grid>
                 </Grid>
             </Stack>
@@ -49,6 +53,9 @@ export async function getServerSideProps(context) {
                     lte: currentDate,
                     gte: endDate
                 }
+            },
+            include: {
+                event: true
             }
         });
 
@@ -109,6 +116,20 @@ export async function getServerSideProps(context) {
             .filter((order) => order.tickets.length < JSON.parse(order.order).ticketAmount)
             .reduce((amount, order) => amount + JSON.parse(order.order).ticketAmount, 0);
 
+        let dataByEvent = oneYearOrders.reduce((group, order) => {
+            const orderDefinition = JSON.parse(order.order)
+            if (order.event.title in group) {
+                group[order.event.title].ticketAmount += orderDefinition.ticketAmount;
+                group[order.event.title].revenue += orderDefinition.totalPrice;
+                return group;
+            }
+            group[order.event.title] = {
+                ticketAmount: orderDefinition.ticketAmount,
+                revenue: orderDefinition.totalPrice
+            }
+            return group;
+        }, {});
+
         return {
             props: {
                 totalEarning,
@@ -118,7 +139,8 @@ export async function getServerSideProps(context) {
                 firstCategory,
                 oneYearOrdersGroup,
                 weekRevenue,
-                unresolvedTickets
+                unresolvedTickets,
+                dataByEvent
             }
         }
     });
