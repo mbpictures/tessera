@@ -92,7 +92,7 @@ export default function UserSettings({ user }) {
                 username: username,
                 email: email
             });
-            await refreshProps();
+            signOut().catch(alert);
         } catch (e) {
             enqueueSnackbar("Error while saving!", { variant: "error" });
         }
