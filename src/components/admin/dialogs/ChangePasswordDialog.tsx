@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { signOut } from "next-auth/react";
 
 export const ChangePasswordDialog = ({ open, user, onClose }) => {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -38,6 +39,7 @@ export const ChangePasswordDialog = ({ open, user, onClose }) => {
                 password: newPassword,
                 oldPassword: currentPassword
             });
+            signOut().catch(alert);
             onClose();
         } catch (e) {
             enqueueSnackbar("Error: " + (e.response?.data ?? e.message), {

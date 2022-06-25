@@ -1,7 +1,14 @@
 import prisma from "../src/lib/prisma";
+import { faker } from '@faker-js/faker';
+
+function getRandom(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 export async function main() {
-    await prisma.category.create({
+    const category1 = await prisma.category.create({
         data: {
             label: "Premium",
             price: 60.99,
@@ -9,7 +16,7 @@ export async function main() {
             color: "#59bb59"
         }
     })
-    await prisma.category.create({
+    const category2 = await prisma.category.create({
         data: {
             label: "Economy",
             price: 30.99,
@@ -17,6 +24,7 @@ export async function main() {
             color: "#59B8BB"
         }
     })
+    const categories = [category1, category2];
 
     const seatmap = await prisma.seatMap.create({
         data: {
@@ -24,7 +32,7 @@ export async function main() {
         }
     });
 
-    await prisma.event.create({
+    const freeSeatEvent = await prisma.event.create({
         data: {
             title: "Demo Event 1",
             seatType: "free",
@@ -38,7 +46,7 @@ export async function main() {
         }
     })
 
-    await prisma.event.create({
+    const seatMapEvent = await prisma.event.create({
         data: {
             title: "Demo Event 2",
             seatType: "seatmap",
@@ -55,6 +63,61 @@ export async function main() {
             }
         }
     })
+
+    for (let i = 0; i < 100; i++) {
+        const amount = getRandom(1, 10);
+        const categoryId = getRandom(categories[0].id, categories[categories.length - 1].id);
+        let order = {
+            ticketAmount: amount,
+            totalPrice: amount * categories[categoryId - 1].price
+        };
+        if (i % 2 === 0) {
+            order["orders"] = [{
+                amount: amount,
+                categoryId: categoryId,
+                price: categories[categoryId - 1].price
+            }]
+        }
+        else {
+            order["seats"] = []
+            for (let j = 0; j < amount; j++) {
+                order["seats"].push({
+                    type: "seat",
+                    id: i * 10 + j,
+                    category: categoryId,
+                    amount: 1,
+                })
+            }
+        }
+        const date = new Date();
+        date.setDate(date.getDate() - getRandom(1, 29));
+        await prisma.order.create({
+            data: {
+                user: {
+                    create: {
+                        firstName: faker.name.firstName(),
+                        lastName: faker.name.lastName(),
+                        address: faker.address.streetAddress(true),
+                        city: faker.address.city(),
+                        zip: faker.address.zipCode(),
+                        email: faker.internet.email(),
+                        countryCode: faker.address.countryCode(),
+                        regionCode: faker.address.cityPrefix()
+                    }
+                },
+                paymentType: "invoice",
+                shipping: JSON.stringify({type: "download", data: "mock"}),
+                order: JSON.stringify(order),
+                locale: "en-GB",
+                event: {
+                    connect: {
+                        id: i % 2 === 0 ? freeSeatEvent.id : seatMapEvent.id
+                    }
+                },
+                date: date
+            }
+        })
+    }
 }
 
 main()
