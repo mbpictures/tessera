@@ -9,10 +9,12 @@ import { RevenueGraphCard } from "../../components/admin/layout/dashboard/Revenu
 import { WeekOrdersCards } from "../../components/admin/layout/dashboard/WeekOrdersCards";
 import { PopularCard } from "../../components/admin/layout/dashboard/PopularCard";
 
-export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, firstCategory, oneYearOrdersGroup, weekRevenue, unresolvedTickets, dataByEvent}) {
+export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, defaultCurrency, oneYearOrdersGroup, weekRevenue, unresolvedTickets, dataByEvent}) {
     const { data: session } = useSession();
 
     if (!session) return null;
+
+    defaultCurrency = defaultCurrency ?? "USD";
 
     return (
         <AdminLayout>
@@ -20,13 +22,13 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
                 <Typography variant="h4" pl={2}>Hi, Welcome back <b>{session.user.name}</b></Typography>
                 <Grid container spacing={2} maxWidth={"100%"}>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
-                        <TotalRevenueCard totalRevenue={totalEarning} earningPercentage={earningPercentage} firstCategory={firstCategory} />
+                        <TotalRevenueCard totalRevenue={totalEarning} earningPercentage={earningPercentage} defaultCurrency={defaultCurrency} />
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
                         <TotalOrdersCard totalOrders={totalOrders} totalTickets={totalTickets} />
                     </Grid>
                     <Grid item lg={4} md={12} sm={12} xs={12}>
-                        <WeekOrdersCards weekRevenue={weekRevenue} firstCategory={firstCategory} unresolvedTickets={unresolvedTickets} />
+                        <WeekOrdersCards weekRevenue={weekRevenue} defaultCurrency={defaultCurrency} unresolvedTickets={unresolvedTickets} />
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} maxWidth={"100%"}>
@@ -34,7 +36,7 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
                         <RevenueGraphCard oneYearOrdersGroup={oneYearOrdersGroup} />
                     </Grid>
                     <Grid item xs={12} sm={12} md={4}>
-                        <PopularCard dataByEvent={dataByEvent} currency={firstCategory.currency} />
+                        <PopularCard dataByEvent={dataByEvent} currency={defaultCurrency} />
                     </Grid>
                 </Grid>
             </Stack>
@@ -136,7 +138,7 @@ export async function getServerSideProps(context) {
                 earningPercentage: earningsByDate.current / earningsByDate.before - 1,
                 totalTickets,
                 totalOrders: oneYearOrders.length,
-                firstCategory,
+                defaultCurrency: firstCategory?.currency ?? null,
                 oneYearOrdersGroup,
                 weekRevenue,
                 unresolvedTickets,

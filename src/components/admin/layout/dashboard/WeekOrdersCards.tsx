@@ -38,7 +38,7 @@ const CardWrapper = styled(Card)<{color: string}>(({color}: {color: string}) => 
     }
 }));
 
-export const WeekOrdersCards = ({weekRevenue, firstCategory, unresolvedTickets}) => {
+export const WeekOrdersCards = ({weekRevenue, defaultCurrency, unresolvedTickets}) => {
     const theme = useTheme();
     return (
         <Stack spacing={2}>
@@ -63,7 +63,7 @@ export const WeekOrdersCards = ({weekRevenue, firstCategory, unresolvedTickets})
                                     mt: 0.45,
                                     mb: 0.45
                                 }}
-                                primary={<Typography variant="h4">{formatPrice(weekRevenue, firstCategory.currency)}</Typography>}
+                                primary={<Typography variant="h4">{formatPrice(weekRevenue, defaultCurrency)}</Typography>}
                                 secondary={
                                     <Typography
                                         variant="subtitle2"

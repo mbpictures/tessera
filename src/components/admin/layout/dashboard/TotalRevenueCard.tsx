@@ -4,7 +4,7 @@ import { Tooltip, useTheme } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { formatPrice } from "../../../../constants/util";
 
-export const TotalRevenueCard = ({totalRevenue, earningPercentage, firstCategory}) => {
+export const TotalRevenueCard = ({totalRevenue, earningPercentage, defaultCurrency}) => {
     const theme = useTheme();
 
     const earningPercentageRounded = earningPercentage?.toFixed(3) ?? 0;
@@ -14,7 +14,7 @@ export const TotalRevenueCard = ({totalRevenue, earningPercentage, firstCategory
 
     return (
         <MainCard
-            title={formatPrice(totalRevenue, firstCategory.currency)}
+            title={formatPrice(totalRevenue, defaultCurrency)}
             secondaryTitle={"Total Revenue"}
             icon={<LocalAtmIcon /> }
             color={theme.palette.primary}
