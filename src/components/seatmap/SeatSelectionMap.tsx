@@ -15,7 +15,8 @@ export type SeatMap = Array<SeatRow>;
 
 export const SeatSelectionMap = ({
     seatSelectionDefinition,
-    categories
+    categories,
+    hideSummary
 }: {
     seatSelectionDefinition: SeatMap;
     categories: Array<{
@@ -24,6 +25,7 @@ export const SeatSelectionMap = ({
         price: number;
         currency: string;
     }>;
+    hideSummary?: boolean;
 }) => {
     const order = useAppSelector(selectOrder) as SeatOrder;
     const dispatch = useAppDispatch();
@@ -130,18 +132,22 @@ export const SeatSelectionMap = ({
                     </TransformComponent>
                 </TransformWrapper>
             </Grid>
-            <Grid
-                item
-                xs={12}
-                md={12}
-                lg={4}
-                display="flex"
-                alignItems="center"
-            >
-                <Card style={{ flex: "1 1 auto", padding: "10px" }}>
-                    <PaymentOverview categories={categories} displayColor />
-                </Card>
-            </Grid>
+            {
+                !hideSummary && (
+                    <Grid
+                        item
+                        xs={12}
+                        md={12}
+                        lg={4}
+                        display="flex"
+                        alignItems="center"
+                    >
+                        <Card style={{ flex: "1 1 auto", padding: "10px" }}>
+                            <PaymentOverview categories={categories} displayColor />
+                        </Card>
+                    </Grid>
+                )
+            }
         </Grid>
     );
 };
