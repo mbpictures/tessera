@@ -187,6 +187,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                 open={addOrderOpen}
                 categories={categories}
                 events={events}
+                onClose={() => setAddOrderOpen(false)}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>

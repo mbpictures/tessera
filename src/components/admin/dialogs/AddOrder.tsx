@@ -20,15 +20,16 @@ interface props {
     open: boolean;
     events: Array<any>;
     categories: Array<any>;
+    onClose: () => unknown;
 }
 
-const AddOrderInner = ({open, events, categories}: props) => {
+const AddOrderInner = ({open, events, categories, onClose}: props) => {
     const selector = useAppSelector((state) => state);
     const [event, setEvent] = useState(null);
     const dispatch = useAppDispatch();
 
     return (
-        <Dialog open={open} fullWidth>
+        <Dialog open={open} fullWidth onClose={onClose}>
             <DialogTitle>Add Order</DialogTitle>
             <DialogContent>
                 <Accordion>
