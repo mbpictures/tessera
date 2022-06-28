@@ -13,10 +13,10 @@ import { useState } from "react";
 import { Box } from "@mui/system";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { FreeSeatOrder } from "../store/reducers/orderReducer";
+import { FreeSeatOrder } from "../../../store/reducers/orderReducer";
 import { motion } from "framer-motion";
 import { Delete } from "@mui/icons-material";
-import { formatPrice } from "../constants/util";
+import { formatPrice } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 
 export const SeatSelectionFreeEntry = ({

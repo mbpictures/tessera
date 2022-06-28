@@ -1,15 +1,15 @@
 import { SeatRow, SeatSelectionRow } from "./SeatSelectionRow";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Card, Grid } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     SeatOrder,
     selectOrder,
     setOrder
-} from "../../store/reducers/orderReducer";
+} from "../../../store/reducers/orderReducer";
 import { useEffect, useRef, useState } from "react";
 import { Seat } from "./SeatMapSeat";
-import { PaymentOverview } from "../PaymentOverview";
+import { PaymentOverview } from "../../PaymentOverview";
 
 export type SeatMap = Array<SeatRow>;
 

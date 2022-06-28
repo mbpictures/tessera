@@ -9,13 +9,12 @@ import {
 } from "@mui/material";
 import { EventSelection } from "../../EventSelection/EventSelection";
 import React, { useState } from "react";
-import { SeatSelectionMap } from "../../seatmap/SeatSelectionMap";
-import { SeatSelectionFree } from "../../SeatSelectionFree";
 import { Provider } from "react-redux";
 import { store } from "../../../store/store";
 import { setAddress, setEmail } from "../../../store/reducers/personalInformationReducer";
 import { AddressComponent } from "../../form/AddressComponent";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { SeatSelectionFactory } from "../../seatselection/SeatSelectionFactory";
 
 interface props {
     open: boolean;
@@ -28,30 +27,6 @@ const AddOrderInner = ({open, events, categories}: props) => {
     const [event, setEvent] = useState(null);
     const dispatch = useAppDispatch();
 
-    let seatSelection;
-    let containerStyles: React.CSSProperties = {
-        alignItems: "center",
-        justifyContent: "center"
-    };
-
-    if (event) {
-        switch (event?.seatType) {
-            case "seatmap":
-                seatSelection = (
-                    <SeatSelectionMap
-                        categories={categories}
-                        seatSelectionDefinition={JSON.parse(event.seatMap.definition)}
-                        hideSummary
-                    />
-                );
-                containerStyles.width = "100%";
-                break;
-            case "free":
-            default:
-                seatSelection = <SeatSelectionFree categories={categories} />;
-        }
-    }
-
     return (
         <Dialog open={open} fullWidth>
             <DialogTitle>Add Order</DialogTitle>
@@ -63,7 +38,13 @@ const AddOrderInner = ({open, events, categories}: props) => {
                             <EventSelection events={events} onChange={(id) => setEvent(events.find(event => event.id === id))} />
                             {
                                 event && (
-                                    seatSelection
+                                    <SeatSelectionFactory
+                                        categories={categories}
+                                        seatType={event.seatType}
+                                        seatSelectionDefinition={event.seatMap ? JSON.parse(event.seatMap?.definition) : null}
+                                        noWrap
+                                        hideSummary
+                                    />
                                 )
                             }
                         </Stack>

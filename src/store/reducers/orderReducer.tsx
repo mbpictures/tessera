@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { Seat } from "../../components/seatmap/SeatMapSeat";
+import { Seat } from "../../components/seatselection/seatmap/SeatMapSeat";
 
 interface OrderState {
     order: IOrder;

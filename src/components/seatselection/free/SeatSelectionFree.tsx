@@ -3,14 +3,14 @@ import { SeatSelectionFreeEntry } from "./SeatSelectionFreeEntry";
 import { Box } from "@mui/system";
 import AddIcon from "@mui/icons-material/Add";
 import React, { useEffect } from "react";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector } from "../../../store/hooks";
 import {
     FreeSeatOrder,
     selectOrder,
     setOrder
-} from "../store/reducers/orderReducer";
+} from "../../../store/reducers/orderReducer";
 import { useDispatch } from "react-redux";
-import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../constants/util";
+import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { motion } from "framer-motion";
 

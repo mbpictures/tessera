@@ -1,16 +1,14 @@
 import React from "react";
-import { Grid } from "@mui/material";
 import { Step } from "../../components/Step";
 import prisma from "../../lib/prisma";
-import { SeatSelectionFree } from "../../components/SeatSelectionFree";
 import {
-    SeatMap,
-    SeatSelectionMap
-} from "../../components/seatmap/SeatSelectionMap";
+    SeatMap
+} from "../../components/seatselection/seatmap/SeatSelectionMap";
 import { SeatOrder } from "../../store/reducers/orderReducer";
 import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
+import { SeatSelectionFactory } from "../../components/seatselection/SeatSelectionFactory";
 
 export default function SeatSelection({
     categories,
@@ -20,26 +18,6 @@ export default function SeatSelection({
     fallback
 }) {
     if (fallback) return null;
-
-    let seatSelection;
-    let containerStyles: React.CSSProperties = {
-        alignItems: "center",
-        justifyContent: "center"
-    };
-    switch (seatType) {
-        case "seatmap":
-            seatSelection = (
-                <SeatSelectionMap
-                    categories={categories}
-                    seatSelectionDefinition={seatMap}
-                />
-            );
-            containerStyles.width = "100%";
-            break;
-        case "free":
-        default:
-            seatSelection = <SeatSelectionFree categories={categories} />;
-    }
 
     return (
         <Step
@@ -52,9 +30,7 @@ export default function SeatSelection({
                 height: seatType === "seatmap" ? "100%" : "auto"
             }}
         >
-            <Grid container style={containerStyles}>
-                {seatSelection}
-            </Grid>
+            <SeatSelectionFactory seatSelectionDefinition={seatMap} categories={categories} seatType={seatType} />
         </Step>
     );
 }

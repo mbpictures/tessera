@@ -1,11 +1,11 @@
-import style from "./../../style/SeatMap.module.scss";
+import style from "../../../style/SeatMap.module.scss";
 import { motion } from "framer-motion";
 import { Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../../store/hooks";
-import { SeatOrder, selectOrder } from "../../store/reducers/orderReducer";
-import { SEAT_COLORS } from "../../constants/Constants";
-import { formatPrice } from "../../constants/util";
+import { useAppSelector } from "../../../store/hooks";
+import { SeatOrder, selectOrder } from "../../../store/reducers/orderReducer";
+import { SEAT_COLORS } from "../../../constants/Constants";
+import { formatPrice } from "../../../constants/util";
 import { useTheme } from "@mui/system";
 
 export interface Seat {

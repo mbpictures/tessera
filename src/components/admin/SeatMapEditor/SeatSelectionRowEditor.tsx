@@ -1,5 +1,5 @@
-import { OnSeatSelect, Seat } from "../../seatmap/SeatMapSeat";
-import { SeatRow, SeatSelectionRow } from "../../seatmap/SeatSelectionRow";
+import { OnSeatSelect, Seat } from "../../seatselection/seatmap/SeatMapSeat";
+import { SeatRow, SeatSelectionRow } from "../../seatselection/seatmap/SeatSelectionRow";
 import {
     Box,
     Button,
