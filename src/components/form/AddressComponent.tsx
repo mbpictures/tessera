@@ -5,6 +5,7 @@ import { useState } from "react";
 import countryRegionData, { Country, Region } from "country-region-data";
 import { addressValidatorMap } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
+import informationText from "../../../locale/en/information.json";
 
 const validateAddressComponent = (address: IAddress, property: string) => {
     if (addressValidatorMap[property](address)) return null;
@@ -38,13 +39,13 @@ export const AddressComponent = ({
 
         const error = validateAddressComponent(newAddress, property);
         if (property === "firstName")
-            setFirstNameError(error ? t(error) : null);
+            setFirstNameError(error ? t(error, null, {fallback: informationText[error.replace("information:", "")]}) : null);
         if (property === "lastName")
-            setLastNameError(error ? t(error) : null);
+            setLastNameError(error ? t(error, null, {fallback: informationText[error.replace("information:", "")]}) : null);
         if (property === "address")
-            setAddressError(error ? t(error) : null);
+            setAddressError(error ? t(error, null, {fallback: informationText[error.replace("information:", "")]}) : null);
         if (property === "city")
-            setCityError(error ? t(error) : null);
+            setCityError(error ? t(error, null, {fallback: informationText[error.replace("information:", "")]}) : null);
     };
 
     const handleChangeZip = (newValue: string, valid: boolean) => {
@@ -79,7 +80,7 @@ export const AddressComponent = ({
     return (
         <Stack spacing={1}>
             <TextField
-                label={t("information:firstname")}
+                label={t("information:firstname", null, {fallback: informationText.firstname})}
                 value={value.firstName ?? ""}
                 onChange={(event) =>
                     handleUpdate("firstName", event.target.value)
@@ -90,7 +91,7 @@ export const AddressComponent = ({
                 onBlur={() => handleTouched("firstname")}
             />
             <TextField
-                label={t("information:lastname")}
+                label={t("information:lastname", null, {fallback: informationText.lastname})}
                 value={value.lastName ?? ""}
                 onChange={(event) =>
                     handleUpdate("lastName", event.target.value)
@@ -101,7 +102,7 @@ export const AddressComponent = ({
                 onBlur={() => handleTouched("lastname")}
             />
             <TextField
-                label={t("information:address")}
+                label={t("information:address", null, {fallback: informationText.address})}
                 value={value.address ?? ""}
                 onChange={(event) =>
                     handleUpdate("address", event.target.value)
@@ -121,7 +122,7 @@ export const AddressComponent = ({
                 </Grid>
                 <Grid item md={8} xs={12}>
                     <TextField
-                        label={t("information:city")}
+                        label={t("information:city", null, {fallback: informationText.city})}
                         fullWidth
                         value={value.city ?? ""}
                         onChange={(event) =>
@@ -140,7 +141,7 @@ export const AddressComponent = ({
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                label={t("information:country")}
+                                label={t("information:country", null, {fallback: informationText.country})}
                                 name={"address-country-text"}
                             />
                         )}
@@ -162,7 +163,7 @@ export const AddressComponent = ({
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
-                                        label={t("information:region")}
+                                        label={t("information:region", null, {fallback: informationText.region})}
                                         name={"address-region-text"}
                                     />
                                 )}
