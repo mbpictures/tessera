@@ -188,6 +188,10 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                 categories={categories}
                 events={events}
                 onClose={() => setAddOrderOpen(false)}
+                onAdd={async () => {
+                    await refreshProps();
+                    setAddOrderOpen(false);
+                }}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
