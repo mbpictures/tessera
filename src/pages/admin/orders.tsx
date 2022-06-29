@@ -34,6 +34,9 @@ import { useTheme } from "@mui/system";
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { SelectionList } from "../../components/admin/SelectionList";
 import { FullSizeLoading } from "../../components/FullSizeLoading";
+import { AddOrder } from "../../components/admin/dialogs/AddOrder";
+import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
+import { SeatOrder } from "../../store/reducers/orderReducer";
 
 const COLUMNS = [
     "Event",
@@ -62,11 +65,12 @@ const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element |
     )
 }
 
-export default function Orders({ permissionDenied, count}) {
+export default function Orders({ permissionDenied, count, categories, events}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
     const [markAsPaidOpen, setMarkAsPaidOpen] = useState(false);
+    const [addOrderOpen, setAddOrderOpen] = useState(false);
     const [amount, setAmount] = useState("25");
     const [page, setPage] = useState("0");
     const theme = useTheme();
@@ -181,6 +185,16 @@ export default function Orders({ permissionDenied, count}) {
                 hasPaid={hasPayed}
                 hasPaidIcon={hasPayedIcon}
             />
+            <AddOrder
+                open={addOrderOpen}
+                categories={categories}
+                events={events}
+                onClose={() => setAddOrderOpen(false)}
+                onAdd={async () => {
+                    await refreshProps();
+                    setAddOrderOpen(false);
+                }}
+            />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
             </Box>
@@ -192,6 +206,14 @@ export default function Orders({ permissionDenied, count}) {
                         variant={"outlined"}
                     >
                         Mark orders as paid
+                    </Button>
+                    <Button
+                        fullWidth={isMdDown}
+                        onClick={() => setAddOrderOpen(true)}
+                        variant={"outlined"}
+                        color="secondary"
+                    >
+                        Add Order
                     </Button>
                 </Grid>
                 <Grid item xs={12} md={6} display={"flex"} justifyContent={"flex-end"}>
@@ -334,9 +356,42 @@ export async function getServerSideProps(context: NextPageContext) {
         context,
         async () => {
             const count = await prisma.order.count();
+            const categories = await prisma.category.findMany();
+            let events = await prisma.event.findMany({
+                include: {
+                    seatMap: true,
+                    orders: true
+                }
+            });
+
+            events = events.map(event => {
+                if (event.seatMap?.definition) {
+                    let baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
+                    baseMap = baseMap.map((row) =>
+                        row.map((seat) => {
+                            const isOccupied = event.orders.some((order) =>
+                                (JSON.parse(order.order) as SeatOrder).seats.some(
+                                    (value) => value.id === seat.id
+                                )
+                            );
+                            return {
+                                ...seat,
+                                occupied: isOccupied
+                            };
+                        })
+                    );
+                    event.seatMap.definition = JSON.stringify(baseMap);
+                }
+                delete event.orders;
+
+                return event;
+            });
+
             return {
                 props: {
-                    count
+                    count,
+                    categories,
+                    events
                 }
             };
         },

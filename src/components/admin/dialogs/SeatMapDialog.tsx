@@ -15,8 +15,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { SeatSelectionRowEditor } from "../SeatMapEditor/SeatSelectionRowEditor";
-import { Seat } from "../../seatmap/SeatMapSeat";
-import { SeatMap } from "../../seatmap/SeatSelectionMap";
+import { Seat } from "../../seatselection/seatmap/SeatMapSeat";
+import { SeatMap } from "../../seatselection/seatmap/SeatSelectionMap";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";

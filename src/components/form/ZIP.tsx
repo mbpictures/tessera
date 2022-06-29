@@ -2,6 +2,7 @@ import { TextField } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import zip from "zippo";
 import useTranslation from "next-translate/useTranslation";
+import informationText from "../../../locale/en/information.json";
 
 export const ZIP = ({
     value,
@@ -23,12 +24,12 @@ export const ZIP = ({
             setError(undefined);
             return;
         }
-        setError(t("information:zip-error"));
+        setError(t("information:zip-error", null, {fallback: informationText["zip-error"]}));
     };
 
     return (
         <TextField
-            label={t("information:zip")}
+            label={t("information:zip", null, {fallback: informationText.zip})}
             fullWidth
             error={error != undefined}
             helperText={touched && error}

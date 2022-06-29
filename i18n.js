@@ -13,6 +13,7 @@ module.exports = {
         "/payment": ["payment"],
         "/seatselection/[id]": ["seatselection"]
     },
+    "logger": () => {},
     "logBuild": false,
     "loadLocaleFrom": async (lang, ns) => {
         const prisma = new PrismaClient();

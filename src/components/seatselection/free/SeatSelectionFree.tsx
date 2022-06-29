@@ -3,16 +3,18 @@ import { SeatSelectionFreeEntry } from "./SeatSelectionFreeEntry";
 import { Box } from "@mui/system";
 import AddIcon from "@mui/icons-material/Add";
 import React, { useEffect } from "react";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector } from "../../../store/hooks";
 import {
     FreeSeatOrder,
     selectOrder,
     setOrder
-} from "../store/reducers/orderReducer";
+} from "../../../store/reducers/orderReducer";
 import { useDispatch } from "react-redux";
-import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../constants/util";
+import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { motion } from "framer-motion";
+import seatSelectionText from "../../../../locale/en/seatselection.json";
+import commonText from "../../../../locale/en/common.json";
 
 export const SeatSelectionFree = ({ categories }) => {
     const order = useAppSelector(selectOrder) as FreeSeatOrder;
@@ -84,7 +86,7 @@ export const SeatSelectionFree = ({ categories }) => {
         >
             <motion.div layout>
                 <Typography variant={"body1"} alignSelf={"center"}>
-                    {t("seatselection:no-seat-reservation")}
+                    {t("seatselection:no-seat-reservation", null, {fallback: ""})}
                 </Typography>
             </motion.div>
             <Grid container spacing={2} justifyContent={"center"}>
@@ -115,11 +117,11 @@ export const SeatSelectionFree = ({ categories }) => {
                     }
                     id={"seat-selection-free-add-category"}
                 >
-                    <AddIcon /> {t("seatselection:add-category")}
+                    <AddIcon /> {t("seatselection:add-category", null, {fallback: seatSelectionText["add-category"]})}
                 </Button>
                 <Box height={20} />
                 <Typography suppressHydrationWarning>
-                    {t("common:total-price")}:{" "}
+                    {t("common:total-price", null, {fallback: commonText["total-price"]})}:{" "}
                     <b id={"seat-selection-free-total-price"}>
                         {
                             categories.length > 0 && formatPrice(order.totalPrice, categories[0]?.currency)

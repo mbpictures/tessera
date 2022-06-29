@@ -15,11 +15,12 @@ export const eventSelectionSlice = createSlice({
     reducers: {
         setEvent: (state, action: PayloadAction<number>) => {
             state.selectedEvent = action.payload;
-        }
+        },
+        resetEvent: () => initialState
     }
 });
 
-export const { setEvent } = eventSelectionSlice.actions;
+export const { setEvent, resetEvent } = eventSelectionSlice.actions;
 export const selectEventSelected = (state: RootState) =>
     state.selectedEvent.selectedEvent;
 export default eventSelectionSlice.reducer;

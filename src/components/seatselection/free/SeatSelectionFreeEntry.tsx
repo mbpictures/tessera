@@ -13,11 +13,13 @@ import { useState } from "react";
 import { Box } from "@mui/system";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { FreeSeatOrder } from "../store/reducers/orderReducer";
+import { FreeSeatOrder } from "../../../store/reducers/orderReducer";
 import { motion } from "framer-motion";
 import { Delete } from "@mui/icons-material";
-import { formatPrice } from "../constants/util";
+import { formatPrice } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
+import seatSelectionText from "../../../../locale/en/seatselection.json";
+import commonText from "../../../../locale/en/common.json";
 
 export const SeatSelectionFreeEntry = ({
     onChange,
@@ -94,7 +96,7 @@ export const SeatSelectionFreeEntry = ({
                 >
                     <TextField
                         id="outlined-basic"
-                        label={t("common:amount")}
+                        label={t("common:amount", null, {fallback: commonText["amount"]})}
                         variant="outlined"
                         value={ticketAmount === -1 ? "" : ticketAmount}
                         onChange={handleChange}
@@ -118,7 +120,7 @@ export const SeatSelectionFreeEntry = ({
                         </IconButton>
                     </Stack>
                 </Box>
-                <InputLabel id={"category-selection" + index}>{t("common:category")}</InputLabel>
+                <InputLabel id={"category-selection" + index}>{t("common:category", null, {fallback: commonText["category"]})}</InputLabel>
                 <Select
                     value={category === -1 ? "" : category}
                     onChange={handleCategoryChange}
@@ -142,7 +144,7 @@ export const SeatSelectionFreeEntry = ({
                 >
                     {price > 0 && (
                         <Typography variant={"body1"}>
-                            {t("common:price")}:{" "}
+                            {t("common:price", null, {fallback: commonText["price"]})}:{" "}
                             <b>{formatPrice(price, categories[0].currency)}</b>
                         </Typography>
                     )}
@@ -157,7 +159,7 @@ export const SeatSelectionFreeEntry = ({
                             style={{ alignSelf: "center" }}
                             className={'seat-selection-free-remove-category'}
                         >
-                            {t("seatselection:remove-category")}
+                            {t("seatselection:remove-category", null, {fallback: seatSelectionText["remove-category"]})}
                         </Button>
                     )
                 }

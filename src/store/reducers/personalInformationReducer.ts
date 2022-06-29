@@ -67,7 +67,8 @@ export const personalInformationSlice = createSlice({
         },
         setUserId: (state, action: PayloadAction<string>) => {
             state.userId = action.payload;
-        }
+        },
+        resetPersonalInformation: () => initialState
     }
 });
 
@@ -82,7 +83,8 @@ export const {
     setCountry,
     setRegion,
     setShipping,
-    setUserId
+    setUserId,
+    resetPersonalInformation
 } = personalInformationSlice.actions;
 export const selectPersonalInformation = (state: RootState) =>
     state.personalInformation;

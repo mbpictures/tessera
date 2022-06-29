@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { Seat } from "../../components/seatmap/SeatMapSeat";
+import { Seat } from "../../components/seatselection/seatmap/SeatMapSeat";
 
 interface OrderState {
     order: IOrder;
@@ -37,10 +37,11 @@ export const orderSlice = createSlice({
         },
         setOrderId: (state, action: PayloadAction<string>) => {
             state.order.orderId = action.payload;
-        }
+        },
+        resetOrder: () => initialState
     }
 });
 
-export const { setOrder, setOrderId } = orderSlice.actions;
+export const { setOrder, setOrderId, resetOrder } = orderSlice.actions;
 export const selectOrder = (state: RootState) => state.order.order;
 export default orderSlice.reducer;
