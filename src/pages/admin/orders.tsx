@@ -35,6 +35,8 @@ import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { SelectionList } from "../../components/admin/SelectionList";
 import { FullSizeLoading } from "../../components/FullSizeLoading";
 import { AddOrder } from "../../components/admin/dialogs/AddOrder";
+import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
+import { SeatOrder } from "../../store/reducers/orderReducer";
 
 const COLUMNS = [
     "Event",
@@ -355,11 +357,36 @@ export async function getServerSideProps(context: NextPageContext) {
         async () => {
             const count = await prisma.order.count();
             const categories = await prisma.category.findMany();
-            const events = await prisma.event.findMany({
+            let events = await prisma.event.findMany({
                 include: {
-                    seatMap: true
+                    seatMap: true,
+                    orders: true
                 }
             });
+
+            events = events.map(event => {
+                if (event.seatMap?.definition) {
+                    let baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
+                    baseMap = baseMap.map((row) =>
+                        row.map((seat) => {
+                            const isOccupied = event.orders.some((order) =>
+                                (JSON.parse(order.order) as SeatOrder).seats.some(
+                                    (value) => value.id === seat.id
+                                )
+                            );
+                            return {
+                                ...seat,
+                                occupied: isOccupied
+                            };
+                        })
+                    );
+                    event.seatMap.definition = JSON.stringify(baseMap);
+                }
+                delete event.orders;
+
+                return event;
+            });
+
             return {
                 props: {
                     count,
