@@ -1,11 +1,11 @@
 import {
     Accordion,
     AccordionDetails,
-    AccordionSummary,
+    AccordionSummary, AppBar,
     Dialog,
     DialogContent,
-    DialogTitle,
-    Stack, TextField
+    IconButton, Slide,
+    Stack, TextField, Toolbar, Typography
 } from "@mui/material";
 import { EventSelection } from "../../EventSelection/EventSelection";
 import React, { useEffect, useState } from "react";
@@ -34,6 +34,17 @@ import { ConfirmDialog } from "./ConfirmDialog";
 import { resetOrder, setOrderId } from "../../../store/reducers/orderReducer";
 import { resetPayment, setPaymentStatus } from "../../../store/reducers/paymentReducer";
 import { LoadingButton } from "@mui/lab";
+import CloseIcon from "@mui/icons-material/Close";
+import { TransitionProps } from "@mui/material/transitions";
+
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props}>{props.children}</Slide>;
+});
 
 interface props {
     open: boolean;
@@ -85,8 +96,26 @@ const AddOrderInner = ({open, events, categories, onClose, onAdd}: props) => {
 
     return (
         <>
-            <Dialog open={open} fullWidth onClose={onClose}>
-                <DialogTitle>Add Order</DialogTitle>
+            <Dialog open={open} fullScreen onClose={onClose} TransitionComponent={Transition}>
+                <AppBar sx={{ position: "relative" }}>
+                    <Toolbar>
+                        <Typography
+                            sx={{ ml: 2, flex: 1 }}
+                            variant="h6"
+                            component="div"
+                        >
+                            Add Order
+                        </Typography>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={onClose}
+                            aria-label="close"
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
                 <DialogContent>
                     <Accordion>
                         <AccordionSummary>Seat Selection</AccordionSummary>
