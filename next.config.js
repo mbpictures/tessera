@@ -4,7 +4,7 @@ const nextTranslate = require("next-translate");
 
 module.exports = nextTranslate({
     future: {
-        webpack5: true,
+        webpack5: true
     },
     webpack: function (config, { dev, isServer }) {
         // Fixes npm packages that depend on `fs` module
@@ -15,7 +15,7 @@ module.exports = nextTranslate({
         if (!dev) {
             config.plugins.push(
                 new CopyPlugin({
-                    patterns: [{ from: "src/assets", to: "assets" }],
+                    patterns: [{ from: "src/assets", to: "assets" }]
                 })
             )
         }
@@ -32,7 +32,5 @@ module.exports = nextTranslate({
 
         return config
     },
-    experimental: {
-        outputStandalone: true,
-    },
+    output: "standalone"
 });
