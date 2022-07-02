@@ -55,7 +55,7 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
     - name: Run E2E tests 🧪
-      uses: cypress-io/github-action@v2
+      uses: cypress-io/github-action@v4.1.1
       with:
         build: npm run cypress:build
         start: npm run start:test
@@ -64,7 +64,7 @@ jobs:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Run Component tests 🧪
-      uses: cypress-io/github-action@v2
+      uses: cypress-io/github-action@v4.1.1
       with:
         install: false
         command: npx cypress run-ct
