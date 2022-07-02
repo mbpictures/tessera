@@ -22,7 +22,7 @@
     "cypress:build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && next build",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:run-ct": "npx cypress run-ct",
+    "cypress:run-ct": "npx cypress run --component",
     "cypress:cov": "npx nyc report --reporter=text-summary"
   },
   "cacheDirectories": [
@@ -116,8 +116,8 @@
     "@types/react-redux": "^7.1.24",
     "babel-plugin-istanbul": "^6.1.1",
     "cross-env": "^7.0.3",
-    "cypress": "^9.5.4",
-    "cypress-real-events": "^1.7.0",
+    "cypress": "^10.3.0",
+    "cypress-real-events": "^1.7.1",
     "eslint": "8.17.0",
     "eslint-config-next": "^12.2.0",
     "html-webpack-plugin": "^5.5.0",
