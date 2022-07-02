@@ -1,4 +1,4 @@
-import { PaymentFactory, PaymentType } from "../../../../src/store/factories/payment/PaymentFactory";
+import { PaymentFactory, PaymentType } from "../../../src/store/factories/payment/PaymentFactory";
 
 describe("Payment Factories", () => {
     it("Factories available", () => {

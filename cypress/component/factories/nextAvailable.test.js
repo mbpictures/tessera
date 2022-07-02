@@ -1,5 +1,5 @@
-import { STEP_URLS } from "../../../../src/constants/Constants";
-import { NextAvailableFactory } from "../../../../src/store/factories/nextAvailable/NextAvailableFactory";
+import { STEP_URLS } from "../../../src/constants/Constants";
+import { NextAvailableFactory } from "../../../src/store/factories/nextAvailable/NextAvailableFactory";
 
 describe("Next Available Factories", () => {
     it("Factories available", () => {

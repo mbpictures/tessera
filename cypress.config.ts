@@ -16,7 +16,7 @@ export default defineConfig({
   },
   component: {
     setupNodeEvents() {},
-    specPattern: 'cypress/**/*.test.{js,ts,jsx,tsx}',
+    specPattern: 'cypress/component/**/*.test.{js,ts,jsx,tsx}',
     devServer: {
       framework: 'next',
       bundler: 'webpack',

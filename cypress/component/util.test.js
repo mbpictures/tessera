@@ -1,4 +1,4 @@
-import { arrayEquals, calculateTotalPrice, formatPrice, totalTicketAmount } from "../../../src/constants/util";
+import { arrayEquals, calculateTotalPrice, formatPrice, totalTicketAmount } from "../../src/constants/util";
 
 describe("Utils", () => {
     it("Calculate Total Price", () => {
