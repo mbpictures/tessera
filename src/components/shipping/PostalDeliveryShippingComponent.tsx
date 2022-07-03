@@ -8,7 +8,7 @@ import {
     selectPersonalInformation,
     setShipping
 } from "../../store/reducers/personalInformationReducer";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 export const PostalDeliveryShippingComponent = () => {
     const { t } = useTranslation();

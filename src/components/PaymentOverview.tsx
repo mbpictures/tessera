@@ -12,7 +12,7 @@ import React from "react";
 import { useAppSelector } from "../store/hooks";
 import { selectOrder } from "../store/reducers/orderReducer";
 import { formatPrice } from "../constants/util";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { OrderFactory } from "../store/factories/order/OrderFactory";
 
 export const PaymentOverview = ({

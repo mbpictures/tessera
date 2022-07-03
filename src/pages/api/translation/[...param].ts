@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { i18n } from "../../../../next-i18next.config";
+import i18nConfig from "../../../../i18n";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "GET")
@@ -8,5 +8,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if ((param?.length ?? 0) < 2)
         return res.status(400).end("Namespace or locale missing");
 
-    return res.status(200).json(await i18n.loadLocaleFrom(param[1], param[0]));
+    return res.status(200).json(await i18nConfig.loadLocaleFrom(param[1], param[0]));
 }

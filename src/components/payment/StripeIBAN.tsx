@@ -14,7 +14,7 @@ import { selectEventSelected } from "../../store/reducers/eventSelectionReducer"
 import { selectPersonalInformation } from "../../store/reducers/personalInformationReducer";
 import { StripeIBANPayment } from "../../store/factories/payment/StripeIBANPayment";
 import { Typography } from "@mui/material";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 export const StripeIBAN = () => {
     const selector = useAppSelector(selectPayment);

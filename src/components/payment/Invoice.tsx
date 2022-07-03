@@ -8,7 +8,7 @@ import {
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
 import { IOrder, selectOrder } from "../../store/reducers/orderReducer";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);

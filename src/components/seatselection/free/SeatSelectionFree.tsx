@@ -11,7 +11,7 @@ import {
 } from "../../../store/reducers/orderReducer";
 import { useDispatch } from "react-redux";
 import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../../../constants/util";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 import { motion } from "framer-motion";
 import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";

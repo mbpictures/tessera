@@ -9,7 +9,7 @@ import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 export const StripeCard = () => {
     const selector = useAppSelector(selectPayment);

@@ -1,6 +1,6 @@
 import { getAdminServerSideProps } from "../../constants/serverUtil";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
-import { i18n } from "../../../next-i18next.config";
+import i18nConfig from "../../../i18n";
 import { AdminLayout } from "../../components/admin/layout";
 import {
     Accordion, AccordionDetails,
@@ -122,17 +122,20 @@ export async function getServerSideProps(context) {
     return await getAdminServerSideProps(
         context,
         async () => {
-            const localization = i18n.namespaces.reduce((result, namespace) => ({...result, [namespace]: {}}), {});
-            for (let namespace of i18n.namespaces) {
-                for (let locale of i18n.locales) {
-                    localization[namespace][locale] = await i18n.loadLocaleFrom(locale, namespace);
+            let namespaces = (Object.values(i18nConfig.pages).flat() as string[])
+                .filter((val, index, array) => array.indexOf(val) === index);
+
+            const localization = namespaces.reduce((result, namespace) => ({...result, [namespace]: {}}), {});
+            for (let namespace of namespaces) {
+                for (let locale of i18nConfig.locales) {
+                    localization[namespace][locale] = await i18nConfig.loadLocaleFrom(locale, namespace);
                 }
             }
             return {
                 props: {
                     localization,
-                    defaultLocale: i18n.defaultLocale,
-                    locales: i18n.locales
+                    defaultLocale: i18nConfig.defaultLocale,
+                    locales: i18nConfig.locales
                 }
             };
         },

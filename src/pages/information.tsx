@@ -14,8 +14,8 @@ import { AddressComponent } from "../components/form/AddressComponent";
 import { Box, useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
+import loadNamespaces from "next-translate/loadNamespaces";
 
 const validateEmail = (email) => {
     const re =
@@ -127,7 +127,7 @@ export async function getStaticProps({ locale }) {
         props: {
             deliveryMethods,
             theme: await getOption(Options.Theme),
-            ...(await serverSideTranslations(locale, ['information', 'common']))
+            ...(await loadNamespaces({ locale, pathname: '/information' }))
         }
     };
 }

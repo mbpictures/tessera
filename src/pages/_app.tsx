@@ -13,8 +13,9 @@ import { SessionProviderProps } from "next-auth/react";
 import { SnackbarProviderProps } from "notistack";
 import dynamic from "next/dynamic";
 import { StoreThemeConfig } from "../components/StoreThemeConfig";
+import appWithI18n from "next-translate/appWithI18n";
+import i18nConfig from "../../i18n";
 import axios from "axios";
-import { appWithTranslation } from "next-i18next";
 
 const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pageProps }) => {
     const router = useRouter();
@@ -72,4 +73,7 @@ const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pa
     );
 }
 
-export default appWithTranslation(Global);
+export default appWithI18n(Global, {
+    ...i18nConfig,
+    skipInitialProps: true
+});

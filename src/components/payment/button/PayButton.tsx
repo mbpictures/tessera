@@ -14,7 +14,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import { LoadingButton } from "@mui/lab";
 import React from "react";
 import { selectNextStateAvailable } from "../../../store/reducers/nextStepAvailableReducer";
-import { useTranslation } from "next-i18next";
+import useTranslation from "next-translate/useTranslation";
 
 export const PayButton = () => {
     const order = useAppSelector(selectOrder);
