@@ -137,7 +137,7 @@ export const revalidateBuild = async (res: NextApiResponse, page: string | strin
     }
 
     try {
-        await res.unstable_revalidate(page);
+        await res.revalidate(page);
     } catch (e) {
         console.log(e);
     }
