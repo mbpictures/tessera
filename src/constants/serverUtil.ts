@@ -5,6 +5,7 @@ import { getSession } from "next-auth/react";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../lib/prisma";
 import { Permission, PermissionSection, PermissionType } from "./interfaces";
+import i18nConfig from "../../i18n";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -130,9 +131,16 @@ export const formatPrice = (
     }).format(price);
 };
 
-export const revalidateBuild = async (res: NextApiResponse, page: string | string[]) => {
+export const revalidateBuild = async (res: NextApiResponse, page: string | string[], addLocale: boolean = true) => {
     if (Array.isArray(page)) {
         await Promise.all(page.map(async (a) => await revalidateBuild(res, a)));
+        return;
+    }
+    if (addLocale) {
+        const pages = i18nConfig.locales
+            .map(locale => (locale === i18nConfig.defaultLocale ? "" : "/" + locale) + page)
+            .map(value => value !== "/" ? value.replace(/\/+$/, '') : "/");
+        await Promise.all(pages.map(async (a) => await revalidateBuild(res, a, false)))
         return;
     }
 
