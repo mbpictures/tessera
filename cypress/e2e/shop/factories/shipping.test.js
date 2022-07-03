@@ -1,4 +1,4 @@
-import { ShippingFactory, ShippingType } from "../../../src/store/factories/shipping/ShippingFactory";
+import { ShippingFactory, ShippingType } from "../../../../src/store/factories/shipping/ShippingFactory";
 import { faker } from '@faker-js/faker';
 import countryData from "country-region-data";
 
