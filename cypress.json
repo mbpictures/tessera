@@ -1,0 +1,14 @@
+{
+    "baseUrl": "http://localhost:3000",
+    "defaultCommandTimeout": 16000,
+    "pageLoadTimeout": 60000,
+    "projectId": "5z1jcc",
+    "chromeWebSecurity": false,
+    "e2e": {
+        "testFiles": "**/*.spec.{js,ts,jsx,tsx}"
+    },
+    "component": {
+        "testFiles": "**/*.test.{js,ts,jsx,tsx}",
+        "componentFolder": "cypress"
+    }
+}

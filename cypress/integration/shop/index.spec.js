@@ -250,12 +250,12 @@ describe("Buy tickets", () => {
     it("Process Payment", () => {
         cy.purchaseTicket().then(({email, firstName, lastName}) => {
             cy.task("getLastEmail", email).then(result => {
-
-                expect(result.html).to.contain(`Hello ${firstName} ${lastName}`);
-                expect(result.html).to.not.contain('As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
-                expect(result.html).to.contain('We hereby confirm your\n' +
-'                                                    order. Enclosed you will\n' +
-'                                                    find an invoice.');
+                cy.state('document').write(result.html)
+                cy.get("body").should("contain.text", `Hello ${firstName} ${lastName}`);
+                cy.get("body").should("not.contain.text", 'As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
+                cy.get("body").should("contain.text", 'We hereby confirm your\n' +
+                    '                                                    order. Enclosed you will\n' +
+                    '                                                    find an invoice.');
             });
         });
     });
