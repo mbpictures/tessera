@@ -7,8 +7,8 @@ import {
 import { SeatOrder } from "../../store/reducers/orderReducer";
 import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
-import loadNamespaces from "next-translate/loadNamespaces";
 import { SeatSelectionFactory } from "../../components/seatselection/SeatSelectionFactory";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export default function SeatSelection({
     categories,
@@ -91,7 +91,7 @@ export async function getStaticProps({ params, locale }) {
             seatType: event.seatType,
             seatMap: seatmap,
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' }))
+            ...(await serverSideTranslations(locale, ['seatselection', 'common']))
         }
     };
 }

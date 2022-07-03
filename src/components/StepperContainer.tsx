@@ -7,7 +7,7 @@ import { selectNextStateAvailable } from "../store/reducers/nextStepAvailableRed
 import { useAppSelector } from "../store/hooks";
 import style from "../style/StepperContainer.module.scss";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslation } from "next-i18next";
 import { LanguageSelection } from "./LanguageSelection";
 
 interface Props {

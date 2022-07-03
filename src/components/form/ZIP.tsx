@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import zip from "zippo";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslation } from "next-i18next";
 import informationText from "../../../locale/en/information.json";
 
 export const ZIP = ({

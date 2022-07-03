@@ -4,7 +4,7 @@ import { ZIP } from "./ZIP";
 import { useState } from "react";
 import countryRegionData, { Country, Region } from "country-region-data";
 import { addressValidatorMap } from "../../constants/util";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslation } from "next-i18next";
 import informationText from "../../../locale/en/information.json";
 
 const validateAddressComponent = (address: IAddress, property: string) => {

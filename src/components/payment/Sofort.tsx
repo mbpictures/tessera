@@ -10,7 +10,7 @@ import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import Image from "next/image";
 import logo from "../../assets/payment/klarna.svg";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslation } from "next-i18next";
 
 export const Sofort = () => {
     const selector = useAppSelector(selectPayment);

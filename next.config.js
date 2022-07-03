@@ -1,8 +1,9 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const nextTranslate = require("next-translate");
+const { i18n } = require('./next-i18next.config');
 
-module.exports = nextTranslate({
+module.exports = {
+    i18n,
     future: {
         webpack5: true
     },
@@ -33,4 +34,4 @@ module.exports = nextTranslate({
         return config
     },
     output: "standalone"
-});
+};

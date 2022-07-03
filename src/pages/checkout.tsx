@@ -4,7 +4,7 @@ import { Typography } from "@mui/material";
 import { Box, useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
-import loadNamespaces from "next-translate/loadNamespaces";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export default function Checkout({ direction }) {
     const theme = useTheme();
@@ -72,7 +72,7 @@ export async function getStaticProps({ locale }) {
     return {
         props: {
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/checkout' }))
+            ...(await serverSideTranslations(locale, ['common']))
         }
     }
 }

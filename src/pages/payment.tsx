@@ -22,7 +22,7 @@ import { PaymentOverview } from "../components/PaymentOverview";
 import { PayButton } from "../components/payment/button/PayButton";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
-import loadNamespaces from "next-translate/loadNamespaces";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export default function Payment({ categories, direction, paymentMethods }) {
     const payment = useAppSelector(selectPayment);
@@ -145,7 +145,7 @@ export async function getStaticProps({ locale }) {
             categories: categories,
             paymentMethods,
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/payment' }))
+            ...(await serverSideTranslations(locale, ['payment', 'common']))
         }
     };
 }

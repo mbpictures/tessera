@@ -8,7 +8,7 @@ import { GalleryEventSelection } from "../components/EventSelection/GalleryEvent
 import { EventSelection } from "../components/EventSelection/EventSelection";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
-import loadNamespaces from "next-translate/loadNamespaces";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export default function Home({ events, direction, title, subtitle }) {
     const dispatch = useAppDispatch();
@@ -50,7 +50,7 @@ export async function getStaticProps({ locale }) {
             title: await getOption(Options.ShopTitle),
             subtitle: await getOption(Options.ShopSubtitle),
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/' }))
+            ...(await serverSideTranslations(locale, ['common']))
         }
     };
 }

@@ -17,7 +17,7 @@ import { FreeSeatOrder } from "../../../store/reducers/orderReducer";
 import { motion } from "framer-motion";
 import { Delete } from "@mui/icons-material";
 import { formatPrice } from "../../../constants/util";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslation } from "next-i18next";
 import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";
 
