@@ -33,7 +33,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
                 data: {
                     namespace: param[0],
                     key: param[1],
-                    translations: req.body
+                    translations: typeof req.body === "string" ? req.body : JSON.stringify(req.body)
                 }
             });
             await revalidateEventPages(res, ["/", "/information", "/payment", "/checkout"]);
@@ -50,7 +50,7 @@ export const translation = async(req: NextApiRequest, res: NextApiResponse) => {
                 key: param[1],
             },
             data: {
-                translations: newBody
+                translations: JSON.stringify(newBody)
             }
         });
         await revalidateEventPages(res, ["/", "/information", "/payment", "/checkout"]);
