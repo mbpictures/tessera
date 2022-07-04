@@ -4,6 +4,7 @@ import {
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
 import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
+import { json2csvAsync } from 'json-2-csv';
 
 function setProperty(object, path, value) {
     const pList = path.split(".");
@@ -37,7 +38,7 @@ export default async function handler(
                 tickets: true
             }
         }
-        let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName, sorting}: any = req.query;
+        let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName, sorting, exportFile}: any = req.query;
 
         if (amount) {
             request["take"] = parseInt(amount as string);
@@ -72,8 +73,17 @@ export default async function handler(
             }));
         }
 
-
         const orders = await prisma.order.findMany(request);
+
+        if (exportFile && exportFile === "csv") {
+            res.setHeader("Content-Type", "text/csv");
+            const csv = await json2csvAsync(orders, {
+                prependHeader: true,
+                emptyFieldValue: ""
+            })
+            res.status(200).send(csv);
+        }
+
         res.status(200).json(orders);
         return;
     }

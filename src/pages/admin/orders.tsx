@@ -7,7 +7,7 @@ import {
     TableBody,
     TableCell, TableFooter,
     TableHead, TablePagination,
-    TableRow, TableSortLabel,
+    TableRow, TableSortLabel, Tooltip,
     Typography, useMediaQuery
 } from "@mui/material";
 import {
@@ -37,6 +37,9 @@ import { FullSizeLoading } from "../../components/FullSizeLoading";
 import { AddOrder } from "../../components/admin/dialogs/AddOrder";
 import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
 import { SeatOrder } from "../../store/reducers/orderReducer";
+import DownloadIcon from '@mui/icons-material/Download';
+import omitBy from 'lodash/omitBy';
+import isEmpty from 'lodash/isEmpty';
 
 const COLUMNS = [
     "Event",
@@ -95,6 +98,10 @@ export default function Orders({ permissionDenied, count, categories, events}) {
 
     if (!session) return null;
 
+    const getOrderUrl = (additionalParams = {}): string => {
+        return "api/admin/order?" + new URLSearchParams({...omitBy(filter.current, isEmpty), ...omitBy(additionalParams, isEmpty)});
+    }
+
     const loadOrders = async (newFilter) => {
         setLoading(true);
         filter.current = {
@@ -102,7 +109,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
             ...({amount: amount, page: page}),
             ...({"sorting": Object.entries(sorting).filter(sort => sort[1] !== false).map(sort => sort[0] + ":" + sort[1]).join(",")})
         };
-        const response = await axios.get("api/admin/order?" + new URLSearchParams(filter.current));
+        const response = await axios.get(getOrderUrl());
         setOrders(response.data);
         setLoading(false);
     }
@@ -165,6 +172,10 @@ export default function Orders({ permissionDenied, count, categories, events}) {
             newSorting[name] = false;
         }
         setSorting(newSorting);
+    }
+
+    const exportCsv = () => {
+        window.location.href = window.location.origin + "/" + getOrderUrl({amount: "", page: "", exportFile: "csv"});
     }
 
     return (
@@ -236,6 +247,11 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                             header={""}
                         />
                     </Menu>
+                    <Tooltip title={"Download all orders matching current filters as csv file"}>
+                        <Button onClick={exportCsv}>
+                            <DownloadIcon />
+                        </Button>
+                    </Tooltip>
                 </Grid>
             </Grid>
             <Box position={"relative"}>
