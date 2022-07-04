@@ -18,6 +18,12 @@ interface Props {
     children?: React.ReactNode;
 }
 
+const decodeHtml = (str) => {
+    return str.replace("&shy;", "").replace(/&(\w+);/g, function(match, dec) {
+        return String.fromCharCode(dec);
+    });
+}
+
 export const StepperContainer = (props: Props) => {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState<number>(0);
@@ -74,7 +80,7 @@ export const StepperContainer = (props: Props) => {
             ref={container}
         >
             <Head>
-                <title>Ticket Shop - {t(STEPS[currentStep])}</title>
+                <title>Ticket Shop - {decodeHtml(t(STEPS[currentStep]))}</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Stepper activeStep={currentStep} alternativeLabel style={{
