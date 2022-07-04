@@ -2,14 +2,14 @@ import { AdminLayout } from "../../components/admin/layout";
 import { getAdminServerSideProps } from "../../constants/serverUtil";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
 import { getAllOptions} from "../../lib/options";
-import { Options as OptionsEnum } from "../../constants/Constants";
+import { Options as OptionsEnum, STEP_URLS } from "../../constants/Constants";
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Box, Button, InputAdornment, Link,
     Stack,
-    TextField,
+    TextField, Tooltip,
     Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -117,6 +117,16 @@ export default function Options({options, permissionDenied}) {
     const handleSaveTheme = async () => {
         try {
             await storeSetting(OptionsEnum.Theme, theme);
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    };
+
+    const handleForceRevalidate = async () => {
+        try {
+            await axios.post("api/admin/revalidate?events=true", STEP_URLS.filter(step => step !== "/seatselection/[id]"));
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -296,6 +306,18 @@ export default function Options({options, permissionDenied}) {
                         >
                             Save
                         </SaveButton>
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary id={"accordion-theme"}>
+                        Advanced
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Tooltip title={"Usefully when using a fresh build of the ticketshop with an already used database or when changes made aren't visible in ticketshop."}>
+                            <SaveButton action={handleForceRevalidate} fullWidth>
+                                Revalidate all pages
+                            </SaveButton>
+                        </Tooltip>
                     </AccordionDetails>
                 </Accordion>
             </Box>
