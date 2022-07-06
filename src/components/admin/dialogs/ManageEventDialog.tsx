@@ -359,13 +359,17 @@ export const ManageEventDialog = ({
                             >
                                 Save
                             </LoadingButton>
-                            <Button
-                                color={"error"}
-                                fullWidth
-                                onClick={() => setDeleteOpen(true)}
-                            >
-                                Delete Event
-                            </Button>
+                            {
+                                event && (
+                                    <Button
+                                        color={"error"}
+                                        fullWidth
+                                        onClick={() => setDeleteOpen(true)}
+                                    >
+                                        Delete Event
+                                    </Button>
+                                )
+                            }
                         </Stack>
                     </Stack>
                 </DialogContent>
