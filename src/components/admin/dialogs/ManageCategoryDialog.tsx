@@ -111,7 +111,7 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category }: prop
             <Dialog open={open} onClose={onClose} fullWidth>
                 <DialogTitle>
                     {
-                        category === null ? "Create new user" : "Edit category"
+                        category === null ? "Create new category" : "Edit category"
                     }
                     <IconButton
                         onClick={onClose}
