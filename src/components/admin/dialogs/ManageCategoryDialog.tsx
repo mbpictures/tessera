@@ -1,5 +1,5 @@
 import {
-    Autocomplete,
+    Autocomplete, Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -19,9 +19,19 @@ import { SEAT_COLORS } from "../../../constants/Constants";
 // @ts-ignore
 import { Color, ColorPicker } from "mui-color";
 import { useSnackbar } from "notistack";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { useEffect, useState } from "react";
 
-export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
+interface props {
+    open: boolean;
+    onClose: () => unknown;
+    onChange?: Function;
+    category?: any;
+}
+
+export const ManageCategoryDialog = ({ open, onClose, onChange, category }: props) => {
     const { enqueueSnackbar } = useSnackbar();
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     const schema = Yup.object().shape({
         label: Yup.string().required("Name is required"),
@@ -32,21 +42,27 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
         occupiedColor: Yup.string()
     });
 
+
     const formik = useFormik({
         initialValues: {
-            label: "",
-            price: 0,
-            currency: "USD",
-            color: SEAT_COLORS.normal,
-            activeColor: SEAT_COLORS.active,
-            occupiedColor: SEAT_COLORS.occupied
+            label: category?.label ?? "",
+            price: category?.price ?? 0,
+            currency: category?.currency ?? "USD",
+            color: category?.color ?? SEAT_COLORS.normal,
+            activeColor: category?.activeColor ?? SEAT_COLORS.active,
+            occupiedColor: category?.occupiedColor ?? SEAT_COLORS.occupied
         },
         validationSchema: schema,
         onSubmit: async (values) => {
             try {
-                await axios.post("/api/admin/category", values);
+                if (category) {
+                    await axios.put("/api/admin/category/" + category.id, values);
+                }
+                else {
+                    await axios.post("/api/admin/category", values);
+                }
                 onClose();
-                onAddCategory();
+                onChange();
             } catch (e) {
                 enqueueSnackbar("Error: " + (e.response.data ?? e.message), {
                     variant: "error"
@@ -54,6 +70,31 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
             }
         }
     });
+
+    useEffect(() => {
+        if (!category) {
+            formik.resetForm();
+            return;
+        }
+        formik.setFieldValue("label", category.label);
+        formik.setFieldValue("price", category.price);
+        formik.setFieldValue("currency", category.currency);
+        formik.setFieldValue("color", category.color);
+        formik.setFieldValue("activeColor", category.activeColor);
+        formik.setFieldValue("occupiedColor", category.occupiedColor);
+    }, [category]);
+
+    const handleDeleteCategory = async () => {
+        try {
+            await axios.delete("/api/admin/category/" + category.id);
+            onClose();
+            onChange();
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    };
 
     const {
         errors,
@@ -69,7 +110,9 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
         <>
             <Dialog open={open} onClose={onClose} fullWidth>
                 <DialogTitle>
-                    Create new user
+                    {
+                        category === null ? "Create new user" : "Edit category"
+                    }
                     <IconButton
                         onClick={onClose}
                         style={{ position: "absolute", top: 8, right: 8 }}
@@ -199,20 +242,41 @@ export const AddCategoryDialog = ({ open, onClose, onAddCategory }) => {
                                         hideTextfield
                                     />
                                 </Stack>
-                                <LoadingButton
-                                    fullWidth
-                                    size="large"
-                                    type="submit"
-                                    loading={isSubmitting}
-                                    disabled={!formik.isValid}
-                                >
-                                    Add Category
-                                </LoadingButton>
+                                <Stack direction={"row"}>
+                                    <LoadingButton
+                                        fullWidth
+                                        size="large"
+                                        type="submit"
+                                        loading={isSubmitting}
+                                        disabled={!formik.isValid}
+                                    >
+                                        {
+                                            category === null ? "Add Category" : "Save"
+                                        }
+                                    </LoadingButton>
+                                    {
+                                        category && (
+                                            <Button
+                                                color={"error"}
+                                                fullWidth
+                                                onClick={() => setDeleteOpen(true)}
+                                            >
+                                                Delete Category
+                                            </Button>
+                                        )
+                                    }
+                                </Stack>
                             </Stack>
                         </Form>
                     </FormikProvider>
                 </DialogContent>
             </Dialog>
+            <ConfirmDialog
+                text={`Confirm delete of category <b>${category?.label}</b>`}
+                open={deleteOpen}
+                onClose={() => setDeleteOpen(false)}
+                onConfirm={handleDeleteCategory}
+            />
         </>
     );
 };
