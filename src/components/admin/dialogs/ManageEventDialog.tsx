@@ -21,9 +21,11 @@ import { SelectionList } from "../SelectionList";
 import ImageIcon from '@mui/icons-material/Image';
 import Image from "next/image";
 import containImageStyle from "../../../style/ContainImage.module.scss";
-import { SaveButton } from "../SaveButton";
+import { useFormik } from "formik";
+import { LoadingButton } from "@mui/lab";
 
-export const EditEventDialog = ({
+export const ManageEventDialog = ({
+    open,
     event,
     seatmaps,
     categories,
@@ -34,63 +36,78 @@ export const EditEventDialog = ({
         () => event?.categories?.map((category) => category.category.id) ?? [],
         [event]
     );
-    const [name, setName] = useState<string>("");
-    const [seatType, setSeatType] = useState<string>("");
-    const [seatMap, setSeatMap] = useState<number>(0);
     const [openPreview, setOpenPreview] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const [coverImage, setCoverImage] = useState(null);
-    const [coverImageUrl, setCoverImageUrl] = useState(null);
     const [coverImageSize, setCoverImageSize] = useState<number | null>(null);
+    const [removeCoverImage, setRemoveCoverImage] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
+    const formik = useFormik({
+        initialValues: {
+            title: event?.title ?? "",
+            seatType: event?.seatType ?? "",
+            seatMap: event?.seatMapId ?? 0,
+            selectedCategories: originalSelectedCategories
+        },
+        onSubmit: async (values) => {
+            try {
+                const data = {
+                    title: values.title,
+                    seatMapId: values.seatMap,
+                    seatType: values.seatType,
+                    ...(values.seatType === "free" && { categories: values.selectedCategories })
+                }
+                let eventId = event?.id;
+                if (!event) {
+                    // first create event, then add all information
+                    const response = await axios.post("/api/admin/events", data);
+                    eventId = response.data;
+                }
+                await axios.put("/api/admin/events/" + eventId, data);
+
+                if (coverImage)
+                    await uploadCoverImage(eventId);
+                else if (removeCoverImage)
+                    await deleteCoverImage(eventId);
+                await storeCoverImageSize(eventId);
+                onClose();
+                onChange();
+            } catch (e) {
+                enqueueSnackbar("Error: " + (e.response?.data ?? e.message), {
+                    variant: "error"
+                });
+            }
+        }
+    });
+
     useEffect(() => {
-        if (!event) return;
-        setSelectedCategories(originalSelectedCategories);
-        setName(event.title);
-        setSeatType(event.seatType);
-        setSeatMap(event.seatMapId);
-        setCoverImageUrl(event.coverImage ?? null);
-        setCoverImageSize(event.coverImageSize ?? null);
+        if (!event) {
+            formik.resetForm();
+            setCoverImageSize(null);
+            return;
+        }
+        formik.setFieldValue("title", event.title);
+        formik.setFieldValue("seatMap", event.seatMapId);
+        setCoverImageSize(event.coverImageSize);
+        formik.setFieldValue("seatType", event.seatType);
+        formik.setFieldValue("selectedCategories", originalSelectedCategories);
     }, [event, originalSelectedCategories]);
 
-    const handleSave = async () => {
-        try {
-            await axios.put("/api/admin/events/" + event.id, {
-                title: name,
-                seatMapId: seatMap,
-                seatType,
-                ...(seatType === "free" && { categories: selectedCategories })
-            });
-            if (coverImage)
-                await uploadCoverImage();
-            else if (!coverImageUrl)
-                await deleteCoverImage();
-
-            await storeCoverImageSize();
-            onChange();
-            onClose();
-        } catch (e) {
-            enqueueSnackbar("Error: " + (e.response.data ?? e.message), {
-                variant: "error"
-            });
-        }
+    const deleteCoverImage = async (eventId) => {
+        await axios.delete("/api/admin/events/coverimage?eventId=" + eventId);
     };
 
-    const deleteCoverImage = async () => {
-        await axios.delete("/api/admin/events/coverimage?eventId=" + event.id);
-    };
-
-    const uploadCoverImage = async () => {
+    const uploadCoverImage = async (eventId) => {
         const pictureData = new FormData();
         pictureData.append('coverImage', coverImage);
-        await axios.post("/api/admin/events/coverimage?eventId=" + event.id, pictureData);
+        await axios.post("/api/admin/events/coverimage?eventId=" + eventId, pictureData);
     };
 
-    const storeCoverImageSize = async () => {
-        if (coverImageSize === event.coverImageSize) return;
-        await axios.put(`/api/admin/events/coverimage?eventId=${event.id}&coverImageSize=${coverImageSize}`);
+    const storeCoverImageSize = async (eventId) => {
+        if (coverImageSize === event?.coverImageSize || coverImageSize === null) return;
+        console.log(coverImageSize)
+        await axios.put(`/api/admin/events/coverimage?eventId=${eventId}&coverImageSize=${coverImageSize}`);
     }
 
     const handleDelete = async () => {
@@ -107,12 +124,12 @@ export const EditEventDialog = ({
 
     const handleUploadImageChange = (event) => {
         setCoverImage(event.target.files[0]);
-        setCoverImageUrl(URL.createObjectURL(event.target.files[0]));
+        setRemoveCoverImage(false);
     };
 
     const handleRemoveCoverImage = () => {
         setCoverImage(null);
-        setCoverImageUrl(null);
+        setRemoveCoverImage(true);
     };
 
     const handleSetCoverImageSizeRandom = (event: ChangeEvent<HTMLInputElement>) => {
@@ -123,34 +140,52 @@ export const EditEventDialog = ({
         setCoverImageSize(value);
     }
 
-    if (event === null) return null;
+    const {
+        values,
+        isSubmitting,
+        handleSubmit,
+        getFieldProps,
+        setFieldValue
+    } = formik;
 
     const hasChanges =
-        name !== event.title ||
-        seatType !== event.seatType ||
-        seatMap !== event.seatMapId ||
-        !arrayEquals(originalSelectedCategories, selectedCategories) ||
-        coverImage !== event.coverImage;
+        values.title !== event?.title ||
+        values.seatType !== event?.seatType ||
+        values.seatMap !== event?.seatMapId ||
+        !arrayEquals(originalSelectedCategories, values.selectedCategories) ||
+        coverImage !== null ||
+        removeCoverImage;
+
+    const isValid =
+        values.title !== "" &&
+        values.seatType !== "" &&
+        (values.seatType === "free" ? values.selectedCategories.length > 0 : true) &&
+        (values.seatType === "map" ? values.seatMap > 0 : true);
+
+    const coverImageUrl = removeCoverImage && (coverImage ? URL.createObjectURL(coverImage) : event?.coverImage);
 
     return (
         <>
-            <Dialog open={true} onClose={onClose} fullWidth>
-                <DialogTitle>Edit Event</DialogTitle>
+            <Dialog open={open || event !== null} onClose={onClose} fullWidth>
+                <DialogTitle>
+                    {
+                        event ? "Edit Event" : "Add Event"
+                    }
+                </DialogTitle>
                 <DialogContent>
                     <Stack pt={1} pb={1} spacing={1}>
                         <TextField
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                            label={"Name"}
+                            {...getFieldProps("title")}
+                            label={"Title"}
                         />
                         <FormControl variant={"filled"}>
                             <InputLabel id={"seatMapTypeLabel"}>
                                 Seat Map Type
                             </InputLabel>
                             <Select
-                                value={seatType}
+                                value={values.seatType}
                                 onChange={(event) =>
-                                    setSeatType(event.target.value)
+                                    setFieldValue("seatType", event.target.value)
                                 }
                                 labelId={"seatMapTypeLabel"}
                                 id={"seatMapType"}
@@ -159,7 +194,7 @@ export const EditEventDialog = ({
                                 <MenuItem value={"seatmap"}>Seat map</MenuItem>
                             </Select>
                         </FormControl>
-                        {seatType === "seatmap" && (
+                        {values.seatType === "seatmap" && (
                             <Grid container>
                                 <Grid item lg={6} md={12} xs={12}>
                                     <FormControl variant={"filled"} fullWidth>
@@ -167,9 +202,10 @@ export const EditEventDialog = ({
                                             Seat Map
                                         </InputLabel>
                                         <Select
-                                            value={seatMap}
+                                            value={values.seatMap}
                                             onChange={(event) =>
-                                                setSeatMap(
+                                                setFieldValue(
+                                                    "seatMap",
                                                     typeof event.target
                                                         .value === "string"
                                                         ? parseInt(
@@ -203,14 +239,14 @@ export const EditEventDialog = ({
                                     <Button
                                         fullWidth
                                         onClick={() => setOpenPreview(true)}
-                                        disabled={seatMap <= 0}
+                                        disabled={values.seatMap <= 0}
                                     >
                                         Preview
                                     </Button>
                                 </Grid>
                             </Grid>
                         )}
-                        {seatType === "free" && (
+                        {values.seatType === "free" && (
                             <SelectionList
                                 options={categories.map((category) => {
                                     return {
@@ -222,9 +258,9 @@ export const EditEventDialog = ({
                                         value: category.id
                                     };
                                 })}
-                                selection={selectedCategories}
+                                selection={values.selectedCategories}
                                 onChange={(newValue) =>
-                                    setSelectedCategories(newValue)
+                                    setFieldValue("selectedCategories", newValue)
                                 }
                                 style={{
                                     width: "100%",
@@ -314,14 +350,15 @@ export const EditEventDialog = ({
                             }
                         </Grid>
                         <Stack direction={"row"}>
-                            <SaveButton
+                            <LoadingButton
                                 color={"success"}
-                                disabled={!hasChanges}
+                                disabled={event ? !hasChanges || !isValid : !isValid}
                                 fullWidth
-                                action={handleSave}
+                                onClick={() => handleSubmit()}
+                                loading={isSubmitting}
                             >
                                 Save
-                            </SaveButton>
+                            </LoadingButton>
                             <Button
                                 color={"error"}
                                 fullWidth
@@ -338,14 +375,14 @@ export const EditEventDialog = ({
                 onChange={() => setOpenPreview(false)}
                 onClose={() => setOpenPreview(false)}
                 seatmap={
-                    openPreview ? seatmaps.find((x) => x.id === seatMap) : null
+                    openPreview ? seatmaps.find((x) => x.id === values.seatMap) : null
                 }
             />
             <ConfirmDialog
                 open={deleteOpen}
                 onConfirm={handleDelete}
                 onClose={() => setDeleteOpen(false)}
-                text={`Confirm delete of category <b>${event.title}</b>`}
+                text={`Confirm delete of event <b>${event?.title}</b>`}
             />
         </>
     );
