@@ -184,7 +184,7 @@ describe("Admin Users", () => {
             cy.get("input[name=email]").type("seconduser@email.com");
             cy.get("input[name=password]").type("userpass");
             cy.get("input[name=confirmPassword]").type("userpass");
-            cy.get("button[type=submit]").click();
+            cy.get("#edit-user-save").click();
 
             cy.get(".user-edit-button").should("have.length", 2);
             cy.get(".user-edit-button").last().click();

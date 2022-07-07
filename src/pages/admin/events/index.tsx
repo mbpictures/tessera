@@ -19,10 +19,9 @@ import prisma from "../../../lib/prisma";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
-import { AddEventDialog } from "../../../components/admin/dialogs/AddEventDialog";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { EditEventDialog } from "../../../components/admin/dialogs/EditEventDialog";
+import { ManageEventDialog } from "../../../components/admin/dialogs/ManageEventDialog";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
 export default function Events({
@@ -44,14 +43,13 @@ export default function Events({
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
-            <AddEventDialog
+            <ManageEventDialog
                 open={addEventOpen}
-                onClose={() => setAddEventOpen(false)}
-                onChange={refreshProps}
-            />
-            <EditEventDialog
                 event={event}
-                onClose={() => setEvent(null)}
+                onClose={() => {
+                    setEvent(null)
+                    setAddEventOpen(false)
+                }}
                 seatmaps={seatmaps}
                 onChange={refreshProps}
                 categories={categories}
@@ -139,7 +137,8 @@ export async function getServerSideProps(context) {
                         (a, order) =>
                             a + (JSON.parse(order.order)?.ticketAmount ?? 0),
                         0
-                    )
+                    ),
+                    orders: []
                 };
             });
 

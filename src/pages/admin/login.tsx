@@ -11,8 +11,8 @@ import { getCsrfToken, getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import prisma from "../../lib/prisma";
-import { AddUserDialog } from "../../components/admin/dialogs/AddUserDialog";
 import { useSnackbar } from "notistack";
+import { ManageUserDialog } from "../../components/admin/dialogs/ManageUserDialog";
 
 const RootStyle = styled("div")(({ theme }) => ({
     [theme.breakpoints.up("md")]: {
@@ -57,8 +57,8 @@ export default function Login({ noUser }) {
     return (
         <RootStyle>
             {noUser && (
-                <AddUserDialog
-                    onAddUser={refreshProps}
+                <ManageUserDialog
+                    onChange={refreshProps}
                     open={addUserOpen}
                     onClose={() => setAddUserOpen(false)}
                 />

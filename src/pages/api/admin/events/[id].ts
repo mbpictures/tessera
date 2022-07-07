@@ -35,6 +35,11 @@ export default async function handler(
     }
 
     if (req.method === "DELETE") {
+        await prisma.categoriesOnEvents.deleteMany({
+            where: {
+                eventId: parseInt(id as string)
+            }
+        });
         await prisma.event.delete({
             where: {
                 id: parseInt(id as string)

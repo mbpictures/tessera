@@ -197,7 +197,7 @@ describe("Buy tickets", () => {
         cy.get("#stripe-card-expire iframe")
             .iframe()
             .find("input[name=exp-date]")
-            .type(`${expirationData.getMonth()}-${expirationData.getFullYear().toString().substr(-2)}`);
+            .type(`${String(expirationData.getMonth() + 1).padStart(2, '0')}-${expirationData.getFullYear().toString().substr(-2)}`);
 
         cy.get("#stripe-card-cvc iframe")
             .iframe()

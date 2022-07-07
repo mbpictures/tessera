@@ -19,10 +19,9 @@ import prisma from "../../../lib/prisma";
 import EditIcon from "@mui/icons-material/Edit";
 import { SEAT_COLORS } from "../../../constants/Constants";
 import { useState } from "react";
-import { EditCategoryDialog } from "../../../components/admin/dialogs/EditCategoryDialog";
 import { useRouter } from "next/router";
 import AddIcon from "@mui/icons-material/Add";
-import { AddCategoryDialog } from "../../../components/admin/dialogs/AddCategoryDialog";
+import { ManageCategoryDialog } from "../../../components/admin/dialogs/ManageCategoryDialog";
 import { formatPrice } from "../../../constants/util";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
 
@@ -44,15 +43,14 @@ export default function Categories({ categories, permissionDenied }) {
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
-            <EditCategoryDialog
-                category={category}
-                onClose={() => setCategory(null)}
+            <ManageCategoryDialog
+                open={addCategoryOpen || category !== null}
+                onClose={() => {
+                    setAddCategoryOpen(false);
+                    setCategory(null);
+                }}
                 onChange={refreshProps}
-            />
-            <AddCategoryDialog
-                open={addCategoryOpen}
-                onClose={() => setAddCategoryOpen(false)}
-                onAddCategory={refreshProps}
+                category={category}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Categories</Typography>
