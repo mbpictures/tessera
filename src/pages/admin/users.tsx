@@ -17,9 +17,8 @@ import {
 } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import { useState } from "react";
-import { UserDetailsDialog } from "../../components/admin/dialogs/UserDetailsDialog";
+import { ManageUserDialog } from "../../components/admin/dialogs/ManageUserDialog";
 import AddIcon from "@mui/icons-material/Add";
-import { AddUserDialog } from "../../components/admin/dialogs/AddUserDialog";
 import { useRouter } from "next/router";
 import EditIcon from "@mui/icons-material/Edit";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
@@ -38,16 +37,16 @@ export default function Users({ users, permissionDenied }) {
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
-            <UserDetailsDialog
+            <ManageUserDialog
+                open={addUserOpen}
                 user={user}
-                onClose={() => setUser(null)}
+                onClose={() => {
+                    setUser(null);
+                    setAddUserOpen(false);
+                }}
                 onDelete={refreshProps}
                 onChange={refreshProps}
-            />
-            <AddUserDialog
-                open={addUserOpen}
-                onClose={() => setAddUserOpen(false)}
-                onAddUser={refreshProps}
+                editRights={true}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Users</Typography>
