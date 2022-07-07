@@ -162,7 +162,8 @@ Cypress.Commands.add("createEvents", () => {
                                     headers: {
                                         "Authorization": `Bearer ${userFixture.username}:${token}`
                                     },
-                                    body: updateData
+                                    body: updateData,
+                                    timeout: 60000
                                 }
                             );
                         });
