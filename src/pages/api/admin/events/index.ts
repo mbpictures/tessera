@@ -32,6 +32,8 @@ export default async function handler(
             }
         });
         await revalidateBuild(res, ["/", "/payment"]);
-        res.status(200).end(seatMap.id.toFixed(0));
+        return res.status(200).end(seatMap.id.toFixed(0));
     }
+
+    res.status(403).end("Method not allowed");
 }
