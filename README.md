@@ -70,9 +70,10 @@ npm install
 - Customizable ticket shop UI with import function for [MUI themes](https://mui.com/customization/theming/)
 - Multi-Language Support and translation editor
 - Ticket control webapp (to scan and verify downloaded tickets)
+- Notifications (e.g. for new orders)
 
 ### 🔜 Planned
-- Notifications (e.g. for new orders) and configurable webhooks
+- Customizeable webhooks (to automate receipt of payment detection etc.)
 - Event scheduling
 
 If you miss some features, which are not planned, please create an [issue ❗](https://github.com/mbpictures/tessera/issues)
