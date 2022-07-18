@@ -79,6 +79,7 @@ model Order {
     locale          String
     invoiceSent     Boolean     @default(false)
     date            DateTime    @default(now())
+    task            Task?
 }
 
 model Ticket {
@@ -97,6 +98,7 @@ model AdminUser {
     readRights      String
     writeRights     String
     notifications   Notification[]
+    tasks           Task[]
 }
 
 model AdminApiKeys {
@@ -125,4 +127,13 @@ model Notification {
     userId          Int
     data            String?
     type            String
+}
+
+model Task {
+    id              Int         @default(autoincrement()) @id
+    order           Order       @relation(fields: [orderId], references: [id])
+    orderId         String
+    assignedUser    AdminUser?  @relation(fields: [adminUserId], references: [id])
+    adminUserId     Int?
+    notes           String[]
 }
