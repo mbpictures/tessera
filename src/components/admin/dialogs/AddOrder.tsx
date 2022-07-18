@@ -168,7 +168,7 @@ const AddOrderInner = ({open, events, categories, onClose, onAdd}: props) => {
                                                         dispatch(
                                                             setShipping({
                                                                 type: method,
-                                                                data: "mock"
+                                                                data: {}
                                                             })
                                                         )
                                                     }}
