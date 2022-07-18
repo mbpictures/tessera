@@ -3,6 +3,8 @@ import { IOrder } from "../../../store/reducers/orderReducer";
 import { PersonalInformationState } from "../../../store/reducers/personalInformationReducer";
 import prisma from "../../../lib/prisma";
 import { withNotification } from "../../../lib/notifications/withNotification";
+import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
+import { ShippingType } from "../../../store/factories/shipping/ShippingFactory";
 
 async function handler(
     req: NextApiRequest,
@@ -59,6 +61,20 @@ async function handler(
                 locale: locale
             }
         });
+
+        // TODO: replace hard coded types by factory methods
+        if (paymentType === PaymentType.Invoice || user.shipping.type === ShippingType.Post) {
+            await prisma.task.create({
+                data: {
+                    order: {
+                        connect: {
+                            id: createOrder.id
+                        }
+                    }
+                }
+            });
+        }
+
         res.status(200).json({
             userId: createUser.id,
             orderId: createOrder.id
