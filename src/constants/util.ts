@@ -4,6 +4,7 @@ import { IOrder } from "../store/reducers/orderReducer";
 import { PersonalInformationState } from "../store/reducers/personalInformationReducer";
 import axios from "axios";
 import { OrderFactory } from "../store/factories/order/OrderFactory";
+import { PaymentFactory, PaymentType } from "../store/factories/payment/PaymentFactory";
 
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
@@ -96,3 +97,13 @@ export const arrayEquals = (a, b) => {
         a.every((val) => b.indexOf(val) !== -1)
     );
 };
+
+export const getTaskType = (task) => {
+    if (!PaymentFactory.getPaymentInstance({type: task.order.paymentType as PaymentType, data: null})
+            .paymentResultValid(task.order.paymentResult))
+        return "payment";
+    const shipping = JSON.parse(task.order.shipping);
+    if (!shipping.data.isShipped)
+        return "shipping";
+    return null;
+}
