@@ -15,6 +15,7 @@ export const completeTask = async (orderId) => {
             }
         }
     });
+    if (!task) return;
     if (getTaskType(task) !== null) return; // we still have something to do with this order!
     await prisma.task.delete({
         where: {
