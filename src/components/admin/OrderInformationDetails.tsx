@@ -1,4 +1,4 @@
-import { Button, Divider, Typography } from "@mui/material";
+import { Button, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
 import axios from "axios";
 import dynamic from "next/dynamic";
@@ -87,8 +87,16 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
             });
         }
     };
+
+    const getShippingAddress = () => {
+        const shipping = JSON.parse(order.shipping);
+        if (shipping.data === "mock" || shipping.data === null || !shipping.data.differentAddress) return order.user;
+        return shipping.data.address;
+    };
+
+    const address = getShippingAddress();
     return (
-        <>
+        <Stack>
             <Typography>
                 Delivery Type:{" "}
                 {
@@ -96,6 +104,13 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
                         JSON.parse(order.shipping)
                     )?.DisplayName
                 }
+            </Typography>
+            <Typography variant={"h6"}>Address</Typography>
+            <Typography>
+                {address.firstName} {address.lastName}<br />
+                {address.address}<br/>
+                {address.zip} {address.city}<br />
+                {address.countryCode}-{address.regionCode}
             </Typography>
             {!hasShipped(order) && (
                 <Button onClick={handleMarkAsShipped}>
@@ -110,7 +125,7 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
                 src={JSON.parse(order.shipping)}
                 collapsed
             />
-        </>
+        </Stack>
     )
 }
 
