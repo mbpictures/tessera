@@ -24,6 +24,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { getTaskType } from "../../constants/util";
+import { ManageTaskDialog } from "../../components/admin/dialogs/ManageTaskDialog";
 
 interface Task extends TaskBase {
     assignedUser: AdminUser;
@@ -60,6 +61,7 @@ export default function Users({ tasks, permissionDenied }: {tasks: Array<Task>, 
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
+            <ManageTaskDialog task={task} onClose={() => setTask(null)} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Tasks</Typography>
             </Box>
