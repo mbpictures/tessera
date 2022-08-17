@@ -17,7 +17,6 @@ import prisma from "../../lib/prisma";
 import InfoIcon from "@mui/icons-material/Info";
 import { useEffect, useRef, useState } from "react";
 import {
-    PaymentFactory,
     PaymentType
 } from "../../store/factories/payment/PaymentFactory";
 import CheckIcon from "@mui/icons-material/Check";
@@ -40,6 +39,7 @@ import { SeatOrder } from "../../store/reducers/orderReducer";
 import DownloadIcon from '@mui/icons-material/Download';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
+import { hasPayedIcon } from "../../components/admin/OrderInformationDetails";
 
 const COLUMNS = [
     "Event",
@@ -118,23 +118,6 @@ export default function Orders({ permissionDenied, count, categories, events}) {
         await router.replace(router.asPath);
     };
 
-    const hasPayed = (order) => {
-        return (
-            PaymentFactory.getPaymentInstance({
-                data: null,
-                type: order.paymentType as PaymentType
-            })?.paymentResultValid(order.paymentResult) ?? false
-        );
-    };
-
-    const hasPayedIcon = (order) => {
-        return hasPayed(order) ? (
-            <CheckIcon color={"success"} />
-        ) : (
-            <CloseIcon color={"error"} />
-        );
-    };
-
     const handleCloseDetails = () => {
         setOrder(null);
     };
@@ -183,9 +166,8 @@ export default function Orders({ permissionDenied, count, categories, events}) {
             <OrderDetailsDialog
                 order={order}
                 onClose={handleCloseDetails}
-                hasPayed={hasPayed}
-                hasPayedIcon={hasPayedIcon}
                 onMarkAsPayed={refreshProps}
+                onMarkAsShipped={refreshProps}
             />
             <MarkOrdersAsPayedDialog
                 open={markAsPaidOpen}
@@ -193,8 +175,6 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                     await refreshProps();
                     setMarkAsPaidOpen(false);
                 }}
-                hasPaid={hasPayed}
-                hasPaidIcon={hasPayedIcon}
             />
             <AddOrder
                 open={addOrderOpen}

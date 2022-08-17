@@ -99,11 +99,23 @@ export const arrayEquals = (a, b) => {
 };
 
 export const getTaskType = (task) => {
-    if (!PaymentFactory.getPaymentInstance({type: task.order.paymentType as PaymentType, data: null})
-            .paymentResultValid(task.order.paymentResult))
+    if (!hasPayed(task.order))
         return "payment";
-    const shipping = JSON.parse(task.order.shipping);
-    if (!shipping.data.isShipped)
+    if (!hasShipped(task.order))
         return "shipping";
     return null;
+}
+
+export const hasPayed = (order) => {
+    return (
+        PaymentFactory.getPaymentInstance({
+            data: null,
+            type: order.paymentType as PaymentType
+        })?.paymentResultValid(order.paymentResult) ?? false
+    );
+};
+
+export const hasShipped = (order) => {
+    const shipping = JSON.parse(order.shipping);
+    return shipping?.data?.isShipped !== null && shipping.data.isShipped;
 }

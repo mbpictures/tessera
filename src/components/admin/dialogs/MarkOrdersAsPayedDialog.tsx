@@ -13,8 +13,10 @@ import { useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { validate as uuidValidate } from 'uuid';
+import { hasPayed } from "../../../constants/util";
+import { hasPayedIcon } from "../OrderInformationDetails";
 
-export const MarkOrdersAsPayedDialog = ({open, onClose, hasPaid, hasPaidIcon}) => {
+export const MarkOrdersAsPayedDialog = ({open, onClose}) => {
     const [orderId, setOrderId] = useState("");
     const [autoMarkAsPaid, setAutoMarkAsPaid] = useState(false);
     const [order, setOrder] = useState(null);
@@ -92,8 +94,8 @@ export const MarkOrdersAsPayedDialog = ({open, onClose, hasPaid, hasPaidIcon}) =
                                         <Stack>
                                             <OrderDisplay order={order} />
                                             {
-                                                hasPaid(order) ? (
-                                                    <Typography>{hasPaidIcon(order)} This order is already paid</Typography>
+                                                hasPayed(order) ? (
+                                                    <Typography>{hasPayedIcon(order)} This order is already paid</Typography>
                                                 ) : (
                                                     <Button onClick={handleMarkAsPaid}>
                                                         Mark as paid
