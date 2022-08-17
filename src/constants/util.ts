@@ -117,5 +117,5 @@ export const hasPayed = (order) => {
 
 export const hasShipped = (order) => {
     const shipping = JSON.parse(order.shipping);
-    return shipping?.data?.isShipped !== null && shipping.data.isShipped;
+    return shipping?.data?.isShipped !== undefined && shipping.data.isShipped;
 }
