@@ -78,6 +78,7 @@ describe("Admin Users", () => {
             cy.get("#notification-type").click();
             cy.get("#notification-type-email").click();
             cy.get("#manage-notification-details").should("not.exist");
+            cy.get("#notification-type").click();
             cy.get("#notification-type-webmessage").click();
             cy.get("#manage-notification-details").should("exist");
 
