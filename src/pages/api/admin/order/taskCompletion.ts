@@ -1,5 +1,5 @@
 import prisma from "../../../../lib/prisma";
-import { getTaskType } from "../../../../constants/util";
+import { getTaskType } from "../../../../constants/orderValidation";
 
 export const completeTask = async (orderId) => {
     const task = await prisma.task.findUnique({

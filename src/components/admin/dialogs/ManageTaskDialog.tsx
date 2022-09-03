@@ -8,9 +8,9 @@ import {
     Stepper,
     Typography
 } from "@mui/material";
-import { getTaskType } from "../../../constants/util";
 import { OrderDeliveryInformationDetails, OrderPaymentInformationDetails } from "../OrderInformationDetails";
 import { useEffect, useState } from "react";
+import { getTaskType } from "../../../constants/orderValidation";
 
 const STEP_ORDER = ["Payment", "Shipping", null];
 

@@ -13,8 +13,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { validate as uuidValidate } from 'uuid';
-import { hasPayed } from "../../../constants/util";
 import { hasPayedIcon } from "../OrderInformationDetails";
+import { hasPayed } from "../../../constants/orderValidation";
 
 export const MarkOrdersAsPayedDialog = ({open, onClose}) => {
     const [orderId, setOrderId] = useState("");

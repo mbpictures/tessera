@@ -23,8 +23,8 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import { getTaskType } from "../../constants/util";
 import { ManageTaskDialog } from "../../components/admin/dialogs/ManageTaskDialog";
+import { getTaskType } from "../../constants/orderValidation";
 
 interface Task extends TaskBase {
     assignedUser: AdminUser;
