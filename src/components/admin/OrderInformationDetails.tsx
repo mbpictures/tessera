@@ -1,4 +1,14 @@
-import { Button, Divider, List, Stack, Typography } from "@mui/material";
+import {
+    Accordion, AccordionDetails, AccordionSummary,
+    Button,
+    Divider,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    Stack,
+    Typography
+} from "@mui/material";
 import React from "react";
 import axios from "axios";
 import dynamic from "next/dynamic";
@@ -7,6 +17,8 @@ import { ShippingFactory } from "../../store/factories/shipping/ShippingFactory"
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { hasPayed, hasShipped } from "../../constants/orderValidation";
+import { OrderFactory } from "../../store/factories/order/OrderFactory";
+import BookOnlineIcon from "@mui/icons-material/BookOnline";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -73,7 +85,7 @@ export const OrderPaymentInformationDetails = ({order, onMarkAsPayed}) => {
     )
 }
 
-export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
+export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categories}) => {
     const {enqueueSnackbar} = useSnackbar();
 
     const handleMarkAsShipped = async () => {
@@ -116,6 +128,8 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
                 {address.zip} {address.city}<br />
                 {address.countryCode}-{address.regionCode}
             </Typography>
+            <Divider sx={{mt: 2, mb: 2}} />
+            <TicketList order={order} categories={categories} />
             {
                 order.tickets.length === 0 && (
                     <Stack>
@@ -142,6 +156,49 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
                 collapsed
             />
         </Stack>
+    )
+}
+
+const TicketList = ({order, categories}) => {
+    const items: Array<{
+        categoryId: number;
+        seatInformation: string;
+    }> = OrderFactory.getInstance(JSON.parse(order.order), categories)?.information ?? [];
+
+    const generateTicket = () => {
+
+    }
+
+    return (
+        <Accordion>
+            <AccordionSummary>Tickets</AccordionSummary>
+            <AccordionDetails>
+                <List>
+                    {
+                        items.map((item, index) => {
+                            const category = categories.find(
+                                (cat) => cat.id === item.categoryId
+                            );
+                            if (!category) return null;
+                            return (
+                                <ListItem key={index} secondaryAction={
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="edit"
+                                        color={"primary"}
+                                        onClick={generateTicket}
+                                    >
+                                        <BookOnlineIcon />
+                                    </IconButton>}
+                                >
+                                    <ListItemText primary={category.label} secondary={item.seatInformation} />
+                                </ListItem>
+                            )
+                        })
+                    }
+                </List>
+            </AccordionDetails>
+        </Accordion>
     )
 }
 

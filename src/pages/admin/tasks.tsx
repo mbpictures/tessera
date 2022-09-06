@@ -31,7 +31,7 @@ interface Task extends TaskBase {
     order: Order & {user: User};
 }
 
-export default function Users({ tasks, permissionDenied }: {tasks: Array<Task>, permissionDenied: boolean}) {
+export default function Tasks({ tasks, permissionDenied, categories }: {tasks: Array<Task>, permissionDenied: boolean, categories: Array<any>}) {
     const router = useRouter();
     const { data: session } = useSession();
     const [task, setTask] = useState<Task | null>(null);
@@ -61,7 +61,7 @@ export default function Users({ tasks, permissionDenied }: {tasks: Array<Task>, 
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
-            <ManageTaskDialog task={task} onClose={() => setTask(null)} />
+            <ManageTaskDialog task={task} onClose={() => setTask(null)} categories={categories} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Tasks</Typography>
             </Box>
@@ -143,9 +143,11 @@ export async function getServerSideProps(context) {
                     }
                 }
             });
+            const categories = await prisma.category.findMany();
             return {
                 props: {
-                    tasks: tasksSerializable
+                    tasks: tasksSerializable,
+                    categories
                 }
             };
         },

@@ -18,7 +18,8 @@ export const OrderDetailsDialog = ({
     order,
     onClose,
     onMarkAsPayed,
-    onMarkAsShipped
+    onMarkAsShipped,
+    categories
 }) => {
     const [detailsTab, setDetailsTab] = useState("overview");
 
@@ -82,6 +83,7 @@ export const OrderDetailsDialog = ({
                             <OrderDeliveryInformationDetails
                                 order={order}
                                 onMarkAsShipped={onMarkAsShipped}
+                                categories={categories}
                             />
                         </Stack>
                     </TabPanel>
