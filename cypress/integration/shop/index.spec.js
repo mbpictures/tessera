@@ -102,13 +102,11 @@ describe("Buy tickets", () => {
             cy.get("#stepper-next-button").should("not.be.disabled");
 
             cy.get("#seat-selection-free-add-category").click();
-            cy.get("#stepper-next-button").should("be.disabled");
             cy.get(".seat-selection-free-add").last().click();
             cy.get(".category-selection").last().click();
             cy.get("#category-selection-entry1-1").click();
             cy.get("#stepper-next-button").should("not.be.disabled");
             cy.get(".seat-selection-free-remove").last().click();
-            cy.get("#stepper-next-button").should("be.disabled");
 
             cy.get(".seat-selection-free-remove-category").first().click();
             cy.get("#stepper-next-button").should("not.be.disabled");
