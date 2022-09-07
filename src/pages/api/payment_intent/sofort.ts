@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import { IOrder } from "../../../store/reducers/orderReducer";
 import { sofortApiCall } from "../../../lib/sofort";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import absoluteUrl from "next-absolute-url";
 import { withNotification } from "../../../lib/notifications/withNotification";
+import { OrderState } from "../../../store/reducers/orderReducer";
+import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
 
 async function handler(
     req: NextApiRequest,
@@ -16,17 +17,34 @@ async function handler(
         return;
     }
 
-    const { order }: { order: IOrder } = req.body;
+    const { order }: { order: OrderState } = req.body;
     const xmlBuilder = new XMLBuilder({});
     const xmlParser = new XMLParser({});
     const { origin } = absoluteUrl(req);
 
     try {
+        const orderDB = await prisma.order.findUnique({
+            where: {
+                id: order.orderId
+            },
+            select: {
+                tickets: true,
+                event: {
+                    select: {
+                        seatMap: true
+                    }
+
+                }
+            }
+        });
+        const categories = await prisma.category.findMany();
+        const totalPrice = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
+
         const data = {
             multipay: {
                 project_id: process.env.SOFORT_PROJECT_ID,
                 interface_version: "TicketShop_1.0.0/Sofort_2.3.3",
-                amount: order.totalPrice.toString(),
+                amount: totalPrice.toString(),
                 reasons: [
                     {
                         reason: "Ticket buy"

@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { IOrder } from "../../../store/reducers/orderReducer";
 
 import Stripe from "stripe";
 import prisma from "../../../lib/prisma";
-import { calculateTotalPrice } from "../../../constants/util";
+import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
+import { OrderState } from "../../../store/reducers/orderReducer";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2020-08-27"
 });
@@ -14,17 +14,31 @@ async function handler(
     res: NextApiResponse
 ) {
     if (req.method === "POST") {
-        const { order }: { order: IOrder } = req.body;
+        const { order }: { order: OrderState } = req.body;
         try {
             if (!order.orderId || order.orderId === "") {
                 throw new Error("Invalid Order ID");
             }
-            if (order.ticketAmount <= 0) {
+            if (order.tickets.length <= 0) {
                 throw new Error("Invalid ticket amount");
             }
 
+            const orderDB = await prisma.order.findUnique({
+                where: {
+                    id: order.orderId
+                },
+                select: {
+                    tickets: true,
+                    event: {
+                        select: {
+                            seatMap: true
+                        }
+
+                    }
+                }
+            });
             const categories = await prisma.category.findMany();
-            let amount = calculateTotalPrice(order, categories);
+            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
             let currency = categories[0].currency;
 
             const params: Stripe.PaymentIntentCreateParams = {

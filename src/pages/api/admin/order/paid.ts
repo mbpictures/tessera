@@ -28,6 +28,9 @@ export default async function handler(
         const order = await prisma.order.findUnique({
             where: {
                 id: params.orderId
+            },
+            include: {
+                tickets: true
             }
         });
         orders = [order];
@@ -37,6 +40,9 @@ export default async function handler(
                 paymentIntent: JSON.stringify({
                     invoicePurpose: params.invoicePurpose
                 })
+            },
+            include: {
+                tickets: true
             }
         });
     } else {

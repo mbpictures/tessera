@@ -135,7 +135,7 @@ export async function getServerSideProps(context) {
                     ...event,
                     ticketsBought: event.orders.reduce(
                         (a, order) =>
-                            a + (JSON.parse(order.order)?.ticketAmount ?? 0),
+                            a + order.tickets.length,
                         0
                     ),
                     orders: []

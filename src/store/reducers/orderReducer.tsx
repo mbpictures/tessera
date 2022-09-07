@@ -1,47 +1,37 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { Seat } from "../../components/seatselection/seatmap/SeatMapSeat";
 
-interface OrderState {
-    order: IOrder;
-}
-
-export interface IOrder {
-    ticketAmount: number;
-    totalPrice: number;
+export interface OrderState {
+    tickets: Tickets;
     orderId?: string;
 }
 
-export interface FreeSeatOrder extends IOrder {
-    orders: Array<{ amount: number; categoryId: number; price: number }>;
+export interface Ticket {
+    seatId?: number;
+    categoryId: number;
+    amount: number;
 }
 
-export interface SeatOrder extends IOrder {
-    seats: Array<Seat>;
-}
+export type Tickets = Array<Ticket>;
 
 const initialState: OrderState = {
-    order: {
-        ticketAmount: -1,
-        totalPrice: 0,
-        orderId: null
-    }
+    tickets: []
 };
 
 export const orderSlice = createSlice({
     name: "order",
     initialState,
     reducers: {
-        setOrder: (state, action: PayloadAction<IOrder>) => {
-            state.order = action.payload;
+        setTickets: (state, action: PayloadAction<Tickets>) => {
+            state.tickets = action.payload;
         },
         setOrderId: (state, action: PayloadAction<string>) => {
-            state.order.orderId = action.payload;
+            state.orderId = action.payload;
         },
         resetOrder: () => initialState
     }
 });
 
-export const { setOrder, setOrderId, resetOrder } = orderSlice.actions;
-export const selectOrder = (state: RootState) => state.order.order;
+export const { setTickets, setOrderId, resetOrder } = orderSlice.actions;
+export const selectOrder = (state: RootState) => state.order;
 export default orderSlice.reducer;

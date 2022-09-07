@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { IOrder } from "../../../store/reducers/orderReducer";
 
 import prisma from "../../../lib/prisma";
+import { OrderState } from "../../../store/reducers/orderReducer";
 
 export default async function handler(
     req: NextApiRequest,
@@ -11,7 +11,7 @@ export default async function handler(
         const {
             order,
             paymentResult
-        }: { order: IOrder; paymentResult: string } = req.body;
+        }: { order: OrderState; paymentResult: string } = req.body;
         try {
             if (!order.orderId || order.orderId === "") {
                 throw new Error("Invalid Order ID");

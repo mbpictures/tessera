@@ -5,7 +5,6 @@ import {
     PersonalInformationState
 } from "../../../store/reducers/personalInformationReducer";
 import countryRegionData from "country-region-data";
-import { IOrder } from "../../../store/reducers/orderReducer";
 
 export default async function handler(
     req: NextApiRequest,
@@ -26,8 +25,14 @@ export default async function handler(
             select: {
                 eventId: true,
                 user: true,
-                order: true,
-                shipping: true
+                shipping: true,
+                tickets: {
+                    select: {
+                        categoryId: true,
+                        seatId: true,
+                        amount: true
+                    }
+                }
             }
         });
 
@@ -54,7 +59,7 @@ export default async function handler(
 
         res.status(200).json({
             user: user,
-            order: JSON.parse(order.order) as IOrder,
+            order: {orderId, tickets: order.tickets},
             eventId: order.eventId
         });
     } catch (e) {

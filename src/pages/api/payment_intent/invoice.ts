@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import { IOrder } from "../../../store/reducers/orderReducer";
+import { OrderState } from "../../../store/reducers/orderReducer";
 import { send } from "../../../lib/send";
 import { withNotification } from "../../../lib/notifications/withNotification";
 
@@ -14,7 +14,7 @@ async function handler(
         return;
     }
 
-    const { order }: { order: IOrder } = req.body;
+    const { order }: { order: OrderState } = req.body;
 
     try {
         const secret = Math.random().toString(36).substring(2, 8).toUpperCase();

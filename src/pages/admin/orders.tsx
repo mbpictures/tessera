@@ -35,7 +35,6 @@ import { SelectionList } from "../../components/admin/SelectionList";
 import { FullSizeLoading } from "../../components/FullSizeLoading";
 import { AddOrder } from "../../components/admin/dialogs/AddOrder";
 import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
-import { SeatOrder } from "../../store/reducers/orderReducer";
 import DownloadIcon from '@mui/icons-material/Download';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
@@ -168,7 +167,6 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                 onClose={handleCloseDetails}
                 onMarkAsPayed={refreshProps}
                 onMarkAsShipped={refreshProps}
-                categories={categories}
             />
             <MarkOrdersAsPayedDialog
                 open={markAsPaidOpen}
@@ -176,6 +174,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                     await refreshProps();
                     setMarkAsPaidOpen(false);
                 }}
+                categories={categories}
             />
             <AddOrder
                 open={addOrderOpen}
@@ -301,7 +300,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                                     <TableRow key={index}>
                                         <ConditionalCell columnName="Event" text={order.event.title} list={visibleColumns} />
                                         <ConditionalCell columnName="Order" text={
-                                            'Tickets booked: ' + JSON.parse(order.order).ticketAmount
+                                            'Tickets booked: ' + order.tickets.length
                                         } list={visibleColumns} />
                                         <ConditionalCell columnName="Payment" text={Object.entries(PaymentType).find(type => type[1] === order.paymentType)[0]} list={visibleColumns} />
                                         <ConditionalCell columnName="Paid" text={hasPayedIcon(order)} list={visibleColumns} />
@@ -357,7 +356,11 @@ export async function getServerSideProps(context: NextPageContext) {
             let events = await prisma.event.findMany({
                 include: {
                     seatMap: true,
-                    orders: true
+                    orders: {
+                        include: {
+                            tickets: true
+                        }
+                    }
                 }
             });
 
@@ -367,8 +370,8 @@ export async function getServerSideProps(context: NextPageContext) {
                     baseMap = baseMap.map((row) =>
                         row.map((seat) => {
                             const isOccupied = event.orders.some((order) =>
-                                (JSON.parse(order.order) as SeatOrder).seats.some(
-                                    (value) => value.id === seat.id
+                                order.tickets.some(
+                                    (ticket) => ticket.seatId === seat.id
                                 )
                             );
                             return {

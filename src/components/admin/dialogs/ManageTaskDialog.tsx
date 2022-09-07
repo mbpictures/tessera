@@ -14,7 +14,7 @@ import { getTaskType } from "../../../constants/orderValidation";
 
 const STEP_ORDER = ["Payment", "Shipping", null];
 
-export const ManageTaskDialog = ({task, onClose, categories}) => {
+export const ManageTaskDialog = ({task, onClose}) => {
     const [taskType, setTaskType] = useState<null | "shipping" | "payment">(null);
 
     const updateState = () => {
@@ -60,7 +60,6 @@ export const ManageTaskDialog = ({task, onClose, categories}) => {
                             <OrderDeliveryInformationDetails
                                 order={task.order}
                                 onMarkAsShipped={updateState}
-                                categories={categories}
                             />
                         </>
                     )

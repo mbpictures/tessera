@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { IOrder } from "../../../store/reducers/orderReducer";
+import { OrderState } from "../../../store/reducers/orderReducer";
 import { PersonalInformationState } from "../../../store/reducers/personalInformationReducer";
 import prisma from "../../../lib/prisma";
 import { withNotification } from "../../../lib/notifications/withNotification";
@@ -23,7 +23,7 @@ async function handler(
         paymentType,
         locale
     }: {
-        order: IOrder;
+        order: OrderState;
         user: PersonalInformationState;
         eventId: number;
         paymentType: string;
@@ -43,9 +43,10 @@ async function handler(
             }
         });
 
+        const tickets = order.tickets.map(ticket => ({...ticket, used: false}));
+
         const createOrder = await prisma.order.create({
             data: {
-                order: JSON.stringify(order),
                 event: {
                     connect: {
                         id: eventId
@@ -58,7 +59,12 @@ async function handler(
                     }
                 },
                 shipping: JSON.stringify(user.shipping),
-                locale: locale
+                locale: locale,
+                tickets: {
+                    createMany: {
+                        data: tickets
+                    }
+                }
             }
         });
 

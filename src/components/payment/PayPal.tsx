@@ -7,7 +7,7 @@ import React, { useRef } from "react";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-    IOrder,
+    OrderState,
     selectOrder,
     setOrderId
 } from "../../store/reducers/orderReducer";
@@ -53,7 +53,7 @@ export const PayPal = () => {
         );
         dispatch(setOrderId(orderId));
         dispatch(setUserId(userId));
-        const newOrder = Object.assign({}, selectorOrder) as IOrder;
+        const newOrder = Object.assign({}, selectorOrder) as OrderState;
         newOrder.orderId = orderId;
         orderIdRef.current = orderId;
         const response = await axios.post("api/payment_intent/paypal", {
