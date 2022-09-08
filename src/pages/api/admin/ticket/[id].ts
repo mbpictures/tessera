@@ -40,6 +40,11 @@ export default async function handler(
         if (ticket.used) {
             return res.status(400).end("Ticket already used");
         }
+        if (req.body.secret !== ticket.secret) {
+            console.log(req.body.secret)
+            console.log(ticket.secret)
+            return res.status(402).end("Ticket Secret invalid");
+        }
         await prisma.ticket.update({
             where: {
                 id: id
