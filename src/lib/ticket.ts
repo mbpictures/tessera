@@ -3,6 +3,7 @@ import prisma from "./prisma";
 import QRCode from "qrcode";
 import { formatPrice } from "../constants/serverUtil";
 import {randomBytes} from "crypto";
+import { encodeTicketQR } from "../constants/util";
 
 const fillTextField = (form, fieldName, value) => {
     const field = form.getTextField(fieldName);
@@ -14,15 +15,6 @@ require('crypto').randomBytes(48, function(err, buffer) { var token = buffer.toS
 const getTicketSecret = () => {
     const bytes = randomBytes(48);
     return bytes.toString('base64');
-}
-
-export const encodeTicketQR = (ticketId, secret) => {
-    return Buffer.from(JSON.stringify({id: ticketId, secret: secret})).toString("base64");
-}
-
-export const decodeTicketQR = (readValue) => {
-    const buffer = new Buffer(readValue, "base64");
-    return JSON.parse(buffer.toString());
 }
 
 const generateTicket = async (

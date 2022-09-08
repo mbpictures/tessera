@@ -113,3 +113,11 @@ export const arrayEquals = (a, b) => {
     );
 };
 
+export const encodeTicketQR = (ticketId, secret) => {
+    return Buffer.from(JSON.stringify({id: ticketId, secret: secret})).toString("base64");
+}
+
+export const decodeTicketQR = (readValue): {id: string; secret: string} => {
+    const buffer = new Buffer(readValue, "base64");
+    return JSON.parse(buffer.toString());
+}
