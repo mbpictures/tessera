@@ -1,4 +1,10 @@
-import { arrayEquals, calculateTotalPrice, formatPrice, totalTicketAmount } from "../../../src/constants/util";
+import {
+    arrayEquals,
+    calculateTotalPrice,
+    formatPrice,
+    totalSeatAmount,
+    totalTicketAmount
+} from "../../../src/constants/util";
 
 describe("Utils", () => {
     it("Calculate Total Price", () => {
@@ -12,69 +18,58 @@ describe("Utils", () => {
                 price: 30.99
             }
         ];
-        const seatsOrder = {
-            seats: [
-                {
-                    category: 1,
-                    amount: 1
-                },
-                {
-                    category: 1,
-                    amount: 2
-                },
-                {
-                    category: 2,
-                    amount: 2
-                },
-                {
-                    category: 2,
-                    amount: 1
-                }
-            ]
-        };
+        const seatsOrder = [
+            {
+                categoryId: 1,
+                amount: 1
+            },
+            {
+                categoryId: 1,
+                amount: 2
+            },
+            {
+                categoryId: 2,
+                amount: 2
+            },
+            {
+                categoryId: 2,
+                amount: 1
+            }
+        ];
 
         const price = categories[0].price * 3 + categories[1].price * 3
         expect(calculateTotalPrice(seatsOrder, categories)).to.equal(
             price
         );
 
-        const freeSeatOrder = {
-            orders: [
-                {
-                    categoryId: 1,
-                    amount: 3
-                },
-                {
-                    categoryId: 2,
-                    amount: 3
-                }
-            ]
-        };
+        const freeSeatOrder = [
+            {
+                categoryId: 1,
+                amount: 3
+            },
+            {
+                categoryId: 2,
+                amount: 3
+            }
+        ];
         expect(calculateTotalPrice(freeSeatOrder, categories)).to.equal(
             price
         );
-        const freeSeatOrder2 = {
-            orders: [
-                {
-                    categoryId: 1,
-                    amount: 3
-                },
-                {
-                    categoryId: 3,
-                    amount: 3,
-                    price: 19.99
-                }
-            ]
-        };
+        const freeSeatOrder2 = [
+            {
+                categoryId: 1,
+                amount: 3
+            }
+        ];
         expect(calculateTotalPrice(freeSeatOrder2, categories)).to.equal(
-            categories[0].price * 3 + 19.99
+            categories[0].price * 3
         )
-        expect(calculateTotalPrice({})).to.equal(-1);
+        expect(calculateTotalPrice([], categories)).to.equal(0);
     })
 
     it("Total Ticket Amount", () => {
         const seatOrder = {
-            seats: [
+            tickets: [
                 {
                     amount: 2,
                 },
@@ -89,10 +84,11 @@ describe("Utils", () => {
                 }
             ]
         };
-        expect(totalTicketAmount(seatOrder)).to.equal(6);
+        expect(totalTicketAmount(seatOrder)).to.equal(4);
+        expect(totalSeatAmount(seatOrder)).to.equal(6);
 
         const freeSeatOrder = {
-            orders: [
+            tickets: [
                 {
                     amount: 2
                 },
@@ -107,9 +103,9 @@ describe("Utils", () => {
                 }
             ]
         };
-        expect(totalTicketAmount(freeSeatOrder)).to.equal(6);
+        expect(totalTicketAmount(freeSeatOrder)).to.equal(4);
 
-        expect(totalTicketAmount({})).to.equal(-1);
+        expect(totalTicketAmount({tickets: []})).to.equal(0);
     })
 
     it("Array Equals", () => {

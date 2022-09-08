@@ -89,6 +89,10 @@ export const totalTicketAmount = (order: OrderState): number => {
     return order.tickets.length;
 };
 
+export const totalSeatAmount = (order: OrderState): number => {
+    return order.tickets.reduce((a, ticket) => a + ticket.amount, 0);
+};
+
 export const summarizeTicketAmount = (tickets: Tickets, categories: Array<{id: number;}>, hideEmptyCategories?: boolean) => {
     let items = categories
         .map(category => ({categoryId: category.id, amount: tickets.filter(ticket => ticket.categoryId === category.id).length}));
