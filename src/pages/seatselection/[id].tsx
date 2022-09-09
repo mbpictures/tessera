@@ -4,7 +4,6 @@ import prisma from "../../lib/prisma";
 import {
     SeatMap
 } from "../../components/seatselection/seatmap/SeatSelectionMap";
-import { SeatOrder } from "../../store/reducers/orderReducer";
 import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
@@ -61,7 +60,11 @@ export async function getStaticProps({ params, locale }) {
         },
         include: {
             seatMap: true,
-            orders: true
+            orders: {
+                include: {
+                    tickets: true
+                }
+            }
         }
     });
 
@@ -72,11 +75,7 @@ export async function getStaticProps({ params, locale }) {
         const baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
         seatmap = baseMap.map((row) =>
             row.map((seat) => {
-                const isOccupied = event.orders.some((order) =>
-                    (JSON.parse(order.order) as SeatOrder).seats.some(
-                        (value) => value.id === seat.id
-                    )
-                );
+                const isOccupied = event.orders.some(order => order.tickets.some(ticket => ticket.seatId === seat.id));
                 return {
                     ...seat,
                     occupied: isOccupied

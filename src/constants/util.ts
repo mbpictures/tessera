@@ -1,9 +1,9 @@
 import { IAddress } from "./interfaces";
 import zippo from "zippo";
-import { IOrder } from "../store/reducers/orderReducer";
 import { PersonalInformationState } from "../store/reducers/personalInformationReducer";
 import axios from "axios";
-import { OrderFactory } from "../store/factories/order/OrderFactory";
+import { OrderState, Tickets } from "../store/reducers/orderReducer";
+import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
 
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
@@ -33,7 +33,7 @@ export const hasNumber = (myString) => {
 };
 
 export const storeOrderAndUser = async (
-    order: IOrder,
+    order: OrderState,
     user: PersonalInformationState,
     eventId,
     paymentType
@@ -54,7 +54,7 @@ export const getStoreWithOrderId = async (
     orderId
 ): Promise<{
     personalInformation: PersonalInformationState;
-    order: IOrder;
+    order: OrderState;
     eventId: number;
 }> => {
     const response = await axios.post("/api/order", { orderId: orderId });
@@ -70,16 +70,36 @@ export const validatePayment = async (orderId): Promise<boolean> => {
     return response.data.valid;
 };
 
+export const ticketsOccupied = (tickets: Tickets, seatMap: SeatMap) => {
+    return tickets.some(ticket => seatMap.flat().find(seat => seat.id === ticket.seatId).occupied);
+}
+
+export const validateCategoriesWithSeatMap = (tickets: Tickets, seatMap: SeatMap): Tickets => {
+    return tickets.map(ticket => ({...ticket, categoryId: seatMap.flat().find(seat => seat.id === ticket.seatId).category}));
+}
+
 export const calculateTotalPrice = (
-    order: IOrder,
+    tickets: Tickets,
     categories: Array<{ id: number; price: number }>
 ): number => {
-    return OrderFactory.getInstance(order, categories)?.price ?? -1;
+    return tickets.reduce((a, ticket) => a + ticket.amount * categories.find(category => category.id === ticket.categoryId).price, 0);
 };
 
-export const totalTicketAmount = (order: IOrder): number => {
-    return OrderFactory.getInstance(order, undefined)?.ticketAmount ?? -1;
+export const totalTicketAmount = (order: OrderState): number => {
+    return order.tickets.length;
 };
+
+export const totalSeatAmount = (order: OrderState): number => {
+    return order.tickets.reduce((a, ticket) => a + ticket.amount, 0);
+};
+
+export const summarizeTicketAmount = (tickets: Tickets, categories: Array<{id: number;}>, hideEmptyCategories?: boolean) => {
+    let items = categories
+        .map(category => ({categoryId: category.id, amount: tickets.filter(ticket => ticket.categoryId === category.id).length}));
+    if (hideEmptyCategories)
+        return items.filter(item => item.amount > 0);
+    return items;
+}
 
 export const formatPrice = (price: number, currency: string): string => {
     if (typeof navigator === "undefined") return "";
@@ -97,3 +117,11 @@ export const arrayEquals = (a, b) => {
     );
 };
 
+export const encodeTicketQR = (ticketId, secret) => {
+    return Buffer.from(JSON.stringify({id: ticketId, secret: secret})).toString("base64");
+}
+
+export const decodeTicketQR = (readValue): {id: string; secret: string} => {
+    const buffer = new Buffer(readValue, "base64");
+    return JSON.parse(buffer.toString());
+}

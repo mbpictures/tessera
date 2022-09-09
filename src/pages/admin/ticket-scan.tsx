@@ -21,6 +21,7 @@ import {useSnackbar} from "notistack";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import style from "../../style/TicketScan.module.scss";
+import { decodeTicketQR } from "../../constants/util";
 
 export default function TicketScan({permissionDenied}){
     const router = useRouter();
@@ -30,7 +31,7 @@ export default function TicketScan({permissionDenied}){
     const autoSendRef = useRef(autoSend);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [ticket, setTicket] = useState(null);
-    const ticketId = useRef(null);
+    const ticketId = useRef<{id: string; secret: string;}>(null);
     const [deviceId, setDeviceId] = useState(null);
     const [devices, setDevices] = useState(null);
 
@@ -55,7 +56,9 @@ export default function TicketScan({permissionDenied}){
 
     const accept = async () => {
         try {
-            await axios.put("/api/admin/ticket/" + ticketId.current);
+            await axios.put("/api/admin/ticket/" + ticketId.current.id, {
+                secret: ticketId.current.secret
+            });
             enqueueSnackbar("Ticket accepted", {variant: "success"});
             setTicket(null);
         } catch (e) {
@@ -66,6 +69,11 @@ export default function TicketScan({permissionDenied}){
             }
             if (e.response.status === 404) {
                 enqueueSnackbar("Ticket not found", {variant: "info"});
+                setTicket(null);
+                return;
+            }
+            if (e.response.status === 402) {
+                enqueueSnackbar("Ticket Secret invalid", {variant: "error"});
                 setTicket(null);
                 return;
             }
@@ -82,9 +90,9 @@ export default function TicketScan({permissionDenied}){
         if (error) return;
         if (ticketId.current) return;
 
-        const text: string = result.getText();
-        if (!text.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
-            ticketId.current = "N/A";
+        const parsedQR = decodeTicketQR(result.getText());
+        if (!parsedQR.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
+            ticketId.current = {id: "N/A", secret: ""};
             setTimeout(() => {
                 ticketId.current = null;
             }, 1000)
@@ -92,14 +100,14 @@ export default function TicketScan({permissionDenied}){
             return;
         }
 
-        ticketId.current = text;
+        ticketId.current = parsedQR;
         if (autoSendRef.current) {
             await accept();
             return;
         }
 
         try {
-            const ticket = await axios.get("/api/admin/ticket/" + ticketId.current);
+            const ticket = await axios.get("/api/admin/ticket/" + ticketId.current.id);
             setTicket(ticket.data);
         } catch (e) {
             if (e.response.status === 404) {
@@ -147,7 +155,7 @@ export default function TicketScan({permissionDenied}){
                     {
                         ticket && (
                             <Stack>
-                                <Typography>Ticket valid: {ticket.used ? <ClearIcon color={"error"} /> : <CheckIcon color={"success"} />}</Typography>
+                                <Typography>Ticket used: {ticket.used ? <ClearIcon color={"error"} /> : <CheckIcon color={"success"} />}</Typography>
                                 <Typography>Name: {ticket.order.user.firstName} {ticket.order.user.lastName}</Typography>
                                 <Typography>Ticket-Id: {ticket.id}</Typography>
                             </Stack>

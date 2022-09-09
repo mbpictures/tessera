@@ -67,27 +67,14 @@ export async function main() {
     for (let i = 0; i < 100; i++) {
         const amount = getRandom(1, 10);
         const categoryId = getRandom(categories[0].id, categories[categories.length - 1].id);
-        let order = {
-            ticketAmount: amount,
-            totalPrice: amount * categories[categoryId - 1].price
-        };
+        let tickets = Array.from(Array(amount).keys()).map(() => ({
+            used: false,
+            categoryId: categoryId
+        }));
         if (i % 2 === 0) {
-            order["orders"] = [{
-                amount: amount,
-                categoryId: categoryId,
-                price: categories[categoryId - 1].price
-            }]
-        }
-        else {
-            order["seats"] = []
-            for (let j = 0; j < amount; j++) {
-                order["seats"].push({
-                    type: "seat",
-                    id: i * 10 + j,
-                    category: categoryId,
-                    amount: 1,
-                })
-            }
+            tickets.forEach((ticket, j) => {
+                ticket["seatId"] = i * 10 + j;
+            })
         }
         const date = new Date();
         date.setDate(date.getDate() - getRandom(1, 29));
@@ -107,14 +94,16 @@ export async function main() {
                 },
                 paymentType: "invoice",
                 shipping: JSON.stringify({type: "download", data: {}}),
-                order: JSON.stringify(order),
                 locale: "en-GB",
                 event: {
                     connect: {
                         id: i % 2 === 0 ? freeSeatEvent.id : seatMapEvent.id
                     }
                 },
-                date: date
+                date: date,
+                tickets: {
+                    create: tickets
+                }
             }
         })
     }

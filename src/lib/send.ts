@@ -7,8 +7,6 @@ import { getEmailTransporter } from "./email";
 import ejs from "ejs";
 import { PaymentFactory, PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getStaticAssetFile } from "../constants/serverUtil";
-import { totalTicketAmount } from "../constants/util";
-import { IOrder } from "../store/reducers/orderReducer";
 
 export const getEmailHtml = (firstName, lastName, containsTickets, invoicePath) => {
     return ejs.render(
@@ -30,7 +28,6 @@ export const send = async (orderId) => {
             select: {
                 shipping: true,
                 user: true,
-                order: true,
                 tickets: true,
                 paymentResult: true,
                 paymentType: true,
@@ -67,9 +64,7 @@ export const send = async (orderId) => {
         const shipping = ShippingFactory.getShippingInstance(
             JSON.parse(order.shipping)
         );
-        const ticketsAlreadySent =
-            totalTicketAmount(JSON.parse(order.order) as IOrder) <=
-            order.tickets.length;
+        const ticketsAlreadySent = order.tickets.every(ticket => ticket.secret !== "" && ticket.secret !== null && ticket.secret !== undefined);
         const payed =
             PaymentFactory.getPaymentInstance({
                 data: null,

@@ -17,7 +17,6 @@ import { ShippingFactory } from "../../store/factories/shipping/ShippingFactory"
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { hasPayed, hasShipped } from "../../constants/orderValidation";
-import { OrderFactory } from "../../store/factories/order/OrderFactory";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
@@ -85,7 +84,7 @@ export const OrderPaymentInformationDetails = ({order, onMarkAsPayed}) => {
     )
 }
 
-export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categories}) => {
+export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
     const {enqueueSnackbar} = useSnackbar();
 
     const handleMarkAsShipped = async () => {
@@ -129,7 +128,7 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categor
                 {address.countryCode}-{address.regionCode}
             </Typography>
             <Divider sx={{mt: 2, mb: 2}} />
-            <TicketList order={order} categories={categories} />
+            <TicketList order={order} />
             {
                 order.tickets.length === 0 && (
                     <Stack>
@@ -159,12 +158,7 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categor
     )
 }
 
-const TicketList = ({order, categories}) => {
-    const items: Array<{
-        categoryId: number;
-        seatInformation: string;
-    }> = OrderFactory.getInstance(JSON.parse(order.order), categories)?.information ?? [];
-
+const TicketList = ({order}) => {
     const generateTicket = () => {
 
     }
@@ -175,11 +169,7 @@ const TicketList = ({order, categories}) => {
             <AccordionDetails>
                 <List>
                     {
-                        items.map((item, index) => {
-                            const category = categories.find(
-                                (cat) => cat.id === item.categoryId
-                            );
-                            if (!category) return null;
+                        order.tickets.map((item, index) => {
                             return (
                                 <ListItem key={index} secondaryAction={
                                     <IconButton
@@ -191,7 +181,7 @@ const TicketList = ({order, categories}) => {
                                         <BookOnlineIcon />
                                     </IconButton>}
                                 >
-                                    <ListItemText primary={category.label} secondary={item.seatInformation} />
+                                    <ListItemText primary={item.category.label} secondary={item.seatId} />
                                 </ListItem>
                             )
                         })

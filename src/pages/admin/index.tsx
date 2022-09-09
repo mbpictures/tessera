@@ -46,10 +46,16 @@ export default function Dashboard({totalEarning, earningPercentage, totalTickets
 
 export async function getServerSideProps(context) {
     return await getAdminServerSideProps(context, async () => {
+        const categories = await prisma.category.findMany();
+
+        const getTotalPriceOfOrder = (order) => {
+            return order.tickets?.reduce((a, ticket) => a + ticket.amount * categories.find(category => category.id === ticket.categoryId).price, 0) ?? 0;
+        }
+
         const currentDate = new Date();
         const endDate = new Date();
         endDate.setFullYear(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())
-        const oneYearOrders = await prisma.order.findMany({
+        let oneYearOrders = (await prisma.order.findMany({
             where: {
                 date: {
                     lte: currentDate,
@@ -57,32 +63,35 @@ export async function getServerSideProps(context) {
                 }
             },
             include: {
-                event: true
+                event: true,
+                tickets: true
             }
-        });
+        })).map(order => ({...order, totalPrice: getTotalPriceOfOrder(order)}));
 
         const sevenDays = new Date();
         sevenDays.setDate(sevenDays.getDate() - 7);
         const fortyDays = new Date();
         fortyDays.setDate(fortyDays.getDate() - 14);
 
-        const totalEarning = oneYearOrders.map(order => JSON.parse(order.order).totalPrice).reduce((a,b) => a + b, 0);
+
+
+        const totalEarning = oneYearOrders.map(order => order.totalPrice).reduce((a,b) => a + b, 0);
         const earningsByDate = oneYearOrders.reduce((groups, order) => {
             const time = new Date(order.date);
             if (time.getTime() < fortyDays.getTime()) return groups;
             const identifier = time.getTime() < sevenDays.getTime() ? "before" : "current";
-            groups[identifier] += JSON.parse(order.order).totalPrice;
+            groups[identifier] += order.totalPrice;
             return groups;
         }, {"before": 0, "current": 0});
 
-        const totalTickets = oneYearOrders.map(order => JSON.parse(order.order).ticketAmount).reduce((a, b) => a + b, 0);
+        const totalTickets = oneYearOrders.map(order => order.tickets.length).reduce((a, b) => a + b, 0);
 
         const firstCategory = await prisma.category.findFirst();
 
         const oneYearOrdersGroup = oneYearOrders.reduce((group, order) => {
             const date = order.date.toISOString().split("T")[0];
-            const price = JSON.parse(order.order).totalPrice;
-            const ticketAmount = JSON.parse(order.order).ticketAmount;
+            const price = order.totalPrice;
+            const ticketAmount = order.tickets.length;
             if (date in group) {
                 group[date].revenue += price;
                 group[date].ticketAmount += ticketAmount;
@@ -103,7 +112,7 @@ export async function getServerSideProps(context) {
                     gte: sevenDays
                 }
             }
-        })).reduce((total, order) => total + JSON.parse(order.order).totalPrice, 0);
+        })).reduce((total, order) => total + getTotalPriceOfOrder(order), 0);
 
         let unresolvedTickets = (await prisma.order.findMany({
             include: {
@@ -115,19 +124,18 @@ export async function getServerSideProps(context) {
                 }
             }
         }))
-            .filter((order) => order.tickets.length < JSON.parse(order.order).ticketAmount)
-            .reduce((amount, order) => amount + JSON.parse(order.order).ticketAmount, 0);
+            .map((order) => order.tickets.filter(ticket => ticket.secret === "" || ticket.secret === null || ticket.secret === undefined).length)
+            .reduce((a, b) => a + b, 0);
 
         let dataByEvent = oneYearOrders.reduce((group, order) => {
-            const orderDefinition = JSON.parse(order.order)
             if (order.event.title in group) {
-                group[order.event.title].ticketAmount += orderDefinition.ticketAmount;
-                group[order.event.title].revenue += orderDefinition.totalPrice;
+                group[order.event.title].ticketAmount += order.tickets.length;
+                group[order.event.title].revenue += order.totalPrice;
                 return group;
             }
             group[order.event.title] = {
-                ticketAmount: orderDefinition.ticketAmount,
-                revenue: orderDefinition.totalPrice
+                ticketAmount: order.tickets.length,
+                revenue: order.totalPrice
             }
             return group;
         }, {});

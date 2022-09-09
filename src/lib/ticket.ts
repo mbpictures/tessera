@@ -1,9 +1,9 @@
 import { PDFDocument } from "pdf-lib";
 import prisma from "./prisma";
 import QRCode from "qrcode";
-import { IOrder } from "../store/reducers/orderReducer";
 import { formatPrice } from "../constants/serverUtil";
-import { OrderFactory } from "../store/factories/order/OrderFactory";
+import {randomBytes} from "crypto";
+import { encodeTicketQR } from "../constants/util";
 
 const fillTextField = (form, fieldName, value) => {
     const field = form.getTextField(fieldName);
@@ -11,18 +11,24 @@ const fillTextField = (form, fieldName, value) => {
     field.setText(value);
 };
 
+require('crypto').randomBytes(48, function(err, buffer) { var token = buffer.toString('hex'); console.log(token); });
+const getTicketSecret = () => {
+    const bytes = randomBytes(48);
+    return bytes.toString('base64');
+}
+
 const generateTicket = async (
     template,
     details: { seatInformation; price; name; currency; locale },
     eventName: string,
-    orderId
+    ticketId
 ): Promise<Uint8Array> => {
     return new Promise<Uint8Array>(async (resolve, reject) => {
         try {
             const pdfDoc = await PDFDocument.load(template);
             const form = pdfDoc.getForm();
             fillTextField(form, "EVENT_NAME", eventName);
-            fillTextField(form, "SEAT_INFORMATION", details.seatInformation);
+            fillTextField(form, "SEAT_INFORMATION", details.seatInformation ?? "");
             fillTextField(
                 form,
                 "PRICE",
@@ -30,15 +36,18 @@ const generateTicket = async (
             );
             fillTextField(form, "CUSTOMER_NAME", details.name);
 
-            const ticket = await prisma.ticket.create({
+            const secret = getTicketSecret();
+
+            await prisma.ticket.update({
                 data: {
-                    order: {
-                        connect: { id: orderId }
-                    }
+                    secret
+                },
+                where: {
+                    id: ticketId
                 }
             });
             QRCode.toDataURL(
-                ticket.id,
+                encodeTicketQR(ticketId, secret),
                 { errorCorrectionLevel: "H" },
                 async (err, data) => {
                     if (err) {
@@ -69,35 +78,31 @@ export const generateTickets = async (
         },
         select: {
             id: true,
-            order: true,
             event: true,
             user: true,
-            locale: true
+            locale: true,
+            tickets: true
         }
     });
 
-    const order = JSON.parse(orderDB.order) as IOrder;
-
     const categories = await prisma.category.findMany();
 
-    let orders: Array<{ categoryId: number; seatInformation: string }> = OrderFactory.getInstance(order, categories).information;
-
     return await Promise.all(
-        orders.map(async (order) => {
+        orderDB.tickets.map(async (ticket) => {
             const category = categories.find(
-                (category) => category.id === order.categoryId
+                (category) => category.id === ticket.categoryId
             );
             return await generateTicket(
                 template,
                 {
-                    seatInformation: order.seatInformation,
+                    seatInformation: ticket.seatId ?? category.label,
                     price: category.price,
                     name: orderDB.user.firstName + " " + orderDB.user.lastName,
                     currency: category.currency,
                     locale: orderDB.locale
                 },
                 orderDB.event.title,
-                orderDB.id
+                ticket.id
             );
         })
     );

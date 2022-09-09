@@ -13,22 +13,24 @@ import { useState } from "react";
 import { Box } from "@mui/system";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { FreeSeatOrder } from "../../../store/reducers/orderReducer";
 import { motion } from "framer-motion";
 import { Delete } from "@mui/icons-material";
 import { formatPrice } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";
+import { Tickets } from "../../../store/reducers/orderReducer";
 
 export const SeatSelectionFreeEntry = ({
     onChange,
     categories,
     index,
-    currentOrder,
-    onRemove
+    currentlySelectedCategories,
+    tickets,
+    onRemove,
+    category
 }: {
-    onChange?: (index: number, amount: number, categoryId) => unknown;
+    onChange?: (index: number, amount: number, categoryId, oldCategory) => unknown;
     categories: Array<{
         id: number;
         label: string;
@@ -36,15 +38,15 @@ export const SeatSelectionFreeEntry = ({
         currency: string;
     }>;
     index: number;
-    currentOrder: FreeSeatOrder;
-    onRemove?: (index: number) => unknown;
+    currentlySelectedCategories: Array<number>;
+    tickets: Tickets;
+    onRemove?: (index: number, categoryId: number) => unknown;
+    category?: number;
 }) => {
-    const alreadyUsedCategories = currentOrder.orders.filter((_, i) => i !== index).map(order => order.categoryId);
+    const alreadyUsedCategories = currentlySelectedCategories.filter((_, i) => i !== index);
     const categoriesFiltered = categories.filter(category => !alreadyUsedCategories.includes(category.id));
 
-    const order = !currentOrder?.orders || currentOrder.orders.length <= index ? null : currentOrder.orders[index]
-    const [ticketAmount, setTicketAmount] = useState<number>((order?.categoryId ?? -1) > 0 ? order.categoryId : 0);
-    const [category, setCategory] = useState<number>((order?.categoryId ?? -1) !== -1  ? order.categoryId : -1);
+    const [ticketAmount, setTicketAmount] = useState<number>(tickets.filter(ticket => ticket.categoryId === category).length);
     const { t } = useTranslation();
 
     const handleChange = (event) => {
@@ -54,23 +56,22 @@ export const SeatSelectionFreeEntry = ({
         }
         const newValue = parseInt(event.target.value);
         setTicketAmount(isNaN(newValue) ? 0 : newValue);
-        onChange(index, isNaN(newValue) ? 0 : newValue, category);
+        onChange(index, isNaN(newValue) ? 0 : newValue, category, category);
     };
 
     const onAdd = () => {
         setTicketAmount(ticketAmount + 1);
-        onChange(index, ticketAmount + 1, category);
+        onChange(index, ticketAmount + 1, category, category);
     };
 
     const onSubtract = () => {
         if (ticketAmount <= 0) return;
         setTicketAmount(ticketAmount - 1);
-        onChange(index, ticketAmount - 1, category);
+        onChange(index, ticketAmount - 1, category, category);
     };
 
     const handleCategoryChange = (event) => {
-        setCategory(parseInt(event.target.value));
-        onChange(index, ticketAmount, parseInt(event.target.value));
+        onChange(index, ticketAmount, parseInt(event.target.value), category);
     };
 
     const price =
@@ -154,7 +155,7 @@ export const SeatSelectionFreeEntry = ({
                         <Button
                             startIcon={<Delete />}
                             color={"error"}
-                            onClick={() => onRemove(index)}
+                            onClick={() => onRemove(index, category)}
                             variant="outlined"
                             style={{ alignSelf: "center" }}
                             className={'seat-selection-free-remove-category'}

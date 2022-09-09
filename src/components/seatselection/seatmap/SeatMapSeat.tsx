@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "../../../store/hooks";
-import { SeatOrder, selectOrder } from "../../../store/reducers/orderReducer";
+import { OrderState, selectOrder } from "../../../store/reducers/orderReducer";
 import { SEAT_COLORS } from "../../../constants/Constants";
 import { formatPrice } from "../../../constants/util";
 import { useTheme } from "@mui/system";
@@ -38,7 +38,7 @@ export const SeatMapSeat = ({
     forceNoRedux?: boolean;
 }) => {
     const [isSelected, setIsSelected] = useState(false);
-    const reduxOrder = (useAppSelector(selectOrder) as SeatOrder);
+    const reduxOrder = (useAppSelector(selectOrder) as OrderState);
     const theme = useTheme();
     const orders = !forceNoRedux
         ? reduxOrder
@@ -46,7 +46,7 @@ export const SeatMapSeat = ({
 
     useEffect(() => {
         setIsSelected(
-            orders?.seats?.some((val) => val.id === seat.id) ?? false
+            orders?.tickets?.some((val) => val.seatId === seat.id) ?? false
         );
     }, [orders, seat.id]);
 

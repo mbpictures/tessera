@@ -38,6 +38,7 @@ model Category {
     occupiedColor   String?
     currency        String
     events          CategoriesOnEvents[]
+    tickets         Ticket[]
 }
 
 model CategoriesOnEvents {
@@ -66,7 +67,6 @@ model Order {
     id              String      @default(uuid()) @id
     user            User        @relation(fields: [userId], references: [id])
     userId          String
-    order           String
     paymentType     String
     paymentIntent   String?
     paymentResult   String?
@@ -87,6 +87,11 @@ model Ticket {
     order           Order       @relation(fields: [orderId], references: [id])
     orderId         String
     used            Boolean     @default(false)
+    seatId          Int?
+    secret          String?
+    category        Category    @relation(fields: [categoryId], references: [id])
+    categoryId      Int
+    amount          Int         @default(1)
 }
 
 model AdminUser {

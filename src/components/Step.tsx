@@ -12,7 +12,6 @@ import {
     enableNextStep
 } from "../store/reducers/nextStepAvailableReducer";
 import { getStoreWithOrderId } from "../constants/util";
-import { setOrder } from "../store/reducers/orderReducer";
 import {
     setAddress,
     setEmail,
@@ -20,6 +19,7 @@ import {
     setUserId
 } from "../store/reducers/personalInformationReducer";
 import { NextAvailableFactory } from "../store/factories/nextAvailable/NextAvailableFactory";
+import { setOrderId, setTickets } from "../store/reducers/orderReducer";
 
 export const Step = ({
     children,
@@ -71,7 +71,8 @@ export const Step = ({
         if (orderId && orderId !== "") {
             getStoreWithOrderId(orderId)
                 .then(({ personalInformation, order, eventId }) => {
-                    dispatch(setOrder(order));
+                    dispatch(setOrderId(order.orderId));
+                    dispatch(setTickets(order.tickets));
                     dispatch(setEvent(eventId));
                     dispatch(setUserId(personalInformation.userId));
                     dispatch(setEmail(personalInformation.email));

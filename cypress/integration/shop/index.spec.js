@@ -1,6 +1,18 @@
 import { formatPrice } from "../../../src/constants/util";
 import { faker } from '@faker-js/faker';
 
+const encodeString = (rawStr) => {
+    return rawStr.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+        return '&#' + i.charCodeAt(0) + ';';
+    });
+}
+
+function decodeHtmlCharCodes(str) {
+    return str.replace(/(&#(\d+);)/g, function(match, capture, charCode) {
+        return String.fromCharCode(charCode);
+    });
+}
+
 function RGBToHex(rgb) {
     // Choose correct separator
     let sep = rgb.indexOf(",") > -1 ? "," : " ";
@@ -102,13 +114,11 @@ describe("Buy tickets", () => {
             cy.get("#stepper-next-button").should("not.be.disabled");
 
             cy.get("#seat-selection-free-add-category").click();
-            cy.get("#stepper-next-button").should("be.disabled");
             cy.get(".seat-selection-free-add").last().click();
             cy.get(".category-selection").last().click();
             cy.get("#category-selection-entry1-1").click();
             cy.get("#stepper-next-button").should("not.be.disabled");
             cy.get(".seat-selection-free-remove").last().click();
-            cy.get("#stepper-next-button").should("be.disabled");
 
             cy.get(".seat-selection-free-remove-category").first().click();
             cy.get("#stepper-next-button").should("not.be.disabled");
@@ -250,9 +260,10 @@ describe("Buy tickets", () => {
     it("Process Payment", () => {
         cy.purchaseTicket().then(({email, firstName, lastName}) => {
             cy.task("getLastEmail", email).then(result => {
-                expect(result.html).to.contain(`Hello ${firstName} ${lastName}`);
-                expect(result.html).to.not.contain('As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
-                expect(result.html).to.contain('We hereby confirm your\n' +
+                const html = decodeHtmlCharCodes(result.html);
+                expect(html).to.contain(`Hello ${encodeString(firstName)} ${encodeString(lastName)}`);
+                expect(html).to.not.contain('As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
+                expect(html).to.contain('We hereby confirm your\n' +
                     '                                                    order. Enclosed you will\n' +
                     '                                                    find an invoice.');
             });

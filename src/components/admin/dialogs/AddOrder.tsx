@@ -68,7 +68,7 @@ const AddOrderInner = ({open, events, categories, onClose, onAdd}: props) => {
     const storeOrder = async () => {
         try {
             const { userId, orderId } = await storeOrderAndUser(
-                selector.order.order,
+                selector.order,
                 selector.personalInformation,
                 selector.selectedEvent.selectedEvent,
                 selector.payment.payment.type
