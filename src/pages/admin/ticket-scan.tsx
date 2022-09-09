@@ -56,7 +56,7 @@ export default function TicketScan({permissionDenied}){
 
     const accept = async () => {
         try {
-            await axios.put("/api/admin/ticket/" + ticketId.current.id, {
+            await axios.post("/api/admin/ticket/" + ticketId.current.id, {
                 secret: ticketId.current.secret
             });
             enqueueSnackbar("Ticket accepted", {variant: "success"});

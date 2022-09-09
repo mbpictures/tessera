@@ -36,7 +36,7 @@ export default async function handler(
     if (req.method === "GET") {
         return res.status(200).json(ticket);
     }
-    if (req.method === "PUT") {
+    if (req.method === "POST") {
         if (ticket.used) {
             return res.status(400).end("Ticket already used");
         }
