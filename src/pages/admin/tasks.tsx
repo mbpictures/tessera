@@ -127,9 +127,14 @@ export async function getServerSideProps(context) {
                     assignedUser: true,
                     order: {
                         include: {
-                            user: true
+                            user: true,
+                            tickets: {
+                                include: {
+                                    category: true
+                                }
+                            }
                         }
-                    }
+                    },
                 }
             });
             const tasksSerializable = tasks.map(task => {
