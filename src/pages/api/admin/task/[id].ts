@@ -43,5 +43,15 @@ export default async function handler(
         return res.status(200).json(task);
     }
 
+    if (req.method === "PUT") {
+        const newTask = await prisma.task.update({
+            where: {
+                id: parseInt(id as string)
+            },
+            data: req.body
+        });
+        return res.status(200).json(newTask);
+    }
+
     return res.status(401).end("Method unsupported");
 }

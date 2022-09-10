@@ -61,7 +61,10 @@ export default function Tasks({ tasks, permissionDenied }: {tasks: Array<Task>, 
 
     return (
         <AdminLayout permissionDenied={permissionDenied}>
-            <ManageTaskDialog task={task} onClose={() => setTask(null)} />
+            <ManageTaskDialog task={task} onClose={async () => {
+                setTask(null)
+                await refreshProps();
+            }} />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Tasks</Typography>
             </Box>
