@@ -2,77 +2,50 @@ import { Button, Grid, Typography } from "@mui/material";
 import { SeatSelectionFreeEntry } from "./SeatSelectionFreeEntry";
 import { Box } from "@mui/system";
 import AddIcon from "@mui/icons-material/Add";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "../../../store/hooks";
 import {
-    FreeSeatOrder,
-    selectOrder,
-    setOrder
+    OrderState,
+    selectOrder, setTickets, Tickets
 } from "../../../store/reducers/orderReducer";
 import { useDispatch } from "react-redux";
-import { calculateTotalPrice, formatPrice, totalTicketAmount } from "../../../constants/util";
+import { formatPrice } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { motion } from "framer-motion";
 import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";
 
 export const SeatSelectionFree = ({ categories }) => {
-    const order = useAppSelector(selectOrder) as FreeSeatOrder;
+    const order = useAppSelector(selectOrder) as OrderState;
     const dispatch = useDispatch();
     const { t } = useTranslation();
+    const [currentlySelectedCategories, setCurrentlySelectedCategories] = useState([1]);
 
-    useEffect(() => {
-        if (order.orders && order.orders.length > 0) return;
-        const newOrder: FreeSeatOrder = {
-            ticketAmount: -1,
-            orders: [{ amount: -1, categoryId: -1, price: 0 }],
-            totalPrice: 0
-        };
-        dispatch(setOrder(newOrder));
-    }, [dispatch, order.orders]);
-
-    const handleChange = (index, amount: number, categoryId) => {
+    const handleChange = (index, amount: number, categoryId, oldCategory) => {
         if (categoryId === -1) return;
-        const price: number =
-            amount * categories.find((cat) => cat.id === categoryId).price;
-        const newOrder: FreeSeatOrder = {
-            ticketAmount: amount,
-            orders: order.orders.map((a) => a),
-            totalPrice: price
-        };
-        newOrder.orders[index] = {
-            amount: amount,
-            categoryId: categoryId,
-            price: price
-        };
-        newOrder.totalPrice = calculateTotalPrice(newOrder, categories);
-        newOrder.ticketAmount = totalTicketAmount(newOrder);
-        dispatch(setOrder(newOrder));
+        const newTickets: Tickets = order.tickets.map(a => a).filter(a => a.categoryId !== oldCategory);
+        newTickets.push(...Array.from(Array(amount).keys()).map(() => ({categoryId: categoryId, amount: 1})));
+        dispatch(setTickets(newTickets));
+        const newValue = currentlySelectedCategories.map(a => a);
+        newValue[index] = categoryId;
+        setCurrentlySelectedCategories(newValue);
     };
 
     const handleAddCategory = () => {
-        if (order.orders && order.orders.length >= categories.length) return;
-        const newOrder: FreeSeatOrder = {
-            ticketAmount: order.ticketAmount,
-            orders: order.orders.map((a) => a),
-            totalPrice: order.totalPrice
-        };
-        newOrder.orders.push({ amount: 0, categoryId: -1, price: 0 });
-        dispatch(setOrder(newOrder));
+        if (currentlySelectedCategories.length >= categories.length) return;
+        setCurrentlySelectedCategories([...currentlySelectedCategories, -1]);
     };
 
     const handleRemoveCategory = (index) => {
-        if (order.orders.length < index || order.orders.length <= 1) return;
-        const newOrder: FreeSeatOrder = {
-            ticketAmount: order.ticketAmount,
-            orders: order.orders.map((a) => a),
-            totalPrice: order.totalPrice
-        };
-        newOrder.orders.splice(index, 1);
-        newOrder.totalPrice = calculateTotalPrice(newOrder, categories);
-        newOrder.ticketAmount = totalTicketAmount(newOrder);
-        dispatch(setOrder(newOrder));
+        if (currentlySelectedCategories.length < index || currentlySelectedCategories.length <= 1) return;
+        const categoryId = currentlySelectedCategories[index];
+        const newValue = currentlySelectedCategories.map(a => a);
+        newValue.splice(index, 1);
+        setCurrentlySelectedCategories(newValue);
+        dispatch(setTickets(order.tickets.map(a => a).filter(a => a.categoryId !== categoryId)))
     };
+
+    const price = order.tickets.reduce((a, ticket) => a + categories.find(category => category.id === ticket.categoryId).price, 0);
 
     return (
         <Grid
@@ -90,17 +63,19 @@ export const SeatSelectionFree = ({ categories }) => {
                 </Typography>
             </motion.div>
             <Grid container spacing={2} justifyContent={"center"}>
-                {order.orders &&
-                    order.orders.length > 0 &&
-                    order.orders.map((o, index) => {
+                {currentlySelectedCategories &&
+                    currentlySelectedCategories.length > 0 &&
+                    currentlySelectedCategories.map((o, index) => {
                         return (
                             <Grid item sm={12} md={6} key={index}>
                                 <SeatSelectionFreeEntry
                                     categories={categories}
                                     onChange={handleChange}
                                     index={index}
-                                    currentOrder={order}
                                     onRemove={handleRemoveCategory}
+                                    tickets={order.tickets}
+                                    currentlySelectedCategories={currentlySelectedCategories}
+                                    category={o}
                                 />
                             </Grid>
                         );
@@ -113,7 +88,7 @@ export const SeatSelectionFree = ({ categories }) => {
                     variant="outlined"
                     onClick={handleAddCategory}
                     disabled={
-                        order.orders && order.orders.length >= categories.length
+                        currentlySelectedCategories && currentlySelectedCategories.length >= categories.length
                     }
                     id={"seat-selection-free-add-category"}
                 >
@@ -124,7 +99,7 @@ export const SeatSelectionFree = ({ categories }) => {
                     {t("common:total-price", null, {fallback: commonText["total-price"]})}:{" "}
                     <b id={"seat-selection-free-total-price"}>
                         {
-                            categories.length > 0 && formatPrice(order.totalPrice, categories[0]?.currency)
+                            categories.length > 0 && formatPrice(price, categories[0]?.currency)
                         }
                     </b>
                 </Typography>

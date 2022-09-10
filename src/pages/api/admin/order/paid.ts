@@ -10,6 +10,7 @@ import {
     PaymentType
 } from "../../../../store/factories/payment/PaymentFactory";
 import { send } from "../../../../lib/send";
+import { completeTask } from "./taskCompletion";
 
 export default async function handler(
     req: NextApiRequest,
@@ -27,6 +28,9 @@ export default async function handler(
         const order = await prisma.order.findUnique({
             where: {
                 id: params.orderId
+            },
+            include: {
+                tickets: true
             }
         });
         orders = [order];
@@ -36,6 +40,9 @@ export default async function handler(
                 paymentIntent: JSON.stringify({
                     invoicePurpose: params.invoicePurpose
                 })
+            },
+            include: {
+                tickets: true
             }
         });
     } else {
@@ -96,6 +103,7 @@ export default async function handler(
 
         await Promise.all(orders.map(async (order) => {
             await send(order.id);
+            await completeTask(order.id);
         }));
         return res.status(200).end("Updated");
     }

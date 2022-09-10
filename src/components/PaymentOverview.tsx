@@ -11,9 +11,8 @@ import { Edit } from "@mui/icons-material";
 import React from "react";
 import { useAppSelector } from "../store/hooks";
 import { selectOrder } from "../store/reducers/orderReducer";
-import { formatPrice } from "../constants/util";
+import { calculateTotalPrice, formatPrice, summarizeTicketAmount } from "../constants/util";
 import useTranslation from "next-translate/useTranslation";
-import { OrderFactory } from "../store/factories/order/OrderFactory";
 
 export const PaymentOverview = ({
     categories,
@@ -42,9 +41,8 @@ export const PaymentOverview = ({
         onEdit();
     };
 
-    let items: Array<{ categoryId: number; amount: number }> = OrderFactory.getInstance(order, categories)?.summary ?? [];
-
-    if (hideEmptyCategories) items = items.filter((val) => val.amount > 0);
+    const items = summarizeTicketAmount(order.tickets, categories, hideEmptyCategories);
+    const price = calculateTotalPrice(order.tickets, categories);
 
     return (
         <List
@@ -112,7 +110,7 @@ export const PaymentOverview = ({
                             secondary={
                                 <span id="payment-overview-total-price">
                             {formatPrice(
-                                Math.max(order.totalPrice, 0),
+                                Math.max(price, 0),
                                 categories[0].currency
                             )}
                         </span>

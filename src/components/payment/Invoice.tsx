@@ -7,12 +7,12 @@ import {
 } from "../../store/reducers/paymentReducer";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import axios from "axios";
-import { IOrder, selectOrder } from "../../store/reducers/orderReducer";
+import { OrderState, selectOrder } from "../../store/reducers/orderReducer";
 import useTranslation from "next-translate/useTranslation";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);
-    const order: IOrder = useAppSelector(selectOrder);
+    const order: OrderState = useAppSelector(selectOrder);
     const dispatch = useAppDispatch();
 
     const { t } = useTranslation();

@@ -17,4 +17,6 @@ export abstract class Shipping {
     abstract get Component(): React.ReactElement;
 
     abstract isValid(): boolean;
+
+    abstract getSuccessfulShipping(): IShipping;
 }

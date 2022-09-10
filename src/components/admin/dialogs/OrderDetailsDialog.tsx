@@ -1,5 +1,4 @@
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogContentText,
@@ -13,48 +12,17 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { ShippingFactory } from "../../../store/factories/shipping/ShippingFactory";
-import { useSnackbar } from "notistack";
-import axios from "axios";
-
-const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
-
-const JsonViewer = ({ paymentResult, paymentIntent }) => {
-    if (typeof window === "undefined") return null;
-
-    return (
-        <ReactJson
-            src={{ paymentResult, paymentIntent }}
-            name={"details"}
-            collapsed
-        />
-    );
-};
+import { OrderDeliveryInformationDetails, OrderPaymentInformationDetails } from "../OrderInformationDetails";
 
 export const OrderDetailsDialog = ({
     order,
     onClose,
-    hasPayedIcon,
-    hasPayed,
-    onMarkAsPayed
+    onMarkAsPayed,
+    onMarkAsShipped
 }) => {
     const [detailsTab, setDetailsTab] = useState("overview");
-    const { enqueueSnackbar } = useSnackbar();
 
     if (order === null) return null;
-
-    const handleMarkAsPayed = async () => {
-        try {
-            await axios.put("/api/admin/order/paid", { orderId: order.id });
-            enqueueSnackbar("Marked as pay", { variant: "success" });
-            onMarkAsPayed();
-        } catch (e) {
-            enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {
-                variant: "error"
-            });
-        }
-    };
 
     const handleDetailsTabChange = (event, newValue) => {
         setDetailsTab(newValue);
@@ -103,47 +71,17 @@ export const OrderDetailsDialog = ({
                     </TabPanel>
                     <TabPanel value={"payment"}>
                         <Stack spacing={1}>
-                            <Typography>
-                                Payment Type: {order.paymentType}
-                                <br />
-                                Payed: {hasPayedIcon(order)}
-                                <br />
-                            </Typography>
-                            {order.paymentType === "invoice" &&
-                                !hasPayed(order) && (
-                                    <Button onClick={handleMarkAsPayed}>
-                                        Mark as payed
-                                    </Button>
-                                )}
-                            <Divider />
-                            <Typography>
-                                Detailed information (in case of payment errors
-                                for example)
-                            </Typography>
-                            <JsonViewer
-                                paymentIntent={JSON.parse(order.paymentIntent)}
-                                paymentResult={JSON.parse(order.paymentResult)}
+                            <OrderPaymentInformationDetails
+                                order={order}
+                                onMarkAsPayed={onMarkAsPayed}
                             />
                         </Stack>
                     </TabPanel>
                     <TabPanel value={"delivery"}>
                         <Stack spacing={1}>
-                            <Typography>
-                                Delivery Type:{" "}
-                                {
-                                    ShippingFactory.getShippingInstance(
-                                        JSON.parse(order.shipping)
-                                    )?.DisplayName
-                                }
-                            </Typography>
-                            <Divider />
-                            <Typography>
-                                Detailed information (in case of payment errors
-                                for example)
-                            </Typography>
-                            <ReactJson
-                                src={JSON.parse(order.shipping)}
-                                collapsed
+                            <OrderDeliveryInformationDetails
+                                order={order}
+                                onMarkAsShipped={onMarkAsShipped}
                             />
                         </Stack>
                     </TabPanel>

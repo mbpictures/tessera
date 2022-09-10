@@ -56,7 +56,7 @@ export default function Information({ direction, deliveryMethods }) {
         dispatch(
             setShipping({
                 type: selectedShippingMethod,
-                data: "mock"
+                data: {}
             })
         );
     }, [selectedShippingMethod, dispatch]);

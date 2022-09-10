@@ -12,6 +12,7 @@ import EventIcon from "@mui/icons-material/Event";
 import SettingsIcon from '@mui/icons-material/Settings';
 import TranslateIcon from '@mui/icons-material/Translate';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const RootStyle = styled("div")(({ theme }) => ({
     [theme.breakpoints.up("lg")]: {
@@ -37,6 +38,11 @@ export const sidebarConfig = [
         title: "Orders",
         path: "/admin/orders",
         icon: <BookOnlineIcon />
+    },
+    {
+        title: "Tasks",
+        path: "/admin/tasks",
+        icon: <AssignmentIcon />
     },
     {
         title: "Event Management",

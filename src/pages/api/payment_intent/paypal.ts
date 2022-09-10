@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { IOrder } from "../../../store/reducers/orderReducer";
 import prisma from "../../../lib/prisma";
 import { paypalClient } from "../../../lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
-import { calculateTotalPrice } from "../../../constants/util";
+import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
+import { OrderState } from "../../../store/reducers/orderReducer";
 
 async function handler(
     req: NextApiRequest,
@@ -14,18 +14,31 @@ async function handler(
         res.setHeader("Allow", "POST");
         res.status(405).end("Method Not Allowed");
     }
-    const { order }: { order: IOrder } = req.body;
+    const { order }: { order: OrderState } = req.body;
 
     try {
         if (!order.orderId || order.orderId === "") {
             throw new Error("Invalid Order ID");
         }
-        if (order.ticketAmount <= 0) {
+        if (order.tickets.length <= 0) {
             throw new Error("Invalid ticket amount");
         }
 
         const categories = await prisma.category.findMany();
-        let amount = calculateTotalPrice(order, categories);
+        const orderDB = await prisma.order.findUnique({
+            where: {
+                id: order.orderId
+            },
+            select: {
+                event: {
+                    select: {
+                        seatMap: true
+                    }
+                },
+                tickets: true
+            }
+        })
+        let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
         let currency = categories[0].currency;
 
         let request = new paypal.orders.OrdersCreateRequest();

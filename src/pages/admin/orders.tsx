@@ -17,7 +17,6 @@ import prisma from "../../lib/prisma";
 import InfoIcon from "@mui/icons-material/Info";
 import { useEffect, useRef, useState } from "react";
 import {
-    PaymentFactory,
     PaymentType
 } from "../../store/factories/payment/PaymentFactory";
 import CheckIcon from "@mui/icons-material/Check";
@@ -36,10 +35,10 @@ import { SelectionList } from "../../components/admin/SelectionList";
 import { FullSizeLoading } from "../../components/FullSizeLoading";
 import { AddOrder } from "../../components/admin/dialogs/AddOrder";
 import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
-import { SeatOrder } from "../../store/reducers/orderReducer";
 import DownloadIcon from '@mui/icons-material/Download';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
+import { hasPayedIcon } from "../../components/admin/OrderInformationDetails";
 
 const COLUMNS = [
     "Event",
@@ -118,23 +117,6 @@ export default function Orders({ permissionDenied, count, categories, events}) {
         await router.replace(router.asPath);
     };
 
-    const hasPayed = (order) => {
-        return (
-            PaymentFactory.getPaymentInstance({
-                data: null,
-                type: order.paymentType as PaymentType
-            })?.paymentResultValid(order.paymentResult) ?? false
-        );
-    };
-
-    const hasPayedIcon = (order) => {
-        return hasPayed(order) ? (
-            <CheckIcon color={"success"} />
-        ) : (
-            <CloseIcon color={"error"} />
-        );
-    };
-
     const handleCloseDetails = () => {
         setOrder(null);
     };
@@ -183,9 +165,8 @@ export default function Orders({ permissionDenied, count, categories, events}) {
             <OrderDetailsDialog
                 order={order}
                 onClose={handleCloseDetails}
-                hasPayed={hasPayed}
-                hasPayedIcon={hasPayedIcon}
                 onMarkAsPayed={refreshProps}
+                onMarkAsShipped={refreshProps}
             />
             <MarkOrdersAsPayedDialog
                 open={markAsPaidOpen}
@@ -193,8 +174,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                     await refreshProps();
                     setMarkAsPaidOpen(false);
                 }}
-                hasPaid={hasPayed}
-                hasPaidIcon={hasPayedIcon}
+                categories={categories}
             />
             <AddOrder
                 open={addOrderOpen}
@@ -320,7 +300,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                                     <TableRow key={index}>
                                         <ConditionalCell columnName="Event" text={order.event.title} list={visibleColumns} />
                                         <ConditionalCell columnName="Order" text={
-                                            'Tickets booked: ' + JSON.parse(order.order).ticketAmount
+                                            'Tickets booked: ' + order.tickets.length
                                         } list={visibleColumns} />
                                         <ConditionalCell columnName="Payment" text={Object.entries(PaymentType).find(type => type[1] === order.paymentType)[0]} list={visibleColumns} />
                                         <ConditionalCell columnName="Paid" text={hasPayedIcon(order)} list={visibleColumns} />
@@ -376,7 +356,11 @@ export async function getServerSideProps(context: NextPageContext) {
             let events = await prisma.event.findMany({
                 include: {
                     seatMap: true,
-                    orders: true
+                    orders: {
+                        include: {
+                            tickets: true
+                        }
+                    }
                 }
             });
 
@@ -386,8 +370,8 @@ export async function getServerSideProps(context: NextPageContext) {
                     baseMap = baseMap.map((row) =>
                         row.map((seat) => {
                             const isOccupied = event.orders.some((order) =>
-                                (JSON.parse(order.order) as SeatOrder).seats.some(
-                                    (value) => value.id === seat.id
+                                order.tickets.some(
+                                    (ticket) => ticket.seatId === seat.id
                                 )
                             );
                             return {

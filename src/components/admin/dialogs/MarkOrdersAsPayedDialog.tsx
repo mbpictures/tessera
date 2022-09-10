@@ -13,8 +13,11 @@ import { useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { validate as uuidValidate } from 'uuid';
+import { hasPayedIcon } from "../OrderInformationDetails";
+import { hasPayed } from "../../../constants/orderValidation";
+import { formatPrice } from "../../../constants/util";
 
-export const MarkOrdersAsPayedDialog = ({open, onClose, hasPaid, hasPaidIcon}) => {
+export const MarkOrdersAsPayedDialog = ({open, onClose, categories}) => {
     const [orderId, setOrderId] = useState("");
     const [autoMarkAsPaid, setAutoMarkAsPaid] = useState(false);
     const [order, setOrder] = useState(null);
@@ -90,10 +93,10 @@ export const MarkOrdersAsPayedDialog = ({open, onClose, hasPaid, hasPaidIcon}) =
                                 {
                                     order ? (
                                         <Stack>
-                                            <OrderDisplay order={order} />
+                                            <OrderDisplay order={order} categories={categories} />
                                             {
-                                                hasPaid(order) ? (
-                                                    <Typography>{hasPaidIcon(order)} This order is already paid</Typography>
+                                                hasPayed(order) ? (
+                                                    <Typography>{hasPayedIcon(order)} This order is already paid</Typography>
                                                 ) : (
                                                     <Button onClick={handleMarkAsPaid}>
                                                         Mark as paid
@@ -112,12 +115,16 @@ export const MarkOrdersAsPayedDialog = ({open, onClose, hasPaid, hasPaidIcon}) =
     )
 };
 
-const OrderDisplay = ({order}) => {
+const OrderDisplay = ({order, categories}) => {
+    const getTotalPriceOfOrder = (order) => {
+        return order.tickets?.reduce((a, ticket) => a + ticket.amount * categories.find(category => category.id === ticket.categoryId).price, 0) ?? 0;
+    }
+
     return (
         <Stack>
             <Typography>OrderID: {order.id}</Typography>
-            <Typography>TicketAmount: {JSON.parse(order.order)["ticketAmount"]}</Typography>
-            <Typography>Total Price: {JSON.parse(order.order)["totalPrice"]}</Typography>
+            <Typography>TicketAmount: {order.tickets.length}</Typography>
+            <Typography>Total Price: {formatPrice(getTotalPriceOfOrder(order), categories[0].currency)}</Typography>
             <Typography>Date: {new Date(order.date).toLocaleString()}</Typography>
         </Stack>
     )

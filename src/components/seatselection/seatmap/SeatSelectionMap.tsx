@@ -3,9 +3,8 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Card, Grid } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
-    SeatOrder,
-    selectOrder,
-    setOrder
+    OrderState,
+    selectOrder, setTickets
 } from "../../../store/reducers/orderReducer";
 import { useEffect, useRef, useState } from "react";
 import { Seat } from "./SeatMapSeat";
@@ -27,7 +26,7 @@ export const SeatSelectionMap = ({
     }>;
     hideSummary?: boolean;
 }) => {
-    const order = useAppSelector(selectOrder) as SeatOrder;
+    const order = useAppSelector(selectOrder) as OrderState;
     const dispatch = useAppDispatch();
     const container = useRef<HTMLDivElement>(null);
     const content = useRef<HTMLDivElement>(null);
@@ -47,60 +46,36 @@ export const SeatSelectionMap = ({
     }, [container, content]);
 
     useEffect(() => {
-        if (order.seats) return;
-        const newOrder: SeatOrder = {
-            ticketAmount: -1,
-            totalPrice: -1,
-            seats: []
-        };
-        dispatch(setOrder(newOrder));
         document.addEventListener("resize", rescale);
         return () => {
             document.removeEventListener("resize", rescale);
         };
-    }, [dispatch, order.seats]);
+    }, []);
 
-    const createNewOrder = () => {
+    const createNewOrder = (): OrderState => {
         return {
-            ticketAmount: 0,
-            seats: order.seats.map((a) => a),
-            totalPrice: 0
+            orderId: order.orderId,
+            tickets: order.tickets.map((a) => a)
         };
     };
 
-    const getPrice = (order: SeatOrder) => {
-        return order.seats
-            .map((seat) => {
-                return {
-                    amount: seat.amount,
-                    price: categories.find((cat) => cat.id === seat.category)
-                        .price
-                };
-            })
-            .reduce((a, seat) => a + seat.price, 0);
-    };
-
-    const getTicketAmount = (order: SeatOrder) => {
-        return order.seats.reduce((a, seat) => a + seat.amount, 0);
-    };
-
     const addSeat = (seat: Seat) => {
-        const newOrder: SeatOrder = createNewOrder();
-        newOrder.seats.push(seat);
-        newOrder.totalPrice = getPrice(newOrder);
-        newOrder.ticketAmount = getTicketAmount(newOrder);
-        dispatch(setOrder(newOrder));
+        const newOrder: OrderState = createNewOrder();
+        newOrder.tickets.push({
+            categoryId: seat.category,
+            amount: seat.amount ?? 1,
+            seatId: seat.id
+        });
+        dispatch(setTickets(newOrder.tickets));
     };
 
     const removeSeat = (seat: Seat) => {
-        const newOrder: SeatOrder = createNewOrder();
-        newOrder.seats.splice(
-            newOrder.seats.findIndex((s) => s.id === seat.id),
+        const newOrder: OrderState = createNewOrder();
+        newOrder.tickets.splice(
+            newOrder.tickets.findIndex((s) => s.seatId === seat.id),
             1
         );
-        newOrder.totalPrice = getPrice(newOrder);
-        newOrder.ticketAmount = getTicketAmount(newOrder);
-        dispatch(setOrder(newOrder));
+        dispatch(setTickets(newOrder.tickets));
     };
 
     const handleSelectSeat = (seat: Seat, isSelected: boolean) => {

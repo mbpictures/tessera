@@ -4,6 +4,7 @@ import { Shipping } from "./Shipping";
 import { ShippingType } from "./ShippingFactory";
 import { PostalDeliveryShippingComponent } from "../../../components/shipping/PostalDeliveryShippingComponent";
 import React from "react";
+import { IShipping } from "../../reducers/personalInformationReducer";
 
 export interface PostalDeliveryData {
     differentAddress: boolean;
@@ -52,5 +53,16 @@ export class PostalDeliveryShipping extends Shipping {
 
     get Component(): React.ReactElement {
         return <PostalDeliveryShippingComponent />;
+    }
+
+    getSuccessfulShipping(): IShipping {
+        const data = typeof this.shippingData.data === "object" ? this.shippingData.data : JSON.parse(this.shippingData.data);
+        return {
+            type: ShippingType.Post,
+            data: {
+                ...data,
+                isShipped: true
+            }
+        };
     }
 }

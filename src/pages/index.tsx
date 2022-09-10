@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { Step } from "../components/Step";
 import { useAppDispatch } from "../store/hooks";
 import { setEvent } from "../store/reducers/eventSelectionReducer";
@@ -9,9 +9,14 @@ import { EventSelection } from "../components/EventSelection/EventSelection";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
+import { resetOrder } from "../store/reducers/orderReducer";
 
 export default function Home({ events, direction, title, subtitle }) {
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(resetOrder());
+    }, []);
 
     const handleChange = (index: number) => {
         dispatch(setEvent(index));

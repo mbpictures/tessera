@@ -7,12 +7,13 @@ describe("Util", () => {
         cy.visit("/");
         cy.wrap(null).then(() => {
             const orderOriginal = {
-                orders: [
+                tickets: [
                     {
                         categoryId: 1,
                         amount: 2
                     }
-                ]
+                ],
+                orderId: null
             };
             const country = countryData[0];
             const user = {
@@ -37,7 +38,8 @@ describe("Util", () => {
                 expect(orderId).to.not.equal(null).equal(undefined);
 
                 cy.getStoreWithOrderId(orderId).then(({personalInformation, order, eventId}) => {
-                    expect(order).to.deep.equal(orderOriginal);
+                    expect(order.tickets[0].categoryId).to.equal(orderOriginal.tickets[0].categoryId);
+                    expect(order.tickets[0].amount).to.equal(orderOriginal.tickets[0].amount);
                     user.userId = userId;
                     expect(personalInformation).to.deep.equal(user);
                     expect(eventId).to.equal(1);
