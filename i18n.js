@@ -11,7 +11,8 @@ module.exports = {
         "*": ["common"],
         "/information": ["information"],
         "/payment": ["payment"],
-        "/seatselection/[id]": ["seatselection"]
+        "/seatselection/[id]": ["seatselection"],
+        "/checkout": ["checkout"]
     },
     "logger": () => {},
     "logBuild": false,

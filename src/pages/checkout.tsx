@@ -5,9 +5,11 @@ import { Box, useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
+import useTranslation from "next-translate/useTranslation";
 
 export default function Checkout({ direction }) {
     const theme = useTheme();
+    const { t } = useTranslation();
 
     return (
         <Step
@@ -61,7 +63,7 @@ export default function Checkout({ direction }) {
                     />
                 </svg>
                 <Typography variant="h3" align={"center"}>
-                    Checkout complete
+                    {t("checkout:checkout-complete")}
                 </Typography>
             </Box>
         </Step>
