@@ -6,7 +6,7 @@
     "firstname-error": "Please enter your firstname here!",
     "lastname": "Lastname",
     "lastname-error": "Please enter your lastname here!",
-    "address": "Addresse",
+    "address": "Address",
     "address-error": "Please enter street and house number!",
     "zip": "ZIP",
     "zip-error": "Please enter a valid ZIP Code!",
@@ -20,5 +20,8 @@
     "postal-delivery-description": "The ticket will be sent to your home.",
     "differing-shipping-address": "Differing shipping address",
     "download-description": "The ticket will be sent to your email address.",
-    "box-office-description": "You can pick up your ticket at the Box-Office."
+    "box-office-description": "You can pick up your ticket at the Box-Office.",
+    "seat": "Seat {{seat}}",
+    "tickets": "Tickets",
+    "delivery": "Delivery"
 }
