@@ -29,7 +29,7 @@ export const generateInvoice = async (
         const categories = await prisma.category.findMany();
         const totalPrice = calculateTotalPrice(orderDB.tickets, categories);
 
-        let orders: Array<{ categoryId: number; amount: number }> = summarizeTicketAmount(orderDB.tickets, categories);
+        let orders: Array<{ categoryId: number; amount: number }> = summarizeTicketAmount(orderDB.tickets, categories, true);
 
         let purpose = undefined;
         if (orderDB.paymentType === PaymentType.Invoice) {
