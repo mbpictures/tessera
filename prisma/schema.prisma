@@ -92,6 +92,8 @@ model Ticket {
     category        Category    @relation(fields: [categoryId], references: [id])
     categoryId      Int
     amount          Int         @default(1)
+    firstName       String?
+    lastName        String?
 }
 
 model AdminUser {
