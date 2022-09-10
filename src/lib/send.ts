@@ -1,4 +1,3 @@
-import fs from "fs";
 import { generateInvoice } from "./invoice";
 import { generateTickets } from "./ticket";
 import prisma from "./prisma";
@@ -8,13 +7,13 @@ import ejs from "ejs";
 import { PaymentFactory, PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getStaticAssetFile } from "../constants/serverUtil";
 
-export const getEmailHtml = (firstName, lastName, containsTickets, invoicePath) => {
+export const getEmailHtml = (firstName, lastName, containsTickets, containsInvoice) => {
     return ejs.render(
       getStaticAssetFile("email/template.html", "utf-8"),
       {
           customerName: firstName + " " + lastName,
           containsTickets: containsTickets,
-          containsInvoice: invoicePath === undefined ? undefined : true
+          containsInvoice: containsInvoice ? true : undefined
       }
     );
 }
@@ -36,10 +35,10 @@ export const send = async (orderId) => {
         });
 
        let attachments = [];
-       let invoicePath = undefined;
         // generate invoice
+        let containsInvoice = false;
        if (!order.invoiceSent) {
-           invoicePath = await generateInvoice(
+           const invoiceData = await generateInvoice(
                getStaticAssetFile("invoice/template.html", "utf-8"),
                orderId
            );
@@ -55,9 +54,10 @@ export const send = async (orderId) => {
 
            attachments.push({
                filename: "Invoice.pdf",
-               path: invoicePath,
+               content: invoiceData,
                contentType: "application/pdf",
            });
+           containsInvoice = true;
        }
 
         // generate tickets
@@ -103,15 +103,13 @@ export const send = async (orderId) => {
             attachments
         };
 
-        message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, invoicePath);
+        message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice);
 
         (await getEmailTransporter()).sendMail(message, (error) => {
             if (error) {
                 reject(error);
                 return;
             }
-            if (invoicePath !== undefined)
-                fs.unlinkSync(invoicePath);
             resolve();
         });
     });

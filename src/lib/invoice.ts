@@ -10,8 +10,8 @@ import { Options } from "../constants/Constants";
 export const generateInvoice = async (
     template,
     orderId: string
-): Promise<string> => {
-    return new Promise<string>(async (resolve, reject) => {
+): Promise<Uint8Array> => {
+    return new Promise<Uint8Array>(async (resolve, reject) => {
         const orderDB = await prisma.order.findUnique({
             where: {
                 id: orderId
@@ -82,12 +82,12 @@ export const generateInvoice = async (
 
         htmlPdf
             .create(html, { format: "A4" })
-            .toFile(`temp/${orderId}.pdf`, (err, res) => {
+            .toBuffer((err, res) => {
                 if (err) {
                     reject(err);
                     return;
                 }
-                resolve(res.filename);
+                resolve(res);
             });
     });
 };
