@@ -6,5 +6,8 @@
     "pages/api/**/*": {
       "includeFiles": "src/assets/**/*"
     }
+  },
+  "github": {
+    "silent": true
   }
 }
