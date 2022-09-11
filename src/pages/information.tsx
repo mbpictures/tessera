@@ -113,7 +113,7 @@ export default function Information({ direction, deliveryMethods, categories }) 
                                     dispatch(setAddress(newValue))
                                 }
                             />
-                            <Button onClick={() => setExpanded(1)} fullWidth={true}>Next</Button>
+                            <Button onClick={() => setExpanded(1)} fullWidth={true}>{t("common:next")}</Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
@@ -121,6 +121,7 @@ export default function Information({ direction, deliveryMethods, categories }) 
                     <AccordionSummary>{t("information:tickets")}</AccordionSummary>
                     <AccordionDetails>
                         <TicketNames categories={categories} />
+                        <Button onClick={() => setExpanded(2)} fullWidth={true}>{t("common:next")}</Button>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion expanded={expanded === 2} onChange={handleAccordionChange(2)}>
