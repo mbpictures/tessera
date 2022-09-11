@@ -40,7 +40,7 @@ export const generateTicketSecret = async (ticketId) => {
 
 const generateTicket = async (
     template,
-    details: { seatInformation; price; name; currency; locale },
+    details: { seatInformation: string; price; name; currency; locale },
     eventName: string,
     ticketId
 ): Promise<Uint8Array> => {
@@ -110,7 +110,7 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
     return await generateTicket(
         getStaticAssetFile("ticket/template.pdf"),
         {
-            seatInformation: order.seatId ?? order.category.label,
+            seatInformation: order.seatId?.toString() ?? order.category.label,
             price: order.category.price,
             name: order.order.user.firstName + " " + order.order.user.lastName,
             currency: order.category.currency,
@@ -148,7 +148,7 @@ export const generateTickets = async (
             return await generateTicket(
                 template,
                 {
-                    seatInformation: ticket.seatId ?? category.label,
+                    seatInformation: ticket.seatId?.toString() ?? category.label,
                     price: category.price,
                     name: orderDB.user.firstName + " " + orderDB.user.lastName,
                     currency: category.currency,
