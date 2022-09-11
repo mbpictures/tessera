@@ -4,6 +4,7 @@ import { RootState } from "../store";
 export interface OrderState {
     tickets: Tickets;
     orderId?: string;
+    ticketPersonalizationRequired: boolean;
 }
 
 export interface Ticket {
@@ -17,7 +18,8 @@ export interface Ticket {
 export type Tickets = Array<Ticket>;
 
 const initialState: OrderState = {
-    tickets: []
+    tickets: [],
+    ticketPersonalizationRequired: false
 };
 
 export const orderSlice = createSlice({
@@ -36,10 +38,13 @@ export const orderSlice = createSlice({
         setTicketLastName: (state, action: PayloadAction<{index: number; lastName: string;}>) => {
             state.tickets[action.payload.index].lastName = action.payload.lastName;
         },
+        setTicketPersonalizationRequired: (state, action: PayloadAction<boolean>) => {
+            state.ticketPersonalizationRequired = action.payload;
+        },
         resetOrder: () => initialState
     }
 });
 
-export const { setTickets, setOrderId, resetOrder, setTicketFirstName, setTicketLastName } = orderSlice.actions;
+export const { setTickets, setOrderId, resetOrder, setTicketFirstName, setTicketLastName, setTicketPersonalizationRequired } = orderSlice.actions;
 export const selectOrder = (state: RootState) => state.order;
 export default orderSlice.reducer;

@@ -26,6 +26,8 @@ import useTranslation from "next-translate/useTranslation";
 import loadNamespaces from "next-translate/loadNamespaces";
 import { TicketNames } from "../components/form/TicketNames";
 import prisma from "../lib/prisma";
+import { setTicketPersonalizationRequired } from "../store/reducers/orderReducer";
+import { useRouter } from "next/router";
 
 const validateEmail = (email) => {
     const re =
@@ -33,11 +35,17 @@ const validateEmail = (email) => {
     return re.test(String(email).toLowerCase());
 };
 
-export default function Information({ direction, deliveryMethods, categories }) {
+export default function Information({ direction, deliveryMethods, categories, events }) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(0);
+    const router = useRouter();
+    const [event, setEvent] = useState(null);
+
+    useEffect(() => {
+        setEvent(events.find(event => event.id === parseInt(router.query.event as string)));
+    }, [events])
 
     const [selectedShippingMethod, setSelectedShippingMethod] =
         useState<ShippingType | null>(selector.shipping?.type ?? null);
@@ -58,6 +66,11 @@ export default function Information({ direction, deliveryMethods, categories }) 
                 : t("information:e-mail-error")
         );
     }, [selector]);
+
+    useEffect(() => {
+        if (!event) return;
+        dispatch(setTicketPersonalizationRequired(event.personalTicket));
+    }, [event]);
 
     useEffect(() => {
         if (selectedShippingMethod === null) {
@@ -117,13 +130,17 @@ export default function Information({ direction, deliveryMethods, categories }) 
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
-                <Accordion expanded={expanded === 1} onChange={handleAccordionChange(1)}>
-                    <AccordionSummary>{t("information:tickets")}</AccordionSummary>
-                    <AccordionDetails>
-                        <TicketNames categories={categories} />
-                        <Button onClick={() => setExpanded(2)} fullWidth={true}>{t("common:next")}</Button>
-                    </AccordionDetails>
-                </Accordion>
+                {
+                    event?.personalTicket && (
+                        <Accordion expanded={expanded === 1} onChange={handleAccordionChange(1)}>
+                            <AccordionSummary>{t("information:tickets")}</AccordionSummary>
+                            <AccordionDetails>
+                                <TicketNames categories={categories} />
+                                <Button onClick={() => setExpanded(2)} fullWidth={true}>{t("common:next")}</Button>
+                            </AccordionDetails>
+                        </Accordion>
+                    )
+                }
                 <Accordion expanded={expanded === 2} onChange={handleAccordionChange(2)}>
                     <AccordionSummary>{t("information:delivery")}</AccordionSummary>
                     <AccordionDetails>
@@ -159,6 +176,12 @@ export async function getStaticProps({ locale }) {
         props: {
             deliveryMethods,
             categories: await prisma.category.findMany(),
+            events: await prisma.event.findMany({
+                select: {
+                    personalTicket: true,
+                    id: true
+                }
+            }),
             theme: await getOption(Options.Theme),
             ...(await loadNamespaces({ locale, pathname: '/information' }))
         }
