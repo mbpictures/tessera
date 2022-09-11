@@ -55,7 +55,8 @@ export const SeatSelectionMap = ({
     const createNewOrder = (): OrderState => {
         return {
             orderId: order.orderId,
-            tickets: order.tickets.map((a) => a)
+            tickets: order.tickets.map((a) => a),
+            ticketPersonalizationRequired: order.ticketPersonalizationRequired
         };
     };
 
