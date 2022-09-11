@@ -184,6 +184,7 @@ describe("Buy tickets", () => {
 
         cy.personalInformationCountry();
 
+        cy.get("#information-address-next").click();
         cy.get("#checkbox-download").click();
         cy.get("#stepper-next-button").should("be.enabled");
         cy.get("#checkbox-download").click();
@@ -221,6 +222,7 @@ describe("Buy tickets", () => {
         cy.setOption("shop.delivery", ["boxoffice", "download", "post"]).then(() => {
             cy.purchaseTicket({shippingMethod: false});
 
+            cy.get("#information-address-next").click();
             cy.get("#checkbox-boxoffice").click();
             cy.get("#stepper-next-button").should("be.enabled");
 

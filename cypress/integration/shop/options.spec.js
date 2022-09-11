@@ -85,6 +85,7 @@ describe("Admin Configuration on store page", () => {
                     cy.get("#category-selection-entry0-1").click();
                     cy.get("#stepper-next-button").click();
                     cy.url().should("include", "information");
+                    cy.get("#information-address-next").click();
 
                     cy.wrap(deliveryMethods).each((item) => {
                         cy.get("#checkbox-" + item).should("exist");
@@ -131,6 +132,7 @@ describe("Admin Configuration on store page", () => {
                     cy.get("input[name=address-region-text").type("Rheinland");
                     cy.get(".MuiAutocomplete-popper").children().first().click();
 
+                    cy.get("#information-address-next").click();
                     cy.get("#checkbox-download").click();
                     cy.get("#stepper-next-button").click();
 
