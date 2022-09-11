@@ -112,7 +112,7 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
         {
             seatInformation: order.seatId?.toString() ?? order.category.label,
             price: order.category.price,
-            name: order.order.user.firstName + " " + order.order.user.lastName,
+            name: (order.firstName ?? order.order.user.firstName) + " " + (order.lastName ?? order.order.user.lastName),
             currency: order.category.currency,
             locale: order.order.locale
         },
@@ -150,7 +150,7 @@ export const generateTickets = async (
                 {
                     seatInformation: ticket.seatId?.toString() ?? category.label,
                     price: category.price,
-                    name: orderDB.user.firstName + " " + orderDB.user.lastName,
+                    name: (ticket.firstName ?? orderDB.user.firstName) + " " + (ticket.lastName ?? orderDB.user.lastName),
                     currency: category.currency,
                     locale: orderDB.locale
                 },

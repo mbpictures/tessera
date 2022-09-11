@@ -187,7 +187,8 @@ const TicketList = ({order}) => {
                         tickets.map((item, index) => {
                             return (
                                 <ListItem key={index}>
-                                    <ListItemText primary={item.category.label} secondary={item.seatId} />
+                                    <ListItemText primary={item.category.label} secondary={item.seatId && ("Seat: " + item.seatId)} />
+                                    <Typography>{item.firstName ?? order.user.firstName} {item.lastName ?? order.user.lastName}</Typography>
                                     {
                                         ticketAvailable(item) ? (
                                             <>

@@ -358,6 +358,7 @@ export async function getServerSideProps(context: NextPageContext) {
                     seatMap: true,
                     orders: {
                         include: {
+                            user: true,
                             tickets: true
                         }
                     }
