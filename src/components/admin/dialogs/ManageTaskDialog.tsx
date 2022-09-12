@@ -22,8 +22,14 @@ export const ManageTaskDialog = ({task, onClose}) => {
     const [notesOpen, setNotesOpen] = useState(false);
 
     const updateState = async () => {
-        const response = await axios.get("/api/admin/task/" + task.id);
-        setTaskType(getTaskType(response.data));
+        try {
+            const response = await axios.get("/api/admin/task/" + task.id);
+            setTaskType(response.status === 404 ? null : getTaskType(response.data));
+        }
+        catch (e) {
+            if (e.response.status !== 404) return;
+            setTaskType(null)
+        }
     }
 
     useEffect(() => {
@@ -40,7 +46,7 @@ export const ManageTaskDialog = ({task, onClose}) => {
                     Manage Task
                 </DialogTitle>
                 <DialogContent>
-                    <Stepper activeStep={STEP_ORDER.findIndex((val) => val?.toLowerCase() === taskType)}>
+                    <Stepper activeStep={taskType === null ? 2 : STEP_ORDER.findIndex((val) => val?.toLowerCase() === taskType)}>
                         {
                             STEP_ORDER.map((label) => (
                                 <Step key={label}>

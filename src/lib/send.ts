@@ -88,6 +88,14 @@ export const send = async (orderId) => {
                 });
             });
             containsTickets = true;
+            await prisma.order.update({
+                where: {
+                    id: orderId
+                },
+                data: {
+                    shipping: JSON.stringify(ShippingFactory.getShippingInstance({type: ShippingType.Download, data: null}).getSuccessfulShipping())
+                }
+            })
         }
 
         if (attachments.length === 0) {
