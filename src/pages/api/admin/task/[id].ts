@@ -40,15 +40,20 @@ export default async function handler(
     }
 
     if (req.method === "GET") {
+        task.notes = JSON.parse(task.notes);
         return res.status(200).json(task);
     }
 
     if (req.method === "PUT") {
+        const data = req.body;
+        if ("notes" in data) {
+            data.notes = JSON.stringify(data.notes);
+        }
         const newTask = await prisma.task.update({
             where: {
                 id: parseInt(id as string)
             },
-            data: req.body
+            data
         });
         return res.status(200).json(newTask);
     }

@@ -43,7 +43,6 @@ async function handler(
             }
         });
 
-        const tickets = order.tickets.map(ticket => ({...ticket, used: false}));
 
         const createOrder = await prisma.order.create({
             data: {
@@ -59,14 +58,17 @@ async function handler(
                     }
                 },
                 shipping: JSON.stringify(user.shipping),
-                locale: locale,
-                tickets: {
-                    createMany: {
-                        data: tickets
-                    }
-                }
+                locale: locale
             }
         });
+        await Promise.all(order.tickets
+            .map(ticket => ({...ticket, used: false, orderId: createOrder.id}))
+            .map(async (ticket) => {
+                return await prisma.ticket.create({
+                    data: ticket
+                })
+            })
+        );
 
         // TODO: replace hard coded types by factory methods
         if (paymentType === PaymentType.Invoice || user.shipping.type === ShippingType.Post) {
@@ -76,7 +78,8 @@ async function handler(
                         connect: {
                             id: createOrder.id
                         }
-                    }
+                    },
+                    notes: "[]"
                 }
             });
         }

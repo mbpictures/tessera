@@ -143,5 +143,5 @@ model Task {
     orderId         String
     assignedUser    AdminUser?  @relation(fields: [adminUserId], references: [id])
     adminUserId     Int?
-    notes           String[]
+    notes           String
 }
