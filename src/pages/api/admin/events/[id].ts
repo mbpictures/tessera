@@ -99,7 +99,7 @@ export default async function handler(
             }
         });
 
-        await revalidateBuild(res, ["/", `/seatselection/${id as string}`]);
+        await revalidateBuild(res, ["/", `/seatselection/${id as string}`, "/information"]);
         res.status(200).end("Updated");
         return;
     }
