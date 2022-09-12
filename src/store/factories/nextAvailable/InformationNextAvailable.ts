@@ -5,6 +5,7 @@ import {
 } from "../../reducers/personalInformationReducer";
 import { validateAddress } from "../../../constants/util";
 import { ShippingFactory } from "../shipping/ShippingFactory";
+import { selectOrder } from "../../reducers/orderReducer";
 
 const validateEmail = (email) => {
     const re =
@@ -17,8 +18,11 @@ export class InformationNextAvailable extends NextAvailable {
         const data: PersonalInformationState = selectPersonalInformation(
             this.state
         );
+        const order = selectOrder(this.state);
+        const ticketsValid = order.ticketPersonalizationRequired ? order.tickets.every(ticket => (ticket.firstName ?? "").length > 2 && (ticket.lastName ?? "").length > 2) : true;
         const emailValid = validateEmail(data.email);
         return (
+            ticketsValid &&
             emailValid &&
             validateAddress(data.address) &&
             (ShippingFactory.getShippingInstance(data.shipping)?.isValid() ??

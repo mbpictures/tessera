@@ -48,7 +48,8 @@ export const ManageEventDialog = ({
             title: event?.title ?? "",
             seatType: event?.seatType ?? "",
             seatMap: event?.seatMapId ?? 0,
-            selectedCategories: originalSelectedCategories
+            selectedCategories: originalSelectedCategories,
+            personalTicket: event?.personalTicket ?? false
         },
         onSubmit: async (values) => {
             try {
@@ -56,6 +57,7 @@ export const ManageEventDialog = ({
                     title: values.title,
                     seatMapId: values.seatMap,
                     seatType: values.seatType,
+                    personalTicket: values.personalTicket,
                     ...(values.seatType === "free" && { categories: values.selectedCategories })
                 }
                 let eventId = event?.id;
@@ -92,6 +94,7 @@ export const ManageEventDialog = ({
         setCoverImageSize(event.coverImageSize);
         formik.setFieldValue("seatType", event.seatType);
         formik.setFieldValue("selectedCategories", originalSelectedCategories);
+        formik.setFieldValue("personalTicket", event.personalTicket);
     }, [event, originalSelectedCategories]);
 
     const deleteCoverImage = async (eventId) => {
@@ -152,6 +155,7 @@ export const ManageEventDialog = ({
         values.title !== event?.title ||
         values.seatType !== event?.seatType ||
         values.seatMap !== event?.seatMapId ||
+        values.personalTicket !== event?.personalTicket ||
         !arrayEquals(originalSelectedCategories, values.selectedCategories) ||
         coverImage !== null ||
         removeCoverImage;
@@ -349,6 +353,14 @@ export const ManageEventDialog = ({
                                 )
                             }
                         </Grid>
+                        <FormControlLabel
+                            control={<Checkbox
+                                checked={values.personalTicket}
+                                onChange={(event, checked) => setFieldValue("personalTicket", checked)}
+                            />}
+                            label="Personal Tickets"
+                            title="Enforces uses to provide the name for each ticket"
+                        />
                         <Stack direction={"row"}>
                             <LoadingButton
                                 color={"success"}

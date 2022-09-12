@@ -1,5 +1,13 @@
 import { Step } from "../components/Step";
-import { Card, Stack, TextField, Typography, useMediaQuery } from "@mui/material";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary, Button,
+    Stack,
+    TextField,
+    Typography,
+    useMediaQuery
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CheckboxAccordion } from "../components/CheckboxAccordion";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -16,6 +24,10 @@ import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import useTranslation from "next-translate/useTranslation";
 import loadNamespaces from "next-translate/loadNamespaces";
+import { TicketNames } from "../components/form/TicketNames";
+import prisma from "../lib/prisma";
+import { setTicketPersonalizationRequired } from "../store/reducers/orderReducer";
+import { useRouter } from "next/router";
 
 const validateEmail = (email) => {
     const re =
@@ -23,10 +35,17 @@ const validateEmail = (email) => {
     return re.test(String(email).toLowerCase());
 };
 
-export default function Information({ direction, deliveryMethods }) {
+export default function Information({ direction, deliveryMethods, categories, events }) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
+    const [expanded, setExpanded] = useState(0);
+    const router = useRouter();
+    const [event, setEvent] = useState(null);
+
+    useEffect(() => {
+        setEvent(events.find(event => event.id === parseInt(router.query.event as string)));
+    }, [events])
 
     const [selectedShippingMethod, setSelectedShippingMethod] =
         useState<ShippingType | null>(selector.shipping?.type ?? null);
@@ -49,6 +68,11 @@ export default function Information({ direction, deliveryMethods }) {
     }, [selector]);
 
     useEffect(() => {
+        if (!event) return;
+        dispatch(setTicketPersonalizationRequired(event.personalTicket));
+    }, [event]);
+
+    useEffect(() => {
         if (selectedShippingMethod === null) {
             dispatch(setShipping(null));
             return;
@@ -61,6 +85,11 @@ export default function Information({ direction, deliveryMethods }) {
         );
     }, [selectedShippingMethod, dispatch]);
 
+    const handleAccordionChange = (index) => (event, isExpanded) => {
+        if (!isExpanded) return;
+        setExpanded(index);
+    }
+
     return (
         <Step
             direction={direction}
@@ -72,50 +101,70 @@ export default function Information({ direction, deliveryMethods }) {
             }}
         >
             <Box style={boxStyling} sx={{ py: 2 }}>
-                <Card>
-                    <Stack padding={1} spacing={1}>
-                        <Typography>
-                            {t("information:address-for-invoice")}
-                        </Typography>
-                        <TextField
-                            label={t("information:e-mail")}
-                            type="email"
-                            value={selector.email}
-                            onChange={(event) =>
-                                dispatch(setEmail(event.target.value))
-                            }
-                            error={emailError != null}
-                            helperText={emailTouched && emailError}
-                            name={"address-email"}
-                            onBlur={() => setEmailTouched(true)}
-                        />
-                        <AddressComponent
-                            value={selector.address}
-                            onChange={(newValue) =>
-                                dispatch(setAddress(newValue))
-                            }
-                        />
-                    </Stack>
-                </Card>
+                <Accordion expanded={expanded === 0} onChange={handleAccordionChange(0)} id={"information-address"}>
+                    <AccordionSummary>{t("information:address")}</AccordionSummary>
+                    <AccordionDetails>
+                        <Stack padding={1} spacing={1}>
+                            <Typography>
+                                {t("information:address-for-invoice")}
+                            </Typography>
+                            <TextField
+                                label={t("information:e-mail")}
+                                type="email"
+                                value={selector.email}
+                                onChange={(event) =>
+                                    dispatch(setEmail(event.target.value))
+                                }
+                                error={emailError != null}
+                                helperText={emailTouched && emailError}
+                                name={"address-email"}
+                                onBlur={() => setEmailTouched(true)}
+                            />
+                            <AddressComponent
+                                value={selector.address}
+                                onChange={(newValue) =>
+                                    dispatch(setAddress(newValue))
+                                }
+                            />
+                            <Button onClick={() => setExpanded(event?.personalTicket ? 1 : 2)} fullWidth={true} id={"information-address-next"}>{t("common:next")}</Button>
+                        </Stack>
+                    </AccordionDetails>
+                </Accordion>
                 {
-                    // iterate through enum and filter to keep order constant
-                    Object.values(ShippingType)
-                        .filter((type) => deliveryMethods.includes(type))
-                        .map((shippingType) => {
-                            const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
-                            return (
-                                <CheckboxAccordion
-                                    label={t(`information:${instance.DisplayName}`)}
-                                    name={shippingType}
-                                    selectedItem={selectedShippingMethod}
-                                    onSelect={setSelectedShippingMethod}
-                                    key={shippingType}
-                                >
-                                    {instance.Component}
-                                </CheckboxAccordion>
-                            )
-                        })
+                    event?.personalTicket && (
+                        <Accordion expanded={expanded === 1} onChange={handleAccordionChange(1)} id={"information-ticket"}>
+                            <AccordionSummary>{t("information:tickets")}</AccordionSummary>
+                            <AccordionDetails>
+                                <TicketNames categories={categories} />
+                                <Button onClick={() => setExpanded(2)} fullWidth={true} id={"information-tickets-next"}>{t("common:next")}</Button>
+                            </AccordionDetails>
+                        </Accordion>
+                    )
                 }
+                <Accordion expanded={expanded === 2} onChange={handleAccordionChange(2)} id={"information-delivery"}>
+                    <AccordionSummary>{t("information:delivery")}</AccordionSummary>
+                    <AccordionDetails>
+                        {
+                            // iterate through enum and filter to keep order constant
+                            Object.values(ShippingType)
+                                .filter((type) => deliveryMethods.includes(type))
+                                .map((shippingType) => {
+                                    const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
+                                    return (
+                                        <CheckboxAccordion
+                                            label={t(`information:${instance.DisplayName}`)}
+                                            name={shippingType}
+                                            selectedItem={selectedShippingMethod}
+                                            onSelect={setSelectedShippingMethod}
+                                            key={shippingType}
+                                        >
+                                            {instance.Component}
+                                        </CheckboxAccordion>
+                                    )
+                                })
+                        }
+                    </AccordionDetails>
+                </Accordion>
             </Box>
         </Step>
     );
@@ -126,6 +175,13 @@ export async function getStaticProps({ locale }) {
     return {
         props: {
             deliveryMethods,
+            categories: await prisma.category.findMany(),
+            events: await prisma.event.findMany({
+                select: {
+                    personalTicket: true,
+                    id: true
+                }
+            }),
             theme: await getOption(Options.Theme),
             ...(await loadNamespaces({ locale, pathname: '/information' }))
         }

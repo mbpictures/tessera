@@ -51,7 +51,7 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        let { title, seatType, seatMapId, categories } = req.body;
+        let { title, seatType, seatMapId, categories, personalTicket } = req.body;
 
         if (!categories && seatType === "seatmap") {
             const seatMap = await prisma.seatMap.findUnique({
@@ -94,11 +94,12 @@ export default async function handler(
             data: {
                 ...(title && { title: title }),
                 ...(seatType && { seatType: seatType }),
-                ...(seatMapId && { seatMapId: seatMapId })
+                ...(seatMapId && { seatMapId: seatMapId }),
+                ...(personalTicket && { personalTicket })
             }
         });
 
-        await revalidateBuild(res, ["/", `/seatselection/${id as string}`]);
+        await revalidateBuild(res, ["/", `/seatselection/${id as string}`, "/information"]);
         res.status(200).end("Updated");
         return;
     }

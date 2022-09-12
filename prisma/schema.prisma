@@ -20,6 +20,7 @@ model Event {
     categories      CategoriesOnEvents[]
     coverImage      String?
     coverImageSize  Int?
+    personalTicket  Boolean     @default(false)
 }
 
 model SeatMap {
@@ -92,6 +93,8 @@ model Ticket {
     category        Category    @relation(fields: [categoryId], references: [id])
     categoryId      Int
     amount          Int         @default(1)
+    firstName       String?
+    lastName        String?
 }
 
 model AdminUser {

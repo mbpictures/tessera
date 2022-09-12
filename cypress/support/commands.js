@@ -213,6 +213,7 @@ Cypress.Commands.add("purchaseTicket", (options) => {
     cy.personalInformation().then((information) => {
         if (options?.shippingMethod !== undefined && !options?.shippingMethod) return cy.wrap(information);
         const shipping = options?.shippingMethod ? options.shippingMethod : "download";
+        cy.get("#information-address-next").click();
         cy.get("#checkbox-" + shipping).click();
         cy.get("#stepper-next-button").click();
 

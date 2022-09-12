@@ -20,5 +20,8 @@
     "postal-delivery-description": "Die Tickets werden zur oben angegebenen Adresse verschickt.",
     "differing-shipping-address": "Abweichende Lieferadresse",
     "download-description": "Die Tickets werden an Ihre E-Mail Adresse verschickt",
-    "box-office-description": "Die Tickets können an der Abendkasse abgeholt werden"
+    "box-office-description": "Die Tickets können an der Abendkasse abgeholt werden",
+    "seat": "Sitzplatz {{seat}}",
+    "tickets": "Tickets",
+    "delivery": "Lieferung"
 }
