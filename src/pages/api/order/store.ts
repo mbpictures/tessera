@@ -76,7 +76,8 @@ async function handler(
                         connect: {
                             id: createOrder.id
                         }
-                    }
+                    },
+                    notes: "[]"
                 }
             });
         }

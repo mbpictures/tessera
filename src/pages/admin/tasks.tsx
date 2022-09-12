@@ -143,6 +143,7 @@ export async function getServerSideProps(context) {
             const tasksSerializable = tasks.map(task => {
                 return {
                     ...task,
+                    notes: JSON.parse(task.notes),
                     ...{
                         order: {
                             ...task.order,
