@@ -101,7 +101,7 @@ export default function Information({ direction, deliveryMethods, categories, ev
             }}
         >
             <Box style={boxStyling} sx={{ py: 2 }}>
-                <Accordion expanded={expanded === 0} onChange={handleAccordionChange(0)}>
+                <Accordion expanded={expanded === 0} onChange={handleAccordionChange(0)} id={"information-address"}>
                     <AccordionSummary>{t("information:address")}</AccordionSummary>
                     <AccordionDetails>
                         <Stack padding={1} spacing={1}>
@@ -132,7 +132,7 @@ export default function Information({ direction, deliveryMethods, categories, ev
                 </Accordion>
                 {
                     event?.personalTicket && (
-                        <Accordion expanded={expanded === 1} onChange={handleAccordionChange(1)}>
+                        <Accordion expanded={expanded === 1} onChange={handleAccordionChange(1)} id={"information-ticket"}>
                             <AccordionSummary>{t("information:tickets")}</AccordionSummary>
                             <AccordionDetails>
                                 <TicketNames categories={categories} />
@@ -141,7 +141,7 @@ export default function Information({ direction, deliveryMethods, categories, ev
                         </Accordion>
                     )
                 }
-                <Accordion expanded={expanded === 2} onChange={handleAccordionChange(2)}>
+                <Accordion expanded={expanded === 2} onChange={handleAccordionChange(2)} id={"information-delivery"}>
                     <AccordionSummary>{t("information:delivery")}</AccordionSummary>
                     <AccordionDetails>
                         {

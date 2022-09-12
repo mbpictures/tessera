@@ -271,4 +271,36 @@ describe("Buy tickets", () => {
             });
         });
     });
+
+    it("Check Personalized Tickets", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.task("getAdminToken").then((token) => {
+                cy.purchaseTicket({event: 1, shippingMethod: false});
+                cy.get("#information-ticket").should("not.exist");
+                cy.request(
+                    {
+                        url: "/api/admin/events/1",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        body: {
+                            personalTicket: true
+                        }
+                    }
+                ).then(() => {
+                    cy.purchaseTicket({event: 1, shippingMethod: false});
+                    cy.get("#information-ticket").should("exist");
+                    cy.get("#information-delivery").click();
+                    cy.get("#checkbox-boxoffice").click();
+                    cy.get("#stepper-next-button").should("be.disabled");
+
+                    cy.get("#information-ticket").click();
+                    cy.get(".ticket-names-firstname").type(faker.name.firstName());
+                    cy.get(".ticket-names-lastname").type(faker.name.lastName());
+                    cy.get("#stepper-next-button").should("be.enabled");
+                });
+            });
+        });
+    });
 });

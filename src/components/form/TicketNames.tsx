@@ -40,8 +40,18 @@ const TicketNameItem = ({index, categories}) => {
                         primary={(index + 1) + ". " + resolveCategory(ticket.categoryId).label}
                         secondary={ticket.seatId && t("information:seat", {seat: ticket.seatId})}
                     />
-                    <TextField fullWidth placeholder={t("information:firstname")} onChange={handleChangeName(setTicketFirstName, "firstName")} />
-                    <TextField fullWidth placeholder={t("information:lastname")} onChange={handleChangeName(setTicketLastName, "lastName")} />
+                    <TextField
+                        fullWidth
+                        placeholder={t("information:firstname")}
+                        onChange={handleChangeName(setTicketFirstName, "firstName")}
+                        className={"ticket-names-firstname"}
+                    />
+                    <TextField
+                        fullWidth
+                        placeholder={t("information:lastname")}
+                        onChange={handleChangeName(setTicketLastName, "lastName")}
+                        className={"ticket-names-lastname"}
+                    />
                 </Stack>
             </ListItem>
             {index < order.tickets.length - 1 && (<Divider />)}
