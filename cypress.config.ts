@@ -25,4 +25,10 @@ export default defineConfig({
       bundler: "webpack",
     },
   },
+
+  env: {
+    codeCoverage: {
+      url: "http://localhost:3000/api/__coverage__"
+    }
+  }
 });
