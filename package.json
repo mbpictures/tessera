@@ -19,7 +19,7 @@
     "ngrok": "ngrok http 3000",
     "lint": "next lint",
     "analyze": "set ANALYZE=true && npm run build",
-    "cypress:build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && next build",
+    "cypress:build": "prisma generate && prisma migrate reset --force --skip-seed && prisma db push && cross-env INSTRUMENT_CODE=true next build",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:run-ct": "npx cypress run-ct",
