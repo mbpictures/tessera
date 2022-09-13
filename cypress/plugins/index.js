@@ -11,9 +11,8 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-import { startDevServer } from '@cypress/webpack-dev-server';
+const injectNextDevServer = require('@cypress/react/plugins/next')
 const codeCoverageTask = require('@cypress/code-coverage/task')
-import findNextWebpackConfig from '@cypress/react/plugins/next/findNextWebpackConfig';
 const ms = require('smtp-tester')
 /**
  * @type {Cypress.PluginConfig}
@@ -55,16 +54,7 @@ module.exports = (on, config) => {
     })
 
     if (config.testingType === 'component') {
-        const webpackConfig = findNextWebpackConfig(config, {
-            webpackConfigPath: 'react-scripts/config/webpack.config',
-        });
-        const rules = webpackConfig.module.rules.find((rule) => !!rule.oneOf).oneOf;
-        const babelRule = rules.find((rule) => /babel-loader/.test(rule.loader));
-        babelRule.options.plugins.push("istanbul");
-
-        on('dev-server:start', (options) => {
-            return startDevServer({ options, webpackConfig });
-        });
+        injectNextDevServer(on, config);
     }
     codeCoverageTask(on, config);
 

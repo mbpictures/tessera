@@ -18,11 +18,33 @@ export default defineConfig({
   },
 
   component: {
-    setupNodeEvents() {},
+    setupNodeEvents(on, config) {
+      require('@cypress/code-coverage/task')(on, config);
+      return config;
+    },
     specPattern: "cypress/component/**/*.test.{js,ts,jsx,tsx}",
     devServer: {
       framework: "next",
       bundler: "webpack",
+      webpackConfig: {
+        mode: 'development',
+        devtool: false,
+        module: {
+          rules: [
+            {
+              test: /\.(ts|tsx)$/,
+              exclude: /node_modules/,
+              use: {
+                loader: 'babel-loader',
+                options: {
+                  presets: ['next/babel'],
+                  plugins: ['istanbul',],
+                },
+              },
+            },
+          ],
+        },
+      }
     },
   },
 
