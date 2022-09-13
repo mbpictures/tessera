@@ -140,7 +140,7 @@ model Notification {
 model Task {
     id              Int         @default(autoincrement()) @id
     order           Order       @relation(fields: [orderId], references: [id])
-    orderId         String
+    orderId         String      @unique
     assignedUser    AdminUser?  @relation(fields: [adminUserId], references: [id])
     adminUserId     Int?
     notes           String
