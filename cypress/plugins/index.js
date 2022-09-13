@@ -11,7 +11,6 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-const injectNextDevServer = require('@cypress/react/plugins/next')
 const codeCoverageTask = require('@cypress/code-coverage/task')
 const ms = require('smtp-tester')
 /**
@@ -53,9 +52,6 @@ module.exports = (on, config) => {
         },
     })
 
-    if (config.testingType === 'component') {
-        injectNextDevServer(on, config);
-    }
     codeCoverageTask(on, config);
 
     const mailServer = ms.init(7777)
