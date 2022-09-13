@@ -3,9 +3,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const nextTranslate = require("next-translate");
 
 module.exports = nextTranslate({
-    future: {
-        webpack5: true
-    },
     webpack: function (config, { dev, isServer }) {
         // Fixes npm packages that depend on `fs` module
         if (!isServer) {
@@ -32,5 +29,6 @@ module.exports = nextTranslate({
 
         return config
     },
-    output: "standalone"
+    output: "standalone",
+    staticPageGenerationTimeout: 60*4
 });
