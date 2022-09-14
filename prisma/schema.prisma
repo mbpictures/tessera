@@ -81,6 +81,7 @@ model Order {
     invoiceSent     Boolean     @default(false)
     date            DateTime    @default(now())
     task            Task?
+    idempotencyKey  String
 }
 
 model Ticket {
