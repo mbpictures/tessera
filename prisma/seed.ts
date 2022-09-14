@@ -89,7 +89,7 @@ export async function main() {
                         zip: faker.address.zipCode(),
                         email: faker.internet.email(),
                         countryCode: faker.address.countryCode(),
-                        regionCode: faker.address.cityPrefix()
+                        regionCode: faker.fake('{{address.city_prefix}}')
                     }
                 },
                 paymentType: "invoice",
