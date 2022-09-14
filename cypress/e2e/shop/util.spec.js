@@ -1,8 +1,15 @@
 import { getStoreWithOrderId, storeOrderAndUser } from "../../../src/constants/util";
-import faker from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 import countryData from "country-region-data";
 
 describe("Util", () => {
+    before(() => {
+        cy.task("db:teardown", null, {timeout: 60000});
+        cy.registerInitialAdminUser();
+        cy.createToken();
+        cy.createEvents();
+    });
+
     it("Store/Load Order", () => {
         cy.visit("/");
         cy.wrap(null).then(() => {

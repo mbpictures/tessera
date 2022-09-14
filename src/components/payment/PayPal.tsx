@@ -1,5 +1,4 @@
 import {
-    FUNDING,
     PayPalButtons,
     PayPalScriptProvider
 } from "@paypal/react-paypal-js";
@@ -101,7 +100,7 @@ export const PayPal = () => {
                     onCancel={onFailed}
                     onApprove={onApproved}
                     onClick={click}
-                    fundingSource={FUNDING.PAYPAL}
+                    fundingSource={"paypal"}
                 />
             </PayPalScriptProvider>
         </>
