@@ -67,6 +67,7 @@ async function handler(
     try {
         if (!idempotencyKey)
             return res.status(410).end("Idempotency Key missing");
+        // users may try to cheat their order using postman or some other interceptor, we need to check server side
         if (!(await validateOrder(order.tickets, eventId)))
             return res.status(411).end("Order not valid");
         let orderDB = await prisma.order.findUnique({
@@ -79,10 +80,12 @@ async function handler(
                 task: true
             }
         });
+        // order and user already created and identified by idempotency key?
         if (orderDB === null) {
             orderDB = await createOrder(eventId, paymentType, user, locale, idempotencyKey);
         }
         if (!orderDB.tickets || orderDB.tickets.length === 0) {
+            // we want to make sure, that either all or none ticket is created
             await prisma.$transaction(order.tickets
                 .map(ticket => ({...ticket, used: false, orderId: orderDB.id}))
                 .map((ticket) => {
