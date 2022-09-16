@@ -5,6 +5,7 @@ import prisma from "../../../lib/prisma";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 import { ShippingType } from "../../../store/factories/shipping/ShippingFactory";
+import { validateOrder } from "../../../constants/serverUtil";
 
 const createOrder = async (eventId, paymentType, user, locale, idempotencyKey) => {
     return await prisma.order.create({
@@ -66,6 +67,8 @@ async function handler(
     try {
         if (!idempotencyKey)
             return res.status(410).end("Idempotency Key missing");
+        if (!(await validateOrder(order.tickets, eventId)))
+            return res.status(411).end("Order not valid");
         let orderDB = await prisma.order.findUnique({
             where: {
                 idempotencyKey: idempotencyKey
