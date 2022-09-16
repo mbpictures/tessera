@@ -33,8 +33,8 @@ async function handler(
                         select: {
                             seatMap: true
                         }
-
-                    }
+                    },
+                    idempotencyKey: true
                 }
             });
             const categories = await prisma.category.findMany();
@@ -50,7 +50,11 @@ async function handler(
                 }
             };
             const payment_intent: Stripe.PaymentIntent =
-                await stripe.paymentIntents.create(params);
+                await stripe.paymentIntents.create(
+                    params,
+                    {
+                        idempotencyKey: orderDB.idempotencyKey
+                    });
 
             await prisma.order.update({
                 where: {
@@ -60,8 +64,6 @@ async function handler(
                     paymentIntent: JSON.stringify(payment_intent)
                 }
             });
-
-            // TODO: add idempotent request key
 
             res.status(200).json(payment_intent);
         } catch (err) {
