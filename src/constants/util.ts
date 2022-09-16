@@ -4,6 +4,7 @@ import { PersonalInformationState } from "../store/reducers/personalInformationR
 import axios from "axios";
 import { OrderState, Tickets } from "../store/reducers/orderReducer";
 import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
+import { idempotencyCall } from "../lib/idempotency/clientsideIdempotency";
 
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
@@ -36,16 +37,19 @@ export const storeOrderAndUser = async (
     order: OrderState,
     user: PersonalInformationState,
     eventId,
-    paymentType
+    paymentType,
+    idempotencyKey
 ) => {
     if (order.orderId || user.userId)
         return { userId: user.userId, orderId: order.orderId };
-    const response = await axios.post("/api/order/store", {
+    const response = await idempotencyCall("/api/order/store", {
         order: order,
         user: user,
         eventId: eventId,
         paymentType: paymentType,
         locale: navigator.language
+    }, {
+        idempotencyKey: idempotencyKey
     });
     return { userId: response.data.userId, orderId: response.data.orderId };
 };

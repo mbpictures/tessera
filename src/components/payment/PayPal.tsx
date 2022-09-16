@@ -10,7 +10,7 @@ import {
     selectOrder,
     setOrderId
 } from "../../store/reducers/orderReducer";
-import { setPaymentStatus } from "../../store/reducers/paymentReducer";
+import { selectPayment, setIdempotencyKey, setPaymentStatus } from "../../store/reducers/paymentReducer";
 import {
     selectPersonalInformation,
     setUserId
@@ -23,11 +23,13 @@ import {
 } from "@paypal/paypal-js/types/components/buttons";
 import logo from "../../assets/payment/paypal.svg";
 import Image from "next/image";
+import { v4 as uuid } from "uuid";
 
 export const PayPal = () => {
     const selectorOrder = useAppSelector(selectOrder);
     const selectedEvent = useAppSelector(selectEventSelected);
     const userInformation = useAppSelector(selectPersonalInformation);
+    const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
 
     const orderIdRef = useRef<string>(null);
@@ -44,11 +46,18 @@ export const PayPal = () => {
     };
 
     const createOrder = async (): Promise<string> => {
+        let idempotencyKey = payment.idempotencyKey;
+        if (idempotencyKey === null) {
+            // generate payment request overarching idempotencyKey
+            idempotencyKey = uuid();
+            dispatch(setIdempotencyKey(idempotencyKey));
+        }
         const { userId, orderId } = await storeOrderAndUser(
             selectorOrder,
             userInformation,
             selectedEvent,
-            "paypal"
+            "paypal",
+            idempotencyKey
         );
         dispatch(setOrderId(orderId));
         dispatch(setUserId(userId));

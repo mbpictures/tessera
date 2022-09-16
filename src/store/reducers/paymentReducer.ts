@@ -13,6 +13,7 @@ type PaymentStatus =
 interface PaymentState {
     payment: IPayment;
     state: PaymentStatus;
+    idempotencyKey: string | null;
 }
 
 export interface IPayment {
@@ -25,7 +26,8 @@ const initialState: PaymentState = {
         data: "",
         type: null
     },
-    state: "none"
+    state: "none",
+    idempotencyKey: null
 };
 
 export const paymentSlice = createSlice({
@@ -38,10 +40,13 @@ export const paymentSlice = createSlice({
         setPaymentStatus: (state, action: PayloadAction<PaymentStatus>) => {
             state.state = action.payload;
         },
+        setIdempotencyKey: (state, action: PayloadAction<string>) => {
+            state.idempotencyKey = action.payload;
+        },
         resetPayment: () => initialState
     }
 });
 
-export const { setPayment, setPaymentStatus, resetPayment } = paymentSlice.actions;
+export const { setPayment, setPaymentStatus, resetPayment, setIdempotencyKey } = paymentSlice.actions;
 export const selectPayment = (state: RootState) => state.payment;
 export default paymentSlice.reducer;
