@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 import { paypalClient } from "../../../lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
-import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
+import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
 
@@ -32,13 +32,20 @@ async function handler(
             select: {
                 event: {
                     select: {
+                        seatType: true,
                         seatMap: true
                     }
                 },
-                tickets: true
+                tickets: true,
+                paymentIntent: true
             }
-        })
-        let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
+        });
+
+        if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "") {
+            res.status(200).json({ orderId: JSON.parse(orderDB.paymentIntent).id });
+        }
+
+        let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
         let currency = categories[0].currency;
 
         let request = new paypal.orders.OrdersCreateRequest();
