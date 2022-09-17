@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import Stripe from "stripe";
 import prisma from "../../../lib/prisma";
-import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
+import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -31,6 +31,7 @@ async function handler(
                     tickets: true,
                     event: {
                         select: {
+                            seatType: true,
                             seatMap: true
                         }
                     },
@@ -42,7 +43,7 @@ async function handler(
                 return res.status(200).json(JSON.parse(orderDB.paymentIntent));
             }
             const categories = await prisma.category.findMany();
-            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
+            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
             let currency = categories[0].currency;
 
             const params: Stripe.PaymentIntentCreateParams = {
