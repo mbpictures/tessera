@@ -63,7 +63,7 @@ async function handler(
         paymentType: string;
         locale: string;
     } = req.body;
-    const idempotencyKey = req.headers["Idempotency-Key"] as string;
+    const idempotencyKey = req.headers["idempotency-key"] as string;
     try {
         if (!idempotencyKey)
             return res.status(410).end("Idempotency Key missing");

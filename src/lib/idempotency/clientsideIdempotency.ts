@@ -12,7 +12,7 @@ export const idempotencyCall = async (url: string, data: any, options?: {idempot
 
     return await client.post(url, data, {
         headers: {
-            "Idempotency-Key": options?.idempotencyKey ?? uuid()
+            "idempotency-key": options?.idempotencyKey ?? uuid()
         }
     });
 }
