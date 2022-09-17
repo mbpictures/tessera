@@ -17,15 +17,25 @@ async function handler(
     const { order }: { order: OrderState } = req.body;
 
     try {
-        const secret = Math.random().toString(36).substring(2, 8).toUpperCase();
-        await prisma.order.update({
+        const orderDB = await prisma.order.findUnique({
             where: {
                 id: order.orderId
             },
-            data: {
-                paymentIntent: JSON.stringify({ invoicePurpose: secret })
+            select: {
+                paymentIntent: true
             }
         });
+        if (orderDB.paymentIntent === null || orderDB.paymentIntent === "") {
+            const secret = Math.random().toString(36).substring(2, 8).toUpperCase();
+            await prisma.order.update({
+                where: {
+                    id: order.orderId
+                },
+                data: {
+                    paymentIntent: JSON.stringify({ invoicePurpose: secret })
+                }
+            });
+        }
 
         await send(order.orderId);
 
