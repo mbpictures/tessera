@@ -17,7 +17,7 @@ export class SofortPayment extends Payment {
     }
 
     paymentResultValid(data: any): boolean {
-        return JSON.parse(data)?.status ?? false;
+        return JSON.parse(data)?.transaction.status ?? false;
     }
 
     getPaymentButton(): React.ReactNode {
