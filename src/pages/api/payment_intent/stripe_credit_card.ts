@@ -34,9 +34,13 @@ async function handler(
                             seatMap: true
                         }
                     },
-                    idempotencyKey: true
+                    idempotencyKey: true,
+                    paymentIntent: true
                 }
             });
+            if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "") {
+                return res.status(200).json(JSON.parse(orderDB.paymentIntent));
+            }
             const categories = await prisma.category.findMany();
             let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
             let currency = categories[0].currency;
