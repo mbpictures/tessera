@@ -36,7 +36,8 @@ export const PayPal = () => {
 
     const click = async (data, actions: OnClickActions) => {
         const paymentAlreadyValid = await validatePayment(
-            orderIdRef.current ? orderIdRef.current : selectorOrder.orderId
+            orderIdRef.current ? orderIdRef.current : selectorOrder.orderId,
+            true
         );
         if (paymentAlreadyValid) {
             dispatch(setPaymentStatus("finished"));
