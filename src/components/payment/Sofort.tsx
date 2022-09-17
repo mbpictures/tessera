@@ -6,11 +6,11 @@ import {
     setPaymentStatus
 } from "../../store/reducers/paymentReducer";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
-import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import Image from "next/image";
 import logo from "../../assets/payment/klarna.svg";
 import useTranslation from "next-translate/useTranslation";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const Sofort = () => {
     const selector = useAppSelector(selectPayment);
@@ -29,7 +29,7 @@ export const Sofort = () => {
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post("api/payment_intent/sofort", {
+            const response = await idempotencyCall("api/payment_intent/sofort", {
                 order: selectorOrder
             });
             window.location.assign(response.data.redirectUrl);

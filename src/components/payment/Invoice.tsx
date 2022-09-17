@@ -6,9 +6,9 @@ import {
     setPaymentStatus
 } from "../../store/reducers/paymentReducer";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
-import axios from "axios";
 import { OrderState, selectOrder } from "../../store/reducers/orderReducer";
 import useTranslation from "next-translate/useTranslation";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);
@@ -26,7 +26,7 @@ export const Invoice = () => {
 
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
-            await axios.post("api/payment_intent/invoice", { order: order });
+            await idempotencyCall("api/payment_intent/invoice", { order: order });
             dispatch(setPaymentStatus("finished"));
         }
 

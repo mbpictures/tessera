@@ -3,7 +3,6 @@ import {
     PayPalScriptProvider
 } from "@paypal/react-paypal-js";
 import React, { useRef } from "react";
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
     OrderState,
@@ -24,6 +23,7 @@ import {
 import logo from "../../assets/payment/paypal.svg";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const PayPal = () => {
     const selectorOrder = useAppSelector(selectOrder);
@@ -65,7 +65,7 @@ export const PayPal = () => {
         const newOrder = Object.assign({}, selectorOrder) as OrderState;
         newOrder.orderId = orderId;
         orderIdRef.current = orderId;
-        const response = await axios.post("api/payment_intent/paypal", {
+        const response = await idempotencyCall("api/payment_intent/paypal", {
             order: newOrder
         });
         if (response.status === 201) {
@@ -79,7 +79,7 @@ export const PayPal = () => {
     };
 
     const onApproved = async (data: OnApproveData) => {
-        const response = await axios.post("api/webhook/paypal", {
+        const response = await idempotencyCall("api/webhook/paypal", {
             paypalId: data.orderID,
             orderId: orderIdRef.current
         });
