@@ -14,7 +14,7 @@ async function handler(
     res: NextApiResponse
 ) {
     if (req.method === "POST") {
-        const { order }: { order: OrderState } = req.body;
+        const { order, paymentMethod = "card" }: { order: OrderState; paymentMethod: string } = req.body;
         try {
             if (!order.orderId || order.orderId === "") {
                 throw new Error("Invalid Order ID");
@@ -46,7 +46,7 @@ async function handler(
             let currency = categories[0].currency;
 
             const params: Stripe.PaymentIntentCreateParams = {
-                payment_method_types: ["card"],
+                payment_method_types: [paymentMethod],
                 amount: Math.floor(amount * 100),
                 currency: currency,
                 metadata: {
