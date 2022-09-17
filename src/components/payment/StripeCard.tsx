@@ -45,7 +45,7 @@ export const StripeCard = () => {
             dispatch(setPaymentStatus("processing"));
 
             const response = await axios.post(
-                "api/payment_intent/stripe_credit_card",
+                "api/payment_intent/stripe",
                 { order: selectorOrder, eventId: selectorEvent }
             );
 
@@ -67,7 +67,7 @@ export const StripeCard = () => {
                 throw new Error(error.message);
 
             await axios.post(
-                "api/payment_intent/stripe_credit_card_confirm_temp",
+                "api/payment_intent/stripe_confirm_temp",
                 {
                     order: selectorOrder,
                     paymentResult: JSON.stringify(paymentIntent)

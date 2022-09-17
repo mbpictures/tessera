@@ -45,7 +45,7 @@ export const StripeIBAN = () => {
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post("api/payment_intent/stripe_credit_card", {
+            const response = await axios.post("api/payment_intent/stripe", {
                 order: selectorOrder,
                 eventId: selectorEvent,
                 paymentMethod: "sepa_debit"
@@ -76,7 +76,7 @@ export const StripeIBAN = () => {
                 throw new Error(error.message);
 
             await axios.post(
-                "api/payment_intent/stripe_credit_card_confirm_temp",
+                "api/payment_intent/stripe_confirm_temp",
                 {
                     order: selectorOrder,
                     paymentResult: JSON.stringify(paymentIntent)
