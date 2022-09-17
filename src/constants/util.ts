@@ -78,6 +78,10 @@ export const ticketsOccupied = (tickets: Tickets, seatMap: SeatMap) => {
     return tickets.some(ticket => seatMap.flat().find(seat => seat.id === ticket.seatId).occupied);
 }
 
+export const getSeatMap = (event): SeatMap => {
+   return  event.seatType.toLowerCase() === "seatMap" ? JSON.parse(event.seatMap.definition) : null;
+}
+
 export const validateCategoriesWithSeatMap = (tickets: Tickets, seatMap: SeatMap): Tickets => {
     if (seatMap === null) return tickets;
     return tickets.map(ticket => ({...ticket, categoryId: seatMap.flat().find(seat => seat.id === ticket.seatId).category}));
