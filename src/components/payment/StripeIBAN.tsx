@@ -45,9 +45,10 @@ export const StripeIBAN = () => {
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post("api/payment_intent", {
+            const response = await axios.post("api/payment_intent/stripe_credit_card", {
                 order: selectorOrder,
-                eventId: selectorEvent
+                eventId: selectorEvent,
+                paymentMethod: "sepa_debit"
             });
 
             if (response.status === 500)
@@ -73,6 +74,14 @@ export const StripeIBAN = () => {
 
             if (error || paymentIntent.status !== "succeeded")
                 throw new Error(error.message);
+
+            await axios.post(
+                "api/payment_intent/stripe_credit_card_confirm_temp",
+                {
+                    order: selectorOrder,
+                    paymentResult: JSON.stringify(paymentIntent)
+                }
+            );
             dispatch(setPaymentStatus("finished"));
         }
 
