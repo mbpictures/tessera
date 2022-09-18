@@ -64,7 +64,7 @@ export const Step = ({
 
     useEffect(() => {
         if (!router.isReady) return;
-        const { orderId, event } = router.query;
+        const { order: orderId, event } = router.query;
 
         updateNextAvailable();
 
