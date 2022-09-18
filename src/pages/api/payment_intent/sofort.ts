@@ -5,7 +5,7 @@ import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import absoluteUrl from "next-absolute-url";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
-import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
+import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 
 async function handler(
     req: NextApiRequest,
@@ -31,14 +31,23 @@ async function handler(
                 tickets: true,
                 event: {
                     select: {
+                        seatType: true,
                         seatMap: true
                     }
 
-                }
+                },
+                paymentIntent: true
             }
         });
+
+        if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "") {
+            return res.status(200).json({
+                redirectUrl: JSON.parse(orderDB.paymentIntent).payment_url
+            });
+        }
+
         const categories = await prisma.category.findMany();
-        const totalPrice = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
+        const totalPrice = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
 
         const data = {
             multipay: {
@@ -55,13 +64,13 @@ async function handler(
                         user_variable: order.orderId
                     }
                 ],
-                success_url: `${origin}/checkout?order=${order.orderId}`,
+                success_url: `${origin}/checkout?order=${order.orderId}&payment=sofort`,
                 abort_url: `${origin}/payment?order=${order.orderId}`,
                 su: "",
                 notification_urls: []
             }
         };
-        // localhost doesnt work for sofort notifiaction
+        // localhost doesn't work for sofort notification
         if (
             process.env.NODE_ENV === "production" &&
             !req.headers.host.includes("localhost")
@@ -72,7 +81,6 @@ async function handler(
         }
 
         // bug in fast-xml-parser typescript declarations
-        // @ts-ignore
         const sofortRequestData = xmlBuilder.build(data);
 
         const response = await sofortApiCall(
@@ -87,7 +95,7 @@ async function handler(
             },
             data: {
                 paymentIntent: JSON.stringify({
-                    transactionID: responseXML.new_transaction.transaction
+                    transactionID: responseXML.new_transaction
                 })
             }
         });
