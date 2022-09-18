@@ -6,10 +6,25 @@ import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 import useTranslation from "next-translate/useTranslation";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Checkout({ direction }) {
     const theme = useTheme();
     const { t } = useTranslation();
+    const router = useRouter();
+    const notificationSent = useRef(false);
+
+    useEffect(() => {
+        if (!router.isReady || notificationSent.current) return;
+
+        const {order: orderId, payment} = router.query;
+        axios.post("/api/order/checkout_complete_notification", {
+            orderId,
+            payment
+        }).catch(console.log);
+    }, [router, notificationSent.current]);
 
     return (
         <Step
