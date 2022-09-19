@@ -51,7 +51,7 @@ export const SeatSelectionFreeEntry = ({
     const { t } = useTranslation();
 
     const getTicketsLeft = (categoryId?: number) => {
-        return categories.find((value) => value.id === (categoryId ?? category))?.ticketsLeft ?? 0;
+        return categories.find((value) => value.id === (categoryId ?? category))?.ticketsLeft ?? Infinity;
     }
 
     const handleChange = (event) => {

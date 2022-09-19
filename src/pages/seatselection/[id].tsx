@@ -95,7 +95,10 @@ export async function getStaticProps({ params, locale }) {
 
     return {
         props: {
-            categories: event.categories.map(category => ({...category.category, ticketsLeft: Math.max(category.maxAmount - currentAmounts[category.categoryId], 0)})),
+            categories: event.categories.map(category => ({
+                ...category.category,
+                ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - currentAmounts[category.categoryId], 0)
+            })),
             seatType: event.seatType,
             seatMap: seatmap,
             theme: await getOption(Options.Theme),
