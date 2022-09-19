@@ -1,9 +1,11 @@
 import { Checkbox, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material";
+import { CSSProperties, ReactNode } from "react";
 
 export interface SelectionListOption {
     primaryLabel: string;
     secondaryLabel?: string;
     value: any;
+    additionalNode?: ReactNode;
 }
 
 export const SelectionList = ({
@@ -17,7 +19,7 @@ export const SelectionList = ({
     selection: any[];
     onChange: (newSelection: any[]) => unknown;
     header: string;
-    style?: React.CSSProperties
+    style?: CSSProperties
 }) => {
     const handleClick = (value: any) => {
         let newCategories = selection.map((a) => a);
@@ -60,6 +62,7 @@ export const SelectionList = ({
                             primary={option.primaryLabel}
                             secondary={option.secondaryLabel}
                         />
+                        {option.additionalNode}
                     </ListItem>
                 );
             })}
