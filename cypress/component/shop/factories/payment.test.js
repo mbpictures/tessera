@@ -43,10 +43,10 @@ describe("Payment Factories", () => {
         expect(sofort.getValidPaymentResult()).to.deep.equal({
             status: true
         });
-        expect(sofort.paymentResultValid(JSON.stringify({status: true}))).to.equal(true);
+        expect(sofort.paymentResultValid(JSON.stringify({transaction: {status: true}}))).to.equal(true);
         expect(sofort.paymentResultValid(JSON.stringify(null))).to.equal(false);
         expect(sofort.paymentResultValid(JSON.stringify({  }))).to.equal(false);
-        expect(sofort.paymentResultValid(JSON.stringify({status: false}))).to.equal(false);
+        expect(sofort.paymentResultValid(JSON.stringify({transaction: {status: false}}))).to.equal(false);
     })
 
     it("CreditCard", () => {
