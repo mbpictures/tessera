@@ -160,6 +160,20 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
 };
 
 export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean> => {
+    const event = await prisma.event.findUnique({
+        where: {
+            id: eventId
+        },
+        select: {
+            seatType: true,
+            categories: {
+                select: {
+                    categoryId: true,
+                    maxAmount: true
+                }
+            }
+        }
+    });
     const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
     if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
 
@@ -177,6 +191,30 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
     }
     if (!seatIdsValid) return false;
 
-    //TODO: add validation for ticket amount of non seat reserved events
+    const maxTicketAmounts = event.categories.reduce((dict, category) => {
+        dict[category.categoryId] = category.maxAmount;
+        return dict;
+    }, {});
+    const currentAmounts = (await prisma.ticket.groupBy({
+        by: ["categoryId"],
+        where: {
+            order: {
+                eventId: eventId
+            },
+            categoryId: {
+                in: tickets.map(ticket => ticket.categoryId)
+            }
+        },
+        _count: true
+    })).reduce((dict, element) => {
+        dict[element.categoryId] = element._count;
+        return dict;
+    }, {});
+    for (let ticket of tickets) {
+        currentAmounts[ticket.categoryId] += ticket.amount;
+        if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId]) continue;
+        if (currentAmounts[ticket.categoryId] > maxTicketAmounts[ticket.categoryId]) return false;
+    }
+
     return true;
 }
