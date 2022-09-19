@@ -5,6 +5,7 @@ import paypal from "@paypal/checkout-server-sdk";
 import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
+import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 
 async function handler(
     req: NextApiRequest,
@@ -37,12 +38,13 @@ async function handler(
                     }
                 },
                 tickets: true,
-                paymentIntent: true
+                paymentIntent: true,
+                paymentType: true
             }
         });
 
-        if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "") {
-            res.status(200).json({ orderId: JSON.parse(orderDB.paymentIntent).id });
+        if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "" && orderDB.paymentType === PaymentType.PayPal) {
+            return res.status(200).json({ orderId: JSON.parse(orderDB.paymentIntent).id });
         }
 
         let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
@@ -68,7 +70,8 @@ async function handler(
                 id: order.orderId
             },
             data: {
-                paymentIntent: JSON.stringify(response.result)
+                paymentIntent: JSON.stringify(response.result),
+                paymentType: PaymentType.PayPal
             }
         });
 

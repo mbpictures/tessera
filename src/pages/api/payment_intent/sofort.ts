@@ -6,6 +6,7 @@ import absoluteUrl from "next-absolute-url";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
 import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
+import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 
 async function handler(
     req: NextApiRequest,
@@ -36,11 +37,12 @@ async function handler(
                     }
 
                 },
-                paymentIntent: true
+                paymentIntent: true,
+                paymentType: true
             }
         });
 
-        if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "") {
+        if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "" && orderDB.paymentType === PaymentType.Sofort) {
             return res.status(200).json({
                 redirectUrl: JSON.parse(orderDB.paymentIntent).payment_url
             });
@@ -94,13 +96,12 @@ async function handler(
                 id: order.orderId
             },
             data: {
-                paymentIntent: JSON.stringify({
-                    transactionID: responseXML.new_transaction
-                })
+                paymentIntent: JSON.stringify(responseXML.new_transaction),
+                paymentType: PaymentType.Sofort
             }
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             redirectUrl: responseXML.new_transaction.payment_url
         });
     } catch (e) {

@@ -5,6 +5,7 @@ import prisma from "../../../lib/prisma";
 import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
+import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2022-08-01"
 });
@@ -36,10 +37,12 @@ async function handler(
                         }
                     },
                     idempotencyKey: true,
-                    paymentIntent: true
+                    paymentIntent: true,
+                    paymentType: true
                 }
             });
-            if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "") {
+            const paymentType = paymentMethod === "card" ? PaymentType.CreditCard : PaymentType.StripeIBAN;
+            if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "" && orderDB.paymentType === paymentType) {
                 return res.status(200).json(JSON.parse(orderDB.paymentIntent));
             }
             const categories = await prisma.category.findMany();
@@ -66,7 +69,8 @@ async function handler(
                     id: order.orderId
                 },
                 data: {
-                    paymentIntent: JSON.stringify(payment_intent)
+                    paymentIntent: JSON.stringify(payment_intent),
+                    paymentType
                 }
             });
 
