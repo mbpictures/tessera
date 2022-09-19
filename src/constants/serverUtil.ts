@@ -212,7 +212,8 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
     }, {});
     for (let ticket of tickets) {
         currentAmounts[ticket.categoryId] += ticket.amount;
-        if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId]) continue;
+        if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId] || maxTicketAmounts[ticket.categoryId] === 0)
+            continue; // category for this event isn't limited
         if (currentAmounts[ticket.categoryId] > maxTicketAmounts[ticket.categoryId]) return false;
     }
 
