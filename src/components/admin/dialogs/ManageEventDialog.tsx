@@ -23,6 +23,14 @@ import Image from "next/image";
 import containImageStyle from "../../../style/ContainImage.module.scss";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
+import isEqual from "lodash/isEqual";
+
+const extractCategoryMaxAmounts = (event) => {
+    return event?.categories?.reduce((dict, el) => {
+        dict[el.category.id] = el.maxAmount;
+        return dict;
+    }, {}) ?? {};
+}
 
 export const ManageEventDialog = ({
     open,
@@ -49,7 +57,8 @@ export const ManageEventDialog = ({
             seatType: event?.seatType ?? "",
             seatMap: event?.seatMapId ?? 0,
             selectedCategories: originalSelectedCategories,
-            personalTicket: event?.personalTicket ?? false
+            personalTicket: event?.personalTicket ?? false,
+            categoryMaxAmount: extractCategoryMaxAmounts(event)
         },
         onSubmit: async (values) => {
             try {
@@ -58,8 +67,8 @@ export const ManageEventDialog = ({
                     seatMapId: values.seatMap,
                     seatType: values.seatType,
                     personalTicket: values.personalTicket,
-                    ...(values.seatType === "free" && { categories: values.selectedCategories })
-                }
+                    ...(values.seatType === "free" && { categories: values.selectedCategories, maxAmounts: values.categoryMaxAmount })
+                };
                 let eventId = event?.id;
                 if (!event) {
                     // first create event, then add all information
@@ -95,6 +104,7 @@ export const ManageEventDialog = ({
         formik.setFieldValue("seatType", event.seatType);
         formik.setFieldValue("selectedCategories", originalSelectedCategories);
         formik.setFieldValue("personalTicket", event.personalTicket);
+        formik.setFieldValue("categoryMaxAmount", extractCategoryMaxAmounts(event));
     }, [event, originalSelectedCategories]);
 
     const deleteCoverImage = async (eventId) => {
@@ -156,6 +166,7 @@ export const ManageEventDialog = ({
         values.seatType !== event?.seatType ||
         values.seatMap !== event?.seatMapId ||
         values.personalTicket !== event?.personalTicket ||
+        !isEqual(values.categoryMaxAmount, extractCategoryMaxAmounts(event)) ||
         !arrayEquals(originalSelectedCategories, values.selectedCategories) ||
         coverImage !== null ||
         removeCoverImage;
@@ -259,7 +270,20 @@ export const ManageEventDialog = ({
                                             category.currency
                                         ),
                                         primaryLabel: `Category: ${category.label}`,
-                                        value: category.id
+                                        value: category.id,
+                                        additionalNode: (
+                                            <TextField
+                                                onChange={event => {
+                                                    const newObject = Object.assign({}, values.categoryMaxAmount);
+                                                    newObject[category.id] = parseInt(event.target.value);
+                                                    setFieldValue("categoryMaxAmount", newObject);
+                                                }}
+                                                type={"number"}
+                                                label={"Maximum Tickets (0 = unlimited)"}
+                                                onClick={(e) => e.stopPropagation()}
+                                                value={isNaN(values.categoryMaxAmount[category.id]) || !values.categoryMaxAmount[category.id] ? "" : values.categoryMaxAmount[category.id]}
+                                            />
+                                        )
                                     };
                                 })}
                                 selection={values.selectedCategories}
