@@ -24,7 +24,7 @@ export class StripeIBANPayment extends Payment {
 
     setData(data: StripeIBANPaymentData) {
         this.data = {
-            type: PaymentType.CreditCard,
+            type: PaymentType.StripeIBAN,
             data: JSON.stringify(data)
         };
     }

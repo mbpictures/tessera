@@ -3,14 +3,13 @@ import {
     PayPalScriptProvider
 } from "@paypal/react-paypal-js";
 import React, { useRef } from "react";
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
     OrderState,
     selectOrder,
     setOrderId
 } from "../../store/reducers/orderReducer";
-import { setPaymentStatus } from "../../store/reducers/paymentReducer";
+import { selectPayment, setIdempotencyKey, setPaymentStatus } from "../../store/reducers/paymentReducer";
 import {
     selectPersonalInformation,
     setUserId
@@ -23,18 +22,22 @@ import {
 } from "@paypal/paypal-js/types/components/buttons";
 import logo from "../../assets/payment/paypal.svg";
 import Image from "next/image";
+import { v4 as uuid } from "uuid";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const PayPal = () => {
     const selectorOrder = useAppSelector(selectOrder);
     const selectedEvent = useAppSelector(selectEventSelected);
     const userInformation = useAppSelector(selectPersonalInformation);
+    const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
 
     const orderIdRef = useRef<string>(null);
 
     const click = async (data, actions: OnClickActions) => {
         const paymentAlreadyValid = await validatePayment(
-            orderIdRef.current ? orderIdRef.current : selectorOrder.orderId
+            orderIdRef.current ? orderIdRef.current : selectorOrder.orderId,
+            true
         );
         if (paymentAlreadyValid) {
             dispatch(setPaymentStatus("finished"));
@@ -44,18 +47,25 @@ export const PayPal = () => {
     };
 
     const createOrder = async (): Promise<string> => {
+        let idempotencyKey = payment.idempotencyKey;
+        if (idempotencyKey === null) {
+            // generate payment request overarching idempotencyKey
+            idempotencyKey = uuid();
+            dispatch(setIdempotencyKey(idempotencyKey));
+        }
         const { userId, orderId } = await storeOrderAndUser(
             selectorOrder,
             userInformation,
             selectedEvent,
-            "paypal"
+            "paypal",
+            idempotencyKey
         );
         dispatch(setOrderId(orderId));
         dispatch(setUserId(userId));
         const newOrder = Object.assign({}, selectorOrder) as OrderState;
         newOrder.orderId = orderId;
         orderIdRef.current = orderId;
-        const response = await axios.post("api/payment_intent/paypal", {
+        const response = await idempotencyCall("api/payment_intent/paypal", {
             order: newOrder
         });
         if (response.status === 201) {
@@ -69,7 +79,7 @@ export const PayPal = () => {
     };
 
     const onApproved = async (data: OnApproveData) => {
-        const response = await axios.post("api/webhook/paypal", {
+        const response = await idempotencyCall("api/webhook/paypal", {
             paypalId: data.orderID,
             orderId: orderIdRef.current
         });

@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../lib/prisma";
 import { Permission, PermissionSection, PermissionType } from "./interfaces";
 import i18nConfig from "../../i18n";
+import { Tickets } from "../store/reducers/orderReducer";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -157,3 +158,25 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
 
     await revalidateBuild(res, eventPaths.concat(additionalPages));
 };
+
+export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean> => {
+    const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
+    if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
+
+    // check seats not already occupied
+    let seatIdsValid = true;
+    for (let seat of seatIds) {
+        seatIdsValid &&= (await prisma.ticket.count({
+            where: {
+                seatId: seat,
+                order: {
+                    eventId: eventId
+                }
+            }
+        })) === 0;
+    }
+    if (!seatIdsValid) return false;
+
+    //TODO: add validation for ticket amount of non seat reserved events
+    return true;
+}

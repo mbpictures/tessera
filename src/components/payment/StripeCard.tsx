@@ -6,10 +6,10 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectPayment, setPayment, setPaymentStatus } from "../../store/reducers/paymentReducer";
 import { CreditCardPayment } from "../../store/factories/payment/CreditCardPayment";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
-import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
 import useTranslation from "next-translate/useTranslation";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const StripeCard = () => {
     const selector = useAppSelector(selectPayment);
@@ -44,8 +44,8 @@ export const StripeCard = () => {
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post(
-                "api/payment_intent/stripe_credit_card",
+            const response = await idempotencyCall(
+                "api/payment_intent/stripe",
                 { order: selectorOrder, eventId: selectorEvent }
             );
 
@@ -66,8 +66,8 @@ export const StripeCard = () => {
             if (error || paymentIntent.status !== "succeeded")
                 throw new Error(error.message);
 
-            await axios.post(
-                "api/payment_intent/stripe_credit_card_confirm_temp",
+            await idempotencyCall(
+                "api/payment_intent/stripe_confirm_temp",
                 {
                     order: selectorOrder,
                     paymentResult: JSON.stringify(paymentIntent)

@@ -5,6 +5,40 @@ import prisma from "../../../lib/prisma";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 import { ShippingType } from "../../../store/factories/shipping/ShippingFactory";
+import { validateOrder } from "../../../constants/serverUtil";
+
+const createOrder = async (eventId, paymentType, user, locale, idempotencyKey) => {
+    return await prisma.order.create({
+        data: {
+            event: {
+                connect: {
+                    id: eventId
+                }
+            },
+            paymentType: paymentType,
+            user: {
+                create: {
+                    firstName: user.address.firstName,
+                    lastName: user.address.lastName,
+                    email: user.email,
+                    address: user.address.address,
+                    zip: user.address.zip,
+                    city: user.address.city,
+                    countryCode: user.address.country.countryShortCode,
+                    regionCode: user.address.region.shortCode
+                }
+            },
+            shipping: JSON.stringify(user.shipping),
+            locale: locale,
+            idempotencyKey: idempotencyKey
+        },
+        include: {
+            user: true,
+            tickets: true,
+            task: true
+        }
+    });
+}
 
 async function handler(
     req: NextApiRequest,
@@ -29,54 +63,46 @@ async function handler(
         paymentType: string;
         locale: string;
     } = req.body;
+    const idempotencyKey = req.headers["idempotency-key"] as string;
     try {
-        const createUser = await prisma.user.create({
-            data: {
-                firstName: user.address.firstName,
-                lastName: user.address.lastName,
-                email: user.email,
-                address: user.address.address,
-                zip: user.address.zip,
-                city: user.address.city,
-                countryCode: user.address.country.countryShortCode,
-                regionCode: user.address.region.shortCode
+        if (!idempotencyKey)
+            return res.status(410).end("Idempotency Key missing");
+        // users may try to cheat their order using postman or some other interceptor, we need to check server side
+        if (!(await validateOrder(order.tickets, eventId)))
+            return res.status(411).end("Order not valid");
+        let orderDB = await prisma.order.findUnique({
+            where: {
+                idempotencyKey: idempotencyKey
+            },
+            include: {
+                tickets: true,
+                user: true,
+                task: true
             }
         });
-
-
-        const createOrder = await prisma.order.create({
-            data: {
-                event: {
-                    connect: {
-                        id: eventId
-                    }
-                },
-                paymentType: paymentType,
-                user: {
-                    connect: {
-                        id: createUser.id
-                    }
-                },
-                shipping: JSON.stringify(user.shipping),
-                locale: locale
-            }
-        });
-        await Promise.all(order.tickets
-            .map(ticket => ({...ticket, used: false, orderId: createOrder.id}))
-            .map(async (ticket) => {
-                return await prisma.ticket.create({
-                    data: ticket
+        // order and user already created and identified by idempotency key?
+        if (orderDB === null) {
+            orderDB = await createOrder(eventId, paymentType, user, locale, idempotencyKey);
+        }
+        if (!orderDB.tickets || orderDB.tickets.length === 0) {
+            // we want to make sure, that either all or none ticket is created
+            await prisma.$transaction(order.tickets
+                .map(ticket => ({...ticket, used: false, orderId: orderDB.id}))
+                .map((ticket) => {
+                    return prisma.ticket.create({
+                        data: ticket
+                    })
                 })
-            })
-        );
+            );
+        }
 
         // TODO: replace hard coded types by factory methods
-        if (paymentType === PaymentType.Invoice || user.shipping.type === ShippingType.Post) {
+        if (orderDB.task === null && (paymentType === PaymentType.Invoice || user.shipping.type === ShippingType.Post)) {
             await prisma.task.create({
                 data: {
                     order: {
                         connect: {
-                            id: createOrder.id
+                            id: orderDB.id
                         }
                     },
                     notes: "[]"
@@ -85,8 +111,8 @@ async function handler(
         }
 
         res.status(200).json({
-            userId: createUser.id,
-            orderId: createOrder.id
+            userId: orderDB.user.id,
+            orderId: orderDB.id
         });
     } catch (e) {
         console.log(e);

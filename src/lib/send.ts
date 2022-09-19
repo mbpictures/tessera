@@ -43,15 +43,6 @@ export const send = async (orderId) => {
                orderId
            );
 
-           await prisma.order.update({
-               where: {
-                   id: orderId
-               },
-               data: {
-                   invoiceSent: true
-               }
-           });
-
            attachments.push({
                filename: "Invoice.pdf",
                content: invoiceData,
@@ -88,14 +79,6 @@ export const send = async (orderId) => {
                 });
             });
             containsTickets = true;
-            await prisma.order.update({
-                where: {
-                    id: orderId
-                },
-                data: {
-                    shipping: JSON.stringify(ShippingFactory.getShippingInstance({type: ShippingType.Download, data: null}).getSuccessfulShipping())
-                }
-            })
         }
 
         if (attachments.length === 0) {
@@ -113,11 +96,32 @@ export const send = async (orderId) => {
 
         message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice);
 
-        (await getEmailTransporter()).sendMail(message, (error) => {
+        (await getEmailTransporter()).sendMail(message, async (error) => {
             if (error) {
                 reject(error);
                 return;
             }
+
+            if (containsInvoice)
+                await prisma.order.update({
+                    where: {
+                        id: orderId
+                    },
+                    data: {
+                        invoiceSent: true
+                    }
+                });
+
+            if (containsTickets)
+                await prisma.order.update({
+                    where: {
+                        id: orderId
+                    },
+                    data: {
+                        shipping: JSON.stringify(ShippingFactory.getShippingInstance({type: ShippingType.Download, data: null}).getSuccessfulShipping())
+                    }
+                });
+
             resolve();
         });
     });

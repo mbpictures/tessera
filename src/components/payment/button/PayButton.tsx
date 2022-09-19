@@ -1,5 +1,5 @@
 import {
-    selectPayment,
+    selectPayment, setIdempotencyKey,
     setPaymentStatus
 } from "../../../store/reducers/paymentReducer";
 import { storeOrderAndUser, validatePayment } from "../../../constants/util";
@@ -15,6 +15,7 @@ import { LoadingButton } from "@mui/lab";
 import React from "react";
 import { selectNextStateAvailable } from "../../../store/reducers/nextStepAvailableReducer";
 import useTranslation from "next-translate/useTranslation";
+import { v4 as uuid } from "uuid";
 
 export const PayButton = () => {
     const order = useAppSelector(selectOrder);
@@ -26,6 +27,12 @@ export const PayButton = () => {
     const { t } = useTranslation();
 
     const onPay = async () => {
+        let idempotencyKey = payment.idempotencyKey;
+        if (idempotencyKey === null) {
+            // generate payment request overarching idempotencyKey
+            idempotencyKey = uuid();
+            dispatch(setIdempotencyKey(idempotencyKey));
+        }
         dispatch(setPaymentStatus("persist"));
         const paymentAlreadyValid = await validatePayment(order.orderId);
         if (paymentAlreadyValid) {
@@ -36,7 +43,8 @@ export const PayButton = () => {
                 order,
                 userInformation,
                 selectedEvent,
-                payment.payment.type
+                payment.payment.type,
+                idempotencyKey
             );
             dispatch(setUserId(userId));
             dispatch(setOrderId(orderId));

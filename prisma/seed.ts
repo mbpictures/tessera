@@ -1,5 +1,6 @@
 import prisma from "../src/lib/prisma";
 import { faker } from '@faker-js/faker';
+import { randomUUID } from "crypto";
 
 function getRandom(min, max) {
     min = Math.ceil(min);
@@ -89,7 +90,7 @@ export async function main() {
                         zip: faker.address.zipCode(),
                         email: faker.internet.email(),
                         countryCode: faker.address.countryCode(),
-                        regionCode: faker.fake('{{address.city_prefix}}')
+                        regionCode: faker.helpers.fake('{{address.city_prefix}}')
                     }
                 },
                 paymentType: "invoice",
@@ -103,7 +104,8 @@ export async function main() {
                 date: date,
                 tickets: {
                     create: tickets
-                }
+                },
+                idempotencyKey: randomUUID()
             }
         })
     }

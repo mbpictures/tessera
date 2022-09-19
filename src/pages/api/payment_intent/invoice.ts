@@ -3,6 +3,7 @@ import prisma from "../../../lib/prisma";
 import { OrderState } from "../../../store/reducers/orderReducer";
 import { send } from "../../../lib/send";
 import { withNotification } from "../../../lib/notifications/withNotification";
+import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 
 async function handler(
     req: NextApiRequest,
@@ -17,15 +18,27 @@ async function handler(
     const { order }: { order: OrderState } = req.body;
 
     try {
-        const secret = Math.random().toString(36).substring(2, 8).toUpperCase();
-        await prisma.order.update({
+        const orderDB = await prisma.order.findUnique({
             where: {
                 id: order.orderId
             },
-            data: {
-                paymentIntent: JSON.stringify({ invoicePurpose: secret })
+            select: {
+                paymentIntent: true,
+                paymentType: true
             }
         });
+        if (orderDB.paymentIntent === null || orderDB.paymentIntent === "" || orderDB.paymentType !== PaymentType.Invoice) {
+            const secret = Math.random().toString(36).substring(2, 8).toUpperCase();
+            await prisma.order.update({
+                where: {
+                    id: order.orderId
+                },
+                data: {
+                    paymentIntent: JSON.stringify({ invoicePurpose: secret }),
+                    paymentType: PaymentType.Invoice
+                }
+            });
+        }
 
         await send(order.orderId);
 

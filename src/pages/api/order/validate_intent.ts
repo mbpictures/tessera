@@ -11,20 +11,22 @@ export default async function handler(
         return;
     }
 
-    const { orderId }: { orderId: string } = req.body;
+    const { orderId, withResult }: { orderId: string; withResult?: boolean; } = req.body;
     try {
         const order = await prisma.order.findUnique({
             where: {
                 id: orderId
             },
             select: {
-                paymentIntent: true
+                paymentIntent: true,
+                paymentResult: true
             }
         });
 
         // TODO: add payment intent validation using payment factory
+        const paymentResultValid = withResult ? order.paymentResult !== null && order.paymentResult !== "" : true;
         res.status(200).json({
-            valid: order.paymentIntent !== null && order.paymentIntent !== ""
+            valid: order.paymentIntent !== null && order.paymentIntent !== "" && paymentResultValid
         });
     } catch (e) {
         res.status(500).end("Server error");

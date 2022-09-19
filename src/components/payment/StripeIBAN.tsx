@@ -8,13 +8,13 @@ import {
     setPaymentStatus
 } from "../../store/reducers/paymentReducer";
 import { PaymentType } from "../../store/factories/payment/PaymentFactory";
-import axios from "axios";
 import { selectOrder } from "../../store/reducers/orderReducer";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
 import { selectPersonalInformation } from "../../store/reducers/personalInformationReducer";
 import { StripeIBANPayment } from "../../store/factories/payment/StripeIBANPayment";
 import { Typography } from "@mui/material";
 import useTranslation from "next-translate/useTranslation";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const StripeIBAN = () => {
     const selector = useAppSelector(selectPayment);
@@ -45,9 +45,10 @@ export const StripeIBAN = () => {
         async function processPayment() {
             dispatch(setPaymentStatus("processing"));
 
-            const response = await axios.post("api/payment_intent", {
+            const response = await idempotencyCall("api/payment_intent/stripe", {
                 order: selectorOrder,
-                eventId: selectorEvent
+                eventId: selectorEvent,
+                paymentMethod: "sepa_debit"
             });
 
             if (response.status === 500)
@@ -73,6 +74,14 @@ export const StripeIBAN = () => {
 
             if (error || paymentIntent.status !== "succeeded")
                 throw new Error(error.message);
+
+            await idempotencyCall(
+                "api/payment_intent/stripe_confirm_temp",
+                {
+                    order: selectorOrder,
+                    paymentResult: JSON.stringify(paymentIntent)
+                }
+            );
             dispatch(setPaymentStatus("finished"));
         }
 

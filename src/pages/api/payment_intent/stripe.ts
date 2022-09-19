@@ -2,9 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import Stripe from "stripe";
 import prisma from "../../../lib/prisma";
-import { calculateTotalPrice, validateCategoriesWithSeatMap } from "../../../constants/util";
+import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
+import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2022-08-01"
 });
@@ -14,7 +15,7 @@ async function handler(
     res: NextApiResponse
 ) {
     if (req.method === "POST") {
-        const { order }: { order: OrderState } = req.body;
+        const { order, paymentMethod = "card" }: { order: OrderState; paymentMethod: string } = req.body;
         try {
             if (!order.orderId || order.orderId === "") {
                 throw new Error("Invalid Order ID");
@@ -31,18 +32,25 @@ async function handler(
                     tickets: true,
                     event: {
                         select: {
+                            seatType: true,
                             seatMap: true
                         }
-
-                    }
+                    },
+                    idempotencyKey: true,
+                    paymentIntent: true,
+                    paymentType: true
                 }
             });
+            const paymentType = paymentMethod === "card" ? PaymentType.CreditCard : PaymentType.StripeIBAN;
+            if (orderDB.paymentIntent !== null && orderDB.paymentIntent !== "" && orderDB.paymentType === paymentType) {
+                return res.status(200).json(JSON.parse(orderDB.paymentIntent));
+            }
             const categories = await prisma.category.findMany();
-            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, JSON.parse(orderDB.event.seatMap.definition)), categories);
+            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
             let currency = categories[0].currency;
 
             const params: Stripe.PaymentIntentCreateParams = {
-                payment_method_types: ["card"],
+                payment_method_types: [paymentMethod],
                 amount: Math.floor(amount * 100),
                 currency: currency,
                 metadata: {
@@ -50,18 +58,21 @@ async function handler(
                 }
             };
             const payment_intent: Stripe.PaymentIntent =
-                await stripe.paymentIntents.create(params);
+                await stripe.paymentIntents.create(
+                    params,
+                    {
+                        idempotencyKey: orderDB.idempotencyKey
+                    });
 
             await prisma.order.update({
                 where: {
                     id: order.orderId
                 },
                 data: {
-                    paymentIntent: JSON.stringify(payment_intent)
+                    paymentIntent: JSON.stringify(payment_intent),
+                    paymentType
                 }
             });
-
-            // TODO: add idempotent request key
 
             res.status(200).json(payment_intent);
         } catch (err) {

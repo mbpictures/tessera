@@ -105,6 +105,6 @@ export function StripeTextFieldIBAN(
     props: StripeTextFieldProps<typeof IbanElement>
 ) {
     return (
-        <StripeTextField label="IBAN" stripeElement={IbanElement} {...props} />
+        <StripeTextField label="IBAN" stripeElement={IbanElement} inputProps={{options: { supportedCountries: ['SEPA'] }}} {...props} />
     );
 }

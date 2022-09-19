@@ -64,11 +64,11 @@ export const Step = ({
 
     useEffect(() => {
         if (!router.isReady) return;
-        const { orderId, event } = router.query;
+        const { order: orderId, event } = router.query;
 
         updateNextAvailable();
 
-        if (orderId && orderId !== "") {
+        if (orderId && orderId !== "" && currentSelectedEvent < 0 && state.order.orderId !== null) {
             getStoreWithOrderId(orderId)
                 .then(({ personalInformation, order, eventId }) => {
                     dispatch(setOrderId(order.orderId));

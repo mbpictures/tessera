@@ -4,6 +4,7 @@ import { PersonalInformationState } from "../store/reducers/personalInformationR
 import axios from "axios";
 import { OrderState, Tickets } from "../store/reducers/orderReducer";
 import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
+import { idempotencyCall } from "../lib/idempotency/clientsideIdempotency";
 
 export type AddressValidator = (address: IAddress) => boolean;
 export const addressValidatorMap: Record<string, AddressValidator> = {
@@ -36,16 +37,19 @@ export const storeOrderAndUser = async (
     order: OrderState,
     user: PersonalInformationState,
     eventId,
-    paymentType
+    paymentType,
+    idempotencyKey
 ) => {
     if (order.orderId || user.userId)
         return { userId: user.userId, orderId: order.orderId };
-    const response = await axios.post("/api/order/store", {
+    const response = await idempotencyCall("/api/order/store", {
         order: order,
         user: user,
         eventId: eventId,
         paymentType: paymentType,
         locale: navigator.language
+    }, {
+        idempotencyKey: idempotencyKey
     });
     return { userId: response.data.userId, orderId: response.data.orderId };
 };
@@ -62,10 +66,11 @@ export const getStoreWithOrderId = async (
     return { personalInformation: user, order: order, eventId: eventId };
 };
 
-export const validatePayment = async (orderId): Promise<boolean> => {
+export const validatePayment = async (orderId, withResult?: boolean): Promise<boolean> => {
     if (!orderId || orderId === "") return false;
     const response = await axios.post("api/order/validate_intent", {
-        orderId: orderId
+        orderId: orderId,
+        withResult
     });
     return response.data.valid;
 };
@@ -74,7 +79,12 @@ export const ticketsOccupied = (tickets: Tickets, seatMap: SeatMap) => {
     return tickets.some(ticket => seatMap.flat().find(seat => seat.id === ticket.seatId).occupied);
 }
 
+export const getSeatMap = (event): SeatMap => {
+   return  event.seatType.toLowerCase() === "seatMap" ? JSON.parse(event.seatMap.definition) : null;
+}
+
 export const validateCategoriesWithSeatMap = (tickets: Tickets, seatMap: SeatMap): Tickets => {
+    if (seatMap === null) return tickets;
     return tickets.map(ticket => ({...ticket, categoryId: seatMap.flat().find(seat => seat.id === ticket.seatId).category}));
 }
 

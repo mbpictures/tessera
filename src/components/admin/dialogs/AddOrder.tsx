@@ -36,6 +36,7 @@ import { resetPayment, setPaymentStatus } from "../../../store/reducers/paymentR
 import { LoadingButton } from "@mui/lab";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
+import { v4 as uuid } from "uuid";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -71,7 +72,8 @@ const AddOrderInner = ({open, events, categories, onClose, onAdd}: props) => {
                 selector.order,
                 selector.personalInformation,
                 selector.selectedEvent.selectedEvent,
-                selector.payment.payment.type
+                selector.payment.payment.type,
+                uuid()
             );
             dispatch(setUserId(userId));
             dispatch(setOrderId(orderId));
