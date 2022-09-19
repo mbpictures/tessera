@@ -175,12 +175,12 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
         }
     });
     const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
+    if (event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
     if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
 
     // check seats not already occupied
-    let seatIdsValid = true;
     for (let seat of seatIds) {
-        seatIdsValid &&= (await prisma.ticket.count({
+        const seatIdValid = (await prisma.ticket.count({
             where: {
                 seatId: seat,
                 order: {
@@ -188,8 +188,8 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
                 }
             }
         })) === 0;
+        if (!seatIdValid) return false; // we don't need to check the other seats, when one is already is invalid
     }
-    if (!seatIdsValid) return false;
 
     const maxTicketAmounts = event.categories.reduce((dict, category) => {
         dict[category.categoryId] = category.maxAmount;
