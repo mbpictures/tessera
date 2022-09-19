@@ -24,7 +24,7 @@ export const SeatSelectionFree = ({ categories }) => {
     const handleChange = (index, amount: number, categoryId, oldCategory) => {
         if (categoryId === -1) return;
         const newTickets: Tickets = order.tickets.map(a => a).filter(a => a.categoryId !== oldCategory);
-        newTickets.push(...Array.from(Array(Math.max(amount, categories.find(cat => cat.id === categoryId).ticketsLeft)).keys()).map(() => ({categoryId: categoryId, amount: 1})));
+        newTickets.push(...Array.from(Array(amount).keys()).map(() => ({categoryId: categoryId, amount: 1})));
         dispatch(setTickets(newTickets));
         const newValue = currentlySelectedCategories.map(a => a);
         newValue[index] = categoryId;

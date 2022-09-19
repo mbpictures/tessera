@@ -36,6 +36,7 @@ export const SeatSelectionFreeEntry = ({
         label: string;
         price: number;
         currency: string;
+        ticketsLeft: number;
     }>;
     index: number;
     currentlySelectedCategories: Array<number>;
@@ -49,19 +50,24 @@ export const SeatSelectionFreeEntry = ({
     const [ticketAmount, setTicketAmount] = useState<number>(tickets.filter(ticket => ticket.categoryId === category).length);
     const { t } = useTranslation();
 
+    const getTicketsLeft = (categoryId?: number) => {
+        return categories.find((value) => value.id === (categoryId ?? category))?.ticketsLeft ?? 0;
+    }
+
     const handleChange = (event) => {
         if (event.target.value === "") {
             setTicketAmount(-1);
             return;
         }
-        const newValue = parseInt(event.target.value);
-        setTicketAmount(isNaN(newValue) ? 0 : newValue);
-        onChange(index, isNaN(newValue) ? 0 : newValue, category, category);
+        const newValue = Math.min(isNaN(parseInt(event.target.value)) ? 0 : parseInt(event.target.value), getTicketsLeft());
+        setTicketAmount(newValue);
+        onChange(index, newValue, category, category);
     };
 
     const onAdd = () => {
-        setTicketAmount(ticketAmount + 1);
-        onChange(index, ticketAmount + 1, category, category);
+        const val = Math.min(ticketAmount + 1, getTicketsLeft());
+        setTicketAmount(val);
+        onChange(index, val, category, category);
     };
 
     const onSubtract = () => {
@@ -71,7 +77,7 @@ export const SeatSelectionFreeEntry = ({
     };
 
     const handleCategoryChange = (event) => {
-        onChange(index, ticketAmount, parseInt(event.target.value), category);
+        onChange(index, Math.min(ticketAmount, getTicketsLeft(parseInt(event.target.value))), parseInt(event.target.value), category);
     };
 
     const price =
