@@ -46,6 +46,7 @@ export const SeatSelectionFree = ({ categories }) => {
     };
 
     const price = order.tickets.reduce((a, ticket) => a + categories.find(category => category.id === ticket.categoryId).price, 0);
+    categories = categories.filter(category => category.ticketsLeft != null ? category.ticketsLeft > 0 : true);
 
     return (
         <Grid
@@ -57,53 +58,64 @@ export const SeatSelectionFree = ({ categories }) => {
             display="flex"
             flexDirection="column"
         >
-            <motion.div layout>
-                <Typography variant={"body1"} alignSelf={"center"}>
-                    {t("seatselection:no-seat-reservation", null, {fallback: ""})}
-                </Typography>
-            </motion.div>
-            <Grid container spacing={2} justifyContent={"center"}>
-                {currentlySelectedCategories &&
-                    currentlySelectedCategories.length > 0 &&
-                    currentlySelectedCategories.map((o, index) => {
-                        return (
-                            <Grid item sm={12} md={6} key={index}>
-                                <SeatSelectionFreeEntry
-                                    categories={categories}
-                                    onChange={handleChange}
-                                    index={index}
-                                    onRemove={handleRemoveCategory}
-                                    tickets={order.tickets}
-                                    currentlySelectedCategories={currentlySelectedCategories}
-                                    category={o}
-                                />
-                            </Grid>
-                        );
-                    })}
-            </Grid>
-            <motion.div layout>
-                <Box height={20} />
-                <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={handleAddCategory}
-                    disabled={
-                        currentlySelectedCategories && currentlySelectedCategories.length >= categories.length
-                    }
-                    id={"seat-selection-free-add-category"}
-                >
-                    <AddIcon /> {t("seatselection:add-category", null, {fallback: seatSelectionText["add-category"]})}
-                </Button>
-                <Box height={20} />
-                <Typography suppressHydrationWarning>
-                    {t("common:total-price", null, {fallback: commonText["total-price"]})}:{" "}
-                    <b id={"seat-selection-free-total-price"}>
-                        {
-                            categories.length > 0 && formatPrice(price, categories[0]?.currency)
-                        }
-                    </b>
-                </Typography>
-            </motion.div>
+            {
+                categories.length > 0 ? (
+                    <>
+                        <motion.div layout>
+                            <Typography variant={"body1"} alignSelf={"center"}>
+                                {t("seatselection:no-seat-reservation", null, {fallback: ""})}
+                            </Typography>
+                        </motion.div>
+                        <Grid container spacing={2} justifyContent={"center"}>
+                            {currentlySelectedCategories &&
+                                currentlySelectedCategories.length > 0 &&
+                                currentlySelectedCategories.map((o, index) => {
+                                    return (
+                                        <Grid item sm={12} md={6} key={index}>
+                                            <SeatSelectionFreeEntry
+                                                categories={categories}
+                                                onChange={handleChange}
+                                                index={index}
+                                                onRemove={handleRemoveCategory}
+                                                tickets={order.tickets}
+                                                currentlySelectedCategories={currentlySelectedCategories}
+                                                category={o}
+                                            />
+                                        </Grid>
+                                    );
+                                })}
+                        </Grid>
+                        <motion.div layout>
+                            <Box height={20} />
+                            <Button
+                                color="primary"
+                                variant="outlined"
+                                onClick={handleAddCategory}
+                                disabled={
+                                    currentlySelectedCategories && currentlySelectedCategories.length >= categories.length
+                                }
+                                id={"seat-selection-free-add-category"}
+                            >
+                                <AddIcon /> {t("seatselection:add-category", null, {fallback: seatSelectionText["add-category"]})}
+                            </Button>
+                            <Box height={20} />
+                            <Typography suppressHydrationWarning>
+                                {t("common:total-price", null, {fallback: commonText["total-price"]})}:{" "}
+                                <b id={"seat-selection-free-total-price"}>
+                                    {
+                                        categories.length > 0 && formatPrice(price, categories[0]?.currency)
+                                    }
+                                </b>
+                            </Typography>
+                        </motion.div>
+                    </>
+                ) : (
+                    <Typography variant={"h2"} textAlign={"center"}>
+                        {t("seatselection:event-booked-out")}
+                    </Typography>
+                )
+            }
+
         </Grid>
     );
 };

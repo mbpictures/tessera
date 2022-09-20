@@ -51,7 +51,7 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        let { title, seatType, seatMapId, categories, personalTicket } = req.body;
+        let { title, seatType, seatMapId, categories, personalTicket, maxAmounts = {} } = req.body;
 
         if (!categories && seatType === "seatmap") {
             const seatMap = await prisma.seatMap.findUnique({
@@ -81,7 +81,8 @@ export default async function handler(
                 await prisma.categoriesOnEvents.create({
                     data: {
                         eventId: parseInt(id as string),
-                        categoryId: category
+                        categoryId: category,
+                        maxAmount: maxAmounts[category] ?? null
                     }
                 })
             }

@@ -44,15 +44,6 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params, locale }) {
     if (params.id === "[id]") return {props: { fallback: true }};
-    const categories = await prisma.category.findMany({
-        where: {
-            events: {
-                some: {
-                    eventId: parseInt(params.id)
-                }
-            }
-        }
-    });
 
     const event = await prisma.event.findUnique({
         where: {
@@ -63,6 +54,11 @@ export async function getStaticProps({ params, locale }) {
             orders: {
                 include: {
                     tickets: true
+                }
+            },
+            categories: {
+                include: {
+                    category: true
                 }
             }
         }
@@ -84,9 +80,25 @@ export async function getStaticProps({ params, locale }) {
         );
     }
 
+    const currentAmounts = (await prisma.ticket.groupBy({
+        by: ["categoryId"],
+        where: {
+            order: {
+                eventId: event.id
+            }
+        },
+        _count: true
+    })).reduce((dict, element) => {
+        dict[element.categoryId] = element._count;
+        return dict;
+    }, {});
+
     return {
         props: {
-            categories,
+            categories: event.categories.map(category => ({
+                ...category.category,
+                ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - currentAmounts[category.categoryId], 0)
+            })),
             seatType: event.seatType,
             seatMap: seatmap,
             theme: await getOption(Options.Theme),

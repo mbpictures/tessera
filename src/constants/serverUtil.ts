@@ -160,13 +160,27 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
 };
 
 export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean> => {
+    const event = await prisma.event.findUnique({
+        where: {
+            id: eventId
+        },
+        select: {
+            seatType: true,
+            categories: {
+                select: {
+                    categoryId: true,
+                    maxAmount: true
+                }
+            }
+        }
+    });
     const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
+    if (event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
     if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
 
     // check seats not already occupied
-    let seatIdsValid = true;
     for (let seat of seatIds) {
-        seatIdsValid &&= (await prisma.ticket.count({
+        const seatIdValid = (await prisma.ticket.count({
             where: {
                 seatId: seat,
                 order: {
@@ -174,9 +188,34 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
                 }
             }
         })) === 0;
+        if (!seatIdValid) return false; // we don't need to check the other seats, when one is already is invalid
     }
-    if (!seatIdsValid) return false;
 
-    //TODO: add validation for ticket amount of non seat reserved events
+    const maxTicketAmounts = event.categories.reduce((dict, category) => {
+        dict[category.categoryId] = category.maxAmount;
+        return dict;
+    }, {});
+    const currentAmounts = (await prisma.ticket.groupBy({
+        by: ["categoryId"],
+        where: {
+            order: {
+                eventId: eventId
+            },
+            categoryId: {
+                in: tickets.map(ticket => ticket.categoryId)
+            }
+        },
+        _count: true
+    })).reduce((dict, element) => {
+        dict[element.categoryId] = element._count;
+        return dict;
+    }, {});
+    for (let ticket of tickets) {
+        currentAmounts[ticket.categoryId] += ticket.amount;
+        if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId] || maxTicketAmounts[ticket.categoryId] === 0)
+            continue; // category for this event isn't limited
+        if (currentAmounts[ticket.categoryId] > maxTicketAmounts[ticket.categoryId]) return false;
+    }
+
     return true;
 }

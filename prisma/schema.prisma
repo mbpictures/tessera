@@ -47,6 +47,7 @@ model CategoriesOnEvents {
     eventId         Int
     category        Category     @relation(fields: [categoryId], references: [id])
     categoryId      Int
+    maxAmount       Int?
 
     @@id([eventId, categoryId])
 }
