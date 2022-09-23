@@ -16,11 +16,21 @@ model Event {
     seatType        String
     seatMap         SeatMap?    @relation(fields: [seatMapId], references: [id])
     seatMapId       Int?
-    orders          Order[]
     categories      CategoriesOnEvents[]
     coverImage      String?
     coverImageSize  Int?
     personalTicket  Boolean     @default(false)
+    dates           EventDate[]
+}
+
+model EventDate {
+    id              Int         @default(autoincrement()) @id
+    title           String?
+    event           Event       @relation(fields: [eventId], references: [id])
+    eventId         Int
+    date            DateTime?
+    orders          Order[]
+    unlockTimeS     Int
 }
 
 model SeatMap {
@@ -74,8 +84,8 @@ model Order {
     paymentResult   String?
     seatMap         SeatMap?    @relation(fields: [seatMapId], references: [id])
     seatMapId       Int?
-    event           Event       @relation(fields: [eventId], references: [id])
-    eventId         Int
+    eventDate       EventDate   @relation(fields: [eventDateId], references: [id])
+    eventDateId     Int
     shipping        String
     tickets         Ticket[]
     locale          String
