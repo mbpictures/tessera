@@ -47,7 +47,6 @@ export async function main() {
             dates: {
                 create: [
                     {
-                        unlockTimeS: 0,
                         date: new Date(),
                     }
                 ]
@@ -76,7 +75,6 @@ export async function main() {
             dates: {
                 create: [
                     {
-                        unlockTimeS: 0,
                         date: new Date(),
                     }
                 ]

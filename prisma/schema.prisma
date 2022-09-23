@@ -24,13 +24,14 @@ model Event {
 }
 
 model EventDate {
-    id              Int         @default(autoincrement()) @id
-    title           String?
-    event           Event       @relation(fields: [eventId], references: [id])
-    eventId         Int
-    date            DateTime?
-    orders          Order[]
-    unlockTimeS     Int
+    id                  Int         @default(autoincrement()) @id
+    title               String?
+    event               Event       @relation(fields: [eventId], references: [id])
+    eventId             Int
+    date                DateTime?
+    orders              Order[]
+    ticketSaleStartDate DateTime?
+    ticketSaleEndDate   DateTime?
 }
 
 model SeatMap {
