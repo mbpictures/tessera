@@ -39,6 +39,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import { hasPayedIcon } from "../../components/admin/OrderInformationDetails";
+import { getEventTitle } from "../../constants/util";
 
 const COLUMNS = [
     "Event",
@@ -298,7 +299,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                             {orders.map((order, index) => {
                                 return (
                                     <TableRow key={index}>
-                                        <ConditionalCell columnName="Event" text={order.event.title} list={visibleColumns} />
+                                        <ConditionalCell columnName="Event" text={getEventTitle(order.eventDate)} list={visibleColumns} />
                                         <ConditionalCell columnName="Order" text={
                                             'Tickets booked: ' + order.tickets.length
                                         } list={visibleColumns} />
@@ -353,9 +354,13 @@ export async function getServerSideProps(context: NextPageContext) {
         async () => {
             const count = await prisma.order.count();
             const categories = await prisma.category.findMany();
-            let events = await prisma.event.findMany({
+            let eventDates = await prisma.eventDate.findMany({
                 include: {
-                    seatMap: true,
+                    event: {
+                        include: {
+                            seatMap: true
+                        }
+                    },
                     orders: {
                         include: {
                             user: true,
@@ -365,9 +370,9 @@ export async function getServerSideProps(context: NextPageContext) {
                 }
             });
 
-            events = events.map(event => {
-                if (event.seatMap?.definition) {
-                    let baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
+            eventDates = eventDates.map(event => {
+                if (event.event.seatMap?.definition) {
+                    let baseMap: SeatMap = JSON.parse(event.event.seatMap?.definition);
                     baseMap = baseMap.map((row) =>
                         row.map((seat) => {
                             const isOccupied = event.orders.some((order) =>
@@ -381,7 +386,7 @@ export async function getServerSideProps(context: NextPageContext) {
                             };
                         })
                     );
-                    event.seatMap.definition = JSON.stringify(baseMap);
+                    event.event.seatMap.definition = JSON.stringify(baseMap);
                 }
                 delete event.orders;
 
@@ -392,7 +397,7 @@ export async function getServerSideProps(context: NextPageContext) {
                 props: {
                     count,
                     categories,
-                    events
+                    eventDates
                 }
             };
         },

@@ -43,7 +43,18 @@ export async function main() {
                     {category: {connect: {id: 2}}},
                 ]
 
+            },
+            dates: {
+                create: [
+                    {
+                        unlockTimeS: 0,
+                        date: new Date(),
+                    }
+                ]
             }
+        },
+        include: {
+            dates: true
         }
     })
 
@@ -61,7 +72,18 @@ export async function main() {
                 connect: {
                     id: seatmap.id
                 }
+            },
+            dates: {
+                create: [
+                    {
+                        unlockTimeS: 0,
+                        date: new Date(),
+                    }
+                ]
             }
+        },
+        include: {
+            dates: true
         }
     })
 
@@ -96,9 +118,9 @@ export async function main() {
                 paymentType: "invoice",
                 shipping: JSON.stringify({type: "download", data: {}}),
                 locale: "en-GB",
-                event: {
+                eventDate: {
                     connect: {
-                        id: i % 2 === 0 ? freeSeatEvent.id : seatMapEvent.id
+                        id: i % 2 === 0 ? freeSeatEvent.dates[0].id : seatMapEvent.dates[0].id
                     }
                 },
                 date: date,

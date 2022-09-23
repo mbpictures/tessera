@@ -117,9 +117,13 @@ export async function getServerSideProps(context) {
         async () => {
             let events = await prisma.event.findMany({
                 include: {
-                    orders: {
+                    dates: {
                         include: {
-                            tickets: true
+                            orders: {
+                                include: {
+                                    tickets: true
+                                }
+                            },
                         }
                     },
                     categories: {
@@ -133,7 +137,7 @@ export async function getServerSideProps(context) {
             events = events.map((event) => {
                 return {
                     ...event,
-                    ticketsBought: event.orders.reduce(
+                    ticketsBought: event.dates.map(date => date.orders).flat().reduce(
                         (a, order) =>
                             a + order.tickets.length,
                         0

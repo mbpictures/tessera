@@ -135,3 +135,7 @@ export const decodeTicketQR = (readValue): {id: string; secret: string} => {
     const buffer = new Buffer(readValue, "base64");
     return JSON.parse(buffer.toString());
 }
+
+export const getEventTitle = (eventDate: {title?: string; event: {title: string}}) => {
+    return eventDate.title ?? eventDate.event.title;
+}

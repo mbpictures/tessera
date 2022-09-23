@@ -23,7 +23,7 @@ export default async function handler(
                 id: orderId
             },
             select: {
-                eventId: true,
+                eventDateId: true,
                 user: true,
                 shipping: true,
                 tickets: {
@@ -60,7 +60,7 @@ export default async function handler(
         res.status(200).json({
             user: user,
             order: {orderId, tickets: order.tickets},
-            eventId: order.eventId
+            eventDateId: order.eventDateId
         });
     } catch (e) {
         res.status(500).end("Server error");

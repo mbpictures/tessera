@@ -30,12 +30,15 @@ async function handler(
             },
             select: {
                 tickets: true,
-                event: {
+                eventDate: {
                     select: {
-                        seatType: true,
-                        seatMap: true
+                        event: {
+                            select: {
+                                seatType: true,
+                                seatMap: true
+                            }
+                        }
                     }
-
                 },
                 paymentIntent: true,
                 paymentType: true
@@ -49,7 +52,7 @@ async function handler(
         }
 
         const categories = await prisma.category.findMany();
-        const totalPrice = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
+        const totalPrice = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)), categories);
 
         const data = {
             multipay: {

@@ -159,23 +159,27 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
     await revalidateBuild(res, eventPaths.concat(additionalPages));
 };
 
-export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean> => {
-    const event = await prisma.event.findUnique({
+export const validateOrder = async (tickets: Tickets, eventDateId): Promise<boolean> => {
+    const eventDate = await prisma.eventDate.findUnique({
         where: {
-            id: eventId
+            id: eventDateId
         },
         select: {
-            seatType: true,
-            categories: {
+            event: {
                 select: {
-                    categoryId: true,
-                    maxAmount: true
+                    seatType: true,
+                    categories: {
+                        select: {
+                            categoryId: true,
+                            maxAmount: true
+                        }
+                    }
                 }
             }
         }
     });
     const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
-    if (event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
+    if (eventDate.event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
     if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
 
     // check seats not already occupied
@@ -184,14 +188,14 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
             where: {
                 seatId: seat,
                 order: {
-                    eventId: eventId
+                    eventDateId: eventDateId
                 }
             }
         })) === 0;
         if (!seatIdValid) return false; // we don't need to check the other seats, when one is already is invalid
     }
 
-    const maxTicketAmounts = event.categories.reduce((dict, category) => {
+    const maxTicketAmounts = eventDate.event.categories.reduce((dict, category) => {
         dict[category.categoryId] = category.maxAmount;
         return dict;
     }, {});
@@ -199,7 +203,7 @@ export const validateOrder = async (tickets: Tickets, eventId): Promise<boolean>
         by: ["categoryId"],
         where: {
             order: {
-                eventId: eventId
+                eventDateId: eventDateId
             },
             categoryId: {
                 in: tickets.map(ticket => ticket.categoryId)

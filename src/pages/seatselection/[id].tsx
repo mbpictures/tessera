@@ -35,9 +35,9 @@ export default function SeatSelection({
 }
 
 export async function getStaticPaths() {
-    const events = await prisma.event.findMany();
-    const paths = events.map((event) => ({
-        params: {id: event.id.toString()}
+    const eventDates = await prisma.eventDate.findMany();
+    const paths = eventDates.map((eventDate) => ({
+        params: {id: eventDate.id.toString()}
     }));
     return { paths, fallback: "blocking"};
 }
@@ -45,33 +45,37 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params, locale }) {
     if (params.id === "[id]") return {props: { fallback: true }};
 
-    const event = await prisma.event.findUnique({
+    const eventDate = await prisma.eventDate.findUnique({
         where: {
             id: parseInt(params.id)
         },
         include: {
-            seatMap: true,
+            event: {
+                include: {
+                    seatMap: true,
+                    categories: {
+                        include: {
+                            category: true
+                        }
+                    }
+                }
+            },
             orders: {
                 include: {
                     tickets: true
-                }
-            },
-            categories: {
-                include: {
-                    category: true
                 }
             }
         }
     });
 
-    if (!event) return { notFound: true }
+    if (!eventDate) return { notFound: true }
 
     let seatmap: SeatMap = null;
-    if (event.seatMap?.definition) {
-        const baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
+    if (eventDate.event.seatMap?.definition) {
+        const baseMap: SeatMap = JSON.parse(eventDate.event.seatMap?.definition);
         seatmap = baseMap.map((row) =>
             row.map((seat) => {
-                const isOccupied = event.orders.some(order => order.tickets.some(ticket => ticket.seatId === seat.id));
+                const isOccupied = eventDate.orders.some(order => order.tickets.some(ticket => ticket.seatId === seat.id));
                 return {
                     ...seat,
                     occupied: isOccupied
@@ -84,7 +88,7 @@ export async function getStaticProps({ params, locale }) {
         by: ["categoryId"],
         where: {
             order: {
-                eventId: event.id
+                eventDateId: eventDate.id
             }
         },
         _count: true
@@ -95,11 +99,11 @@ export async function getStaticProps({ params, locale }) {
 
     return {
         props: {
-            categories: event.categories.map(category => ({
+            categories: eventDate.event.categories.map(category => ({
                 ...category.category,
                 ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - currentAmounts[category.categoryId], 0)
             })),
-            seatType: event.seatType,
+            seatType: eventDate.event.seatType,
             seatMap: seatmap,
             theme: await getOption(Options.Theme),
             ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' }))

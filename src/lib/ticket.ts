@@ -3,7 +3,7 @@ import prisma from "./prisma";
 import QRCode from "qrcode";
 import { formatPrice, getStaticAssetFile } from "../constants/serverUtil";
 import {randomBytes} from "crypto";
-import { encodeTicketQR } from "../constants/util";
+import { encodeTicketQR, getEventTitle } from "../constants/util";
 
 const fillTextField = (form, fieldName, value) => {
     const field = form.getTextField(fieldName);
@@ -100,7 +100,11 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
         include: {
             order: {
                 include: {
-                    event: true,
+                    eventDate: {
+                        include: {
+                            event: true
+                        }
+                    },
                     user: true
                 }
             },
@@ -116,7 +120,7 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
             currency: order.category.currency,
             locale: order.order.locale
         },
-        order.order.event.title,
+        getEventTitle(order.order.eventDate),
         ticketId
     );
 }
@@ -131,7 +135,12 @@ export const generateTickets = async (
         },
         select: {
             id: true,
-            event: true,
+            eventDate: {
+                select: {
+                    title: true,
+                    event: true
+                }
+            },
             user: true,
             locale: true,
             tickets: true
@@ -154,7 +163,7 @@ export const generateTickets = async (
                     currency: category.currency,
                     locale: orderDB.locale
                 },
-                orderDB.event.title,
+                getEventTitle(orderDB.eventDate),
                 ticket.id
             );
         })

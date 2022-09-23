@@ -7,12 +7,12 @@ import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
 import { ShippingType } from "../../../store/factories/shipping/ShippingFactory";
 import { validateOrder } from "../../../constants/serverUtil";
 
-const createOrder = async (eventId, paymentType, user, locale, idempotencyKey) => {
+const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKey) => {
     return await prisma.order.create({
         data: {
-            event: {
+            eventDate: {
                 connect: {
-                    id: eventId
+                    id: eventDateId
                 }
             },
             paymentType: paymentType,
@@ -53,13 +53,13 @@ async function handler(
     const {
         order,
         user,
-        eventId,
+        eventDateId,
         paymentType,
         locale
     }: {
         order: OrderState;
         user: PersonalInformationState;
-        eventId: number;
+        eventDateId: number;
         paymentType: string;
         locale: string;
     } = req.body;
@@ -68,7 +68,7 @@ async function handler(
         if (!idempotencyKey)
             return res.status(410).end("Idempotency Key missing");
         // users may try to cheat their order using postman or some other interceptor, we need to check server side
-        if (!(await validateOrder(order.tickets, eventId)))
+        if (!(await validateOrder(order.tickets, eventDateId)))
             return res.status(411).end("Order not valid");
         let orderDB = await prisma.order.findUnique({
             where: {
@@ -82,7 +82,7 @@ async function handler(
         });
         // order and user already created and identified by idempotency key?
         if (orderDB === null) {
-            orderDB = await createOrder(eventId, paymentType, user, locale, idempotencyKey);
+            orderDB = await createOrder(eventDateId, paymentType, user, locale, idempotencyKey);
         }
         if (!orderDB.tickets || orderDB.tickets.length === 0) {
             // we want to make sure, that either all or none ticket is created
