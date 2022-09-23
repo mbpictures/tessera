@@ -115,12 +115,12 @@ export async function getServerSideProps(context) {
     return await getAdminServerSideProps(
         context,
         async () => {
-            let events = await prisma.event.findMany({
+            const events = await prisma.event.findMany({
                 include: {
                     dates: {
                         include: {
                             orders: {
-                                include: {
+                                select: {
                                     tickets: true
                                 }
                             },
@@ -134,7 +134,7 @@ export async function getServerSideProps(context) {
                 }
             });
 
-            events = events.map((event) => {
+            const serializableEvents = events.map((event) => {
                 return {
                     ...event,
                     ticketsBought: event.dates.map(date => date.orders).flat().reduce(
@@ -142,7 +142,8 @@ export async function getServerSideProps(context) {
                             a + order.tickets.length,
                         0
                     ),
-                    orders: []
+                    orders: [],
+                    dates: event.dates.map(({orders, ...date}) => ({...date, date: date.date.toISOString()}))
                 };
             });
 
@@ -151,7 +152,7 @@ export async function getServerSideProps(context) {
 
             return {
                 props: {
-                    events,
+                    events: serializableEvents,
                     seatmaps,
                     categories
                 }

@@ -24,6 +24,7 @@ import containImageStyle from "../../../style/ContainImage.module.scss";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import isEqual from "lodash/isEqual";
+import { EventDateDialog } from "./EventDateDialog";
 
 const extractCategoryMaxAmounts = (event) => {
     return event?.categories?.reduce((dict, el) => {
@@ -49,6 +50,7 @@ export const ManageEventDialog = ({
     const [coverImage, setCoverImage] = useState(null);
     const [coverImageSize, setCoverImageSize] = useState<number | null>(null);
     const [removeCoverImage, setRemoveCoverImage] = useState(false);
+    const [eventDatesOpen, setEventDatesOpen] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
     const formik = useFormik({
@@ -58,7 +60,8 @@ export const ManageEventDialog = ({
             seatMap: event?.seatMapId ?? 0,
             selectedCategories: originalSelectedCategories,
             personalTicket: event?.personalTicket ?? false,
-            categoryMaxAmount: extractCategoryMaxAmounts(event)
+            categoryMaxAmount: extractCategoryMaxAmounts(event),
+            eventDates: event?.dates ?? []
         },
         onSubmit: async (values) => {
             try {
@@ -67,7 +70,8 @@ export const ManageEventDialog = ({
                     seatMapId: values.seatMap,
                     seatType: values.seatType,
                     personalTicket: values.personalTicket,
-                    ...(values.seatType === "free" && { categories: values.selectedCategories, maxAmounts: values.categoryMaxAmount })
+                    ...(values.seatType === "free" && { categories: values.selectedCategories, maxAmounts: values.categoryMaxAmount }),
+                    dates: values.eventDates
                 };
                 let eventId = event?.id;
                 if (!event) {
@@ -105,6 +109,7 @@ export const ManageEventDialog = ({
         formik.setFieldValue("selectedCategories", originalSelectedCategories);
         formik.setFieldValue("personalTicket", event.personalTicket);
         formik.setFieldValue("categoryMaxAmount", extractCategoryMaxAmounts(event));
+        formik.setFieldValue("eventDates", event.dates);
     }, [event, originalSelectedCategories]);
 
     const deleteCoverImage = async (eventId) => {
@@ -169,7 +174,8 @@ export const ManageEventDialog = ({
         !isEqual(values.categoryMaxAmount, extractCategoryMaxAmounts(event)) ||
         !arrayEquals(originalSelectedCategories, values.selectedCategories) ||
         coverImage !== null ||
-        removeCoverImage;
+        removeCoverImage ||
+        !isEqual(values.eventDates, event?.dates);
 
     const isValid =
         values.title !== "" &&
@@ -385,6 +391,9 @@ export const ManageEventDialog = ({
                             label="Personal Tickets"
                             title="Enforces uses to provide the name for each ticket"
                         />
+                        <Button onClick={() => setEventDatesOpen(true)}>
+                            Configure Event Dates
+                        </Button>
                         <Stack direction={"row"}>
                             <LoadingButton
                                 color={"success"}
@@ -423,6 +432,12 @@ export const ManageEventDialog = ({
                 onConfirm={handleDelete}
                 onClose={() => setDeleteOpen(false)}
                 text={`Confirm delete of event <b>${event?.title}</b>`}
+            />
+            <EventDateDialog
+                dates={values.eventDates}
+                open={eventDatesOpen}
+                onClose={() => setEventDatesOpen(false)}
+                onChange={(newDates) => setFieldValue("eventDates", newDates)}
             />
         </>
     );
