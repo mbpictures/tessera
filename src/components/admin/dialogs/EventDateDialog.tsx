@@ -51,7 +51,7 @@ const EventDateEntry = ({date, onChange, onDelete, index}) => {
                     />
                     <DateTimePicker
                         label="Ticket Sale End Date (optional)"
-                        value={date.ticketSaleStartDate ? dayjs(date.ticketSaleEndDate) : null}
+                        value={date.ticketSaleEndDate ? dayjs(date.ticketSaleEndDate) : null}
                         onChange={(newValue) => handleChange("ticketSaleEndDate", newValue?.toISOString())}
                         renderInput={(params) => <TextField {...params} />}
                     />
