@@ -22,6 +22,19 @@ export default function Home({ events, direction, title, subtitle }) {
         dispatch(setEvent(index));
     };
 
+    // we filter events client side, as we have to update server very often otherwise
+    events = events.map(event => {
+        const currentDate = new Date();
+        return {
+            ...event,
+            dates: event.dates.filter(date => {
+                const isAfterRegistration = date.ticketSaleStartDate !== null ? new Date(date.ticketSaleStartDate).getTime() < currentDate.getTime() : true;
+                const endDate = date.ticketSaleEndDate ?? date.date;
+                const isBeforeEnd = endDate !== null ? new Date(endDate).getTime() > currentDate.getTime() : true;
+                return isAfterRegistration && isBeforeEnd;
+            })
+        };
+    }).filter(event => event.dates.length > 0);
     const gallery = events.filter(event => !event.coverImage).length === 0;
 
     return (
@@ -48,7 +61,23 @@ export default function Home({ events, direction, title, subtitle }) {
 }
 
 export async function getStaticProps({ locale }) {
-    const events = await prisma.event.findMany();
+    const events = (await prisma.event.findMany({
+        include: {
+            dates: true
+        }
+    }))
+        .map(event =>
+            ({
+                ...event,
+                dates: event.dates
+                    .map(date => ({
+                        ...date,
+                        date: date.date?.toISOString() ?? null,
+                        ticketSaleStartDate: date.ticketSaleStartDate?.toISOString() ?? null,
+                        ticketSaleEndDate: date.ticketSaleEndDate?.toISOString() ?? null
+                    }))
+            })
+        );
     return {
         props: {
             events,
