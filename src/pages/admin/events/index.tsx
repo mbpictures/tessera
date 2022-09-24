@@ -143,7 +143,12 @@ export async function getServerSideProps(context) {
                         0
                     ),
                     orders: [],
-                    dates: event.dates.map(({orders, ...date}) => ({...date, date: date.date.toISOString()}))
+                    dates: event.dates.map(({orders, ...date}) => ({
+                        ...date,
+                        date: date.date?.toISOString() ?? null,
+                        ticketSaleStartDate: date.ticketSaleStartDate?.toISOString() ?? null,
+                        ticketSaleEndDate: date.ticketSaleEndDate?.toISOString() ?? null
+                    }))
                 };
             });
 
