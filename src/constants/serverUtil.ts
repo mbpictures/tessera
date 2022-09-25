@@ -7,6 +7,7 @@ import prisma from "../lib/prisma";
 import { Permission, PermissionSection, PermissionType } from "./interfaces";
 import i18nConfig from "../../i18n";
 import { Tickets } from "../store/reducers/orderReducer";
+import { eventDateIsBookable } from "./util";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -175,9 +176,13 @@ export const validateOrder = async (tickets: Tickets, eventDateId): Promise<bool
                         }
                     }
                 }
-            }
+            },
+            date: true,
+            ticketSaleEndDate: true,
+            ticketSaleStartDate: true
         }
     });
+    if (!eventDateIsBookable(eventDate)) return false;
     const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
     if (eventDate.event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
     if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
