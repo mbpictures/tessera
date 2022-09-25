@@ -26,6 +26,8 @@ const GalleryEventSelectionEntryInner = ({event, onChange, selected, expanded}) 
     const classNames = style.eventSelectionItem + " " + (isHovering || selected ? style.active : "") + " " +
         (selected ? style.selected : "");
 
+    const tiltClassNames = style.tilt + " " + (expanded ? style.expanded : "");
+
     return (
         <div
             style={{
@@ -47,7 +49,7 @@ const GalleryEventSelectionEntryInner = ({event, onChange, selected, expanded}) 
                 glareColor="lightblue"
                 glarePosition="bottom"
                 perspective={500}
-                className={style.tilt}
+                className={tiltClassNames}
                 tiltEnable={!expanded}
             >
                 <div className={style.border} />

@@ -64,6 +64,10 @@
             cursor: pointer;
             transform-style: preserve-3d;
 
+            &.expanded {
+                transform: none!important;
+            }
+
             > span {
                 position: relative;
                 width: 100%!important;
