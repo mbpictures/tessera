@@ -33,7 +33,17 @@ export default async function handler(
     if (req.method === "GET") {
         const request = {
             include: {
-                event: true,
+                eventDate: {
+                    select: {
+                        title: true,
+                        event: {
+                            select: {
+                                title: true
+
+                            }
+                        }
+                    }
+                },
                 user: true,
                 tickets: true
             }
