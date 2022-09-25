@@ -168,6 +168,7 @@ export default function Orders({ permissionDenied, count, categories, eventDates
                 onClose={handleCloseDetails}
                 onMarkAsPayed={refreshProps}
                 onMarkAsShipped={refreshProps}
+                categories={categories}
             />
             <MarkOrdersAsPayedDialog
                 open={markAsPaidOpen}

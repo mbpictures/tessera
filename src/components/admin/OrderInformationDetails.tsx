@@ -86,7 +86,7 @@ export const OrderPaymentInformationDetails = ({order, onMarkAsPayed}) => {
     )
 }
 
-export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
+export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categories}) => {
     const {enqueueSnackbar} = useSnackbar();
 
     const handleMarkAsShipped = async () => {
@@ -126,7 +126,7 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
                 {address.countryCode}-{address.regionCode}
             </Typography>
             <Divider sx={{mt: 2, mb: 2}} />
-            <TicketList order={order} />
+            <TicketList order={order} categories={categories} />
             {!hasShipped(order) && (
                 <Button onClick={handleMarkAsShipped}>
                     Mark as shipped
@@ -144,7 +144,7 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped}) => {
     )
 }
 
-const TicketList = ({order}) => {
+const TicketList = ({order, categories}) => {
     const {enqueueSnackbar} = useSnackbar();
     const [tickets, setTickets] = useState(order.tickets);
 
@@ -185,9 +185,10 @@ const TicketList = ({order}) => {
                 <List>
                     {
                         tickets.map((item, index) => {
+                            const category = categories.find(category => category.id === item.categoryId)
                             return (
                                 <ListItem key={index}>
-                                    <ListItemText primary={item.category.label} secondary={item.seatId && ("Seat: " + item.seatId)} />
+                                    <ListItemText primary={category.label} secondary={item.seatId && ("Seat: " + item.seatId)} />
                                     <Typography>{item.firstName ?? order.user.firstName} {item.lastName ?? order.user.lastName}</Typography>
                                     {
                                         ticketAvailable(item) ? (

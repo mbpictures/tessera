@@ -13,12 +13,14 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import React, { useState } from "react";
 import { OrderDeliveryInformationDetails, OrderPaymentInformationDetails } from "../OrderInformationDetails";
+import { getEventTitle } from "../../../constants/util";
 
 export const OrderDetailsDialog = ({
     order,
     onClose,
     onMarkAsPayed,
-    onMarkAsShipped
+    onMarkAsShipped,
+    categories
 }) => {
     const [detailsTab, setDetailsTab] = useState("overview");
 
@@ -47,7 +49,7 @@ export const OrderDetailsDialog = ({
                         <DialogContentText>
                             <Stack spacing={1}>
                                 <Typography>
-                                    Event: {order.event.title}
+                                    Event: {getEventTitle(order.eventDate)}
                                     <br />
                                     OrderID: {order.id}
                                     <br />
@@ -82,6 +84,7 @@ export const OrderDetailsDialog = ({
                             <OrderDeliveryInformationDetails
                                 order={order}
                                 onMarkAsShipped={onMarkAsShipped}
+                                categories={categories}
                             />
                         </Stack>
                     </TabPanel>
