@@ -183,7 +183,7 @@ export const ManageEventDialog = ({
         (values.seatType === "free" ? values.selectedCategories.length > 0 : true) &&
         (values.seatType === "map" ? values.seatMap > 0 : true);
 
-    const coverImageUrl = removeCoverImage && (coverImage ? URL.createObjectURL(coverImage) : event?.coverImage);
+    const coverImageUrl = !removeCoverImage && (coverImage ? URL.createObjectURL(coverImage) : event?.coverImage);
 
     return (
         <>
