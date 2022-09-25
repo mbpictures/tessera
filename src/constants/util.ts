@@ -36,7 +36,7 @@ export const hasNumber = (myString) => {
 export const storeOrderAndUser = async (
     order: OrderState,
     user: PersonalInformationState,
-    eventId,
+    eventDateId,
     paymentType,
     idempotencyKey
 ) => {
@@ -45,7 +45,7 @@ export const storeOrderAndUser = async (
     const response = await idempotencyCall("/api/order/store", {
         order: order,
         user: user,
-        eventId: eventId,
+        eventDateId: eventDateId,
         paymentType: paymentType,
         locale: navigator.language
     }, {
