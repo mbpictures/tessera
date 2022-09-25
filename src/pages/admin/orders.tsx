@@ -68,7 +68,7 @@ const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element |
     )
 }
 
-export default function Orders({ permissionDenied, count, categories, events}) {
+export default function Orders({ permissionDenied, count, categories, eventDates, events}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
@@ -180,6 +180,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
             <AddOrder
                 open={addOrderOpen}
                 categories={categories}
+                eventDates={eventDates}
                 events={events}
                 onClose={() => setAddOrderOpen(false)}
                 onAdd={async () => {
@@ -371,6 +372,7 @@ export async function getServerSideProps(context: NextPageContext) {
             });
 
             eventDates = eventDates.map(event => {
+                event["seatType"] = event.event.seatType;
                 if (event.event.seatMap?.definition) {
                     let baseMap: SeatMap = JSON.parse(event.event.seatMap?.definition);
                     baseMap = baseMap.map((row) =>
@@ -386,18 +388,25 @@ export async function getServerSideProps(context: NextPageContext) {
                             };
                         })
                     );
-                    event.event.seatMap.definition = JSON.stringify(baseMap);
+                    event["seatMap"] = {definition: JSON.stringify(baseMap)};
                 }
                 delete event.orders;
 
                 return event;
             });
 
+            const events = await prisma.event.findMany({
+                include: {
+                    dates: true
+                }
+            });
+
             return {
                 props: {
                     count,
                     categories,
-                    eventDates
+                    eventDates: JSON.parse(JSON.stringify(eventDates)),
+                    events: JSON.parse(JSON.stringify(events))
                 }
             };
         },
