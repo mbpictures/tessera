@@ -8,15 +8,23 @@ import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 import { SeatSelectionFactory } from "../../components/seatselection/SeatSelectionFactory";
+import { eventDateIsBookable } from "../../constants/util";
+import useTranslation from "next-translate/useTranslation";
 
 export default function SeatSelection({
     categories,
     direction,
     seatMap,
     seatType,
-    fallback
+    fallback,
+    eventDate
 }) {
+    const {t} = useTranslation();
     if (fallback) return null;
+    if (!eventDateIsBookable(eventDate))
+        return (
+            <h1>{t("common:event-not-bookable")}</h1>
+        );
 
     return (
         <Step
@@ -106,6 +114,11 @@ export async function getStaticProps({ params, locale }) {
             seatType: eventDate.event.seatType,
             seatMap: seatmap,
             theme: await getOption(Options.Theme),
+            eventDate: {
+                ticketSaleStartDate: eventDate.ticketSaleStartDate?.toISOString() ?? null,
+                ticketSaleEndDate: eventDate.ticketSaleEndDate?.toISOString() ?? null,
+                date: eventDate.date?.toISOString() ?? null
+            },
             ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' }))
         }
     };

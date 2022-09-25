@@ -10,5 +10,6 @@
     "total-price": "Gesamtpreis",
     "category": "Kategorie",
     "summary": "Zusammenfassung",
-    "price": "Preis"
+    "price": "Preis",
+    "event-not-bookable": "Das ausgewählte Event ist aktuell nicht verfügbar"
 }
