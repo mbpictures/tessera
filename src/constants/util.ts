@@ -139,3 +139,11 @@ export const decodeTicketQR = (readValue): {id: string; secret: string} => {
 export const getEventTitle = (eventDate: {title?: string; event: {title: string}}) => {
     return eventDate.title ?? eventDate.event.title;
 }
+
+export const eventDateIsBookable = (eventDate: {ticketSaleStartDate?: string | Date; ticketSaleEndDate?: string | Date; date?: string | Date;}, currentDate?: Date) => {
+    if (!currentDate) currentDate = new Date();
+    const isAfterRegistration = eventDate.ticketSaleStartDate !== null ? new Date(eventDate.ticketSaleStartDate).getTime() < currentDate.getTime() : true;
+    const endDate = eventDate.ticketSaleEndDate ?? eventDate.date;
+    const isBeforeEnd = endDate !== null ? new Date(endDate).getTime() > currentDate.getTime() : true;
+    return isAfterRegistration && isBeforeEnd;
+}

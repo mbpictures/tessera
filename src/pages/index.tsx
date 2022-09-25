@@ -10,6 +10,7 @@ import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 import { resetOrder } from "../store/reducers/orderReducer";
+import { eventDateIsBookable } from "../constants/util";
 
 export default function Home({ events, direction, title, subtitle }) {
     const dispatch = useAppDispatch();
@@ -23,18 +24,11 @@ export default function Home({ events, direction, title, subtitle }) {
     };
 
     // we filter events client side, as we have to update server very often otherwise
-    events = events.map(event => {
-        const currentDate = new Date();
-        return {
-            ...event,
-            dates: event.dates.filter(date => {
-                const isAfterRegistration = date.ticketSaleStartDate !== null ? new Date(date.ticketSaleStartDate).getTime() < currentDate.getTime() : true;
-                const endDate = date.ticketSaleEndDate ?? date.date;
-                const isBeforeEnd = endDate !== null ? new Date(endDate).getTime() > currentDate.getTime() : true;
-                return isAfterRegistration && isBeforeEnd;
-            })
-        };
-    }).filter(event => event.dates.length > 0);
+    const currentDate = new Date();
+    events = events.map(event => ({
+        ...event,
+        dates: event.dates.filter(date => eventDateIsBookable(date, currentDate))
+    })).filter(event => event.dates.length > 0);
     const gallery = events.filter(event => !event.coverImage).length === 0;
 
     return (
