@@ -153,8 +153,8 @@ export const revalidateBuild = async (res: NextApiResponse, page: string | strin
 };
 
 export const revalidateEventPages = async (res, additionalPages: string[]) => {
-    const events = await prisma.event.findMany();
-    const eventPaths = events.map(event => `/seatselection/${event.id}`);
+    const eventDates = await prisma.eventDate.findMany();
+    const eventPaths = eventDates.map(eventDate => `/seatselection/${eventDate.id}`);
 
     await revalidateBuild(res, eventPaths.concat(additionalPages));
 };
