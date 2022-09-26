@@ -40,7 +40,7 @@ export const generateTicketSecret = async (ticketId) => {
 
 const generateTicket = async (
     template,
-    details: { seatInformation: string; price; name; currency; locale },
+    details: { seatInformation: string; price; name; currency; locale; date?: Date },
     eventName: string,
     ticketId
 ): Promise<Uint8Array> => {
@@ -56,6 +56,8 @@ const generateTicket = async (
                 formatPrice(details.price, details.currency, details.locale)
             );
             fillTextField(form, "CUSTOMER_NAME", details.name);
+            if (details.date)
+                fillTextField(form, "EVENT_DATE", details.date.toLocaleString(details.locale));
 
             const secret = await generateTicketSecret(ticketId);
 
@@ -118,7 +120,8 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
             price: order.category.price,
             name: (order.firstName ?? order.order.user.firstName) + " " + (order.lastName ?? order.order.user.lastName),
             currency: order.category.currency,
-            locale: order.order.locale
+            locale: order.order.locale,
+            date: order.order.eventDate.date
         },
         getEventTitle(order.order.eventDate),
         ticketId
@@ -138,7 +141,8 @@ export const generateTickets = async (
             eventDate: {
                 select: {
                     title: true,
-                    event: true
+                    event: true,
+                    date: true
                 }
             },
             user: true,
@@ -161,7 +165,8 @@ export const generateTickets = async (
                     price: category.price,
                     name: (ticket.firstName ?? orderDB.user.firstName) + " " + (ticket.lastName ?? orderDB.user.lastName),
                     currency: category.currency,
-                    locale: orderDB.locale
+                    locale: orderDB.locale,
+                    date: orderDB.eventDate.date
                 },
                 getEventTitle(orderDB.eventDate),
                 ticket.id
