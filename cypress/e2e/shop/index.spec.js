@@ -334,6 +334,7 @@ describe("Buy tickets", () => {
                           },
                           body: {
                               dates: [{
+                                  id: body.dates[0].id,
                                   date: yesterday.toISOString()
                               }]
                           },
@@ -353,6 +354,8 @@ describe("Buy tickets", () => {
                           },
                           body: {
                               dates: [{
+                                  id: body.dates[0].id,
+                                  date: null,
                                   ticketSaleStartDate: yesterday.toISOString()
                               }]
                           },
@@ -373,6 +376,8 @@ describe("Buy tickets", () => {
                           body: {
                               dates: [
                                   {
+                                      id: body.dates[0].id,
+                                      date: null,
                                       ticketSaleStartDate: yesterday.toISOString()
                                   },
                                   {
