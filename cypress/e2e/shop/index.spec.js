@@ -303,4 +303,97 @@ describe("Buy tickets", () => {
             });
         });
     });
+
+    it("Schedule events", () => {
+        cy.visit("/");
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.task("getAdminToken").then((token) => {
+                cy.request(
+                  {
+                      url: "/api/admin/events/1",
+                      method: "GET",
+                      headers: {
+                          "Authorization": `Bearer ${userFixture.username}:${token}`
+                      },
+                      timeout: 60000
+                  }
+                ).then(({body}) => {
+                    cy.get("input[name=event_selection]").should("have.length", 2);
+                    cy.contains(body.title).should("exist");
+
+                    cy.request(
+                      {
+                          url: "/api/admin/events/" + 1,
+                          method: "PUT",
+                          headers: {
+                              "Authorization": `Bearer ${userFixture.username}:${token}`
+                          },
+                          body: {
+                              dates: [{
+                                  date: yesterday.toISOString()
+                              }]
+                          },
+                          timeout: 60000
+                      }
+                    );
+
+                    cy.visit("/");
+                    cy.contains(body.title).should("not.exist");
+
+                    cy.request(
+                      {
+                          url: "/api/admin/events/" + 1,
+                          method: "PUT",
+                          headers: {
+                              "Authorization": `Bearer ${userFixture.username}:${token}`
+                          },
+                          body: {
+                              dates: [{
+                                  ticketSaleStartDate: yesterday.toISOString()
+                              }]
+                          },
+                          timeout: 60000
+                      }
+                    );
+
+                    cy.visit("/");
+                    cy.contains(body.title).should("exist");
+
+                    cy.request(
+                      {
+                          url: "/api/admin/events/" + 1,
+                          method: "PUT",
+                          headers: {
+                              "Authorization": `Bearer ${userFixture.username}:${token}`
+                          },
+                          body: {
+                              dates: [
+                                  {
+                                      ticketSaleStartDate: yesterday.toISOString()
+                                  },
+                                  {
+                                      ticketSaleStartDate: yesterday.toISOString()
+                                  }
+                              ]
+                          },
+                          timeout: 60000
+                      }
+                    );
+
+                    cy.visit("/");
+                    cy.get(".MuiAccordion-root").should("exist");
+                    cy.get(".MuiAccordion-root").click();
+                    cy.get(".MuiAccordionDetails-root .MuiTypography-body1").should("have.length", 2);
+                    cy.get(".MuiAccordionDetails-root .MuiTypography-body1").should((elements) => {
+                        const texts = elements.toArray().map(elem => elem.innerText);
+                        expect(texts).to.deep.equal([body.title, body.title]);
+                    });
+                });
+            });
+        });
+    });
 });
