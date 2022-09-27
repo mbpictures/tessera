@@ -21,6 +21,9 @@ export default async function handler(
     const event = await prisma.event.findUnique({
         where: {
             id: parseInt(id as string)
+        },
+        include: {
+            dates: true
         }
     });
 
