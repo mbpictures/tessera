@@ -126,7 +126,7 @@ export default async function handler(
             }
             const eventDatesDelete = eventDateIds.filter(id => !dates.some(date => date.id === id));
             if (eventDatesDelete.length > 0) {
-                if (eventDates.some(date => date.orders.length > 0))
+                if (eventDates.filter(date => eventDatesDelete.includes(date.id)).some(date => date.orders.length > 0))
                     return res.status(400).end("The Date you want to delete has already orders and therefor can't be deleted!")
                 await prisma.eventDate.deleteMany({
                     where: {
