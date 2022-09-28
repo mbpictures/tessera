@@ -420,6 +420,38 @@ describe("Buy tickets", () => {
                         const texts = elements.toArray().map(elem => elem.innerText);
                         expect(texts).to.deep.equal([body.title, body.title]);
                     });
+                    
+                    cy.request(
+                        {
+                            url: "/api/admin/events/" + 1,
+                            method: "PUT",
+                            headers: {
+                                "Authorization": `Bearer ${userFixture.username}:${token}`
+                            },
+                            body: {
+                                dates: [
+                                    {
+                                        id: body.dates[0].id,
+                                        date: tomorrow.toISOString(),
+                                        ticketSaleStartDate: yesterday.toISOString()
+                                    },
+                                    {
+                                        ticketSaleStartDate: yesterday.toISOString(),
+                                        date: tomorrow.toISOString()
+                                    }
+                                ]
+                            },
+                            timeout: 60000
+                        }
+                    );
+
+                    cy.visit("/");
+                    cy.get(".MuiAccordion-root").click();
+                    cy.get(".MuiAccordionDetails-root .MuiTypography-body1").should((elements) => {
+                        const texts = elements.toArray().map(elem => elem.innerText);
+                        const expectedTitle = `${body.title} (${tomorrow.toLocaleString()})`;
+                        expect(texts).to.deep.equal([expectedTitle, expectedTitle]);
+                    });
                 });
             });
         });
