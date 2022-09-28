@@ -310,6 +310,9 @@ describe("Buy tickets", () => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
 
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
         cy.fixture("admin/user").then((userFixture) => {
             cy.task("getAdminToken").then((token) => {
                 cy.request(
@@ -344,6 +347,26 @@ describe("Buy tickets", () => {
 
                     cy.visit("/");
                     cy.contains(body.title).should("not.exist");
+
+                    cy.request(
+                        {
+                            url: "/api/admin/events/" + 1,
+                            method: "PUT",
+                            headers: {
+                                "Authorization": `Bearer ${userFixture.username}:${token}`
+                            },
+                            body: {
+                                dates: [{
+                                    id: body.dates[0].id,
+                                    date: tomorrow.toISOString()
+                                }]
+                            },
+                            timeout: 60000
+                        }
+                    );
+
+                    cy.visit("/");
+                    cy.contains(`${body.title} (${tomorrow.toLocaleString()})`).should("exist");
 
                     cy.request(
                       {
