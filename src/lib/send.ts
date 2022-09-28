@@ -6,6 +6,7 @@ import { getEmailTransporter } from "./email";
 import ejs from "ejs";
 import { PaymentFactory, PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getStaticAssetFile } from "../constants/serverUtil";
+import { getIcalData } from "./ical";
 
 export const getEmailHtml = (firstName, lastName, containsTickets, containsInvoice) => {
     return ejs.render(
@@ -30,7 +31,14 @@ export const send = async (orderId) => {
                 tickets: true,
                 paymentResult: true,
                 paymentType: true,
-                invoiceSent: true
+                invoiceSent: true,
+                eventDate: {
+                    select: {
+                        title: true,
+                        date: true,
+                        event: true
+                    }
+                }
             },
         });
 
@@ -93,6 +101,12 @@ export const send = async (orderId) => {
             html: null,
             attachments
         };
+
+        console.log(order.eventDate);
+        if (order.eventDate.date) {
+            message["icalEvent"] = getIcalData(order.eventDate);
+        }
+        console.log(message);
 
         message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice);
 
