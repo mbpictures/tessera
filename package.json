@@ -74,6 +74,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^6.3.11",
     "html-pdf": "^3.0.1",
+    "ical-generator": "^3.5.2",
     "json-2-csv": "^3.17.1",
     "micro": "^9.4.1",
     "micro-cors": "^0.1.1",
