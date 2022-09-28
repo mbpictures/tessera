@@ -71,10 +71,10 @@ npm install
 - Multi-Language Support and translation editor
 - Ticket control webapp (to scan and verify downloaded tickets)
 - Notifications (e.g. for new orders)
+- Event scheduling
 
 ### 🔜 Planned
 - Customizeable webhooks (to automate receipt of payment detection etc.)
-- Event scheduling
 
 If you miss some features, which are not planned, please create an [issue ❗](https://github.com/mbpictures/tessera/issues)
 
