@@ -50,12 +50,13 @@ const Transition = React.forwardRef(function Transition(
 interface props {
     open: boolean;
     events: Array<any>;
+    eventDates: Array<any>;
     categories: Array<any>;
     onClose: () => unknown;
     onAdd: () => unknown;
 }
 
-const AddOrderInner = ({open, events, categories, onClose, onAdd}: props) => {
+const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd}: props) => {
     const selector = useAppSelector((state) => state);
     const [orderStored, setOrderStored] = useState(false);
     const dispatch = useAppDispatch();
@@ -94,7 +95,7 @@ const AddOrderInner = ({open, events, categories, onClose, onAdd}: props) => {
 
     const canStore = STEP_URLS.every(value => NextAvailableFactory.getInstance(value, selector)?.isNextAvailable() ?? true);
 
-    const event = events.find(event => event.id === selector.selectedEvent.selectedEvent);
+    const event = eventDates.find(event => event.id === selector.selectedEvent.selectedEvent);
 
     return (
         <>

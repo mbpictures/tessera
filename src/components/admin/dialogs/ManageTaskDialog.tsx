@@ -17,7 +17,7 @@ import SendIcon from '@mui/icons-material/Send';
 
 const STEP_ORDER = ["Payment", "Shipping", null];
 
-export const ManageTaskDialog = ({task, onClose}) => {
+export const ManageTaskDialog = ({task, onClose, categories}) => {
     const [taskType, setTaskType] = useState<null | "shipping" | "payment">(null);
     const [notesOpen, setNotesOpen] = useState(false);
 
@@ -74,6 +74,7 @@ export const ManageTaskDialog = ({task, onClose}) => {
                                 <OrderDeliveryInformationDetails
                                     order={task.order}
                                     onMarkAsShipped={updateState}
+                                    categories={categories}
                                 />
                             </>
                         )

@@ -1,5 +1,5 @@
 import { Box } from "@mui/system";
-import { Theme, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Theme, Typography } from "@mui/material";
 import styles from "../../style/EventSelection.module.scss";
 import { Check } from "@mui/icons-material";
 import { ChangeEventHandler } from "react";
@@ -69,3 +69,31 @@ export const EventSelectionEntry = (props: Props) => {
         </Box>
     );
 };
+
+export const EventSelectionMultiple = ({dates, onChange, label}) => {
+    return (
+        <Accordion>
+            <AccordionSummary>
+                {label}
+            </AccordionSummary>
+            <AccordionDetails>
+                {
+                    dates.map(date => {
+                        let title = date.title ?? label;
+                        if (date.date)
+                            title += ` (${new Date(date.date).toLocaleString()})`
+                        return (
+                            <EventSelectionEntry
+                                label={title}
+                                name={"event_selection"}
+                                key={date.id}
+                                index={date.id}
+                                onChange={onChange}
+                            />
+                        )
+                    })
+                }
+            </AccordionDetails>
+        </Accordion>
+    )
+}

@@ -39,6 +39,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import { hasPayedIcon } from "../../components/admin/OrderInformationDetails";
+import { getEventTitle } from "../../constants/util";
 
 const COLUMNS = [
     "Event",
@@ -67,7 +68,7 @@ const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element |
     )
 }
 
-export default function Orders({ permissionDenied, count, categories, events}) {
+export default function Orders({ permissionDenied, count, categories, eventDates, events}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
@@ -167,6 +168,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                 onClose={handleCloseDetails}
                 onMarkAsPayed={refreshProps}
                 onMarkAsShipped={refreshProps}
+                categories={categories}
             />
             <MarkOrdersAsPayedDialog
                 open={markAsPaidOpen}
@@ -179,6 +181,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
             <AddOrder
                 open={addOrderOpen}
                 categories={categories}
+                eventDates={eventDates}
                 events={events}
                 onClose={() => setAddOrderOpen(false)}
                 onAdd={async () => {
@@ -298,7 +301,7 @@ export default function Orders({ permissionDenied, count, categories, events}) {
                             {orders.map((order, index) => {
                                 return (
                                     <TableRow key={index}>
-                                        <ConditionalCell columnName="Event" text={order.event.title} list={visibleColumns} />
+                                        <ConditionalCell columnName="Event" text={getEventTitle(order.eventDate)} list={visibleColumns} />
                                         <ConditionalCell columnName="Order" text={
                                             'Tickets booked: ' + order.tickets.length
                                         } list={visibleColumns} />
@@ -353,9 +356,13 @@ export async function getServerSideProps(context: NextPageContext) {
         async () => {
             const count = await prisma.order.count();
             const categories = await prisma.category.findMany();
-            let events = await prisma.event.findMany({
+            let eventDates = await prisma.eventDate.findMany({
                 include: {
-                    seatMap: true,
+                    event: {
+                        include: {
+                            seatMap: true
+                        }
+                    },
                     orders: {
                         include: {
                             user: true,
@@ -365,9 +372,10 @@ export async function getServerSideProps(context: NextPageContext) {
                 }
             });
 
-            events = events.map(event => {
-                if (event.seatMap?.definition) {
-                    let baseMap: SeatMap = JSON.parse(event.seatMap?.definition);
+            eventDates = eventDates.map(event => {
+                event["seatType"] = event.event.seatType;
+                if (event.event.seatMap?.definition) {
+                    let baseMap: SeatMap = JSON.parse(event.event.seatMap?.definition);
                     baseMap = baseMap.map((row) =>
                         row.map((seat) => {
                             const isOccupied = event.orders.some((order) =>
@@ -381,18 +389,25 @@ export async function getServerSideProps(context: NextPageContext) {
                             };
                         })
                     );
-                    event.seatMap.definition = JSON.stringify(baseMap);
+                    event["seatMap"] = {definition: JSON.stringify(baseMap)};
                 }
                 delete event.orders;
 
                 return event;
             });
 
+            const events = await prisma.event.findMany({
+                include: {
+                    dates: true
+                }
+            });
+
             return {
                 props: {
                     count,
                     categories,
-                    events
+                    eventDates: JSON.parse(JSON.stringify(eventDates)),
+                    events: JSON.parse(JSON.stringify(events))
                 }
             };
         },

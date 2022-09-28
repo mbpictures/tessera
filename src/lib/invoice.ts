@@ -18,7 +18,11 @@ export const generateInvoice = async (
             },
             select: {
                 user: true,
-                event: true,
+                eventDate: {
+                    select: {
+                        event: true
+                    }
+                },
                 locale: true,
                 paymentType: true,
                 paymentIntent: true,

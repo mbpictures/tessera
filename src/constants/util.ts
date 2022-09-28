@@ -36,7 +36,7 @@ export const hasNumber = (myString) => {
 export const storeOrderAndUser = async (
     order: OrderState,
     user: PersonalInformationState,
-    eventId,
+    eventDateId,
     paymentType,
     idempotencyKey
 ) => {
@@ -45,7 +45,7 @@ export const storeOrderAndUser = async (
     const response = await idempotencyCall("/api/order/store", {
         order: order,
         user: user,
-        eventId: eventId,
+        eventDateId: eventDateId,
         paymentType: paymentType,
         locale: navigator.language
     }, {
@@ -62,8 +62,8 @@ export const getStoreWithOrderId = async (
     eventId: number;
 }> => {
     const response = await axios.post("/api/order", { orderId: orderId });
-    const { user, order, eventId } = response.data;
-    return { personalInformation: user, order: order, eventId: eventId };
+    const { user, order, eventDateId } = response.data;
+    return { personalInformation: user, order: order, eventId: eventDateId };
 };
 
 export const validatePayment = async (orderId, withResult?: boolean): Promise<boolean> => {
@@ -134,4 +134,16 @@ export const encodeTicketQR = (ticketId, secret) => {
 export const decodeTicketQR = (readValue): {id: string; secret: string} => {
     const buffer = new Buffer(readValue, "base64");
     return JSON.parse(buffer.toString());
+}
+
+export const getEventTitle = (eventDate: {title?: string; event: {title: string}}) => {
+    return eventDate.title ?? eventDate.event.title;
+}
+
+export const eventDateIsBookable = (eventDate: {ticketSaleStartDate?: string | Date; ticketSaleEndDate?: string | Date; date?: string | Date;}, currentDate?: Date) => {
+    if (!currentDate) currentDate = new Date();
+    const isAfterRegistration = eventDate.ticketSaleStartDate !== null ? new Date(eventDate.ticketSaleStartDate).getTime() < currentDate.getTime() : true;
+    const endDate = eventDate.ticketSaleEndDate ?? eventDate.date;
+    const isBeforeEnd = endDate !== null ? new Date(endDate).getTime() > currentDate.getTime() : true;
+    return isAfterRegistration && isBeforeEnd;
 }

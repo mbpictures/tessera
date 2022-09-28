@@ -31,10 +31,14 @@ async function handler(
                 id: order.orderId
             },
             select: {
-                event: {
+                eventDate: {
                     select: {
-                        seatType: true,
-                        seatMap: true
+                        event: {
+                            select: {
+                                seatType: true,
+                                seatMap: true
+                            }
+                        }
                     }
                 },
                 tickets: true,
@@ -47,7 +51,7 @@ async function handler(
             return res.status(200).json({ orderId: JSON.parse(orderDB.paymentIntent).id });
         }
 
-        let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
+        let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)), categories);
         let currency = categories[0].currency;
 
         let request = new paypal.orders.OrdersCreateRequest();

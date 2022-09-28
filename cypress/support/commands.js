@@ -113,7 +113,10 @@ Cypress.Commands.add("createEvents", () => {
                             seatType: event.seatType
                         };
                         let updateData = {
-                            seatType: event.seatType
+                            seatType: event.seatType,
+                            dates: [
+                                {}
+                            ]
                         };
                         if ("seatMap" in event) {
                             const seatMapDefinition = event.seatMap.map((row) => {

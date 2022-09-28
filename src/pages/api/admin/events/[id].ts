@@ -21,6 +21,9 @@ export default async function handler(
     const event = await prisma.event.findUnique({
         where: {
             id: parseInt(id as string)
+        },
+        include: {
+            dates: true
         }
     });
 
@@ -51,7 +54,7 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        let { title, seatType, seatMapId, categories, personalTicket, maxAmounts = {} } = req.body;
+        let { title, seatType, seatMapId, categories, personalTicket, maxAmounts = {}, dates } = req.body;
 
         if (!categories && seatType === "seatmap") {
             const seatMap = await prisma.seatMap.findUnique({
@@ -85,6 +88,53 @@ export default async function handler(
                         maxAmount: maxAmounts[category] ?? null
                     }
                 })
+            }
+        }
+
+        if (dates) {
+            const eventDates = await prisma.eventDate.findMany({
+                where: {
+                    eventId: parseInt(id as string)
+                },
+                select: {
+                    id: true,
+                    orders: true
+                }
+            });
+            const eventDateIds = eventDates.map(eventDate => eventDate.id)
+            for(const date of dates) {
+                if (date.id && eventDateIds.includes(date.id)) {
+                    await prisma.eventDate.update({
+                        where: {
+                            id: date.id
+                        },
+                        data: date
+                    });
+                    continue;
+                }
+
+                await prisma.eventDate.create({
+                    data: {
+                        ...date,
+                        event: {
+                            connect: {
+                                id: parseInt(id as string)
+                            }
+                        }
+                    }
+                });
+            }
+            const eventDatesDelete = eventDateIds.filter(id => !dates.some(date => date.id === id));
+            if (eventDatesDelete.length > 0) {
+                if (eventDates.filter(date => eventDatesDelete.includes(date.id)).some(date => date.orders.length > 0))
+                    return res.status(400).end("The Date you want to delete has already orders and therefor can't be deleted!")
+                await prisma.eventDate.deleteMany({
+                    where: {
+                        id: {
+                            in: eventDatesDelete
+                        }
+                    }
+                });
             }
         }
 

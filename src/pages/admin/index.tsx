@@ -8,6 +8,7 @@ import { TotalOrdersCard } from "../../components/admin/layout/dashboard/TotalOr
 import { RevenueGraphCard } from "../../components/admin/layout/dashboard/RevenueGraphCard";
 import { WeekOrdersCards } from "../../components/admin/layout/dashboard/WeekOrdersCards";
 import { PopularCard } from "../../components/admin/layout/dashboard/PopularCard";
+import { getEventTitle } from "../../constants/util";
 
 export default function Dashboard({totalEarning, earningPercentage, totalTickets, totalOrders, defaultCurrency, oneYearOrdersGroup, weekRevenue, unresolvedTickets, dataByEvent}) {
     const { data: session } = useSession();
@@ -63,7 +64,11 @@ export async function getServerSideProps(context) {
                 }
             },
             include: {
-                event: true,
+                eventDate: {
+                    include: {
+                        event: true
+                    }
+                },
                 tickets: true
             }
         })).map(order => ({...order, totalPrice: getTotalPriceOfOrder(order)}));
@@ -128,12 +133,12 @@ export async function getServerSideProps(context) {
             .reduce((a, b) => a + b, 0);
 
         let dataByEvent = oneYearOrders.reduce((group, order) => {
-            if (order.event.title in group) {
-                group[order.event.title].ticketAmount += order.tickets.length;
-                group[order.event.title].revenue += order.totalPrice;
+            if (getEventTitle(order.eventDate) in group) {
+                group[getEventTitle(order.eventDate)].ticketAmount += order.tickets.length;
+                group[getEventTitle(order.eventDate)].revenue += order.totalPrice;
                 return group;
             }
-            group[order.event.title] = {
+            group[getEventTitle(order.eventDate)] = {
                 ticketAmount: order.tickets.length,
                 revenue: order.totalPrice
             }

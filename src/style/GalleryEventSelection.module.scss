@@ -28,7 +28,7 @@
         grid-column: 1 / 1;
     }
 
-    > div {
+    .eventSelectionItem {
         position: relative;
 
         &.selected {
@@ -58,11 +58,15 @@
             grid-column: 1 / 1!important;
         }
 
-        > div {
+        > .tilt {
             width: 100%;
             height: 100%;
             cursor: pointer;
             transform-style: preserve-3d;
+
+            &.expanded {
+                transform: none!important;
+            }
 
             > span {
                 position: relative;

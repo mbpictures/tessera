@@ -10,5 +10,6 @@
     "total-price": "Total Price",
     "category": "Category",
     "summary": "Summary",
-    "price": "Price"
+    "price": "Price",
+    "event-not-bookable": "The selected event is currently not available"
 }

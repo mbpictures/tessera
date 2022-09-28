@@ -30,10 +30,14 @@ async function handler(
                 },
                 select: {
                     tickets: true,
-                    event: {
+                    eventDate: {
                         select: {
-                            seatType: true,
-                            seatMap: true
+                            event: {
+                                select: {
+                                    seatType: true,
+                                    seatMap: true
+                                }
+                            }
                         }
                     },
                     idempotencyKey: true,
@@ -46,7 +50,7 @@ async function handler(
                 return res.status(200).json(JSON.parse(orderDB.paymentIntent));
             }
             const categories = await prisma.category.findMany();
-            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.event)), categories);
+            let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)), categories);
             let currency = categories[0].currency;
 
             const params: Stripe.PaymentIntentCreateParams = {
