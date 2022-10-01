@@ -11,5 +11,7 @@
     "klarna-description": "Nach dem Klick auf \"Jetzt Kaufen\" werden Sie zum Bezahlvorgang nach klarna weitergeleitet",
     "invoice": "Rechnung",
     "invoice-description": "Ihnen wird eine Rechnung per E-Mail zu gesendet!",
-    "paypal-description": ""
+    "paypal-description": "",
+    "shipping-fee": "Versandkosten",
+    "payment-fee": "Zahlungsgebühren"
 }
