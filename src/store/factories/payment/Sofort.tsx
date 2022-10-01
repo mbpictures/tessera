@@ -12,8 +12,8 @@ export class SofortPayment extends Payment {
         return true;
     }
 
-    getHeaderComponent(): React.ReactNode {
-        return <SofortHeader />;
+    getHeaderComponent(hasFee: boolean, fees?: string): React.ReactNode {
+        return <SofortHeader hasFee={hasFee} fees={fees} />;
     }
 
     paymentResultValid(data: any): boolean {

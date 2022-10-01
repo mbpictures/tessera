@@ -8,8 +8,9 @@ import {
     PaymentFactory,
     PaymentType
 } from "../../store/factories/payment/PaymentFactory";
+import { formatPrice } from "../../constants/util";
 
-export const PaymentMethods = ({ paymentMethods }) => {
+export const PaymentMethods = ({ paymentMethods, paymentFees, categories }) => {
     const selector = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -40,7 +41,12 @@ export const PaymentMethods = ({ paymentMethods }) => {
                     .map((value, index) => {
                         return (
                             <CheckboxAccordion
-                                label={value.getHeaderComponent()}
+                                label={
+                                    value.getHeaderComponent(
+                                        paymentFees[value.data.type] !== 0,
+                                        `${paymentFees[value.data.type] > 0 ? "+" : ""}${formatPrice(paymentFees[value.data.type], categories[0].currency)}`
+                                    )
+                                }
                                 name={value.data.type}
                                 selectedItem={selectedPaymentMethod}
                                 onSelect={handleChangeSelectedPaymentMethod}

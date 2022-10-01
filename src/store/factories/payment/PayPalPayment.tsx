@@ -7,8 +7,8 @@ export class PayPalPayment extends Payment {
         return undefined;
     }
 
-    getHeaderComponent(): React.ReactNode {
-        return <PayPalHeader />;
+    getHeaderComponent(hasFee: boolean, fees?: string): React.ReactNode {
+        return <PayPalHeader hasFee={hasFee} fees={fees} />;
     }
 
     isValid(): boolean {

@@ -12,8 +12,8 @@ export class InvoicePayment extends Payment {
         return true;
     }
 
-    getHeaderComponent(): React.ReactNode {
-        return <InvoiceHeader />;
+    getHeaderComponent(hasFee: boolean, fees?: string): React.ReactNode {
+        return <InvoiceHeader hasFee={hasFee} fees={fees} />;
     }
 
     paymentResultValid(data: any): boolean {

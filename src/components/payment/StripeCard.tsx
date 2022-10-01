@@ -159,7 +159,7 @@ export const StripeCard = () => {
     );
 };
 
-export const StripeCardHeader = () => {
+export const StripeCardHeader = ({hasFee, fees}) => {
     const { t } = useTranslation();
-    return <Typography>{t("payment:credit-card")}</Typography>;
+    return <Typography>{t("payment:credit-card")}{hasFee && ` (${fees})`}</Typography>;
 };
