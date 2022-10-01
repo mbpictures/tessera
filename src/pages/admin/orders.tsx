@@ -1,45 +1,51 @@
 import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../components/admin/layout";
 import {
-    Box, Button, Grid,
-    IconButton, Menu,
+    Box,
+    Button,
+    Grid,
+    IconButton,
+    Menu,
     Table,
     TableBody,
-    TableCell, TableFooter,
-    TableHead, TablePagination,
-    TableRow, TableSortLabel, Tooltip,
-    Typography, useMediaQuery
+    TableCell,
+    TableFooter,
+    TableHead,
+    TablePagination,
+    TableRow,
+    TableSortLabel,
+    Tooltip,
+    Typography,
+    useMediaQuery
 } from "@mui/material";
-import {
-    getAdminServerSideProps
-} from "../../constants/serverUtil";
+import { getAdminServerSideProps } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import InfoIcon from "@mui/icons-material/Info";
+import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import {
-    PaymentType
-} from "../../store/factories/payment/PaymentFactory";
+import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { OrderDetailsDialog } from "../../components/admin/dialogs/OrderDetailsDialog";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
 import { useRouter } from "next/router";
 import { NextPageContext } from "next";
-import * as React from "react";
 import { MarkOrdersAsPayedDialog } from "../../components/admin/dialogs/MarkOrdersAsPayedDialog";
 import axios from "axios";
 import { OrderFilter } from "../../components/admin/OrderFilter";
 import { useTheme } from "@mui/system";
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import { SelectionList } from "../../components/admin/SelectionList";
 import { FullSizeLoading } from "../../components/FullSizeLoading";
 import { AddOrder } from "../../components/admin/dialogs/AddOrder";
 import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
-import DownloadIcon from '@mui/icons-material/Download';
-import omitBy from 'lodash/omitBy';
-import isEmpty from 'lodash/isEmpty';
+import DownloadIcon from "@mui/icons-material/Download";
+import omitBy from "lodash/omitBy";
+import isEmpty from "lodash/isEmpty";
 import { hasPayedIcon } from "../../components/admin/OrderInformationDetails";
 import { getEventTitle } from "../../constants/util";
+import { getOption } from "../../lib/options";
+import { Options } from "../../constants/Constants";
 
 const COLUMNS = [
     "Event",
@@ -68,7 +74,7 @@ const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element |
     )
 }
 
-export default function Orders({ permissionDenied, count, categories, eventDates, events}) {
+export default function Orders({ permissionDenied, count, categories, eventDates, events, paymentFees}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
@@ -188,6 +194,7 @@ export default function Orders({ permissionDenied, count, categories, eventDates
                     await refreshProps();
                     setAddOrderOpen(false);
                 }}
+                paymentFees={paymentFees}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
@@ -407,7 +414,8 @@ export async function getServerSideProps(context: NextPageContext) {
                     count,
                     categories,
                     eventDates: JSON.parse(JSON.stringify(eventDates)),
-                    events: JSON.parse(JSON.stringify(events))
+                    events: JSON.parse(JSON.stringify(events)),
+                    paymentFees: await getOption(Options.PaymentFeesPayment)
                 }
             };
         },
