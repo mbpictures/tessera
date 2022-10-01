@@ -27,7 +27,7 @@ const getPayload = (eventDate, ticket) => {
     }
     return {
         "id": getObjectId(ticket.id),
-        "classId": classId,
+        "classId": `${issuerId}.${classId}`,
         "textModulesData": [
             {
                 "header": "Event",
