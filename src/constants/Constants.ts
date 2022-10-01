@@ -27,5 +27,7 @@ export enum Options {
     Delivery = "shop.delivery",
     Theme = "shop.theme",
     PaymentDetails = "payment.information",
-    TaxAmount = "payment.tax-amount"
+    TaxAmount = "payment.tax-amount",
+    PaymentFeesShipping = "payment.fees.shipping",
+    PaymentFeesPayment = "payment.fees.payment"
 }
