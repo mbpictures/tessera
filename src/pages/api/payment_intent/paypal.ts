@@ -6,6 +6,8 @@ import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
 import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
+import { getOption } from "../../../lib/options";
+import { Options } from "../../../constants/Constants";
 
 async function handler(
     req: NextApiRequest,
@@ -43,7 +45,8 @@ async function handler(
                 },
                 tickets: true,
                 paymentIntent: true,
-                paymentType: true
+                paymentType: true,
+                shipping: true
             }
         });
 
@@ -51,7 +54,14 @@ async function handler(
             return res.status(200).json({ orderId: JSON.parse(orderDB.paymentIntent).id });
         }
 
-        let amount = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)), categories);
+        let amount = calculateTotalPrice(
+            validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)),
+            categories,
+            await getOption(Options.PaymentFeesShipping),
+            await getOption(Options.PaymentFeesPayment),
+            JSON.parse(orderDB.shipping).type,
+            orderDB.paymentType
+        );
         let currency = categories[0].currency;
 
         let request = new paypal.orders.OrdersCreateRequest();
