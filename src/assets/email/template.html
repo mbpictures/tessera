@@ -352,6 +352,16 @@
                                                 <p>
                                                     Your demo-ticketshop Team!
                                                 </p>
+                                                <% if (googleWallet) { %>
+                                                <p>
+                                                    <a href="<%= googleWallet.allTicketsLink %>">
+                                                        <img
+                                                            src="https://raw.githubusercontent.com/google-pay/wallet-web-codelab/main/public/wallet-button.png"
+                                                            style="max-height: 46px"
+                                                        />
+                                                    </a>
+                                                </p>
+                                                <% } %>
                                             </td>
                                         </tr>
                                     </table>
