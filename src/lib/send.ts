@@ -102,11 +102,9 @@ export const send = async (orderId) => {
             attachments
         };
 
-        console.log(order.eventDate);
         if (order.eventDate.date) {
             message["icalEvent"] = getIcalData(order.eventDate);
         }
-        console.log(message);
 
         message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice);
 
