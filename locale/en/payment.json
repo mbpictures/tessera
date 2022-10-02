@@ -11,5 +11,7 @@
     "klarna-description": "After clicking on \"pay now\" you will be redirected to \"klarna\" payment.",
     "invoice": "Invoice",
     "invoice-description": "You will receive an invoice containing the recipient's bank details by e-mail.",
-    "paypal-description": ""
+    "paypal-description": "",
+    "shipping-fee": "Shipping Fee",
+    "payment-fee": "Payment Service Fee"
 }

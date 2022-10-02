@@ -88,11 +88,21 @@ export const validateCategoriesWithSeatMap = (tickets: Tickets, seatMap: SeatMap
     return tickets.map(ticket => ({...ticket, categoryId: seatMap.flat().find(seat => seat.id === ticket.seatId).category}));
 }
 
+export const getServiceFeeAmount = (fees, type) => {
+    return fees ? fees[type] ?? 0 : 0;
+}
+
 export const calculateTotalPrice = (
     tickets: Tickets,
-    categories: Array<{ id: number; price: number }>
+    categories: Array<{ id: number; price: number }>,
+    shippingFees = null,
+    paymentFees = null,
+    shippingType = null,
+    paymentType = null
 ): number => {
-    return tickets.reduce((a, ticket) => a + ticket.amount * categories.find(category => category.id === ticket.categoryId).price, 0);
+    const shippingPrice = getServiceFeeAmount(shippingFees, shippingType);
+    const paymentPrice = getServiceFeeAmount(paymentFees, paymentType);
+    return tickets.reduce((a, ticket) => a + ticket.amount * categories.find(category => category.id === ticket.categoryId).price, 0) + shippingPrice + paymentPrice;
 };
 
 export const totalTicketAmount = (order: OrderState): number => {

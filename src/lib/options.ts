@@ -14,7 +14,15 @@ const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
         "Demo Bank",
         "IBAN: EN23 2133 2343 2343 2343"
     ],
-    "payment.tax-amount": 19
+    "payment.tax-amount": 19,
+    "payment.fees.shipping": Object.values(ShippingType).reduce((group, value) => {
+        group[value] = 0;
+        return group;
+    }, {}),
+    "payment.fees.payment": Object.values(PaymentType).reduce((group, value) => {
+        group[value] = 0;
+        return group;
+    }, {})
 }
 
 const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
@@ -27,6 +35,7 @@ const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
         case Options.Delivery:
             await revalidateBuild(res, "/information");
             break;
+        case Options.PaymentFeesPayment:
         case Options.PaymentProviders:
             await revalidateBuild(res, "/payment");
             break;
@@ -34,6 +43,9 @@ const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
             const events = await prisma.event.findMany();
             const eventPaths = events.map(event => `/seatselection/${event.id}`);
             await revalidateBuild(res, eventPaths.concat(["/", "/information", "/payment", "/checkout"]))
+            break;
+        case Options.PaymentFeesShipping:
+            await revalidateBuild(res, ["/payment", "/information"]);
     }
 };
 

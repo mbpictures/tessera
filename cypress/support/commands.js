@@ -217,6 +217,14 @@ Cypress.Commands.add("purchaseTicket", (options) => {
         if (options?.shippingMethod !== undefined && !options?.shippingMethod) return cy.wrap(information);
         const shipping = options?.shippingMethod ? options.shippingMethod : "download";
         cy.get("#information-address-next").click();
+
+        cy.get("body").then(body => {
+            if (body.find("#information-ticket").length <= 0) return;
+            cy.get(".ticket-names-firstname").type(faker.name.firstName());
+            cy.get(".ticket-names-lastname").type(faker.name.lastName());
+            cy.get("#information-tickets-next").click();
+        });
+
         cy.get("#checkbox-" + shipping).click();
         cy.get("#stepper-next-button").click();
 

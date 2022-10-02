@@ -54,9 +54,10 @@ interface props {
     categories: Array<any>;
     onClose: () => unknown;
     onAdd: () => unknown;
+    paymentFees: any;
 }
 
-const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd}: props) => {
+const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, paymentFees}: props) => {
     const selector = useAppSelector((state) => state);
     const [orderStored, setOrderStored] = useState(false);
     const dispatch = useAppDispatch();
@@ -188,7 +189,11 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd}: p
                     <Accordion>
                         <AccordionSummary>Payment Information</AccordionSummary>
                         <AccordionDetails>
-                            <PaymentMethods paymentMethods={["invoice"]} />
+                            <PaymentMethods
+                                paymentMethods={["invoice"]}
+                                categories={categories}
+                                paymentFees={paymentFees}
+                            />
                         </AccordionDetails>
                     </Accordion>
                     <Box pt={2}>

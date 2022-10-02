@@ -35,6 +35,8 @@ export default function Options({options, permissionDenied}) {
     const [taxAmount, setTaxAmount] = useState(0);
     const [shippingProviders, setShippingProviders] = useState([]);
     const [bankInformation, setBankInformation] = useState([]);
+    const [shippingFees, setShippingFees] = useState({});
+    const [paymentFees, setPaymentFees] = useState({});
     const [theme, setTheme] = useState({})
     const [inputThemeOpen, setInputThemeOpen] = useState(false);
     const router = useRouter();
@@ -50,6 +52,8 @@ export default function Options({options, permissionDenied}) {
         setTheme(options[OptionsEnum.Theme] ?? {});
         setBankInformation(options[OptionsEnum.PaymentDetails] ?? []);
         setTaxAmount(options[OptionsEnum.TaxAmount] ?? 0);
+        setShippingFees(options[OptionsEnum.PaymentFeesShipping] ?? {});
+        setPaymentFees(options[OptionsEnum.PaymentFeesPayment] ?? {});
     }, [options, permissionDenied]);
 
     const refreshProps = async () => {
@@ -79,6 +83,7 @@ export default function Options({options, permissionDenied}) {
             await storeSetting(OptionsEnum.PaymentProviders, paymentProviders);
             await storeSetting(OptionsEnum.PaymentDetails, bankInformation);
             await storeSetting(OptionsEnum.TaxAmount, taxAmount);
+            await storeSetting(OptionsEnum.PaymentFeesPayment, paymentFees);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -89,6 +94,7 @@ export default function Options({options, permissionDenied}) {
     const handleSaveShipping = async () => {
         try {
             await storeSetting(OptionsEnum.Delivery, shippingProviders);
+            await storeSetting(OptionsEnum.PaymentFeesShipping, shippingFees);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -107,6 +113,12 @@ export default function Options({options, permissionDenied}) {
         } catch (e) {
             enqueueSnackbar("JSON not parseable", {variant: "error"});
         }
+    };
+
+    const handleObjectChange = (object, key, value, setter) => {
+        const newObject = Object.assign({}, object);
+        newObject[key] = value;
+        setter(newObject);
     }
 
     const handleGetThemeFromClipboard = async () => {
@@ -183,7 +195,16 @@ export default function Options({options, permissionDenied}) {
                                 options={Object.entries(PaymentType).map(option => {
                                     return {
                                         value: option[1],
-                                        primaryLabel: option[0].replace(/([A-Z])/g, ' $1')
+                                        primaryLabel: option[0].replace(/([A-Z])/g, ' $1'),
+                                        additionalNode: (
+                                            <TextField
+                                                onChange={(event) => handleObjectChange(paymentFees, option[1], parseFloat(event.target.value), setPaymentFees)}
+                                                value={paymentFees[option[1]]}
+                                                label={"Service Fees (negative mean savings)"}
+                                                type={"number"}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        )
                                     };
                                 })}
                                 selection={paymentProviders}
@@ -237,7 +258,16 @@ export default function Options({options, permissionDenied}) {
                                 options={Object.entries(ShippingType).map(option => {
                                     return {
                                         value: option[1],
-                                        primaryLabel: option[0].replace(/([A-Z])/g, ' $1')
+                                        primaryLabel: option[0].replace(/([A-Z])/g, ' $1'),
+                                        additionalNode: (
+                                            <TextField
+                                                onChange={(event) => handleObjectChange(shippingFees, option[1], parseFloat(event.target.value), setShippingFees)}
+                                                value={shippingFees[option[1]]}
+                                                label={"Service Fees (negative mean savings)"}
+                                                type={"number"}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        )
                                     };
                                 })}
                                 selection={shippingProviders}
