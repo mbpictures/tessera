@@ -33,6 +33,8 @@ function RGBToHex(rgb) {
     return ("#" + r + g + b).toLowerCase();
 }
 
+let eventDateId = 1;
+
 describe("Buy tickets", () => {
     before(() => {
         cy.task("db:teardown", null, {timeout: 60000});
@@ -259,19 +261,6 @@ describe("Buy tickets", () => {
         cy.get("#pay-button").should("not.exist");
     });
 
-    it("Process Payment", () => {
-        cy.purchaseTicket().then(({email, firstName, lastName}) => {
-            cy.task("getLastEmail", email).then(result => {
-                const html = decodeHtmlCharCodes(result.html);
-                expect(html).to.contain(`Hello ${encodeString(firstName)} ${encodeString(lastName)}`);
-                expect(html).to.not.contain('As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
-                expect(html).to.contain('We hereby confirm your\n' +
-                    '                                                    order. Enclosed you will\n' +
-                    '                                                    find an invoice.');
-            });
-        });
-    });
-
     it("Service Fees", () => {
         cy.fixture("admin/user").then((userFixture) => {
             cy.task("getAdminToken").then((token) => {
@@ -356,6 +345,35 @@ describe("Buy tickets", () => {
                 cy.get("#checkbox-invoice").click();
 
                 cy.get(".payment-overview-service-fee").should("have.length", 0);
+
+
+                cy.request(
+                    {
+                        url: "/api/admin/options/fees/shipping",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        timeout: 60000,
+                        body: {
+                            "post": 2,
+                            "download": 2
+                        }
+                    }
+                );
+                cy.request(
+                    {
+                        url: "/api/admin/options/fees/payment",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        timeout: 60000,
+                        body: {
+                            "invoice": 2
+                        }
+                    }
+                );
             });
         });
     });
@@ -457,21 +475,21 @@ describe("Buy tickets", () => {
                     cy.contains(`${body.title} (${tomorrow.toLocaleString()})`).should("exist");
 
                     cy.request(
-                      {
-                          url: "/api/admin/events/" + 1,
-                          method: "PUT",
-                          headers: {
-                              "Authorization": `Bearer ${userFixture.username}:${token}`
-                          },
-                          body: {
-                              dates: [{
-                                  id: body.dates[0].id,
-                                  date: null,
-                                  ticketSaleStartDate: yesterday.toISOString()
-                              }]
-                          },
-                          timeout: 60000
-                      }
+                        {
+                            url: "/api/admin/events/" + 1,
+                            method: "PUT",
+                            headers: {
+                                "Authorization": `Bearer ${userFixture.username}:${token}`
+                            },
+                            body: {
+                                dates: [{
+                                    id: body.dates[0].id,
+                                    date: null,
+                                    ticketSaleStartDate: yesterday.toISOString()
+                                }]
+                            },
+                            timeout: 60000
+                        }
                     );
 
                     cy.visit("/");
@@ -540,7 +558,40 @@ describe("Buy tickets", () => {
                         const expectedTitle = `${body.title} (${tomorrow.toLocaleString()})`;
                         expect(texts).to.deep.equal([expectedTitle, expectedTitle]);
                     });
+                    cy.request(
+                        {
+                            url: "/api/admin/events/" + 1,
+                            method: "PUT",
+                            headers: {
+                                "Authorization": `Bearer ${userFixture.username}:${token}`
+                            },
+                            body: {
+                                dates: [
+                                    {
+                                        id: body.dates[0].id,
+                                        date: tomorrow.toISOString(),
+                                        ticketSaleStartDate: yesterday.toISOString()
+                                    }
+                                ]
+                            },
+                            timeout: 60000
+                        }
+                    );
+                    eventDateId = body.dates[0].id;
                 });
+            });
+        });
+    });
+
+    it("Process Payment", () => {
+        cy.purchaseTicket({event: eventDateId}).then(({email, firstName, lastName}) => {
+            cy.task("getLastEmail", email).then(result => {
+                const html = decodeHtmlCharCodes(result.html);
+                expect(html).to.contain(`Hello ${encodeString(firstName)} ${encodeString(lastName)}`);
+                expect(html).to.not.contain('As you have opted for downloadable tickets, this email also contains the tickets. You can also find them in the attachment.');
+                expect(html).to.contain('We hereby confirm your\n' +
+                    '                                                    order. Enclosed you will\n' +
+                    '                                                    find an invoice.');
             });
         });
     });
