@@ -272,6 +272,94 @@ describe("Buy tickets", () => {
         });
     });
 
+    it("Service Fees", () => {
+        cy.fixture("admin/user").then((userFixture) => {
+            cy.task("getAdminToken").then((token) => {
+                cy.request(
+                    {
+                        url: "/api/admin/options/fees/shipping/post",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        timeout: 60000,
+                        body: "2"
+                    }
+                );
+                cy.request(
+                    {
+                        url: "/api/admin/options/fees/payment/invoice",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        timeout: 60000,
+                        body: "3"
+                    }
+                );
+                cy.visit("/");
+                cy.purchaseTicket({information: false});
+                cy.personalInformation();
+                cy.get("#information-address-next").click();
+                cy.get("#checkbox-post").should("contain.text", formatPrice(2, "USD"));
+                cy.get("#checkbox-post").click();
+                cy.get("#stepper-next-button").click();
+
+                cy.url().should("include", "payment");
+
+                cy.get(".payment-overview-service-fee").should("have.length", 1);
+                cy.get("#checkbox-invoice").should("contain.text", formatPrice(3, "USD"));
+                cy.get("#checkbox-invoice").click();
+
+                cy.get(".payment-overview-service-fee").should("have.length", 2);
+                cy.get(".payment-overview-service-fee").eq(0).should("contain.text", formatPrice(2, "USD"));
+                cy.get(".payment-overview-service-fee").eq(1).should("contain.text", formatPrice(3, "USD"));
+
+                cy.request(
+                    {
+                        url: "/api/admin/options/fees/shipping",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        timeout: 60000,
+                        body: {
+                            "post": 0
+                        }
+                    }
+                );
+                cy.request(
+                    {
+                        url: "/api/admin/options/fees/payment",
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${userFixture.username}:${token}`
+                        },
+                        timeout: 60000,
+                        body: {
+                            "invoice": 0
+                        }
+                    }
+                );
+
+                cy.visit("/");
+                cy.purchaseTicket({information: false});
+                cy.personalInformation();
+                cy.get("#information-address-next").click();
+                cy.get("#checkbox-post").should("not.contain.text", formatPrice(2, "USD"));
+                cy.get("#checkbox-post").click();
+                cy.get("#stepper-next-button").click();
+
+                cy.url().should("include", "payment");
+
+                cy.get("#checkbox-invoice").should("not.contain.text", formatPrice(3, "USD"));
+                cy.get("#checkbox-invoice").click();
+
+                cy.get(".payment-overview-service-fee").should("have.length", 0);
+            });
+        });
+    });
+
     it("Check Personalized Tickets", () => {
         cy.fixture("admin/user").then((userFixture) => {
             cy.task("getAdminToken").then((token) => {
@@ -420,7 +508,7 @@ describe("Buy tickets", () => {
                         const texts = elements.toArray().map(elem => elem.innerText);
                         expect(texts).to.deep.equal([body.title, body.title]);
                     });
-                    
+
                     cy.request(
                         {
                             url: "/api/admin/events/" + 1,

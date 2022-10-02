@@ -117,6 +117,7 @@ export const PaymentOverview = ({
                         <ListItemText
                             primary={t("payment:shipping-fee")}
                             secondary={formatPrice(shippingPrice, categories[0].currency)}
+                            className={"payment-overview-service-fee"}
                         />
                     </ListItem>
                 )
@@ -127,6 +128,7 @@ export const PaymentOverview = ({
                         <ListItemText
                             primary={t("payment:payment-fee")}
                             secondary={formatPrice(paymentPrice, categories[0].currency)}
+                            className={"payment-overview-service-fee"}
                         />
                     </ListItem>
                 )
