@@ -127,7 +127,7 @@ export const StripeIBAN = () => {
     );
 };
 
-export const StripeIBANHeader = ({hasFee, fees}) => {
+export const StripeIBANHeader = () => {
     const { t } = useTranslation();
-    return <Typography>{t("payment:sepa-direct-debit")}{hasFee && ` (${fees})`}</Typography>;
+    return <Typography>{t("payment:sepa-direct-debit")}</Typography>;
 };

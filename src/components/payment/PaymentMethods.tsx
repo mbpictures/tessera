@@ -42,10 +42,16 @@ export const PaymentMethods = ({ paymentMethods, paymentFees, categories }) => {
                         return (
                             <CheckboxAccordion
                                 label={
-                                    value.getHeaderComponent(
-                                        paymentFees[value.data.type] !== 0,
-                                        `${paymentFees[value.data.type] > 0 ? "+" : ""}${formatPrice(paymentFees[value.data.type], categories[0].currency)}`
-                                    )
+                                    <>
+                                        {
+                                            value.getHeaderComponent()
+                                        }
+                                        {
+                                            paymentFees[value.data.type] !== 0 && (
+                                                ` (${paymentFees[value.data.type] > 0 ? "+" : ""}${formatPrice(paymentFees[value.data.type], categories[0].currency)})`
+                                            )
+                                        }
+                                    </>
                                 }
                                 name={value.data.type}
                                 selectedItem={selectedPaymentMethod}

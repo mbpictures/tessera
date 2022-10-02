@@ -29,8 +29,8 @@ export class StripeIBANPayment extends Payment {
         };
     }
 
-    getHeaderComponent(hasFee: boolean, fees?: string): React.ReactNode {
-        return <StripeIBANHeader hasFee={hasFee} fees={fees} />;
+    getHeaderComponent(): React.ReactNode {
+        return <StripeIBANHeader />;
     }
 
     paymentResultValid(data: any): boolean {

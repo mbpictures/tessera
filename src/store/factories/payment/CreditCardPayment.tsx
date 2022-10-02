@@ -33,8 +33,8 @@ export class CreditCardPayment extends Payment {
         };
     }
 
-    getHeaderComponent(hasFee: boolean, fees?: string): React.ReactNode {
-        return <StripeCardHeader hasFee={hasFee} fees={fees} />;
+    getHeaderComponent(): React.ReactNode {
+        return <StripeCardHeader />;
     }
 
     paymentResultValid(data: any): boolean {

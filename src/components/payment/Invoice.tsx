@@ -40,7 +40,7 @@ export const Invoice = () => {
     );
 };
 
-export const InvoiceHeader = ({hasFee, fees}) => {
+export const InvoiceHeader = () => {
     const { t } = useTranslation();
-    return <Typography>{t("payment:invoice")}{hasFee && ` (${fees})`}</Typography>;
+    return <Typography>{t("payment:invoice")}</Typography>;
 };

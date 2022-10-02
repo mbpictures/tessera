@@ -45,11 +45,6 @@ export const Sofort = () => {
     );
 };
 
-export const SofortHeader = ({hasFee, fees}) => {
-    return (
-        <>
-            <Image src={logo} height={50} alt="Klarna Logo" />
-            {hasFee && ` (${fees})`}
-        </>
-    );
+export const SofortHeader = () => {
+    return <Image src={logo} height={50} alt="Klarna Logo" />;
 };

@@ -117,11 +117,6 @@ export const PayPal = () => {
     );
 };
 
-export const PayPalHeader = ({hasFee, fees}) => {
-    return (
-        <>
-            <Image src={logo} height={20} alt="PayPal Logo" />
-            {hasFee && ` (${fees})`}
-        </>
-    );
+export const PayPalHeader = () => {
+    return <Image src={logo} height={20} alt="PayPal Logo" />;
 };

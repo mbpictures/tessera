@@ -14,7 +14,7 @@ export abstract class Payment {
     }
 
     abstract getComponent(): React.ReactNode;
-    abstract getHeaderComponent(hasFee: boolean, fees?: string): React.ReactNode;
+    abstract getHeaderComponent(): React.ReactNode;
     abstract getPaymentButton(): React.ReactNode;
     abstract paymentResultValid(data: any): boolean;
     abstract getValidPaymentResult(data?: any): Object;
