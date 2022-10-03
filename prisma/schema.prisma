@@ -96,6 +96,16 @@ model Order {
     idempotencyKey  String      @unique
 }
 
+model SeatReservation {
+    id              String      @default(uuid()) @id
+    reservationId   String
+    seatId          Int?
+    categoryId      Int
+    amount          Int         @default(1)
+    expiresAt       DateTime
+    eventDateId     Int
+}
+
 model Ticket {
     id              String      @default(uuid()) @id
     order           Order       @relation(fields: [orderId], references: [id])
