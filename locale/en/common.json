@@ -11,5 +11,8 @@
     "category": "Category",
     "summary": "Summary",
     "price": "Price",
-    "event-not-bookable": "The selected event is currently not available"
+    "event-not-bookable": "The selected event is currently not available",
+    "tickets-already-booked-title": "Tickets already booked!",
+    "tickets-already-booked-content": "Some of the tickets you have chosen are already booked or reserved and thus have been reset. The blocked tickets are:",
+    "seat": "Seat: {{seat}}"
 }
