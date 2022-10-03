@@ -160,7 +160,7 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
     await revalidateBuild(res, eventPaths.concat(additionalPages));
 };
 
-export const validateOrder = async (tickets: Tickets, eventDateId): Promise<boolean> => {
+export const validateOrder = async (tickets: Tickets, eventDateId, reservationId): Promise<boolean> => {
     const eventDate = await prisma.eventDate.findUnique({
         where: {
             id: eventDateId
@@ -197,14 +197,26 @@ export const validateOrder = async (tickets: Tickets, eventDateId): Promise<bool
                 }
             }
         })) === 0;
-        if (!seatIdValid) return false; // we don't need to check the other seats, when one is already is invalid
+        const seatIdReservationValid = (await prisma.seatReservation.count({
+            where: {
+                seatId: seat,
+                expiresAt: {
+                    lt: new Date()
+                },
+                eventDateId: eventDateId,
+                reservationId: {
+                    not: reservationId
+                }
+            }
+        })) === 0;
+        if (!seatIdValid || !seatIdReservationValid) return false; // we don't need to check the other seats, when one is already invalid
     }
 
     const maxTicketAmounts = eventDate.event.categories.reduce((dict, category) => {
         dict[category.categoryId] = category.maxAmount;
         return dict;
     }, {});
-    const currentAmounts = (await prisma.ticket.groupBy({
+    let databaseAmounts = (await prisma.ticket.groupBy({
         by: ["categoryId"],
         where: {
             order: {
@@ -215,7 +227,25 @@ export const validateOrder = async (tickets: Tickets, eventDateId): Promise<bool
             }
         },
         _count: true
-    })).reduce((dict, element) => {
+    }));
+    databaseAmounts.push(...(await prisma.seatReservation.groupBy({
+        by: ["categoryId"],
+        where: {
+            eventDateId: eventDateId,
+            categoryId: {
+                in: tickets.map(ticket => ticket.categoryId)
+            },
+            reservationId: {
+                not: reservationId
+            },
+            expiresAt: {
+                lt: new Date()
+            },
+        },
+        _count: true
+    })));
+
+    let currentAmounts = databaseAmounts.reduce((dict, element) => {
         dict[element.categoryId] = element._count;
         return dict;
     }, {});
