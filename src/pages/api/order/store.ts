@@ -110,6 +110,16 @@ async function handler(
             });
         }
 
+        try {
+            if (order.reservationId) {
+                await prisma.seatReservation.deleteMany({
+                    where: {
+                        reservationId: order.reservationId
+                    }
+                });
+            }
+        } catch (e) {} // not fatal
+
         res.status(200).json({
             userId: orderDB.user.id,
             orderId: orderDB.id
