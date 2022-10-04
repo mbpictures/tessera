@@ -7,6 +7,8 @@ import { withNotification } from "../../../lib/notifications/withNotification";
 import { OrderState } from "../../../store/reducers/orderReducer";
 import { calculateTotalPrice, getSeatMap, validateCategoriesWithSeatMap } from "../../../constants/util";
 import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
+import { getOption } from "../../../lib/options";
+import { Options } from "../../../constants/Constants";
 
 async function handler(
     req: NextApiRequest,
@@ -41,7 +43,8 @@ async function handler(
                     }
                 },
                 paymentIntent: true,
-                paymentType: true
+                paymentType: true,
+                shipping: true
             }
         });
 
@@ -52,7 +55,14 @@ async function handler(
         }
 
         const categories = await prisma.category.findMany();
-        const totalPrice = calculateTotalPrice(validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)), categories);
+        const totalPrice = calculateTotalPrice(
+            validateCategoriesWithSeatMap(orderDB.tickets, getSeatMap(orderDB.eventDate.event)),
+            categories,
+            await getOption(Options.PaymentFeesShipping),
+            await getOption(Options.PaymentFeesPayment),
+            JSON.parse(orderDB.shipping).type,
+            orderDB.paymentType
+        );
 
         const data = {
             multipay: {

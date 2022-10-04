@@ -13,13 +13,17 @@ import { useAppSelector } from "../store/hooks";
 import { selectOrder } from "../store/reducers/orderReducer";
 import { calculateTotalPrice, formatPrice, summarizeTicketAmount } from "../constants/util";
 import useTranslation from "next-translate/useTranslation";
+import { selectPayment } from "../store/reducers/paymentReducer";
+import { selectPersonalInformation } from "../store/reducers/personalInformationReducer";
 
 export const PaymentOverview = ({
     categories,
     withEditButton,
     onEdit,
     hideEmptyCategories,
-    displayColor
+    displayColor,
+    shippingFees,
+    paymentFees
 }: {
     categories: Array<{
         id: number;
@@ -32,8 +36,12 @@ export const PaymentOverview = ({
     onEdit?: Function;
     hideEmptyCategories?: boolean;
     displayColor?: boolean;
+    shippingFees?: Record<string, number>;
+    paymentFees?: Record<string, number>;
 }) => {
     const order = useAppSelector(selectOrder);
+    const payment = useAppSelector(selectPayment).payment?.type;
+    const shipping = useAppSelector(selectPersonalInformation).shipping?.type;
     const { t } = useTranslation();
 
     const handleEdit = () => {
@@ -42,7 +50,9 @@ export const PaymentOverview = ({
     };
 
     const items = summarizeTicketAmount(order.tickets, categories, hideEmptyCategories);
-    const price = calculateTotalPrice(order.tickets, categories);
+    const shippingPrice = shippingFees ? shippingFees[shipping] ?? 0 : 0;
+    const paymentPrice = paymentFees ? paymentFees[payment] ?? 0 : 0;
+    const price = calculateTotalPrice(order.tickets, categories, shippingFees, paymentFees, shipping, payment);
 
     return (
         <List
@@ -101,6 +111,28 @@ export const PaymentOverview = ({
                     </ListItem>
                 );
             })}
+            {
+                shippingPrice !== 0 && (
+                    <ListItem>
+                        <ListItemText
+                            primary={t("payment:shipping-fee")}
+                            secondary={formatPrice(shippingPrice, categories[0].currency)}
+                            className={"payment-overview-service-fee"}
+                        />
+                    </ListItem>
+                )
+            }
+            {
+                paymentPrice !== 0 && (
+                    <ListItem>
+                        <ListItemText
+                            primary={t("payment:payment-fee")}
+                            secondary={formatPrice(paymentPrice, categories[0].currency)}
+                            className={"payment-overview-service-fee"}
+                        />
+                    </ListItem>
+                )
+            }
             <Divider />
             {
                 categories.length > 0 && (

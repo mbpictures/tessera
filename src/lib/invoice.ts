@@ -1,7 +1,7 @@
 import prisma from "./prisma";
 import ejs from "ejs";
 import htmlPdf from "html-pdf";
-import { calculateTotalPrice, summarizeTicketAmount } from "../constants/util";
+import { calculateTotalPrice, getServiceFeeAmount, summarizeTicketAmount } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getOption } from "./options";
@@ -26,12 +26,22 @@ export const generateInvoice = async (
                 locale: true,
                 paymentType: true,
                 paymentIntent: true,
-                tickets: true
+                tickets: true,
+                shipping: true
             }
         });
+        const shippingFees = await getOption(Options.PaymentFeesShipping);
+        const paymentFees = await getOption(Options.PaymentFeesPayment);
 
         const categories = await prisma.category.findMany();
-        const totalPrice = calculateTotalPrice(orderDB.tickets, categories);
+        const totalPrice = calculateTotalPrice(
+            orderDB.tickets,
+            categories,
+            shippingFees,
+            paymentFees,
+            JSON.parse(orderDB.shipping).type,
+            orderDB.paymentType
+        );
 
         let orders: Array<{ categoryId: number; amount: number }> = summarizeTicketAmount(orderDB.tickets, categories, true);
 
@@ -42,6 +52,59 @@ export const generateInvoice = async (
 
         const date = new Date();
         const taxAmount = (await getOption(Options.TaxAmount));
+
+        const products = orders.map((order) => {
+            const category = categories.find(
+                (category) => category.id === order.categoryId
+            );
+            return {
+                name: category.label,
+                unit_price: formatPrice(
+                    category.price,
+                    category.currency,
+                    orderDB.locale
+                ),
+                amount: order.amount,
+                total_price: formatPrice(
+                    category.price * order.amount,
+                    category.currency,
+                    orderDB.locale
+                )
+            };
+        });
+        if (getServiceFeeAmount(shippingFees, JSON.parse(orderDB.shipping).type) !== 0) {
+            products.push({
+                name: "Shipping Fee",
+                unit_price: formatPrice(
+                    getServiceFeeAmount(shippingFees, JSON.parse(orderDB.shipping).type),
+                    categories[0].currency,
+                    orderDB.locale
+                ),
+                amount: 1,
+                total_price: formatPrice(
+                    getServiceFeeAmount(shippingFees, JSON.parse(orderDB.shipping).type),
+                    categories[0].currency,
+                    orderDB.locale
+                )
+            })
+        }
+        if (getServiceFeeAmount(paymentFees, orderDB.paymentType) !== 0) {
+            products.push({
+                name: "Payment Fee",
+                unit_price: formatPrice(
+                    getServiceFeeAmount(paymentFees, orderDB.paymentType),
+                    categories[0].currency,
+                    orderDB.locale
+                ),
+                amount: 1,
+                total_price: formatPrice(
+                    getServiceFeeAmount(paymentFees, orderDB.paymentType),
+                    categories[0].currency,
+                    orderDB.locale
+                )
+            })
+        }
+
         const html = ejs.render(template, {
             invoice_number: 1,
             creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
@@ -50,25 +113,7 @@ export const generateInvoice = async (
                 orderDB.user.address,
                 orderDB.user.zip + " " + orderDB.user.city
             ],
-            products: orders.map((order) => {
-                const category = categories.find(
-                    (category) => category.id === order.categoryId
-                );
-                return {
-                    name: category.label,
-                    unit_price: formatPrice(
-                        category.price,
-                        category.currency,
-                        orderDB.locale
-                    ),
-                    amount: order.amount,
-                    total_price: formatPrice(
-                        category.price * order.amount,
-                        category.currency,
-                        orderDB.locale
-                    )
-                };
-            }),
+            products: products,
             total_net_price: formatPrice(
                 totalPrice * (1 - (taxAmount / 100)),
                 categories[0].currency,

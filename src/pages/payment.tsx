@@ -24,7 +24,7 @@ import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 
-export default function Payment({ categories, direction, paymentMethods }) {
+export default function Payment({ categories, direction, paymentMethods, paymentFees, shippingFees }) {
     const payment = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -105,7 +105,7 @@ export default function Payment({ categories, direction, paymentMethods }) {
                         }}
                     >
                         <Card>
-                            <PaymentMethods paymentMethods={paymentMethods} />
+                            <PaymentMethods paymentMethods={paymentMethods} paymentFees={paymentFees} categories={categories} />
                         </Card>
                     </Box>
                 </Grid>
@@ -123,6 +123,8 @@ export default function Payment({ categories, direction, paymentMethods }) {
                             hideEmptyCategories
                             withEditButton
                             onEdit={openSeatSelectionPage}
+                            paymentFees={paymentFees}
+                            shippingFees={shippingFees}
                         />
                         {PaymentFactory.getPaymentInstance(
                             payment.payment
@@ -144,6 +146,8 @@ export async function getStaticProps({ locale }) {
             noNext: true,
             categories: categories,
             paymentMethods,
+            paymentFees: await getOption(Options.PaymentFeesPayment),
+            shippingFees: await getOption(Options.PaymentFeesShipping),
             theme: await getOption(Options.Theme),
             ...(await loadNamespaces({ locale, pathname: '/payment' }))
         }

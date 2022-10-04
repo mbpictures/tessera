@@ -2,7 +2,8 @@ import { Step } from "../components/Step";
 import {
     Accordion,
     AccordionDetails,
-    AccordionSummary, Button,
+    AccordionSummary,
+    Button,
     Stack,
     TextField,
     Typography,
@@ -28,6 +29,7 @@ import { TicketNames } from "../components/form/TicketNames";
 import prisma from "../lib/prisma";
 import { setTicketPersonalizationRequired } from "../store/reducers/orderReducer";
 import { useRouter } from "next/router";
+import { formatPrice } from "../constants/util";
 
 const validateEmail = (email) => {
     const re =
@@ -35,7 +37,7 @@ const validateEmail = (email) => {
     return re.test(String(email).toLowerCase());
 };
 
-export default function Information({ direction, deliveryMethods, categories, events }) {
+export default function Information({ direction, deliveryMethods, categories, events, shippingFees }) {
     const selector = useAppSelector(selectPersonalInformation);
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
@@ -150,9 +152,12 @@ export default function Information({ direction, deliveryMethods, categories, ev
                                 .filter((type) => deliveryMethods.includes(type))
                                 .map((shippingType) => {
                                     const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
+                                    let label = t(`information:${instance.DisplayName}`);
+                                    if ((shippingFees[shippingType] ?? 0) !== 0)
+                                        label += ` (${shippingFees[shippingType] > 0 ? "+" : ""}${formatPrice(shippingFees[shippingType], categories[0].currency)})`;
                                     return (
                                         <CheckboxAccordion
-                                            label={t(`information:${instance.DisplayName}`)}
+                                            label={label}
                                             name={shippingType}
                                             selectedItem={selectedShippingMethod}
                                             onSelect={setSelectedShippingMethod}
@@ -182,6 +187,7 @@ export async function getStaticProps({ locale }) {
                     id: true
                 }
             }),
+            shippingFees: await getOption(Options.PaymentFeesShipping),
             theme: await getOption(Options.Theme),
             ...(await loadNamespaces({ locale, pathname: '/information' }))
         }
