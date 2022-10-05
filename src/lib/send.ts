@@ -7,14 +7,34 @@ import ejs from "ejs";
 import { PaymentFactory, PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getStaticAssetFile } from "../constants/serverUtil";
 import { getIcalData } from "./ical";
+import {
+    getGoogleWalletTicketLink,
+    getGoogleWalletTicketLinkFromObjectId,
+    validateConfiguration
+} from "./googleWallet";
 
-export const getEmailHtml = (firstName, lastName, containsTickets, containsInvoice) => {
+export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets) => {
+    let googleWallet = undefined;
+    if (containsTickets && validateConfiguration()) {
+        try {
+            const links: {objectId: string, link: string}[] = await Promise.all(
+                tickets.map(async (ticket): Promise<{objectId: string, link: string}> => await getGoogleWalletTicketLink(eventDate, ticket))
+            );
+            googleWallet = {
+                allTicketsLink: getGoogleWalletTicketLinkFromObjectId(links.map(link => link.objectId)),
+                ticketLinks: links.map(link => link.link)
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
     return ejs.render(
       getStaticAssetFile("email/template.html", "utf-8"),
       {
           customerName: firstName + " " + lastName,
           containsTickets: containsTickets,
-          containsInvoice: containsInvoice ? true : undefined
+          containsInvoice: containsInvoice ? true : undefined,
+          googleWallet: googleWallet
       }
     );
 }
@@ -106,7 +126,34 @@ export const send = async (orderId) => {
             message["icalEvent"] = getIcalData(order.eventDate);
         }
 
-        message.html = getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice);
+        const tickets = await prisma.ticket.findMany({
+            where: {
+                orderId: orderId
+            },
+            select: {
+                id: true,
+                secret: true,
+                seatId: true,
+                firstName: true,
+                lastName: true,
+                category: {
+                    select: {
+                        label: true
+                    }
+                },
+                order: {
+                    select: {
+                        user: {
+                            select: {
+                                firstName: true,
+                                lastName: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        message.html = await getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice, order.eventDate, tickets);
 
         (await getEmailTransporter()).sendMail(message, async (error) => {
             if (error) {

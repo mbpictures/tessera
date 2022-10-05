@@ -72,6 +72,7 @@ npm install
 - Ticket control webapp (to scan and verify downloaded tickets)
 - Notifications (e.g. for new orders)
 - Event scheduling
+- [Google Wallet API](https://developers.google.com/wallet) for event tickets (needs environment variables)
 
 ### 🔜 Planned
 - Customizeable webhooks (to automate receipt of payment detection etc.)
