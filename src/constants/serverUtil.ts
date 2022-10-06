@@ -6,8 +6,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../lib/prisma";
 import { Permission, PermissionSection, PermissionType } from "./interfaces";
 import i18nConfig from "../../i18n";
-import { Tickets } from "../store/reducers/orderReducer";
+import { Ticket, Tickets } from "../store/reducers/orderReducer";
 import { eventDateIsBookable } from "./util";
+import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -161,6 +162,7 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
 };
 
 export const validateOrder = async (tickets: Tickets, eventDateId, reservationId): Promise<boolean> => {
+    if (tickets.length === 0) return false;
     const eventDate = await prisma.eventDate.findUnique({
         where: {
             id: eventDateId
@@ -183,72 +185,20 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
         }
     });
     if (!eventDateIsBookable(eventDate)) return false;
-    const seatIds = tickets.filter(ticket => ticket.seatId).map(ticket => ticket.seatId);
+    const seatIds = tickets.filter(ticket => ticket.seatId);
     if (eventDate.event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
-    if (seatIds.some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
+    if (seatIds.map(ticket => ticket.seatId).some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
 
     // check seats not already occupied
-    for (let seat of seatIds) {
-        const seatIdValid = (await prisma.ticket.count({
-            where: {
-                seatId: seat,
-                order: {
-                    eventDateId: eventDateId
-                }
-            }
-        })) === 0;
-        const seatIdReservationValid = (await prisma.seatReservation.count({
-            where: {
-                seatId: seat,
-                expiresAt: {
-                    lt: new Date()
-                },
-                eventDateId: eventDateId,
-                reservationId: {
-                    not: reservationId
-                }
-            }
-        })) === 0;
-        if (!seatIdValid || !seatIdReservationValid) return false; // we don't need to check the other seats, when one is already invalid
-    }
+    const ticketsOccupied = await isTicketOccupied(eventDateId, tickets);
+    if (Object.values(ticketsOccupied).length > 0 && Object.values(ticketsOccupied).some(v => v)) return false;
 
     const maxTicketAmounts = eventDate.event.categories.reduce((dict, category) => {
         dict[category.categoryId] = category.maxAmount;
         return dict;
     }, {});
-    let databaseAmounts = (await prisma.ticket.groupBy({
-        by: ["categoryId"],
-        where: {
-            order: {
-                eventDateId: eventDateId
-            },
-            categoryId: {
-                in: tickets.map(ticket => ticket.categoryId)
-            }
-        },
-        _count: true
-    }));
-    databaseAmounts.push(...(await prisma.seatReservation.groupBy({
-        by: ["categoryId"],
-        where: {
-            eventDateId: eventDateId,
-            categoryId: {
-                in: tickets.map(ticket => ticket.categoryId)
-            },
-            reservationId: {
-                not: reservationId
-            },
-            expiresAt: {
-                lt: new Date()
-            },
-        },
-        _count: true
-    })));
 
-    let currentAmounts = databaseAmounts.reduce((dict, element) => {
-        dict[element.categoryId] = element._count;
-        return dict;
-    }, {});
+    let currentAmounts = getCategoryTicketAmount(eventDateId, tickets, reservationId);
     for (let ticket of tickets) {
         currentAmounts[ticket.categoryId] += ticket.amount;
         if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId] || maxTicketAmounts[ticket.categoryId] === 0)
@@ -257,4 +207,97 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
     }
 
     return true;
+}
+
+export const getCategoryTicketAmount = async (eventDateId: number, tickets?: Tickets, reservationId?: string): Promise<Record<number, number>> => {
+    const categoryIdFilter = tickets !== undefined ? {categoryId: {in: tickets?.map(ticket => ticket.categoryId)}} : {};
+    const reservationIdFilter = reservationId !== undefined ? {reservationId: {not: reservationId}} : {};
+
+    let databaseAmounts = await prisma.ticket.groupBy({
+        by: ["categoryId"],
+        where: {
+            order: {
+                eventDateId: eventDateId
+            },
+            ...categoryIdFilter
+        },
+        _count: true
+    });
+    databaseAmounts.push(...(await prisma.seatReservation.groupBy({
+        by: ["categoryId"],
+        where: {
+            eventDateId: eventDateId,
+            ...categoryIdFilter,
+            ...reservationIdFilter,
+            expiresAt: {
+                lt: new Date()
+            },
+        },
+        _count: true
+    })));
+
+    return databaseAmounts.reduce((dict, element) => {
+        dict[element.categoryId] = element._count;
+        return dict;
+    }, {});
+}
+
+export const isTicketOccupied = async (eventDateId: number, tickets: Tickets | Ticket): Promise<Record<number, boolean>> => {
+    if (!Array.isArray(tickets))
+        tickets = [tickets];
+
+    if (tickets.length === 0) return {};
+
+    const reservations = await prisma.seatReservation.findMany({
+        where: {
+            eventDateId: eventDateId,
+            expiresAt: {
+                gt: new Date()
+            }
+        }
+    });
+    const ticketsDb = await prisma.ticket.findMany({
+        where: {
+            order: {
+                eventDateId: eventDateId
+            }
+        }
+    });
+
+    return tickets.reduce((group, ticket) => {
+        group[ticket.seatId] = ticketsDb.some(t => t.seatId === ticket.seatId) ||
+            reservations.some(reservation => reservation.seatId === ticket.seatId);
+        return group;
+    }, {});
+}
+
+export const getSeatMap = async (eventDateId, withOccupiedMarked): Promise<SeatMap> => {
+    const event = await prisma.eventDate.findUnique({
+        where: {
+            id: eventDateId
+        },
+        select: {
+            event: {
+                select: {
+                    seatMap: true,
+                    seatType: true
+                }
+            }
+        }
+    });
+    if (event.event.seatType !== "seatmap") throw new Error("Event not seatmap!");
+
+    let seatMap: SeatMap = JSON.parse(event.event.seatMap.definition);
+    if (withOccupiedMarked) {
+        const occupies = await isTicketOccupied(eventDateId, seatMap.flat(2).map(seat => ({seatId: seat.id, amount: seat.amount, categoryId: seat.category})));
+        seatMap = seatMap.map((row) =>
+            row.map((seat) => {
+                return {
+                    ...seat,
+                    occupied: occupies[seat.id]
+                };
+            })
+        );
+    }
+    return seatMap;
 }
