@@ -10,6 +10,7 @@ import loadNamespaces from "next-translate/loadNamespaces";
 import { SeatSelectionFactory } from "../../components/seatselection/SeatSelectionFactory";
 import { eventDateIsBookable } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
+import { getCategoryTicketAmount, getSeatMap } from "../../constants/serverUtil";
 
 export default function SeatSelection({
     categories,
@@ -77,43 +78,13 @@ export async function getStaticProps({ params, locale }) {
     });
 
     if (!eventDate) return { notFound: true }
-    const reservations = await prisma.seatReservation.findMany({
-        where: {
-            eventDateId: parseInt(params.id),
-            expiresAt: {
-                gt: new Date()
-            }
-        }
-    });
 
-    let seatmap: SeatMap = null;
+    let seatMap: SeatMap = null;
     if (eventDate.event.seatMap?.definition) {
-        const baseMap: SeatMap = JSON.parse(eventDate.event.seatMap?.definition);
-        seatmap = baseMap.map((row) =>
-            row.map((seat) => {
-                const isOccupied =
-                    eventDate.orders.some(order => order.tickets.some(ticket => ticket.seatId === seat.id)) ||
-                    reservations.some(reservation => reservation.seatId === seat.id);
-                return {
-                    ...seat,
-                    occupied: isOccupied
-                };
-            })
-        );
+        seatMap = await getSeatMap(eventDate.id, true);
     }
 
-    const currentAmounts = (await prisma.ticket.groupBy({
-        by: ["categoryId"],
-        where: {
-            order: {
-                eventDateId: eventDate.id
-            }
-        },
-        _count: true
-    })).reduce((dict, element) => {
-        dict[element.categoryId] = element._count;
-        return dict;
-    }, {});
+    const currentAmounts = await getCategoryTicketAmount(eventDate.id);
 
     return {
         props: {
@@ -122,7 +93,7 @@ export async function getStaticProps({ params, locale }) {
                 ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - currentAmounts[category.categoryId], 0)
             })),
             seatType: eventDate.event.seatType,
-            seatMap: seatmap,
+            seatMap,
             theme: await getOption(Options.Theme),
             eventDate: {
                 ticketSaleStartDate: eventDate.ticketSaleStartDate?.toISOString() ?? null,
