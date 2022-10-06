@@ -32,6 +32,7 @@ model EventDate {
     orders              Order[]
     ticketSaleStartDate DateTime?
     ticketSaleEndDate   DateTime?
+    seatReservations    SeatReservation[]
 }
 
 model SeatMap {
@@ -104,6 +105,7 @@ model SeatReservation {
     amount          Int         @default(1)
     expiresAt       DateTime
     eventDateId     Int
+    eventDate       EventDate   @relation(fields: [eventDateId], references: [id])
 }
 
 model Ticket {
