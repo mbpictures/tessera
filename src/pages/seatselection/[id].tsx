@@ -77,13 +77,23 @@ export async function getStaticProps({ params, locale }) {
     });
 
     if (!eventDate) return { notFound: true }
+    const reservations = await prisma.seatReservation.findMany({
+        where: {
+            eventDateId: parseInt(params.id),
+            expiresAt: {
+                gt: new Date()
+            }
+        }
+    });
 
     let seatmap: SeatMap = null;
     if (eventDate.event.seatMap?.definition) {
         const baseMap: SeatMap = JSON.parse(eventDate.event.seatMap?.definition);
         seatmap = baseMap.map((row) =>
             row.map((seat) => {
-                const isOccupied = eventDate.orders.some(order => order.tickets.some(ticket => ticket.seatId === seat.id));
+                const isOccupied =
+                    eventDate.orders.some(order => order.tickets.some(ticket => ticket.seatId === seat.id)) ||
+                    reservations.some(reservation => reservation.seatId === seat.id);
                 return {
                     ...seat,
                     occupied: isOccupied
