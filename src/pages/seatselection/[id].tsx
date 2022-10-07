@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Step } from "../../components/Step";
 import prisma from "../../lib/prisma";
 import {
@@ -11,6 +11,7 @@ import { SeatSelectionFactory } from "../../components/seatselection/SeatSelecti
 import { eventDateIsBookable } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { getCategoryTicketAmount, getSeatMap } from "../../constants/serverUtil";
+import axios from "axios";
 
 export default function SeatSelection({
     categories,
@@ -21,6 +22,22 @@ export default function SeatSelection({
     eventDate
 }) {
     const {t} = useTranslation();
+    const [categoriesState, setCategoriesState] = useState(categories);
+    const [seatMapState, setSeatMapState] = useState(seatMap);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const response = await axios.get("/api/bookingInformation/" + eventDate.id);
+                setCategoriesState(old => response?.data?.categoryAmount ?? old);
+                setSeatMapState(old => response?.data?.seatMap ?? old);
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        setInterval(loadData, 30000);
+    }, []);
+
     if (fallback) return null;
     if (!eventDateIsBookable(eventDate))
         return (
@@ -38,7 +55,7 @@ export default function SeatSelection({
                 height: seatType === "seatmap" ? "100%" : "auto"
             }}
         >
-            <SeatSelectionFactory seatSelectionDefinition={seatMap} categories={categories} seatType={seatType} />
+            <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} />
         </Step>
     );
 }
@@ -96,6 +113,7 @@ export async function getStaticProps({ params, locale }) {
             seatMap,
             theme: await getOption(Options.Theme),
             eventDate: {
+                id: eventDate.id,
                 ticketSaleStartDate: eventDate.ticketSaleStartDate?.toISOString() ?? null,
                 ticketSaleEndDate: eventDate.ticketSaleEndDate?.toISOString() ?? null,
                 date: eventDate.date?.toISOString() ?? null
