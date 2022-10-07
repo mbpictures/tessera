@@ -190,7 +190,7 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
     if (seatIds.map(ticket => ticket.seatId).some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
 
     // check seats not already occupied
-    const ticketsOccupied = await isTicketOccupied(eventDateId, tickets);
+    const ticketsOccupied = await isTicketOccupied(eventDateId, tickets, reservationId);
     if (Object.values(ticketsOccupied).length > 0 && Object.values(ticketsOccupied).some(v => v)) return false;
 
     const maxTicketAmounts = eventDate.event.categories.reduce((dict, category) => {
@@ -242,7 +242,7 @@ export const getCategoryTicketAmount = async (eventDateId: number, tickets?: Tic
     }, {});
 }
 
-export const isTicketOccupied = async (eventDateId: number, tickets: Tickets | Ticket): Promise<Record<number, boolean>> => {
+export const isTicketOccupied = async (eventDateId: number, tickets: Tickets | Ticket, reservationId?: string): Promise<Record<number, boolean>> => {
     if (!Array.isArray(tickets))
         tickets = [tickets];
 
@@ -253,7 +253,8 @@ export const isTicketOccupied = async (eventDateId: number, tickets: Tickets | T
             eventDateId: eventDateId,
             expiresAt: {
                 gt: new Date()
-            }
+            },
+            ...(reservationId && ({reservationId: {not: reservationId}}))
         }
     });
     const ticketsDb = await prisma.ticket.findMany({
