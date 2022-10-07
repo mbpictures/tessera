@@ -2,10 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 import { getCategoryTicketAmount, getSeatMap } from "../../../constants/serverUtil";
 
-export async function handler(
+export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    if (req.method !== "GET") return res.status(400).end("Method unsupported");
     const { id } = req.query;
     const eventDateId = parseInt(id as string);
     try {
