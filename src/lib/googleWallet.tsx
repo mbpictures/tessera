@@ -58,8 +58,6 @@ const getPayload = (eventDate, ticket) => {
 };
 
 const getCredentials = () => {
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH)
-        return require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
     if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
         let credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS;
         if (process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64)
