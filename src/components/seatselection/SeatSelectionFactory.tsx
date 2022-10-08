@@ -1,7 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SeatSelectionMap } from "./seatmap/SeatSelectionMap";
 import { SeatSelectionFree } from "./free/SeatSelectionFree";
-import { Dialog, DialogContent, DialogTitle, Grid, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText
+} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectOrder, setReservationExpiresAt, setReservationId, setTickets } from "../../store/reducers/orderReducer";
 import {v4 as uuid} from "uuid";
@@ -128,6 +139,14 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
                         )
                     }
                 </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setError(null)}
+                        id={"seat-reservation-error-close"}
+                    >
+                        {t("common:close")}
+                    </Button>
+                </DialogActions>
             </Dialog>
         </>
     );

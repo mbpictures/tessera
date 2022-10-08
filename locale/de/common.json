@@ -14,5 +14,6 @@
     "event-not-bookable": "Das ausgewählte Event ist aktuell nicht verfügbar",
     "tickets-already-booked-title": "Tickets bereits gebucht!",
     "tickets-already-booked-content": "Einige der ausgewählten Tickets wurden bereits gebucht und die Auswahl der blockierten Tickets wird zurückgesetzt. Die blockierte Tickets sind:",
-    "seat": "Sitzplatz: {{seat}}"
+    "seat": "Sitzplatz: {{seat}}",
+    "close": "Schließen"
 }
