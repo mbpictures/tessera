@@ -47,7 +47,7 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
     };
 
     useEffect(() => {
-        if (isEqual(previousTickets, order.tickets)) return;
+        if (isEqual(previousTickets, order.tickets) || order.tickets.length === 0) return;
         if (timer.current) {
             clearTimeout(timer.current);
             timer.current = null;
