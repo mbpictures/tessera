@@ -10,6 +10,7 @@ import { selectEventSelected } from "../../store/reducers/eventSelectionReducer"
 import useTranslation from "next-translate/useTranslation";
 import { usePrevious } from "../../constants/hooks";
 import isEqual from "lodash/isEqual";
+import { executeRequest, RecaptchaResultType } from "../../lib/recaptcha";
 
 export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinition, noWrap, hideSummary}: {seatType: string, categories: Array<any>, seatSelectionDefinition: Array<any>, noWrap?: boolean, hideSummary?: boolean}) => {
     const {t} = useTranslation();
@@ -19,6 +20,7 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
     const timer = useRef<NodeJS.Timeout>(null);
     const [error, setError] = useState(null);
     const previousTickets = usePrevious(order.tickets);
+    const recaptchaValue = useRef(null);
 
     const sendReservation = async () => {
         let reservationId = order.reservationId;
@@ -26,8 +28,16 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
             reservationId = uuid();
             dispatch(setReservationId(reservationId))
         }
+        if (recaptchaValue.current === null) {
+            recaptchaValue.current = await executeRequest(
+                process.env.NEXT_PUBLIC_RECAPTCHA_API_KEY,
+                "reservation",
+                process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE && process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE === "true"
+            );
+        }
         try {
             const response = await axios.put("/api/order/reservation", {
+                token: recaptchaValue.current,
                 id: reservationId,
                 tickets: order.tickets,
                 eventDateId: event
@@ -42,7 +52,10 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
             }
             dispatch(setReservationExpiresAt(response.data.expiresAt));
         } catch (e) {
-            // display error
+            if (e?.response?.data?.error && e.response.data.error === RecaptchaResultType.Timeout) {
+                recaptchaValue.current = null;
+                return await sendReservation();
+            }
         }
     };
 

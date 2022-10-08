@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { validateOrder } from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
+import { RecaptchaResultType, verifyToken } from "../../../lib/recaptcha";
 
 export default async function handler(
     req: NextApiRequest,
@@ -11,8 +12,19 @@ export default async function handler(
         res.status(405).end("Method Not Allowed");
         return;
     }
-    const {tickets, id, eventDateId} = req.body;
+    const {tickets, id, eventDateId, token} = req.body;
     try {
+        const tokenResult = await verifyToken(
+            process.env.RECAPTCHA_API_SECRET,
+            token,
+            process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE && process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE === "true"
+        );
+        if (tokenResult !== RecaptchaResultType.Success) {
+            return res.status(400).json({
+                error: tokenResult
+            });
+        }
+
         let invalidTickets = [];
         let validTickets = tickets;
         if (!(await validateOrder(tickets, eventDateId, id))) { // quick check to enhance valid order speed
