@@ -28,7 +28,7 @@ export default async function handler(
         let invalidTickets = [];
         let validTickets = tickets;
         if (!(await validateOrder(tickets, eventDateId, id))) { // quick check to enhance valid order speed
-            let validTickets = [];
+            validTickets = [];
             for (let ticket of tickets) {
                 if (await validateOrder([ticket], eventDateId, id))
                     validTickets.push(ticket);
