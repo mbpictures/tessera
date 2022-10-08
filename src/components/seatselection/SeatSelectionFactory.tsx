@@ -112,7 +112,7 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
                     </Grid>
                 )
             }
-            <Dialog open={error !== null} onClose={() => setError(null)}>
+            <Dialog open={error !== null} onClose={() => setError(null)} id={"seat-reservation-error"}>
                 <DialogTitle>{error?.title}</DialogTitle>
                 <DialogContent>
                     {
