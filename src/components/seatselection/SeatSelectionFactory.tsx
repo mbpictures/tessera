@@ -70,6 +70,17 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
         }
     };
 
+    const cancelReservation = () => {
+        if (order.reservationId === undefined) return undefined;
+        fetch(
+            "/api/order/reservation?id=" + order.reservationId,
+            {
+                method: "DELETE"
+            }
+        );
+        return undefined;
+    };
+
     useEffect(() => {
         if (isEqual(previousTickets, order.tickets) || order.tickets.length === 0) return;
         if (timer.current) {
@@ -80,6 +91,10 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
         // Wait 2s for more seats, so we don't overwhelm server with requests
         timer.current = setTimeout(sendReservation, 2000);
     }, [order.tickets]);
+
+    useEffect(() => {
+        window.onbeforeunload = cancelReservation;
+    }, [order.reservationId]);
 
     let seatSelection;
     let containerStyles: React.CSSProperties = {
