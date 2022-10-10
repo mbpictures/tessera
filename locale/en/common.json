@@ -17,5 +17,8 @@
     "seat": "Seat: {{seat}}",
     "close": "Close",
     "unknown-error": "Unknown error occurred!",
-    "ticket-reservation-error-content": "An error occurred while the reservation of your tickets, but don't panic. You can still continue your booking, just be aware, that others can be faster than you."
+    "ticket-reservation-error-content": "An error occurred while the reservation of your tickets, but don't panic. You can still continue your booking, just be aware, that others can be faster than you.",
+    "seat-reservation-time-over": "The time when your tickets are reserved is over, however you can continue with the booking process, without blocked seats.",
+    "time-until-title": "Remaining reservation time:",
+    "time-until": "{{minutes}}:{{seconds}}"
 }

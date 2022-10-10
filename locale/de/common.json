@@ -17,5 +17,8 @@
     "seat": "Sitzplatz: {{seat}}",
     "close": "Schließen",
     "unknown-error": "Ein unbekannter Fehler ist aufgetreten!",
-    "ticket-reservation-error-content": "Beim Reservieren Ihrer Bestellung ist ein Fehler aufgetreten, aber keine Panik! Sie können die Buchung weiterhin fortsetzen, allerdings sind Ihre Tickets für den weiteren Verlauf nicht für andere Kunden gesperrt."
+    "ticket-reservation-error-content": "Beim Reservieren Ihrer Bestellung ist ein Fehler aufgetreten, aber keine Panik! Sie können die Buchung weiterhin fortsetzen, allerdings sind Ihre Tickets für den weiteren Verlauf nicht für andere Kunden gesperrt.",
+    "seat-reservation-time-over": "Die Reservierungszeit Ihrer Tickets ist zu Ende. Sie können Ihre Buchung vorsetzen, allerdings ohne garantierte Sitzplätze.",
+    "time-until-title": "Restzeit der Sitz-Reservierung:",
+    "time-until": "{{minutes}}:{{seconds}}"
 }
