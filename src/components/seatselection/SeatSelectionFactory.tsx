@@ -16,12 +16,12 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectOrder, setReservationExpiresAt, setReservationId, setTickets } from "../../store/reducers/orderReducer";
 import {v4 as uuid} from "uuid";
-import axios from "axios";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";
 import useTranslation from "next-translate/useTranslation";
 import { usePrevious } from "../../constants/hooks";
 import isEqual from "lodash/isEqual";
 import { executeRequest, RecaptchaResultType } from "../../lib/recaptcha";
+import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
 export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinition, noWrap, hideSummary}: {seatType: string, categories: Array<any>, seatSelectionDefinition: Array<any>, noWrap?: boolean, hideSummary?: boolean}) => {
     const {t} = useTranslation();
@@ -47,12 +47,13 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
             );
         }
         try {
-            const response = await axios.put("/api/order/reservation", {
+            // we can retry if the call fails
+            const response = await idempotencyCall("/api/order/reservation", {
                 token: recaptchaValue.current,
                 id: reservationId,
                 tickets: order.tickets,
                 eventDateId: event
-            });
+            }, {method: "PUT"});
             if (response.data.invalidTickets && response.data.invalidTickets.length > 0) {
                 dispatch(setTickets(response.data.validTickets));
                 setError({
