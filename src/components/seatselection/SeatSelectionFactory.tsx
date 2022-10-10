@@ -67,6 +67,10 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
                 recaptchaValue.current = null;
                 return await sendReservation();
             }
+            setError({
+                title: t("common:unknown-error"),
+                content: t("common:ticket-reservation-error-content")
+            })
         }
     };
 
