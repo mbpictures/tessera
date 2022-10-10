@@ -15,5 +15,7 @@
     "tickets-already-booked-title": "Tickets bereits gebucht!",
     "tickets-already-booked-content": "Einige der ausgewählten Tickets wurden bereits gebucht und die Auswahl der blockierten Tickets wird zurückgesetzt. Die blockierte Tickets sind:",
     "seat": "Sitzplatz: {{seat}}",
-    "close": "Schließen"
+    "close": "Schließen",
+    "unknown-error": "Ein unbekannter Fehler ist aufgetreten!",
+    "ticket-reservation-error-content": "Beim Reservieren Ihrer Bestellung ist ein Fehler aufgetreten, aber keine Panik! Sie können die Buchung weiterhin fortsetzen, allerdings sind Ihre Tickets für den weiteren Verlauf nicht für andere Kunden gesperrt."
 }
