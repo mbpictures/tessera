@@ -23,7 +23,21 @@ import isEqual from "lodash/isEqual";
 import { executeRequest, RecaptchaResultType } from "../../lib/recaptcha";
 import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
 
-export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinition, noWrap, hideSummary}: {seatType: string, categories: Array<any>, seatSelectionDefinition: Array<any>, noWrap?: boolean, hideSummary?: boolean}) => {
+export const SeatSelectionFactory = ({
+                                         seatType,
+                                         categories,
+                                         seatSelectionDefinition,
+                                         noWrap,
+                                         hideSummary,
+                                         onSeatAlreadyBooked
+}: {
+    seatType: string,
+    categories: Array<any>,
+    seatSelectionDefinition: Array<any>,
+    noWrap?: boolean,
+    hideSummary?: boolean,
+    onSeatAlreadyBooked?: Function,
+}) => {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
     const order = useAppSelector(selectOrder);
@@ -61,6 +75,7 @@ export const SeatSelectionFactory = ({seatType, categories, seatSelectionDefinit
                     content: t("common:tickets-already-booked-content"),
                     invalidTickets: response.data.invalidTickets
                 })
+                if (onSeatAlreadyBooked) onSeatAlreadyBooked();
             }
             dispatch(setReservationExpiresAt(response.data.expiresAt));
         } catch (e) {

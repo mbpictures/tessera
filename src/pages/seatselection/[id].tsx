@@ -25,16 +25,17 @@ export default function SeatSelection({
     const [categoriesState, setCategoriesState] = useState(categories);
     const [seatMapState, setSeatMapState] = useState(seatMap);
 
+    const loadData = async () => {
+        try {
+            const response = await axios.get("/api/bookingInformation/" + eventDate.id);
+            setCategoriesState(old => response?.data?.categoryAmount ?? old);
+            setSeatMapState(old => response?.data?.seatMap ?? old);
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     useEffect(() => {
-        const loadData = async () => {
-            try {
-                const response = await axios.get("/api/bookingInformation/" + eventDate.id);
-                setCategoriesState(old => response?.data?.categoryAmount ?? old);
-                setSeatMapState(old => response?.data?.seatMap ?? old);
-            } catch (e) {
-                console.log(e);
-            }
-        };
         setInterval(loadData, 30000);
     }, []);
 
@@ -55,7 +56,7 @@ export default function SeatSelection({
                 height: seatType === "seatmap" ? "100%" : "auto"
             }}
         >
-            <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} />
+            <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} onSeatAlreadyBooked={loadData} />
         </Step>
     );
 }
