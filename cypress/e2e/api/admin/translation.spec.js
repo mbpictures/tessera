@@ -49,7 +49,7 @@ describe("Translation Management", () => {
                     const newTranslation = translation[key] + "_changed" + locale;
 
                     translationExpectations[locale] = [key, newTranslation];
-                    cy.get(`#translation-${namespace}-${locale}-${key}`).clear().type(newTranslation);
+                    cy.get(`#translation-${namespace}-${locale}-${key}`).clear().type(newTranslation, { parseSpecialCharSequences: false });
                 });
             });
 
