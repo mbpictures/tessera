@@ -16,6 +16,6 @@ export const idempotencyCall = async (url: string, data: any, options?: {idempot
             "idempotency-key": options?.idempotencyKey ?? uuid()
         },
         data: data,
-        method: options.method ?? "POST"
+        method: options?.method ?? "POST"
     });
 }
