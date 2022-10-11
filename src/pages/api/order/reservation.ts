@@ -9,7 +9,6 @@ export default async function handler(
 ) {
     if (req.method === "DELETE") {
         const {id} = req.query;
-        console.log("DELETING: " + id);
         await prisma.seatReservation.deleteMany({
             where: {
                 reservationId: id as string
