@@ -198,7 +198,7 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
         return dict;
     }, {});
 
-    let currentAmounts = getCategoryTicketAmount(eventDateId, tickets, reservationId);
+    let currentAmounts = await getCategoryTicketAmount(eventDateId, tickets, reservationId);
     for (let ticket of tickets) {
         currentAmounts[ticket.categoryId] += ticket.amount;
         if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId] || maxTicketAmounts[ticket.categoryId] === 0)
