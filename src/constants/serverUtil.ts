@@ -210,7 +210,7 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
 }
 
 export const getCategoryTicketAmount = async (eventDateId: number, tickets?: Tickets, reservationId?: string): Promise<Record<number, number>> => {
-    const categoryIdFilter = tickets !== undefined ? {categoryId: {in: tickets?.map(ticket => ticket.categoryId)}} : {};
+    const categoryIdFilter = tickets !== undefined ? {categoryId: {in: tickets?.map(ticket => ticket.categoryId).filter((value, index, self) => self.indexOf(value) === index)}} : {};
     const reservationIdFilter = reservationId !== undefined ? {reservationId: {not: reservationId}} : {};
 
     let databaseAmounts = await prisma.ticket.groupBy({
@@ -230,7 +230,7 @@ export const getCategoryTicketAmount = async (eventDateId: number, tickets?: Tic
             ...categoryIdFilter,
             ...reservationIdFilter,
             expiresAt: {
-                lt: new Date()
+                gt: new Date()
             },
         },
         _count: true
