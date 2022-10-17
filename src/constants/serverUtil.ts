@@ -161,8 +161,8 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
     await revalidateBuild(res, eventPaths.concat(additionalPages));
 };
 
-export const validateOrder = async (tickets: Tickets, eventDateId, reservationId): Promise<boolean> => {
-    if (tickets.length === 0) return false;
+export const validateOrder = async (tickets: Tickets, eventDateId, reservationId): Promise<[boolean, Tickets]> => {
+    if (tickets.length === 0) return [false, []];
     const eventDate = await prisma.eventDate.findUnique({
         where: {
             id: eventDateId
@@ -184,14 +184,17 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
             ticketSaleStartDate: true
         }
     });
-    if (!eventDateIsBookable(eventDate)) return false;
+    if (!eventDateIsBookable(eventDate)) return [false, tickets];
     const seatIds = tickets.filter(ticket => ticket.seatId);
-    if (eventDate.event.seatType === "seatMap" && seatIds.length !== tickets.length) return false; // all tickets of event with seat reservation need a seatId
-    if (seatIds.map(ticket => ticket.seatId).some((e, i, arr) => arr.indexOf(e) !== i)) return false; //duplicated seat ids in order
+    if (eventDate.event.seatType === "seatMap" && seatIds.length !== tickets.length)
+        return [false, tickets.filter(ticket => !ticket.seatId)]; // all tickets of event with seat reservation need a seatId
+    if (seatIds.map(ticket => ticket.seatId).some((e, i, arr) => arr.indexOf(e) !== i))
+        return [false, tickets.filter((value, index, self) => self.indexOf(value) === index)]; //duplicated seat ids in order
 
     // check seats not already occupied
     const ticketsOccupied = await isTicketOccupied(eventDateId, tickets, reservationId);
-    if (Object.values(ticketsOccupied).length > 0 && Object.values(ticketsOccupied).some(v => v)) return false;
+    if (Object.values(ticketsOccupied).length > 0 && Object.values(ticketsOccupied).some(v => v))
+        return [false, Object.values(ticketsOccupied).filter(a => a[1]).map(a => tickets.find(ticket => ticket.seatId === a[0]))];
 
     const maxTicketAmounts = eventDate.event.categories.reduce((dict, category) => {
         dict[category.categoryId] = category.maxAmount;
@@ -199,14 +202,20 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
     }, {});
 
     let currentAmounts = await getCategoryTicketAmount(eventDateId, tickets, reservationId);
+    let invalidTickets = [];
     for (let ticket of tickets) {
+        if (typeof currentAmounts[ticket.categoryId] === "undefined")
+            currentAmounts[ticket.categoryId] = 0;
         currentAmounts[ticket.categoryId] += ticket.amount;
         if (isNaN(maxTicketAmounts[ticket.categoryId]) || !maxTicketAmounts[ticket.categoryId] || maxTicketAmounts[ticket.categoryId] === 0)
             continue; // category for this event isn't limited
-        if (currentAmounts[ticket.categoryId] > maxTicketAmounts[ticket.categoryId]) return false;
+        if (currentAmounts[ticket.categoryId] > maxTicketAmounts[ticket.categoryId])
+            invalidTickets.push(ticket);
     }
+    if (eventDate.event.seatType === "free" && invalidTickets.length > 0)
+        return [false, invalidTickets];
 
-    return true;
+    return [true, []];
 }
 
 export const getCategoryTicketAmount = async (eventDateId: number, tickets?: Tickets, reservationId?: string): Promise<Record<number, number>> => {

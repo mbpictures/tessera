@@ -31,16 +31,10 @@ export default async function handler(
                 });
             }
 
-            let invalidTickets = [];
             let validTickets = tickets;
-            if (!(await validateOrder(tickets, eventDateId, id))) { // quick check to enhance valid order speed
-                validTickets = [];
-                for (let ticket of tickets) {
-                    if (await validateOrder([ticket], eventDateId, id))
-                        validTickets.push(ticket);
-                    else
-                        invalidTickets.push(ticket);
-                }
+            const [orderValid, invalidTickets] = await validateOrder(tickets, eventDateId, id)
+            if (!orderValid) { // quick check to enhance valid order speed
+                validTickets = tickets.filter(ticket => !invalidTickets.includes(ticket));
             }
 
             const expiresAt = new Date();
