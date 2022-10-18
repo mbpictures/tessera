@@ -14,7 +14,6 @@ import useTranslation from "next-translate/useTranslation";
 import { motion } from "framer-motion";
 import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";
-import { ReservationCountdown } from "../../ReservationCountdown";
 
 export const SeatSelectionFree = ({ categories }) => {
     const order = useAppSelector(selectOrder) as OrderState;
@@ -111,7 +110,6 @@ export const SeatSelectionFree = ({ categories }) => {
                                     }
                                 </b>
                             </Typography>
-                            <ReservationCountdown />
                         </motion.div>
                     </>
                 ) : (

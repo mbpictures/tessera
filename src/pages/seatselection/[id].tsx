@@ -12,6 +12,7 @@ import { eventDateIsBookable } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { getCategoryTicketAmount, getSeatMap } from "../../constants/serverUtil";
 import axios from "axios";
+import { ReservationCountdown } from "../../components/ReservationCountdown";
 
 export default function SeatSelection({
     categories,
@@ -57,6 +58,7 @@ export default function SeatSelection({
             }}
         >
             <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} onSeatAlreadyBooked={loadData} />
+            <ReservationCountdown />
         </Step>
     );
 }

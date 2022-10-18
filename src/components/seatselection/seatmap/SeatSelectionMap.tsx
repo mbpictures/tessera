@@ -1,6 +1,6 @@
 import { SeatRow, SeatSelectionRow } from "./SeatSelectionRow";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Card, Grid, Stack } from "@mui/material";
+import { Card, Grid } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     OrderState,
@@ -9,7 +9,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Seat } from "./SeatMapSeat";
 import { PaymentOverview } from "../../PaymentOverview";
-import { ReservationCountdown } from "../../ReservationCountdown";
 
 export type SeatMap = Array<SeatRow>;
 
@@ -119,12 +118,9 @@ export const SeatSelectionMap = ({
                         display="flex"
                         alignItems="center"
                     >
-                        <Stack flexGrow={1} spacing={2}>
-                            <Card style={{ flex: "1 1 auto", padding: "10px" }}>
-                                <PaymentOverview categories={categories} displayColor />
-                            </Card>
-                            <ReservationCountdown />
-                        </Stack>
+                        <Card style={{ flex: "1 1 auto", padding: "10px" }}>
+                            <PaymentOverview categories={categories} displayColor />
+                        </Card>
                     </Grid>
                 )
             }
