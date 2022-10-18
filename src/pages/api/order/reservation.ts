@@ -45,15 +45,17 @@ export default async function handler(
                     reservationId: id
                 }
             }); // first remove all current
-            const createOp = prisma.seatReservation.createMany({
-                data: validTickets.map(ticket => ({
-                    ...ticket,
-                    expiresAt: expiresAt,
-                    reservationId: id,
-                    eventDateId: eventDateId
-                }))
-            }); // then (re-)create all ticket reservations with update expiration date
-            await prisma.$transaction([deleteOp, createOp]);
+            const createOps = validTickets.map(ticket =>
+                prisma.seatReservation.create({
+                    data: {
+                        ...ticket,
+                        expiresAt: expiresAt,
+                        reservationId: id,
+                        eventDateId: eventDateId
+                    }
+                })
+            ); // then (re-)create all ticket reservations with update expiration date
+            await prisma.$transaction([deleteOp, ...createOps]);
             return res.status(200).json({
                 validTickets,
                 invalidTickets,
