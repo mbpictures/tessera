@@ -194,7 +194,7 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
     // check seats not already occupied
     const ticketsOccupied = await isTicketOccupied(eventDateId, tickets, reservationId);
     if (Object.values(ticketsOccupied).length > 0 && Object.values(ticketsOccupied).some(v => v))
-        return [false, Object.values(ticketsOccupied).filter(a => a[1]).map(a => tickets.find(ticket => ticket.seatId === a[0]))];
+        return [false, Object.entries(ticketsOccupied).filter(a => a[1]).map(a => tickets.find(ticket => ticket.seatId === parseInt(a[0])))];
 
     const maxTicketAmounts = eventDate.event.categories.reduce((dict, category) => {
         dict[category.categoryId] = category.maxAmount;
