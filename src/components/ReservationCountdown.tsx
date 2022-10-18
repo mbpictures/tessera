@@ -32,13 +32,14 @@ export const ReservationCountdown = () => {
     const hideInfo = remainingSeconds < -120;
     return (
         <Card style={{
-            padding: `10px 10px ${order.reservationExpiresAt && !hideInfo ? 50 : 0}px 10px`,
+            padding: `10px 10px 10px 10px`,
             position: "absolute",
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: order.reservationExpiresAt && !hideInfo ? "100%" : 0,
             transition: ".3s ease",
-            backgroundColor: theme.palette.primary.light
+            backgroundColor: theme.palette.primary.light,
+            zIndex: -1
         }}>
             {
                 (order.reservationExpiresAt && !hideInfo) && (
