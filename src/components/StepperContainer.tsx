@@ -9,6 +9,7 @@ import style from "../style/StepperContainer.module.scss";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
 import useTranslation from "next-translate/useTranslation";
 import { LanguageSelection } from "./LanguageSelection";
+import { ReservationCountdown } from "./ReservationCountdown";
 
 interface Props {
     onNext?: () => unknown;
@@ -16,6 +17,7 @@ interface Props {
     disableOverflow?: boolean;
     noNext?: boolean;
     children?: React.ReactNode;
+    withReservationCountdown?: boolean;
 }
 
 const decodeHtml = (str) => {
@@ -111,47 +113,51 @@ export const StepperContainer = (props: Props) => {
                 >
                     {props.children}
                 </Box>
-                <Paper
-                    sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
-                    elevation={20}
-                    ref={bottomBar}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            pt: 2,
-                            padding: "5px 0"
-                        }}
+                <Box sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}>
+                    {
+                        props.withReservationCountdown && <ReservationCountdown />
+                    }
+                    <Paper
+                        elevation={20}
+                        ref={bottomBar}
                     >
-                        <Button
-                            color="inherit"
-                            sx={{ mr: 1 }}
-                            onClick={handleBack}
-                            id={"stepper-back-button"}
-                            style={{
-                                opacity: currentStep > 0 ? 1 : 0
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                pt: 2,
+                                padding: "5px 0"
                             }}
                         >
-                            {t("back")}
-                        </Button>
+                            <Button
+                                color="inherit"
+                                sx={{ mr: 1 }}
+                                onClick={handleBack}
+                                id={"stepper-back-button"}
+                                style={{
+                                    opacity: currentStep > 0 ? 1 : 0
+                                }}
+                            >
+                                {t("back")}
+                            </Button>
 
-                        <Box sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
-                            <LanguageSelection />
+                            <Box sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+                                <LanguageSelection />
+                            </Box>
+
+                            <Button
+                                onClick={handleNext}
+                                disabled={!nextDisabled}
+                                id={"stepper-next-button"}
+                                style={{
+                                    opacity: !props.noNext ? 1 : 0
+                                }}
+                            >
+                                {t("next")}
+                            </Button>
                         </Box>
-
-                        <Button
-                            onClick={handleNext}
-                            disabled={!nextDisabled}
-                            id={"stepper-next-button"}
-                            style={{
-                                opacity: !props.noNext ? 1 : 0
-                            }}
-                        >
-                            {t("next")}
-                        </Button>
-                    </Box>
-                </Paper>
+                    </Paper>
+                </Box>
             </React.Fragment>
         </Box>
     );

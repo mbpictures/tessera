@@ -1,5 +1,7 @@
 import { formatPrice } from "../../../src/constants/util";
 import { faker } from '@faker-js/faker';
+import chaiColors from 'chai-colors';
+chai.use(chaiColors);
 
 const encodeString = (rawStr) => {
     return rawStr.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
@@ -579,6 +581,38 @@ describe("Buy tickets", () => {
                     );
                     eventDateId = body.dates[0].id;
                 });
+            });
+        });
+    });
+
+    it("Seat reservation", () => {
+        cy.fixture("admin/events").then((eventsFixture) => {
+            const seats = eventsFixture.events[1].seatMap.flat(2).filter((seat) => seat.type !== "space");
+            cy.visit("/seatselection/2?event=2");
+            // simulate other user reservating seat before we are
+            cy.request({
+                url: "/api/order/reservation",
+                method: "PUT",
+                body: {
+                    eventDateId: 2,
+                    id: "000000000001",
+                    tickets: [
+                        {
+                            categoryId: seats[0].category + 1,
+                            seatId: seats[0].id,
+                            amount: seats[0].amount
+                        }
+                    ]
+                }
+            });
+            cy.get("#seat-reservation-error").should("not.exist");
+            cy.get(".seat-selection-seatmap-seat").eq(0).click();
+            cy.get("#seat-reservation-error").should("exist");
+            cy.get("#seat-reservation-error-close").click();
+            cy.get(".seat-selection-seatmap-seat").eq(0).then(elem => {
+                cy.wrap(elem, {timeout: 62000})
+                    .should("have.css", "background-color")
+                    .and("be.colored", eventsFixture.categories[seats[0].category].occupiedColor.toLowerCase());
             });
         });
     });

@@ -61,16 +61,16 @@ export const SeatMapSeat = ({
     );
     if (!category) return null;
 
-    const color = seat.occupied
+    const color = isSelected
+        ? category.activeColor ?? SEAT_COLORS.active
+        : seat.occupied
         ? category.occupiedColor ?? SEAT_COLORS.occupied
-        : !isSelected
-        ? category.color ?? SEAT_COLORS.normal
-        : category.activeColor ?? SEAT_COLORS.active;
+        : category.color ?? SEAT_COLORS.normal;
     return (
         <Tooltip
             title={
                 <React.Fragment>
-                    {seat.occupied ? (
+                    {(seat.occupied && !isSelected) ? (
                         <Typography>
                             This seat has already been booked
                         </Typography>

@@ -5,6 +5,8 @@ export interface OrderState {
     tickets: Tickets;
     orderId?: string;
     ticketPersonalizationRequired: boolean;
+    reservationId?: string;
+    reservationExpiresAt?: number;
 }
 
 export interface Ticket {
@@ -41,10 +43,16 @@ export const orderSlice = createSlice({
         setTicketPersonalizationRequired: (state, action: PayloadAction<boolean>) => {
             state.ticketPersonalizationRequired = action.payload;
         },
+        setReservationId: (state, action: PayloadAction<string>) => {
+            state.reservationId = action.payload;
+        },
+        setReservationExpiresAt: (state, action: PayloadAction<number>) => {
+            state.reservationExpiresAt = action.payload;
+        },
         resetOrder: () => initialState
     }
 });
 
-export const { setTickets, setOrderId, resetOrder, setTicketFirstName, setTicketLastName, setTicketPersonalizationRequired } = orderSlice.actions;
+export const { setTickets, setOrderId, resetOrder, setTicketFirstName, setTicketLastName, setTicketPersonalizationRequired, setReservationId, setReservationExpiresAt } = orderSlice.actions;
 export const selectOrder = (state: RootState) => state.order;
 export default orderSlice.reducer;

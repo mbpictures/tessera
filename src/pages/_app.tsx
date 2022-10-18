@@ -59,6 +59,7 @@ const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pa
                     onNext={() => setDirection(1)}
                     disableOverflow={pageProps.disableOverflow ?? false}
                     noNext={pageProps.noNext ?? false}
+                    withReservationCountdown={pageProps.withReservationCountdown ?? false}
                 >
                     <AnimatePresence exitBeforeEnter initial={false}>
                         <Component

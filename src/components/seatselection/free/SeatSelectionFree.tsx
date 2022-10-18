@@ -46,7 +46,10 @@ export const SeatSelectionFree = ({ categories }) => {
     };
 
     const price = order.tickets.reduce((a, ticket) => a + categories.find(category => category.id === ticket.categoryId).price, 0);
-    categories = categories.filter(category => category.ticketsLeft != null ? category.ticketsLeft > 0 : true);
+    categories = categories
+        .filter(category => (category.ticketsLeft !== null ? category.ticketsLeft > 0 : true) ||
+            (order.tickets.some(ticket => ticket.categoryId === category.id && order.reservationExpiresAt && order.reservationExpiresAt > new Date().getTime()))
+        );
 
     return (
         <Grid

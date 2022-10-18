@@ -9,7 +9,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/system";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -49,6 +49,10 @@ export const SeatSelectionFreeEntry = ({
 
     const [ticketAmount, setTicketAmount] = useState<number>(tickets.filter(ticket => ticket.categoryId === category).length);
     const { t } = useTranslation();
+
+    useEffect(() => {
+        setTicketAmount(tickets.filter(ticket => ticket.categoryId === category).length)
+    }, [tickets]);
 
     const getTicketsLeft = (categoryId?: number) => {
         return categories.find((value) => value.id === (categoryId ?? category))?.ticketsLeft ?? Infinity;

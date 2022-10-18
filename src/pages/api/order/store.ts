@@ -68,7 +68,8 @@ async function handler(
         if (!idempotencyKey)
             return res.status(410).end("Idempotency Key missing");
         // users may try to cheat their order using postman or some other interceptor, we need to check server side
-        if (!(await validateOrder(order.tickets, eventDateId)))
+        const [isValid] = await validateOrder(order.tickets, eventDateId, order.reservationId)
+        if (!isValid)
             return res.status(411).end("Order not valid");
         let orderDB = await prisma.order.findUnique({
             where: {
@@ -109,6 +110,16 @@ async function handler(
                 }
             });
         }
+
+        try {
+            if (order.reservationId) {
+                await prisma.seatReservation.deleteMany({
+                    where: {
+                        reservationId: order.reservationId
+                    }
+                });
+            }
+        } catch (e) {} // not fatal
 
         res.status(200).json({
             userId: orderDB.user.id,

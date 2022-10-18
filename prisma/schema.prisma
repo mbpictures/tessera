@@ -32,6 +32,7 @@ model EventDate {
     orders              Order[]
     ticketSaleStartDate DateTime?
     ticketSaleEndDate   DateTime?
+    seatReservations    SeatReservation[]
 }
 
 model SeatMap {
@@ -94,6 +95,17 @@ model Order {
     date            DateTime    @default(now())
     task            Task?
     idempotencyKey  String      @unique
+}
+
+model SeatReservation {
+    id              String      @default(uuid()) @id
+    reservationId   String
+    seatId          Int?
+    categoryId      Int
+    amount          Int         @default(1)
+    expiresAt       DateTime
+    eventDateId     Int
+    eventDate       EventDate   @relation(fields: [eventDateId], references: [id])
 }
 
 model Ticket {
