@@ -29,9 +29,10 @@ export const ReservationCountdown = () => {
     const minutes = Math.floor((remainingSeconds / 60) % 60);
     const seconds = Math.floor(remainingSeconds % 60);
     const isOver = remainingSeconds <= 0;
+    const hideInfo = remainingSeconds < -120;
     return (
         <Card style={{
-            padding: `10px 10px ${order.reservationExpiresAt ? 50 : 0}px 10px`,
+            padding: `10px 10px ${order.reservationExpiresAt && !hideInfo ? 50 : 0}px 10px`,
             position: "absolute",
             left: 0,
             right: 0,
@@ -40,7 +41,7 @@ export const ReservationCountdown = () => {
             backgroundColor: theme.palette.primary.light
         }}>
             {
-                order.reservationExpiresAt && (
+                (order.reservationExpiresAt && !hideInfo) && (
                     isOver ? (
                         <Typography variant={"body2"} textAlign={"center"}>{t("common:seat-reservation-time-over")}</Typography>
                     ) : (
