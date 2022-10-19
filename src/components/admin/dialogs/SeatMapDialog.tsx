@@ -166,13 +166,13 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                     item
                     md={12}
                     lg={8}
-                    style={{ maxWidth: "100%" }}
                     ref={container}
                 >
                     <TransformWrapper
                         centerOnInit
                         centerZoomedOut
                         minScale={scale}
+                        limitToBounds
                     >
                         <TransformComponent
                             wrapperStyle={{ width: "100%", height: "100%" }}
