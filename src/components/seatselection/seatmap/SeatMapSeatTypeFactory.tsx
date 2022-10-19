@@ -8,12 +8,14 @@ export const SeatMapSeatTypeFactory = ({
     data,
     categories,
     onSelectSeat,
-    forceNoRedux
+    forceNoRedux,
+    index
 }: {
     data: SeatType;
     categories;
     onSelectSeat?: OnSeatSelect;
     forceNoRedux?: boolean;
+    index: number;
 }) => {
     if (data.type === "seat") {
         return (
@@ -22,6 +24,7 @@ export const SeatMapSeatTypeFactory = ({
                 categories={categories}
                 onSeatSelect={onSelectSeat}
                 forceNoRedux={forceNoRedux}
+                index={index}
             />
         );
     }

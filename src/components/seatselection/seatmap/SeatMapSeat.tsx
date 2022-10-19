@@ -16,13 +16,14 @@ export interface Seat {
     occupied?: boolean;
 }
 
-export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
+export type OnSeatSelect = (seat: Seat, indexInRow, isSelected: boolean) => unknown;
 
 export const SeatMapSeat = ({
     seat,
     categories,
     onSeatSelect,
-    forceNoRedux
+    forceNoRedux,
+    index
 }: {
     seat: Seat;
     categories: Array<{
@@ -36,6 +37,7 @@ export const SeatMapSeat = ({
     }>;
     onSeatSelect?: OnSeatSelect;
     forceNoRedux?: boolean;
+    index: number;
 }) => {
     const [isSelected, setIsSelected] = useState(false);
     const reduxOrder = (useAppSelector(selectOrder) as OrderState);
@@ -52,7 +54,7 @@ export const SeatMapSeat = ({
 
     const handleSelect = () => {
         if (seat.occupied) return;
-        if (onSeatSelect) onSeatSelect(seat, !isSelected);
+        if (onSeatSelect) onSeatSelect(seat, index, !isSelected);
         setIsSelected((prev) => !prev);
     };
 

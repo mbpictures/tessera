@@ -79,7 +79,7 @@ export const SeatSelectionMap = ({
         dispatch(setTickets(newOrder.tickets));
     };
 
-    const handleSelectSeat = (seat: Seat, isSelected: boolean) => {
+    const handleSelectSeat = (seat: Seat, indexInRow, isSelected: boolean) => {
         if (isSelected) {
             addSeat(seat);
             return;

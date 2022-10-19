@@ -80,16 +80,10 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
         setSeatmapDefinition(newSeatmapDefinition);
     };
 
-    const handleDeleteSeat = (seat: Seat, isSelected: boolean) => {
+    const handleDeleteSeat = (seat: Seat, indexInRow, isSelected: boolean, rowIndex) => {
         if (!isSelected) return;
         let newSeatmapDefinition = copySeatmapDefinition();
-        const rowIndex = newSeatmapDefinition.findIndex((row) =>
-            row.some((filterSeat) => filterSeat.id === seat.id)
-        );
-        const seatIndex = newSeatmapDefinition[rowIndex].findIndex(
-            (value) => value.id === seat.id
-        );
-        newSeatmapDefinition[rowIndex].splice(seatIndex, 1);
+        newSeatmapDefinition[rowIndex].splice(indexInRow, 1);
         setSeatmapDefinition(newSeatmapDefinition);
     };
 
@@ -196,7 +190,7 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                             key={`row${index}`}
                                             row={row}
                                             categories={categories}
-                                            onSelectSeat={handleDeleteSeat}
+                                            onSelectSeat={(seat, indexInRow, isSelected) => handleDeleteSeat(seat, indexInRow, isSelected, index)}
                                             onAddSeat={(seat, seatIndex) =>
                                                 handleAddSeat(
                                                     index,

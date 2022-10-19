@@ -23,6 +23,7 @@ export const SeatSelectionRow = ({
                     categories={categories}
                     onSelectSeat={onSelectSeat}
                     forceNoRedux={forceNoRedux}
+                    index={index}
                 />
             ))}
         </div>
