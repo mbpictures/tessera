@@ -1,4 +1,4 @@
-import { OnSeatSelect, Seat } from "../../seatselection/seatmap/SeatMapSeat";
+import { OnContextMenu, OnSeatSelect, Seat } from "../../seatselection/seatmap/SeatMapSeat";
 import { SeatRow, SeatSelectionRow } from "../../seatselection/seatmap/SeatSelectionRow";
 import {
     Box,
@@ -16,26 +16,37 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import RemoveIcon from "@mui/icons-material/Remove";
 
 export type OnAddSeat = (seat: Seat, index: number) => unknown;
+export type OnChangeSeat = (newSeat: Seat, index) => unknown;
 
 export const SeatSelectionRowEditor = ({
     row,
     categories,
     onSelectSeat,
-    onAddSeat
+    onAddSeat,
+    onChangeSeat
 }: {
     row: SeatRow;
     categories: Array<any>;
     onSelectSeat?: OnSeatSelect;
     onAddSeat?: OnAddSeat;
+    onChangeSeat?: OnChangeSeat;
 }) => {
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>(null);
     const [newSeatIndex, setNewSeatIndex] = useState<number>(-1);
     const [seatAmount, setSeatAmount] = useState<number>(0);
+    const [seatContext, setSeatContext] = useState(null);
 
     const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
         setSeatAmount(1);
         setNewSeatIndex(row.length);
+    };
+
+    const handleContextMenu: OnContextMenu = (event, seat, indexInRow) => {
+        setAnchorEl(event.currentTarget);
+        setSeatContext(seat);
+        setNewSeatIndex(indexInRow);
+        setSeatAmount(seat.amount);
     };
 
     const handleClose = () => {
@@ -44,6 +55,16 @@ export const SeatSelectionRowEditor = ({
     };
 
     const handleAddSeat = (category) => {
+        if (seatContext) {
+            onChangeSeat({
+                category: category?.id,
+                amount: seatAmount,
+                type: category === undefined ? "space" : "seat",
+                id: seatContext.id
+            }, newSeatIndex);
+            handleClose();
+            return;
+        }
         onAddSeat(
             {
                 category: category?.id,
@@ -68,12 +89,20 @@ export const SeatSelectionRowEditor = ({
     const mutatedRow = row.map((a) => {
         return { ...a };
     });
-    if (newSeatIndex >= 0) {
+    if (newSeatIndex >= 0 && !seatContext) {
         mutatedRow.splice(newSeatIndex, 0, {
             type: "seat",
             category: -1,
             amount: seatAmount
         });
+    }
+    if (seatContext) {
+        mutatedRow[newSeatIndex] = {
+            id: seatContext.id,
+            type: "seat",
+            category: seatContext.category,
+            amount: seatAmount
+        };
     }
 
     const mutatedCategories = categories.map((a) => {
@@ -94,6 +123,7 @@ export const SeatSelectionRowEditor = ({
                 categories={mutatedCategories}
                 forceNoRedux
                 onSelectSeat={onSelectSeat}
+                onContextMenu={handleContextMenu}
             />
             <IconButton onClick={handleOpenMenu}>
                 <AddIcon />
@@ -108,21 +138,27 @@ export const SeatSelectionRowEditor = ({
                 }}
             >
                 <Stack p={1} alignItems={"center"} spacing={1}>
-                    <Typography>Position:</Typography>
-                    <ButtonGroup orientation="horizontal">
-                        <Button
-                            onClick={handleLeft}
-                            disabled={newSeatIndex <= 0}
-                        >
-                            <ChevronLeftIcon />
-                        </Button>
-                        <Button
-                            onClick={handleRight}
-                            disabled={newSeatIndex >= row.length}
-                        >
-                            <ChevronRightIcon />
-                        </Button>
-                    </ButtonGroup>
+                    {
+                        !seatContext && (
+                            <>
+                                <Typography>Position:</Typography>
+                                <ButtonGroup orientation="horizontal">
+                                    <Button
+                                        onClick={handleLeft}
+                                        disabled={newSeatIndex <= 0}
+                                    >
+                                        <ChevronLeftIcon />
+                                    </Button>
+                                    <Button
+                                        onClick={handleRight}
+                                        disabled={newSeatIndex >= row.length}
+                                    >
+                                        <ChevronRightIcon />
+                                    </Button>
+                                </ButtonGroup>
+                            </>
+                        )
+                    }
                     <Typography>Amount:</Typography>
                     <ButtonGroup orientation="horizontal">
                         <Button

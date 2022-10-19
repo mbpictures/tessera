@@ -80,6 +80,13 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
         setSeatmapDefinition(newSeatmapDefinition);
     };
 
+    const handleChangeSeat = (rowIndex, newSeat: Seat, index: number) => {
+        console.log(rowIndex);
+        const newSeatmapDefinition = copySeatmapDefinition();
+        newSeatmapDefinition[rowIndex][index] = newSeat;
+        setSeatmapDefinition(newSeatmapDefinition);
+    };
+
     const handleDeleteSeat = (seat: Seat, indexInRow, isSelected: boolean, rowIndex) => {
         if (!isSelected) return;
         let newSeatmapDefinition = copySeatmapDefinition();
@@ -198,6 +205,7 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                                     seatIndex
                                                 )
                                             }
+                                            onChangeSeat={(seat, indexInRow) => handleChangeSeat(index, seat, indexInRow)}
                                         />
                                     );
                                 })}
