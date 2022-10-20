@@ -56,7 +56,10 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category }: prop
         onSubmit: async (values) => {
             try {
                 if (category) {
-                    await axios.put("/api/admin/category/" + category.id, values);
+                    await axios.put("/api/admin/category/" + category.id, {
+                        ...values,
+                        price: parseFloat(values.price)
+                    });
                 }
                 else {
                     await axios.post("/api/admin/category", values);
