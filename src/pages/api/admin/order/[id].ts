@@ -21,7 +21,8 @@ export default async function handler(
             id: id as string
         },
         include: {
-            tickets: true
+            tickets: true,
+            task: true
         }
     });
 
@@ -40,6 +41,11 @@ export default async function handler(
                 });
             })
         );
+        await prisma.task.delete({
+            where: {
+                id: order.task.id
+            }
+        })
         await prisma.order.delete({
             where: {
                 id: id as string
