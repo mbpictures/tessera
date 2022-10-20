@@ -54,6 +54,9 @@ export const SeatSelectionRowEditor = ({
     const handleClose = () => {
         setAnchorEl(null);
         setNewSeatIndex(-1);
+        setSeatContext(null);
+        setSeatId("");
+        setSeatAmount(1);
     };
 
     const handleAddSeat = (category) => {
