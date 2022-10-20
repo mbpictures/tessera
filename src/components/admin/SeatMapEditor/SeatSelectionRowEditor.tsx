@@ -6,7 +6,7 @@ import {
     ButtonGroup,
     IconButton,
     Popover,
-    Stack,
+    Stack, TextField,
     Typography
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -35,6 +35,7 @@ export const SeatSelectionRowEditor = ({
     const [newSeatIndex, setNewSeatIndex] = useState<number>(-1);
     const [seatAmount, setSeatAmount] = useState<number>(0);
     const [seatContext, setSeatContext] = useState(null);
+    const [seatId, setSeatId] = useState("");
 
     const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -47,6 +48,7 @@ export const SeatSelectionRowEditor = ({
         setSeatContext(seat);
         setNewSeatIndex(indexInRow);
         setSeatAmount(seat.amount);
+        setSeatId(seat.id.toString() ?? "");
     };
 
     const handleClose = () => {
@@ -60,7 +62,7 @@ export const SeatSelectionRowEditor = ({
                 category: category?.id,
                 amount: seatAmount,
                 type: category === undefined ? "space" : "seat",
-                id: seatContext.id
+                id: parseInt(seatId)
             }, newSeatIndex);
             handleClose();
             return;
@@ -69,7 +71,8 @@ export const SeatSelectionRowEditor = ({
             {
                 category: category?.id,
                 amount: seatAmount,
-                type: category === undefined ? "space" : "seat"
+                type: category === undefined ? "space" : "seat",
+                ...(seatId !== "" && ({id: parseInt(seatId)}))
             },
             newSeatIndex
         );
@@ -138,11 +141,17 @@ export const SeatSelectionRowEditor = ({
                 }}
             >
                 <Stack p={1} alignItems={"center"} spacing={1}>
+                    <TextField
+                        label={"Id"}
+                        value={seatId}
+                        onChange={event => setSeatId(event.target.value)}
+                        size={"small"}
+                    />
                     {
                         !seatContext && (
                             <>
                                 <Typography>Position:</Typography>
-                                <ButtonGroup orientation="horizontal">
+                                <ButtonGroup orientation="horizontal" fullWidth>
                                     <Button
                                         onClick={handleLeft}
                                         disabled={newSeatIndex <= 0}
@@ -160,7 +169,7 @@ export const SeatSelectionRowEditor = ({
                         )
                     }
                     <Typography>Amount:</Typography>
-                    <ButtonGroup orientation="horizontal">
+                    <ButtonGroup orientation="horizontal" fullWidth>
                         <Button
                             onClick={() => setSeatAmount((prev) => prev - 1)}
                             disabled={seatAmount <= 1}
@@ -178,7 +187,7 @@ export const SeatSelectionRowEditor = ({
                         <br />
                         to Add Seat:
                     </Typography>
-                    <ButtonGroup orientation="vertical">
+                    <ButtonGroup orientation="vertical" fullWidth>
                         {categories.map((category, index) => (
                             <Button
                                 key={index}
