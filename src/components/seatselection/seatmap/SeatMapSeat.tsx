@@ -16,13 +16,16 @@ export interface Seat {
     occupied?: boolean;
 }
 
-export type OnSeatSelect = (seat: Seat, isSelected: boolean) => unknown;
+export type OnSeatSelect = (seat: Seat, indexInRow, isSelected: boolean) => unknown;
+export type OnContextMenu = (event: React.MouseEvent<HTMLDivElement>, seat: Seat, indexInRow, isSelected: boolean) => unknown;
 
 export const SeatMapSeat = ({
     seat,
     categories,
     onSeatSelect,
-    forceNoRedux
+    forceNoRedux,
+    index,
+    onContextMenu
 }: {
     seat: Seat;
     categories: Array<{
@@ -35,7 +38,9 @@ export const SeatMapSeat = ({
         occupiedColor?: string;
     }>;
     onSeatSelect?: OnSeatSelect;
+    onContextMenu?: OnContextMenu;
     forceNoRedux?: boolean;
+    index: number;
 }) => {
     const [isSelected, setIsSelected] = useState(false);
     const reduxOrder = (useAppSelector(selectOrder) as OrderState);
@@ -52,8 +57,14 @@ export const SeatMapSeat = ({
 
     const handleSelect = () => {
         if (seat.occupied) return;
-        if (onSeatSelect) onSeatSelect(seat, !isSelected);
+        if (onSeatSelect) onSeatSelect(seat, index, !isSelected);
         setIsSelected((prev) => !prev);
+    };
+
+    const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (!onContextMenu) return;
+        event.preventDefault();
+        onContextMenu(event, seat, index, isSelected);
     };
 
     const category = categories.find(
@@ -107,6 +118,7 @@ export const SeatMapSeat = ({
                     transition: { duration: 0.1, delay: 0 }
                 }}
                 onClick={handleSelect}
+                onContextMenu={handleContextMenu}
             >
                 <span>{seat.id}</span>
             </motion.div>

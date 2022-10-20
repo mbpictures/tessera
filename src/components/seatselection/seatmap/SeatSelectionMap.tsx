@@ -79,7 +79,7 @@ export const SeatSelectionMap = ({
         dispatch(setTickets(newOrder.tickets));
     };
 
-    const handleSelectSeat = (seat: Seat, isSelected: boolean) => {
+    const handleSelectSeat = (seat: Seat, indexInRow, isSelected: boolean) => {
         if (isSelected) {
             addSeat(seat);
             return;
@@ -89,8 +89,8 @@ export const SeatSelectionMap = ({
 
     return (
         <Grid container style={{ maxHeight: "100%" }} ref={container}>
-            <Grid item md={12} lg={8} style={{ maxWidth: "100%" }}>
-                <TransformWrapper centerOnInit centerZoomedOut minScale={scale}>
+            <Grid item md={12} lg={8}>
+                <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
                     <TransformComponent wrapperStyle={{ width: "100%" }}>
                         <div
                             style={{ display: "flex", flexDirection: "column" }}

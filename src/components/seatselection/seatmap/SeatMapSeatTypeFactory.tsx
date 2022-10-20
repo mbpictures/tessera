@@ -1,4 +1,4 @@
-import { OnSeatSelect, Seat, SeatMapSeat, SeatMapSpace } from "./SeatMapSeat";
+import { OnContextMenu, OnSeatSelect, Seat, SeatMapSeat, SeatMapSpace } from "./SeatMapSeat";
 
 interface SeatType extends Seat {
     type: "seat" | "space";
@@ -8,12 +8,16 @@ export const SeatMapSeatTypeFactory = ({
     data,
     categories,
     onSelectSeat,
-    forceNoRedux
+    forceNoRedux,
+    index,
+    onContextMenu
 }: {
     data: SeatType;
     categories;
     onSelectSeat?: OnSeatSelect;
+    onContextMenu?: OnContextMenu;
     forceNoRedux?: boolean;
+    index: number;
 }) => {
     if (data.type === "seat") {
         return (
@@ -22,6 +26,8 @@ export const SeatMapSeatTypeFactory = ({
                 categories={categories}
                 onSeatSelect={onSelectSeat}
                 forceNoRedux={forceNoRedux}
+                index={index}
+                onContextMenu={onContextMenu}
             />
         );
     }

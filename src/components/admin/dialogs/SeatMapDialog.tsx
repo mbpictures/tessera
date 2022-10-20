@@ -23,6 +23,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box } from "@mui/system";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import { SeatMapTemplateEditor } from "../SeatMapEditor/SeatMapTemplateEditor";
 
 const isJson = (str) => {
     try {
@@ -80,16 +81,17 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
         setSeatmapDefinition(newSeatmapDefinition);
     };
 
-    const handleDeleteSeat = (seat: Seat, isSelected: boolean) => {
+    const handleChangeSeat = (rowIndex, newSeat: Seat, index: number) => {
+        console.log(rowIndex);
+        const newSeatmapDefinition = copySeatmapDefinition();
+        newSeatmapDefinition[rowIndex][index] = newSeat;
+        setSeatmapDefinition(newSeatmapDefinition);
+    };
+
+    const handleDeleteSeat = (seat: Seat, indexInRow, isSelected: boolean, rowIndex) => {
         if (!isSelected) return;
         let newSeatmapDefinition = copySeatmapDefinition();
-        const rowIndex = newSeatmapDefinition.findIndex((row) =>
-            row.some((filterSeat) => filterSeat.id === seat.id)
-        );
-        const seatIndex = newSeatmapDefinition[rowIndex].findIndex(
-            (value) => value.id === seat.id
-        );
-        newSeatmapDefinition[rowIndex].splice(seatIndex, 1);
+        newSeatmapDefinition[rowIndex].splice(indexInRow, 1);
         setSeatmapDefinition(newSeatmapDefinition);
     };
 
@@ -172,13 +174,13 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                     item
                     md={12}
                     lg={8}
-                    style={{ maxWidth: "100%" }}
                     ref={container}
                 >
                     <TransformWrapper
                         centerOnInit
                         centerZoomedOut
                         minScale={scale}
+                        limitToBounds
                     >
                         <TransformComponent
                             wrapperStyle={{ width: "100%", height: "100%" }}
@@ -196,7 +198,7 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                             key={`row${index}`}
                                             row={row}
                                             categories={categories}
-                                            onSelectSeat={handleDeleteSeat}
+                                            onSelectSeat={(seat, indexInRow, isSelected) => handleDeleteSeat(seat, indexInRow, isSelected, index)}
                                             onAddSeat={(seat, seatIndex) =>
                                                 handleAddSeat(
                                                     index,
@@ -204,6 +206,7 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                                     seatIndex
                                                 )
                                             }
+                                            onChangeSeat={(seat, indexInRow) => handleChangeSeat(index, seat, indexInRow)}
                                         />
                                     );
                                 })}
@@ -241,6 +244,18 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                         </Button>
                                     </label>
                                 </Stack>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography>Templates</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <SeatMapTemplateEditor
+                                    onSeatMapChange={(newSeatMap) => setSeatmapDefinition(newSeatMap)}
+                                    categories={categories}
+                                    seatDefinition={seatmapDefinition}
+                                />
                             </AccordionDetails>
                         </Accordion>
                         <Accordion>
