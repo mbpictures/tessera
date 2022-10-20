@@ -172,8 +172,9 @@ export default function Orders({ permissionDenied, count, categories, eventDates
             <OrderDetailsDialog
                 order={order}
                 onClose={handleCloseDetails}
-                onMarkAsPayed={refreshProps}
-                onMarkAsShipped={refreshProps}
+                onMarkAsPayed={() => loadOrders(filter.current)}
+                onMarkAsShipped={() => loadOrders(filter.current)}
+                onDelete={() => loadOrders(filter.current)}
                 categories={categories}
             />
             <MarkOrdersAsPayedDialog

@@ -1,4 +1,5 @@
 import {
+    Button,
     Dialog,
     DialogContent,
     DialogContentText,
@@ -14,15 +15,21 @@ import TabPanel from "@mui/lab/TabPanel";
 import React, { useState } from "react";
 import { OrderDeliveryInformationDetails, OrderPaymentInformationDetails } from "../OrderInformationDetails";
 import { getEventTitle } from "../../../constants/util";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { useSnackbar } from "notistack";
+import axios from "axios";
 
 export const OrderDetailsDialog = ({
     order,
     onClose,
     onMarkAsPayed,
     onMarkAsShipped,
+    onDelete,
     categories
 }) => {
     const [detailsTab, setDetailsTab] = useState("overview");
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const {enqueueSnackbar} = useSnackbar();
 
     if (order === null) return null;
 
@@ -35,61 +42,82 @@ export const OrderDetailsDialog = ({
         if (onClose) onClose();
     };
 
+    const handleDeleteOrder = async () => {
+        try {
+            await axios.delete("/api/admin/order/" + order.id);
+            onClose();
+            onDelete();
+        } catch (e) {
+            enqueueSnackbar("Error deleting order: " + (e?.response?.data), {variant: "error"});
+        }
+    }
+
     return (
-        <Dialog open={true} onClose={handleClose} fullWidth>
-            <DialogTitle>Order Details</DialogTitle>
-            <DialogContent>
-                <TabContext value={detailsTab}>
-                    <TabList onChange={handleDetailsTabChange} centered>
-                        <Tab value="overview" label="Overview" />
-                        <Tab value="payment" label="Payment" />
-                        <Tab value="delivery" label="Delivery" />
-                    </TabList>
-                    <TabPanel value={"overview"}>
-                        <DialogContentText>
+        <>
+            <Dialog open={true} onClose={handleClose} fullWidth>
+                <DialogTitle>Order Details</DialogTitle>
+                <DialogContent>
+                    <TabContext value={detailsTab}>
+                        <TabList onChange={handleDetailsTabChange} centered>
+                            <Tab value="overview" label="Overview" />
+                            <Tab value="payment" label="Payment" />
+                            <Tab value="delivery" label="Delivery" />
+                        </TabList>
+                        <TabPanel value={"overview"}>
+                            <DialogContentText>
+                                <Stack spacing={1}>
+                                    <Typography>
+                                        Event: {getEventTitle(order.eventDate)}
+                                        <br />
+                                        OrderID: {order.id}
+                                        <br />
+                                        Date: {new Date(order.date).toLocaleString()}
+                                    </Typography>
+                                    <Divider />
+                                    <Typography>
+                                        {order.user.firstName} {order.user.lastName}
+                                        <br />
+                                        {order.user.email}
+                                        <br />
+                                        {order.user.address}
+                                        <br />
+                                        {order.user.zip} {order.user.city}
+                                        <br />
+                                        {order.user.countryCode}{" "}
+                                        {order.user.regionCode}
+                                    </Typography>
+                                    <Button color={"error"} onClick={() => setDeleteOpen(true)}>
+                                        Delete
+                                    </Button>
+                                </Stack>
+                            </DialogContentText>
+                        </TabPanel>
+                        <TabPanel value={"payment"}>
                             <Stack spacing={1}>
-                                <Typography>
-                                    Event: {getEventTitle(order.eventDate)}
-                                    <br />
-                                    OrderID: {order.id}
-                                    <br />
-                                    Date: {new Date(order.date).toLocaleString()}
-                                </Typography>
-                                <Divider />
-                                <Typography>
-                                    {order.user.firstName} {order.user.lastName}
-                                    <br />
-                                    {order.user.email}
-                                    <br />
-                                    {order.user.address}
-                                    <br />
-                                    {order.user.zip} {order.user.city}
-                                    <br />
-                                    {order.user.countryCode}{" "}
-                                    {order.user.regionCode}
-                                </Typography>
+                                <OrderPaymentInformationDetails
+                                    order={order}
+                                    onMarkAsPayed={onMarkAsPayed}
+                                />
                             </Stack>
-                        </DialogContentText>
-                    </TabPanel>
-                    <TabPanel value={"payment"}>
-                        <Stack spacing={1}>
-                            <OrderPaymentInformationDetails
-                                order={order}
-                                onMarkAsPayed={onMarkAsPayed}
-                            />
-                        </Stack>
-                    </TabPanel>
-                    <TabPanel value={"delivery"}>
-                        <Stack spacing={1}>
-                            <OrderDeliveryInformationDetails
-                                order={order}
-                                onMarkAsShipped={onMarkAsShipped}
-                                categories={categories}
-                            />
-                        </Stack>
-                    </TabPanel>
-                </TabContext>
-            </DialogContent>
-        </Dialog>
+                        </TabPanel>
+                        <TabPanel value={"delivery"}>
+                            <Stack spacing={1}>
+                                <OrderDeliveryInformationDetails
+                                    order={order}
+                                    onMarkAsShipped={onMarkAsShipped}
+                                    categories={categories}
+                                />
+                            </Stack>
+                        </TabPanel>
+                    </TabContext>
+                </DialogContent>
+            </Dialog>
+            <ConfirmDialog
+                open={deleteOpen}
+                onClose={() => setDeleteOpen(false)}
+                onConfirm={handleDeleteOrder}
+                text={"Confirm delete this order?"}
+            />
+        </>
     );
 };
