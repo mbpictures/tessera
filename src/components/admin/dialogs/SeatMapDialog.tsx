@@ -23,6 +23,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box } from "@mui/system";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import { SeatMapTemplateEditor } from "../SeatMapEditor/SeatMapTemplateEditor";
 
 const isJson = (str) => {
     try {
@@ -243,6 +244,18 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                         </Button>
                                     </label>
                                 </Stack>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography>Templates</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <SeatMapTemplateEditor
+                                    onSeatMapChange={(newSeatMap) => setSeatmapDefinition(newSeatMap)}
+                                    categories={categories}
+                                    seatDefinition={seatmapDefinition}
+                                />
                             </AccordionDetails>
                         </Accordion>
                         <Accordion>
