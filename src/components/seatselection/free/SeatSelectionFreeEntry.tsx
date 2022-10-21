@@ -69,13 +69,14 @@ export const SeatSelectionFreeEntry = ({
     };
 
     const onAdd = () => {
+        if (category === -1) return;
         const val = Math.min(ticketAmount + 1, getTicketsLeft());
         setTicketAmount(val);
         onChange(index, val, category, category);
     };
 
     const onSubtract = () => {
-        if (ticketAmount <= 0) return;
+        if (ticketAmount <= 0 || category === -1) return;
         setTicketAmount(ticketAmount - 1);
         onChange(index, ticketAmount - 1, category, category);
     };
