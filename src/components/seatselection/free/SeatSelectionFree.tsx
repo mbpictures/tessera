@@ -16,10 +16,14 @@ import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";
 
 export const SeatSelectionFree = ({ categories }) => {
+    categories = categories
+        .filter(category => (category.ticketsLeft !== null ? category.ticketsLeft > 0 : true) ||
+            (order.tickets.some(ticket => ticket.categoryId === category.id && order.reservationExpiresAt && order.reservationExpiresAt > new Date().getTime()))
+        );
     const order = useAppSelector(selectOrder) as OrderState;
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const [currentlySelectedCategories, setCurrentlySelectedCategories] = useState([1]);
+    const [currentlySelectedCategories, setCurrentlySelectedCategories] = useState([categories[0].id]);
 
     const handleChange = (index, amount: number, categoryId, oldCategory) => {
         if (categoryId === -1) return;
@@ -46,10 +50,6 @@ export const SeatSelectionFree = ({ categories }) => {
     };
 
     const price = order.tickets.reduce((a, ticket) => a + categories.find(category => category.id === ticket.categoryId).price, 0);
-    categories = categories
-        .filter(category => (category.ticketsLeft !== null ? category.ticketsLeft > 0 : true) ||
-            (order.tickets.some(ticket => ticket.categoryId === category.id && order.reservationExpiresAt && order.reservationExpiresAt > new Date().getTime()))
-        );
 
     return (
         <Grid
