@@ -1,6 +1,6 @@
 import { SeatRow, SeatSelectionRow } from "./SeatSelectionRow";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Card, Grid } from "@mui/material";
+import { Card, Grid, useMediaQuery } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     OrderState,
@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Seat } from "./SeatMapSeat";
 import { PaymentOverview } from "../../PaymentOverview";
+import { useTheme } from "@mui/system";
 
 export type SeatMap = Array<SeatRow>;
 
@@ -31,6 +32,7 @@ export const SeatSelectionMap = ({
     const container = useRef<HTMLDivElement>(null);
     const content = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState<number>(1);
+    const theme = useTheme();
 
     const rescale = () => {
         if (!content.current || !container.current) return;
@@ -38,7 +40,10 @@ export const SeatSelectionMap = ({
         const maxHeight = container.current.clientHeight;
         const width = content.current.clientWidth;
         const height = content.current.clientHeight;
-        setScale(Math.min(width / maxWidth, height / maxHeight));
+        console.log(maxWidth / width)
+        console.log(maxHeight / height)
+        console.log(Math.min(maxWidth / width, maxHeight / height))
+        setScale(Math.min(maxWidth / width, maxHeight / height));
     };
 
     useEffect(() => {
@@ -89,7 +94,7 @@ export const SeatSelectionMap = ({
 
     return (
         <Grid container style={{ maxHeight: "100%" }} ref={container}>
-            <Grid item md={12} lg={8}>
+            <Grid item md={12} lg={8} style={{maxWidth: useMediaQuery(theme.breakpoints.down("lg")) ? "100%": "66.66666%"}}>
                 <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
                     <TransformComponent wrapperStyle={{ width: "100%" }}>
                         <div
