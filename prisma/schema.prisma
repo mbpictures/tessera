@@ -145,6 +145,7 @@ model AdminApiKeys {
 model Option {
     key             String      @unique
     value           String
+    data            Bytes?
 }
 
 model Translation {
