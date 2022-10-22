@@ -124,7 +124,7 @@ export async function getStaticProps({ params, locale }) {
             ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' })),
             withReservationCountdown: true,
             seatMapId: eventDate.event.seatMapId,
-            containsPreview: eventDate.event.seatMap.preview !== null
+            containsPreview: eventDate.event.seatMap?.preview !== null
         }
     };
 }
