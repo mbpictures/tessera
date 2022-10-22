@@ -2,5 +2,6 @@
     "no-seat-reservation": "Dieses Event hat keine Sitzplatzreservierung",
     "add-category": "Kategorie hinzufügen",
     "remove-category": "Kategorie entfernen",
-    "event-booked-out": "Tut uns leid, aber das Event ist bereits voll ausgebucht"
+    "event-booked-out": "Tut uns leid, aber das Event ist bereits voll ausgebucht",
+    "seat-map-preview": "Sitzplan Vorschau"
 }

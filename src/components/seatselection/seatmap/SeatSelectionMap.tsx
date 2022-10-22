@@ -1,6 +1,6 @@
 import { SeatRow, SeatSelectionRow } from "./SeatSelectionRow";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Card, Grid, useMediaQuery } from "@mui/material";
+import { Card, Grid, IconButton, useMediaQuery } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     OrderState,
@@ -10,13 +10,17 @@ import { useEffect, useRef, useState } from "react";
 import { Seat } from "./SeatMapSeat";
 import { PaymentOverview } from "../../PaymentOverview";
 import { useTheme } from "@mui/system";
+import PreviewIcon from '@mui/icons-material/Preview';
+import { SeatMapPreview } from "./SeatMapPreview";
 
 export type SeatMap = Array<SeatRow>;
 
 export const SeatSelectionMap = ({
     seatSelectionDefinition,
     categories,
-    hideSummary
+    hideSummary,
+    seatMapId,
+    containsPreview
 }: {
     seatSelectionDefinition: SeatMap;
     categories: Array<{
@@ -26,12 +30,15 @@ export const SeatSelectionMap = ({
         currency: string;
     }>;
     hideSummary?: boolean;
+    seatMapId?: number;
+    containsPreview?: boolean;
 }) => {
     const order = useAppSelector(selectOrder) as OrderState;
     const dispatch = useAppDispatch();
     const container = useRef<HTMLDivElement>(null);
     const content = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState<number>(1);
+    const [previewOpen, setPreviewOpen] = useState(false);
     const theme = useTheme();
 
     const rescale = () => {
@@ -40,9 +47,6 @@ export const SeatSelectionMap = ({
         const maxHeight = container.current.clientHeight;
         const width = content.current.clientWidth;
         const height = content.current.clientHeight;
-        console.log(maxWidth / width)
-        console.log(maxHeight / height)
-        console.log(Math.min(maxWidth / width, maxHeight / height))
         setScale(Math.min(maxWidth / width, maxHeight / height));
     };
 
@@ -93,42 +97,59 @@ export const SeatSelectionMap = ({
     };
 
     return (
-        <Grid container style={{ maxHeight: "100%" }} ref={container}>
-            <Grid item md={12} lg={8} style={{maxWidth: useMediaQuery(theme.breakpoints.down("lg")) ? "100%": "66.66666%"}}>
-                <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
-                    <TransformComponent wrapperStyle={{ width: "100%" }}>
-                        <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                            ref={content}
+        <>
+            <SeatMapPreview open={previewOpen} onClose={() => setPreviewOpen(false)} id={seatMapId} />
+            <Grid container style={{ maxHeight: "100%" }} ref={container}>
+                <Grid item md={12} lg={8} style={{
+                    maxWidth: useMediaQuery(theme.breakpoints.down("lg")) ? "100%": "66.66666%",
+                    position: "relative"
+                }}>
+                    <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
+                        <TransformComponent wrapperStyle={{ width: "100%" }}>
+                            <div
+                                style={{ display: "flex", flexDirection: "column" }}
+                                ref={content}
+                            >
+                                {seatSelectionDefinition.map((row, index) => (
+                                    <SeatSelectionRow
+                                        key={`row${index}`}
+                                        row={row}
+                                        categories={categories}
+                                        onSelectSeat={handleSelectSeat}
+                                    />
+                                ))}
+                            </div>
+                        </TransformComponent>
+                    </TransformWrapper>
+                    {
+                        containsPreview && (
+                            <IconButton
+                                style={{position: "absolute", top: 0, right: 0}}
+                                color={"primary"}
+                                onClick={() => setPreviewOpen(true)}
+                            >
+                                <PreviewIcon fontSize={"large"} />
+                            </IconButton>
+                        )
+                    }
+                </Grid>
+                {
+                    !hideSummary && (
+                        <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            lg={4}
+                            display="flex"
+                            alignItems="center"
                         >
-                            {seatSelectionDefinition.map((row, index) => (
-                                <SeatSelectionRow
-                                    key={`row${index}`}
-                                    row={row}
-                                    categories={categories}
-                                    onSelectSeat={handleSelectSeat}
-                                />
-                            ))}
-                        </div>
-                    </TransformComponent>
-                </TransformWrapper>
+                            <Card style={{ flex: "1 1 auto", padding: "10px" }}>
+                                <PaymentOverview categories={categories} displayColor />
+                            </Card>
+                        </Grid>
+                    )
+                }
             </Grid>
-            {
-                !hideSummary && (
-                    <Grid
-                        item
-                        xs={12}
-                        md={12}
-                        lg={4}
-                        display="flex"
-                        alignItems="center"
-                    >
-                        <Card style={{ flex: "1 1 auto", padding: "10px" }}>
-                            <PaymentOverview categories={categories} displayColor />
-                        </Card>
-                    </Grid>
-                )
-            }
-        </Grid>
+        </>
     );
 };

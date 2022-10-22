@@ -19,7 +19,9 @@ export default function SeatSelection({
     seatMap,
     seatType,
     fallback,
-    eventDate
+    eventDate,
+    seatMapId,
+    containsPreview
 }) {
     const {t} = useTranslation();
     const [categoriesState, setCategoriesState] = useState(categories);
@@ -56,7 +58,7 @@ export default function SeatSelection({
                 height: seatType === "seatmap" ? "100%" : "auto"
             }}
         >
-            <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} onSeatAlreadyBooked={loadData} />
+            <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} onSeatAlreadyBooked={loadData} seatMapId={seatMapId} containsPreview={containsPreview} />
         </Step>
     );
 }
@@ -120,7 +122,9 @@ export async function getStaticProps({ params, locale }) {
                 date: eventDate.date?.toISOString() ?? null
             },
             ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' })),
-            withReservationCountdown: true
+            withReservationCountdown: true,
+            seatMapId: eventDate.event.seatMapId,
+            containsPreview: eventDate.event.seatMap.preview !== null
         }
     };
 }

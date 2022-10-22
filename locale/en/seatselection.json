@@ -2,5 +2,6 @@
     "no-seat-reservation": "This event has no seat reservation",
     "add-category": "Add Category",
     "remove-category": "Remove Category",
-    "event-booked-out": "We are sorry, but the event is already fully booked"
+    "event-booked-out": "We are sorry, but the event is already fully booked",
+    "seat-map-preview": "Seat Map Preview"
 }
