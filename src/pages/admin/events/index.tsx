@@ -152,7 +152,8 @@ export async function getServerSideProps(context) {
                 };
             });
 
-            const seatmaps = await prisma.seatMap.findMany();
+            const seatmaps = (await prisma.seatMap.findMany())
+                .map(seatmap => ({...seatmap, preview: null, containsPreview: seatmap.preview !== null}));
             const categories = await prisma.category.findMany();
 
             return {

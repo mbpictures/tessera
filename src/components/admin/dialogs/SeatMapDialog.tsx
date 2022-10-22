@@ -24,6 +24,7 @@ import { Box } from "@mui/system";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { SeatMapTemplateEditor } from "../SeatMapEditor/SeatMapTemplateEditor";
+import { SeatMapOriginalSeatMap } from "../SeatMapEditor/SeatMapOriginalSeatMap";
 
 const isJson = (str) => {
     try {
@@ -282,6 +283,14 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
                                         );
                                     })}
                                 </Stack>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary>
+                                Original Seat Map
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <SeatMapOriginalSeatMap seatmap={seatmap} />
                             </AccordionDetails>
                         </Accordion>
                         <Button fullWidth onClick={handleSave}>
