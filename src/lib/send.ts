@@ -99,7 +99,7 @@ export const send = async (orderId) => {
             payed
         ) {
             const tickets = await generateTickets(
-                getStaticAssetFile("ticket/template.pdf"),
+                (await getOptionData(Options.TemplateTicket, getStaticAssetFile("ticket/template.pdf"))).data,
                 orderId
             );
             tickets.forEach((ticket, i) => {

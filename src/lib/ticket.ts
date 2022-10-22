@@ -2,8 +2,10 @@ import { PDFDocument } from "pdf-lib";
 import prisma from "./prisma";
 import QRCode from "qrcode";
 import { formatPrice, getStaticAssetFile } from "../constants/serverUtil";
-import {randomBytes} from "crypto";
+import { randomBytes } from "crypto";
 import { encodeTicketQR, getEventTitle } from "../constants/util";
+import { getOptionData } from "./options";
+import { Options } from "../constants/Constants";
 
 const fillTextField = (form, fieldName, value) => {
     try {
@@ -124,7 +126,7 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
         }
     });
     return await generateTicket(
-        getStaticAssetFile("ticket/template.pdf"),
+        (await getOptionData(Options.TemplateTicket, getStaticAssetFile("ticket/template.pdf"))).data,
         {
             seatInformation: order.seatId?.toString() ?? order.category.label,
             price: order.category.price,
