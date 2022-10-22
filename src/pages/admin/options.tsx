@@ -2,17 +2,17 @@ import { AdminLayout } from "../../components/admin/layout";
 import { getAdminServerSideProps } from "../../constants/serverUtil";
 import { PermissionSection, PermissionType } from "../../constants/interfaces";
 import { getAllOptions} from "../../lib/options";
-import { Options as OptionsEnum, STEP_URLS } from "../../constants/Constants";
+import { OptionLabels, Options as OptionsEnum, STEP_URLS } from "../../constants/Constants";
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Box, Button, InputAdornment, Link,
+    Box, Button, IconButton, InputAdornment, Link, List, ListItem, ListItemText,
     Stack,
     TextField, Tooltip,
     Typography
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { SelectionList } from "../../components/admin/SelectionList";
@@ -25,6 +25,10 @@ import dynamic from "next/dynamic";
 import { TextInputDialog } from "../../components/TextInputDialog";
 import { TextfieldList } from "../../components/admin/TextfieldList";
 import PercentIcon from '@mui/icons-material/Percent';
+import PreviewIcon from '@mui/icons-material/Preview';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import DownloadIcon from '@mui/icons-material/Download';
+import { TemplatePreview } from "../../components/admin/dialogs/TemplatePreview";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -39,6 +43,8 @@ export default function Options({options, permissionDenied}) {
     const [paymentFees, setPaymentFees] = useState({});
     const [theme, setTheme] = useState({})
     const [inputThemeOpen, setInputThemeOpen] = useState(false);
+    const [templateFiles, setTemplateFiles] = useState<Partial<Record<OptionsEnum, Blob>>>({});
+    const [templatePreview, setTemplatePreview] = useState(null);
     const router = useRouter();
 
     const {enqueueSnackbar} = useSnackbar();
@@ -146,6 +152,26 @@ export default function Options({options, permissionDenied}) {
         }
     }
 
+    const handleChangeTemplate = (key) => (event: ChangeEvent<HTMLInputElement>) => {
+        setTemplateFiles({
+            ...templateFiles,
+            [key]: event.target.files[0]
+        })
+    }
+
+    const handleSaveTemplates = async () => {
+        for (let file of Object.entries(templateFiles)) {
+            const fileData = new FormData();
+            fileData.append('file', file[1]);
+            await axios.post("/api/admin/options/data/" + file[0], fileData);
+        }
+        await refreshProps();
+    };
+
+    const downloadTemplate = (key) => {
+        window.location.href = window.location.origin + "/api/admin/options/data/" + key;
+    }
+
     return (
         <AdminLayout permissionDenied={permissionDenied}>
             <TextInputDialog
@@ -154,6 +180,11 @@ export default function Options({options, permissionDenied}) {
                 onClose={() => setInputThemeOpen(false)}
                 title="Enter Theme in JSON format"
                 placeholder="JSON Theme"
+            />
+            <TemplatePreview
+                activeTemplatePreview={templatePreview}
+                localFiles={templateFiles}
+                onClose={() => setTemplatePreview(null)}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Options</Typography>
@@ -334,6 +365,57 @@ export default function Options({options, permissionDenied}) {
                             fullWidth
                             id={"theme-save"}
                         >
+                            Save
+                        </SaveButton>
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary>
+                        Templates
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <List>
+                            {
+                                [OptionsEnum.TemplateConfirmEmail, OptionsEnum.TemplateInvoice, OptionsEnum.TemplateTicket].map(value => {
+                                    const templateAvailable = Object.keys(options).filter(option => options[option]).includes(value);
+                                    const templateToUpload = Object.keys(templateFiles).includes(value);
+                                    return (
+                                        <ListItem key={value}>
+                                            <ListItemText
+                                                primary={OptionLabels[value]}
+                                                secondary={templateAvailable ? "Template uploaded" : (templateToUpload ? "Template not saved" : "Template not set yet")}
+                                            />
+                                            {
+                                                (templateAvailable || templateToUpload) && (
+                                                    <IconButton color={"primary"} onClick={() => setTemplatePreview(value)}>
+                                                        <PreviewIcon />
+                                                    </IconButton>
+                                                )
+                                            }
+                                            <input
+                                                id={`upload-${value}`}
+                                                type="file"
+                                                style={{ display: "none" }}
+                                                onChange={handleChangeTemplate(value)}
+                                            />
+                                            <label htmlFor={`upload-${value}`}>
+                                                <IconButton component="span">
+                                                    <FileUploadIcon />
+                                                </IconButton>
+                                            </label>
+                                            {
+                                                templateAvailable && (
+                                                    <IconButton onClick={() => downloadTemplate(value)}>
+                                                        <DownloadIcon />
+                                                    </IconButton>
+                                                )
+                                            }
+                                        </ListItem>
+                                    )
+                                })
+                            }
+                        </List>
+                        <SaveButton action={handleSaveTemplates} fullWidth>
                             Save
                         </SaveButton>
                     </AccordionDetails>
