@@ -6,6 +6,7 @@ import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getOption } from "./options";
 import { Options } from "../constants/Constants";
+import unescape from "lodash/unescape";
 
 export const generateInvoice = async (
     template,
@@ -105,8 +106,8 @@ export const generateInvoice = async (
             })
         }
 
-        const html = ejs.render(template, {
-            invoice_number: 1,
+        const html = ejs.render(unescape(template.toString()), {
+            invoice_number: 1, // TODO: replace with real invoice number
             creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
             receiver: [
                 orderDB.user.firstName + " " + orderDB.user.lastName,
