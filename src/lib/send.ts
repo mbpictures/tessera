@@ -12,7 +12,7 @@ import {
     getGoogleWalletTicketLinkFromObjectId,
     validateConfiguration
 } from "./googleWallet";
-import { getOptionData } from "./options";
+import { getOption, getOptionData, setOption } from "./options";
 import { Options } from "../constants/Constants";
 import unescape from "lodash/unescape";
 
@@ -164,7 +164,8 @@ export const send = async (orderId) => {
                 return;
             }
 
-            if (containsInvoice)
+            if (containsInvoice) {
+                await setOption(Options.InvoiceNumber, (await getOption(Options.InvoiceNumber)) + 1);
                 await prisma.order.update({
                     where: {
                         id: orderId
@@ -173,6 +174,7 @@ export const send = async (orderId) => {
                         invoiceSent: true
                     }
                 });
+            }
 
             if (containsTickets)
                 await prisma.order.update({

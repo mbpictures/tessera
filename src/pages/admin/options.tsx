@@ -45,6 +45,7 @@ export default function Options({options, permissionDenied}) {
     const [inputThemeOpen, setInputThemeOpen] = useState(false);
     const [templateFiles, setTemplateFiles] = useState<Partial<Record<OptionsEnum, Blob>>>({});
     const [templatePreview, setTemplatePreview] = useState(null);
+    const [invoiceNumber, setInvoiceNumber] = useState(1);
     const router = useRouter();
 
     const {enqueueSnackbar} = useSnackbar();
@@ -60,6 +61,7 @@ export default function Options({options, permissionDenied}) {
         setTaxAmount(options[OptionsEnum.TaxAmount] ?? 0);
         setShippingFees(options[OptionsEnum.PaymentFeesShipping] ?? {});
         setPaymentFees(options[OptionsEnum.PaymentFeesPayment] ?? {});
+        setInvoiceNumber(options[OptionsEnum.InvoiceNumber] ?? 1);
     }, [options, permissionDenied]);
 
     const refreshProps = async () => {
@@ -90,6 +92,7 @@ export default function Options({options, permissionDenied}) {
             await storeSetting(OptionsEnum.PaymentDetails, bankInformation);
             await storeSetting(OptionsEnum.TaxAmount, taxAmount);
             await storeSetting(OptionsEnum.PaymentFeesPayment, paymentFees);
+            await storeSetting(OptionsEnum.InvoiceNumber, invoiceNumber);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -268,6 +271,17 @@ export default function Options({options, permissionDenied}) {
                                         </InputAdornment>
                                     )
                                 }}
+                            />
+                            <TextField
+                                type={"number"}
+                                label="Invoice Number"
+                                value={invoiceNumber}
+                                onChange={(event) => setInvoiceNumber(parseInt(event.target.value))}
+                                helperText={
+                                    <>
+                                        This number represents the number of the last invoice sent (it increases automatically, everytime an invoice is generated). It can be edited manually to make it fit your invoice numbers generated from other sources. The next invoice will have the number <b>{invoiceNumber + 1}</b>. To start with one, please enter 0 in the text field.
+                                    </>
+                                }
                             />
                             <SaveButton
                                 action={handleSavePayment}

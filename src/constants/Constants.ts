@@ -32,7 +32,8 @@ export enum Options {
     PaymentFeesPayment = "payment.fees.payment",
     TemplateInvoice = "template.invoice",
     TemplateConfirmEmail = "template.confirm-email",
-    TemplateTicket = "template.ticket"
+    TemplateTicket = "template.ticket",
+    InvoiceNumber = "payment.invoice-number"
 }
 
 export const OptionLabels: Partial<Record<Options, string>> = {

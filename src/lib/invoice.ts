@@ -106,8 +106,10 @@ export const generateInvoice = async (
             })
         }
 
+        const invoiceNumber = (await getOption(Options.InvoiceNumber)) + 1;
+
         const html = ejs.render(unescape(template.toString()), {
-            invoice_number: 1, // TODO: replace with real invoice number
+            invoice_number: invoiceNumber,
             creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
             receiver: [
                 orderDB.user.firstName + " " + orderDB.user.lastName,
