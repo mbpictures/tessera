@@ -22,7 +22,8 @@ const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
     "payment.fees.payment": Object.values(PaymentType).reduce((group, value) => {
         group[value] = 0;
         return group;
-    }, {})
+    }, {}),
+    "payment.invoice-number": 1
 }
 
 const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
