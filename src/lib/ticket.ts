@@ -6,9 +6,13 @@ import {randomBytes} from "crypto";
 import { encodeTicketQR, getEventTitle } from "../constants/util";
 
 const fillTextField = (form, fieldName, value) => {
-    const field = form.getTextField(fieldName);
-    if (!field) return;
-    field.setText(value);
+    try {
+        const field = form.getTextField(fieldName);
+        if (!field) return;
+        field.setText(value);
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 const getTicketSecret = () => {
