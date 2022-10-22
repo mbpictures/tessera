@@ -2,13 +2,19 @@ import { PDFDocument } from "pdf-lib";
 import prisma from "./prisma";
 import QRCode from "qrcode";
 import { formatPrice, getStaticAssetFile } from "../constants/serverUtil";
-import {randomBytes} from "crypto";
+import { randomBytes } from "crypto";
 import { encodeTicketQR, getEventTitle } from "../constants/util";
+import { getOptionData } from "./options";
+import { Options } from "../constants/Constants";
 
 const fillTextField = (form, fieldName, value) => {
-    const field = form.getTextField(fieldName);
-    if (!field) return;
-    field.setText(value);
+    try {
+        const field = form.getTextField(fieldName);
+        if (!field) return;
+        field.setText(value);
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 const getTicketSecret = () => {
@@ -38,11 +44,12 @@ export const generateTicketSecret = async (ticketId) => {
     return secret;
 }
 
-const generateTicket = async (
+export const generateTicket = async (
     template,
     details: { seatInformation: string; price; name; currency; locale; date?: Date },
     eventName: string,
-    ticketId
+    ticketId,
+    demo = false
 ): Promise<Uint8Array> => {
     return new Promise<Uint8Array>(async (resolve, reject) => {
         try {
@@ -59,7 +66,12 @@ const generateTicket = async (
             if (details.date)
                 fillTextField(form, "EVENT_DATE", details.date.toLocaleString(details.locale));
 
-            const secret = await generateTicketSecret(ticketId);
+            let secret;
+            if (demo) {
+                secret = getTicketSecret();
+            } else {
+                secret = await generateTicketSecret(ticketId);
+            }
 
             const qrCode = await generateQRCode(ticketId, secret);
             const qrCodeImg = await pdfDoc.embedPng(qrCode);
@@ -114,7 +126,7 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
         }
     });
     return await generateTicket(
-        getStaticAssetFile("ticket/template.pdf"),
+        (await getOptionData(Options.TemplateTicket, getStaticAssetFile("ticket/template.pdf"))).data,
         {
             seatInformation: order.seatId?.toString() ?? order.category.label,
             price: order.category.price,

@@ -12,6 +12,9 @@ import {
     getGoogleWalletTicketLinkFromObjectId,
     validateConfiguration
 } from "./googleWallet";
+import { getOptionData } from "./options";
+import { Options } from "../constants/Constants";
+import unescape from "lodash/unescape";
 
 export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets) => {
     let googleWallet = undefined;
@@ -29,13 +32,13 @@ export const getEmailHtml = async (firstName, lastName, containsTickets, contain
         }
     }
     return ejs.render(
-      getStaticAssetFile("email/template.html", "utf-8"),
-      {
-          customerName: firstName + " " + lastName,
-          containsTickets: containsTickets,
-          containsInvoice: containsInvoice ? true : undefined,
-          googleWallet: googleWallet
-      }
+        unescape((await getOptionData(Options.TemplateConfirmEmail, getStaticAssetFile("email/template.html", "utf-8"))).data.toString()),
+        {
+            customerName: firstName + " " + lastName,
+            containsTickets: containsTickets,
+            containsInvoice: containsInvoice ? true : undefined,
+            googleWallet: googleWallet
+        }
     );
 }
 
@@ -67,7 +70,7 @@ export const send = async (orderId) => {
         let containsInvoice = false;
        if (!order.invoiceSent) {
            const invoiceData = await generateInvoice(
-               getStaticAssetFile("invoice/template.html", "utf-8"),
+               (await getOptionData(Options.TemplateInvoice, getStaticAssetFile("invoice/template.html", "utf-8"))).data,
                orderId
            );
 
@@ -96,7 +99,7 @@ export const send = async (orderId) => {
             payed
         ) {
             const tickets = await generateTickets(
-                getStaticAssetFile("ticket/template.pdf"),
+                (await getOptionData(Options.TemplateTicket, getStaticAssetFile("ticket/template.pdf"))).data,
                 orderId
             );
             tickets.forEach((ticket, i) => {

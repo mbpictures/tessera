@@ -78,6 +78,32 @@ export const setOption = async (key: Options, value: any, res?: NextApiResponse)
     await updateNecessaryPages(key, res);
 };
 
+export const setOptionData = async (key: Options, value: Buffer, type: string) => {
+    const option = await prisma.option.findUnique({
+        where: {key}
+    });
+    type = JSON.stringify({
+        value: type
+    })
+    if (option) {
+        await prisma.option.update({
+            where: {key},
+            data: {
+                data: value,
+                value: type
+            }
+        })
+        return;
+    }
+    await prisma.option.create({
+        data: {
+            key,
+            value: type,
+            data: value
+        }
+    })
+}
+
 export const getOption = async (key: Options): Promise<any> => {
     const option = await prisma.option.findUnique({
         where: {
@@ -91,6 +117,16 @@ export const getOption = async (key: Options): Promise<any> => {
     if (key in DEFAULT_OPTIONS) return DEFAULT_OPTIONS[key];
     return null;
 };
+
+export const getOptionData = async (key: Options, fallback?): Promise<{data: Buffer, type: string}> => {
+    const option = await prisma.option.findUnique({
+        where: {
+            key: key
+        }
+    });
+    if (!option) return {data: fallback ?? null, type: null};
+    return {data: option.data, type: JSON.parse(option.value).value};
+}
 
 export const getAllOptions = async (): Promise<Record<Options, any>> => {
     let result: Partial<Record<Options, any>> = {};
