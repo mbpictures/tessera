@@ -42,11 +42,12 @@ export const generateTicketSecret = async (ticketId) => {
     return secret;
 }
 
-const generateTicket = async (
+export const generateTicket = async (
     template,
     details: { seatInformation: string; price; name; currency; locale; date?: Date },
     eventName: string,
-    ticketId
+    ticketId,
+    demo = false
 ): Promise<Uint8Array> => {
     return new Promise<Uint8Array>(async (resolve, reject) => {
         try {
@@ -63,7 +64,12 @@ const generateTicket = async (
             if (details.date)
                 fillTextField(form, "EVENT_DATE", details.date.toLocaleString(details.locale));
 
-            const secret = await generateTicketSecret(ticketId);
+            let secret;
+            if (demo) {
+                secret = getTicketSecret();
+            } else {
+                secret = await generateTicketSecret(ticketId);
+            }
 
             const qrCode = await generateQRCode(ticketId, secret);
             const qrCodeImg = await pdfDoc.embedPng(qrCode);
