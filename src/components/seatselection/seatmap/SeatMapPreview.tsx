@@ -11,7 +11,7 @@ export const SeatMapPreview = ({open, onClose, id}) => {
     const {t} = useTranslation();
 
     useEffect(() => {
-        if (data || !id) return;
+        if (data || !id || !open) return;
         const loadData = async () => {
             const response = await axios.get("/api/seatmap_preview/" + id, {
                 responseType: "blob"
@@ -20,7 +20,7 @@ export const SeatMapPreview = ({open, onClose, id}) => {
             setData(URL.createObjectURL(response.data));
         };
         loadData().catch(console.log);
-    }, [id]);
+    }, [id, open, data]);
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth={"lg"}>
