@@ -3,5 +3,6 @@
     "add-category": "Add Category",
     "remove-category": "Remove Category",
     "event-booked-out": "We are sorry, but the event is already fully booked",
-    "seat-map-preview": "Seat Map Preview"
+    "seat-map-preview": "Seat Map Preview",
+    "seat-booked": "This seat has already been booked"
 }

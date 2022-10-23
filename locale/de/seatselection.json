@@ -3,5 +3,6 @@
     "add-category": "Kategorie hinzufügen",
     "remove-category": "Kategorie entfernen",
     "event-booked-out": "Tut uns leid, aber das Event ist bereits voll ausgebucht",
-    "seat-map-preview": "Sitzplan Vorschau"
+    "seat-map-preview": "Sitzplan Vorschau",
+    "seat-booked": "Dieser Platz wurde bereits gebucht"
 }
