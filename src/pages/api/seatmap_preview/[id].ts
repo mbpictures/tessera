@@ -29,6 +29,7 @@ export default async function handler(
     if (!seatMap.preview)
         return res.status(400).end("This Seat Map has no preview");
 
+    res.setHeader("Cache-Control", "s-maxage=86400");
     res.setHeader("Content-Type", seatMap.previewType);
     res.status(200).send(seatMap.preview);
 }
