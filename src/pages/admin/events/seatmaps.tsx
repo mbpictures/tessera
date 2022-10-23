@@ -117,13 +117,14 @@ export async function getServerSideProps(context) {
     return await getAdminServerSideProps(
         context,
         async () => {
-            const seatmaps = await prisma.seatMap.findMany({
+            const seatmaps = (await prisma.seatMap.findMany({
                 select: {
                     events: true,
                     definition: true,
-                    id: true
+                    id: true,
+                    preview: true
                 }
-            });
+            })).map(seatmap => ({...seatmap, preview: null, containsPreview: seatmap.preview !== null}));
             const categories = await prisma.category.findMany();
             return {
                 props: {

@@ -40,6 +40,8 @@ model SeatMap {
     events          Event[]
     orders          Order[]
     definition      String
+    preview         Bytes?
+    previewType     String?
 }
 
 model Category {

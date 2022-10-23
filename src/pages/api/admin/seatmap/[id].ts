@@ -66,7 +66,7 @@ export default async function handler(
             where: {
                 id: parseInt(id as string)
             },
-            include: {
+            select: {
                 events: true
             }
         });

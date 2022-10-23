@@ -105,7 +105,6 @@ export default async function handler(
         if (demo === "true") {
             data = await templatePreviewFill[optionsKey](data, locale);
         }
-        console.log(data);
         res.setHeader("Content-Type", option.type);
         res.status(200).send(data);
         return;
