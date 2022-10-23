@@ -40,6 +40,7 @@ export const SeatSelectionMap = ({
     const [scale, setScale] = useState<number>(1);
     const [previewOpen, setPreviewOpen] = useState(false);
     const theme = useTheme();
+    const isLgDown = useMediaQuery(theme.breakpoints.down("lg"));
 
     const rescale = () => {
         if (!content.current || !container.current) return;
@@ -101,7 +102,7 @@ export const SeatSelectionMap = ({
             <SeatMapPreview open={previewOpen} onClose={() => setPreviewOpen(false)} id={seatMapId} />
             <Grid container style={{ maxHeight: "100%" }} ref={container}>
                 <Grid item md={12} lg={8} style={{
-                    maxWidth: useMediaQuery(theme.breakpoints.down("lg")) ? "100%": "66.66666%",
+                    maxWidth: isLgDown ? "100%": "66.66666%",
                     position: "relative"
                 }}>
                     <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
@@ -122,9 +123,14 @@ export const SeatSelectionMap = ({
                         </TransformComponent>
                     </TransformWrapper>
                     {
-                        containsPreview && (
+                        (containsPreview && !isLgDown) && (
                             <IconButton
-                                style={{position: "absolute", top: 0, right: 0}}
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    transform: "translateY(-100%)",
+                                    right: 0
+                                }}
                                 color={"primary"}
                                 onClick={() => setPreviewOpen(true)}
                             >
@@ -142,10 +148,27 @@ export const SeatSelectionMap = ({
                             lg={4}
                             display="flex"
                             alignItems="center"
+                            position={"relative"}
                         >
                             <Card style={{ flex: "1 1 auto", padding: "10px" }}>
                                 <PaymentOverview categories={categories} displayColor />
                             </Card>
+                            {
+                                (containsPreview && isLgDown) && (
+                                    <IconButton
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            right: 0,
+                                            zIndex: 100
+                                        }}
+                                        color={"primary"}
+                                        onClick={() => setPreviewOpen(true)}
+                                    >
+                                        <PreviewIcon fontSize={"large"} />
+                                    </IconButton>
+                                )
+                            }
                         </Grid>
                     )
                 }
