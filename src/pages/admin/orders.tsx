@@ -368,7 +368,11 @@ export async function getServerSideProps(context: NextPageContext) {
                 include: {
                     event: {
                         include: {
-                            seatMap: true
+                            seatMap: {
+                                select: {
+                                    definition: true
+                                }
+                            }
                         }
                     },
                     orders: {

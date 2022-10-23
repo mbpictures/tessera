@@ -81,7 +81,12 @@ export async function getStaticProps({ params, locale }) {
         include: {
             event: {
                 include: {
-                    seatMap: true,
+                    seatMap: {
+                        select: {
+                            definition: true,
+                            previewType: true
+                        }
+                    },
                     categories: {
                         include: {
                             category: true
@@ -124,7 +129,7 @@ export async function getStaticProps({ params, locale }) {
             ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' })),
             withReservationCountdown: true,
             seatMapId: eventDate.event.seatMapId,
-            containsPreview: eventDate.event.seatMap?.preview !== null
+            containsPreview: eventDate.event.seatMap?.previewType !== null
         }
     };
 }

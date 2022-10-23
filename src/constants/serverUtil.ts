@@ -289,7 +289,11 @@ export const getSeatMap = async (eventDateId, withOccupiedMarked): Promise<SeatM
         select: {
             event: {
                 select: {
-                    seatMap: true,
+                    seatMap: {
+                        select: {
+                            definition: true
+                        }
+                    },
                     seatType: true
                 }
             }
