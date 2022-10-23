@@ -123,7 +123,7 @@ export const SeatSelectionMap = ({
                     ref={container}
                 >
                     <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
-                        <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
+                        <TransformComponent wrapperStyle={{ width: "100%", height: isLgDown ? "500px" : "100%" }}>
                             <div
                                 style={{ display: "flex", flexDirection: "column" }}
                                 ref={content}
