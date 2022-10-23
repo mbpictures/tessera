@@ -47,6 +47,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@faker-js/faker": "^7.5.0",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.3",
     "@mui/lab": "^5.0.0-alpha.99",
@@ -115,7 +116,6 @@
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/react": "6.2.0",
     "@cypress/webpack-dev-server": "^2.3.0",
-    "@faker-js/faker": "^7.5.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.18",
     "@types/react": "latest",
