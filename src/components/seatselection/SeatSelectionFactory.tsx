@@ -139,6 +139,7 @@ export const SeatSelectionFactory = ({
             );
             containerStyles.width = "100%";
             containerStyles.maxHeight = "100%";
+            containerStyles.flex = "1 1 auto";
             break;
         case "free":
         default:

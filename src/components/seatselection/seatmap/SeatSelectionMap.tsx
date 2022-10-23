@@ -15,6 +15,17 @@ import { SeatMapPreview } from "./SeatMapPreview";
 
 export type SeatMap = Array<SeatRow>;
 
+const getDimensions = (element: HTMLDivElement) => {
+    const computedStyle = getComputedStyle(element);
+    let elementHeight = element.clientHeight;
+    let elementWidth = element.clientWidth;
+
+    elementHeight -= parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
+    elementWidth -= parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
+
+    return {width: elementWidth, height: elementHeight};
+};
+
 export const SeatSelectionMap = ({
     seatSelectionDefinition,
     categories,
@@ -44,10 +55,8 @@ export const SeatSelectionMap = ({
 
     const rescale = () => {
         if (!content.current || !container.current) return;
-        const maxWidth = container.current.clientWidth;
-        const maxHeight = container.current.clientHeight;
-        const width = content.current.clientWidth;
-        const height = content.current.clientHeight;
+        const {width: maxWidth, height: maxHeight} = getDimensions(container.current);
+        const {width, height} = getDimensions(content.current);
         setScale(Math.min(maxWidth / width, maxHeight / height));
     };
 
@@ -100,13 +109,21 @@ export const SeatSelectionMap = ({
     return (
         <>
             <SeatMapPreview open={previewOpen} onClose={() => setPreviewOpen(false)} id={seatMapId} />
-            <Grid container style={{ maxHeight: "100%" }} ref={container}>
-                <Grid item md={12} lg={8} style={{
-                    maxWidth: isLgDown ? "100%": "66.66666%",
-                    position: "relative"
-                }}>
+            <Grid container style={{ maxHeight: "100%", height: "100%" }}>
+                <Grid
+                    item
+                    md={12}
+                    lg={8}
+                    style={{
+                        maxWidth: isLgDown ? "100%": "66.66666%",
+                        position: "relative",
+                        width: "100%",
+                        padding: isLgDown ? "10px 0" : "10px"
+                    }}
+                    ref={container}
+                >
                     <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
-                        <TransformComponent wrapperStyle={{ width: "100%" }}>
+                        <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
                             <div
                                 style={{ display: "flex", flexDirection: "column" }}
                                 ref={content}
