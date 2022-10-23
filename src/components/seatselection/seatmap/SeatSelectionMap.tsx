@@ -144,8 +144,7 @@ export const SeatSelectionMap = ({
                             <IconButton
                                 style={{
                                     position: "absolute",
-                                    top: 0,
-                                    transform: "translateY(-100%)",
+                                    bottom: 0,
                                     right: 0
                                 }}
                                 color={"primary"}
