@@ -129,9 +129,9 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
                                 {
                                     event && (
                                         <SeatSelectionFactory
-                                            categories={categories}
+                                            categories={categories[selector.selectedEvent.selectedEvent]}
                                             seatType={event.seatType}
-                                            seatSelectionDefinition={event.seatMap ? JSON.parse(event.seatMap?.definition) : null}
+                                            seatSelectionDefinition={event.seatMap?.definition}
                                             noWrap
                                             hideSummary
                                         />

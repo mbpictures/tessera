@@ -18,7 +18,7 @@ import {
     Typography,
     useMediaQuery
 } from "@mui/material";
-import { getAdminServerSideProps } from "../../constants/serverUtil";
+import { getAdminServerSideProps, getCategoryTicketAmount, getSeatMap } from "../../constants/serverUtil";
 import prisma from "../../lib/prisma";
 import InfoIcon from "@mui/icons-material/Info";
 import * as React from "react";
@@ -38,7 +38,6 @@ import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import { SelectionList } from "../../components/admin/SelectionList";
 import { FullSizeLoading } from "../../components/FullSizeLoading";
 import { AddOrder } from "../../components/admin/dialogs/AddOrder";
-import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
 import DownloadIcon from "@mui/icons-material/Download";
 import omitBy from "lodash/omitBy";
 import isEmpty from "lodash/isEmpty";
@@ -363,62 +362,58 @@ export async function getServerSideProps(context: NextPageContext) {
         context,
         async () => {
             const count = await prisma.order.count();
-            const categories = await prisma.category.findMany();
             let eventDates = await prisma.eventDate.findMany({
-                include: {
+                select: {
+                    id: true,
                     event: {
-                        include: {
+                        select: {
+                            id: true,
+                            seatType: true,
                             seatMap: {
                                 select: {
                                     definition: true
                                 }
+                            },
+                            categories: {
+                                include: {
+                                    category: true
+                                }
                             }
-                        }
-                    },
-                    orders: {
-                        include: {
-                            user: true,
-                            tickets: true
                         }
                     }
                 }
             });
 
-            eventDates = eventDates.map(event => {
+            const eventDateMaps = await Promise.all(eventDates.map(async (event) => {
                 event["seatType"] = event.event.seatType;
                 if (event.event.seatMap?.definition) {
-                    let baseMap: SeatMap = JSON.parse(event.event.seatMap?.definition);
-                    baseMap = baseMap.map((row) =>
-                        row.map((seat) => {
-                            const isOccupied = event.orders.some((order) =>
-                                order.tickets.some(
-                                    (ticket) => ticket.seatId === seat.id
-                                )
-                            );
-                            return {
-                                ...seat,
-                                occupied: isOccupied
-                            };
-                        })
-                    );
-                    event["seatMap"] = {definition: JSON.stringify(baseMap)};
+                    event["seatMap"] = {definition: await getSeatMap(event.id, true)};
                 }
-                delete event.orders;
 
                 return event;
-            });
+            }));
 
             const events = await prisma.event.findMany({
                 include: {
                     dates: true
                 }
             });
+            const currentAmounts = {};
+            for (let eventDate of eventDates) {
+                currentAmounts[eventDate.id] = await getCategoryTicketAmount(eventDate.id);
+            }
 
             return {
                 props: {
                     count,
-                    categories,
-                    eventDates: JSON.parse(JSON.stringify(eventDates)),
+                    categories: eventDates.reduce((group, eventDate) => {
+                        group[eventDate.id] = eventDate.event.categories.map(category => ({
+                                ...category.category,
+                                ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - currentAmounts[eventDate.id][category.categoryId], 0)
+                            }))
+                        return group;
+                    }, {}),
+                    eventDates: JSON.parse(JSON.stringify(eventDateMaps)),
                     events: JSON.parse(JSON.stringify(events)),
                     paymentFees: await getOption(Options.PaymentFeesPayment)
                 }
