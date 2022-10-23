@@ -60,6 +60,9 @@ export default async function handler(
             const seatMap = await prisma.seatMap.findUnique({
                 where: {
                     id: seatMapId
+                },
+                select: {
+                    definition: true
                 }
             });
             const definition = JSON.parse(seatMap.definition);
