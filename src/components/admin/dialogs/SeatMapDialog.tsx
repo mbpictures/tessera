@@ -25,6 +25,8 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { SeatMapTemplateEditor } from "../SeatMapEditor/SeatMapTemplateEditor";
 import { SeatMapOriginalSeatMap } from "../SeatMapEditor/SeatMapOriginalSeatMap";
+import { makeStore } from "../../../store/store";
+import { Provider } from "react-redux";
 
 const isJson = (str) => {
     try {
@@ -35,7 +37,7 @@ const isJson = (str) => {
     return true;
 };
 
-export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
+const SeatMapDialogInner = ({ seatmap, onClose, categories, onChange }) => {
     const [seatmapDefinition, setSeatmapDefinition] = useState<SeatMap>([]);
     const [scale, setScale] = useState<number>(1);
     const container = useRef<HTMLDivElement>(null);
@@ -309,3 +311,11 @@ export const SeatMapDialog = ({ seatmap, onClose, categories, onChange }) => {
         </Dialog>
     );
 };
+
+export const SeatMapDialog = (props: {seatmap, onClose, categories, onChange}) => {
+    return (
+        <Provider store={makeStore()}>
+            <SeatMapDialogInner {...props} />
+        </Provider>
+    );
+}
