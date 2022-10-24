@@ -118,7 +118,8 @@ export const SeatSelectionMap = ({
                         maxWidth: isLgDown ? "100%": "66.66666%",
                         position: "relative",
                         width: "100%",
-                        padding: isLgDown ? "10px 0" : "10px"
+                        padding: isLgDown ? "10px 0" : "10px",
+                        maxHeight: "100%"
                     }}
                     ref={container}
                 >
