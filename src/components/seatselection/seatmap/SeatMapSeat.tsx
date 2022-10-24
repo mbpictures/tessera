@@ -7,6 +7,7 @@ import { OrderState, selectOrder } from "../../../store/reducers/orderReducer";
 import { SEAT_COLORS } from "../../../constants/Constants";
 import { formatPrice } from "../../../constants/util";
 import { useTheme } from "@mui/system";
+import useTranslation from "next-translate/useTranslation";
 
 export interface Seat {
     type: "seat" | "space";
@@ -48,6 +49,7 @@ export const SeatMapSeat = ({
     const orders = !forceNoRedux
         ? reduxOrder
         : null;
+    const { t } = useTranslation();
 
     useEffect(() => {
         setIsSelected(
@@ -83,15 +85,15 @@ export const SeatMapSeat = ({
                 <React.Fragment>
                     {(seat.occupied && !isSelected) ? (
                         <Typography>
-                            This seat has already been booked
+                            {t("seatselection:seat-booked")}
                         </Typography>
                     ) : (
                         <>
                             <Typography variant={"body1"}>
-                                Category: {category.label}
+                                {t("common:category")}: {category.label}
                             </Typography>
                             <Typography variant={"body1"}>
-                                Price:{" "}
+                                {t("common:price")}:{" "}
                                 {formatPrice(
                                     category.price * seat.amount,
                                     category.currency
