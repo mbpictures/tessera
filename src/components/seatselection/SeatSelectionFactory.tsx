@@ -106,10 +106,15 @@ export const SeatSelectionFactory = ({
     };
 
     useEffect(() => {
-        if (isEqual(previousTickets, order.tickets) || order.tickets.length === 0) return;
+        if (isEqual(previousTickets, order.tickets)) return;
         if (timer.current) {
             clearTimeout(timer.current);
             timer.current = null;
+        }
+        if (order.tickets.length === 0) {
+            cancelReservation();
+            dispatch(setReservationExpiresAt(null));
+            return;
         }
 
         // Wait 2s for more seats, so we don't overwhelm server with requests
