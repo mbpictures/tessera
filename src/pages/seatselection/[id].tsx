@@ -39,6 +39,7 @@ export default function SeatSelection({
     };
 
     useEffect(() => {
+        loadData().catch(console.log);
         interval.current = setInterval(loadData, 30000);
 
         return () => clearInterval(interval.current);
