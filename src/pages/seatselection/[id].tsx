@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Step } from "../../components/Step";
 import prisma from "../../lib/prisma";
 import {
@@ -26,6 +26,7 @@ export default function SeatSelection({
     const {t} = useTranslation();
     const [categoriesState, setCategoriesState] = useState(categories);
     const [seatMapState, setSeatMapState] = useState(seatMap);
+    const interval = useRef<NodeJS.Timer>();
 
     const loadData = async () => {
         try {
@@ -38,7 +39,9 @@ export default function SeatSelection({
     };
 
     useEffect(() => {
-        setInterval(loadData, 30000);
+        interval.current = setInterval(loadData, 30000);
+
+        return () => clearInterval(interval.current);
     }, []);
 
     if (fallback) return null;
