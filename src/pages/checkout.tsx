@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { Step } from "../components/Step";
-import { Typography } from "@mui/material";
-import { Box, useTheme } from "@mui/system";
+import { Button, Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
-import { Options } from "../constants/Constants";
+import { Options, STEP_URLS } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 import useTranslation from "next-translate/useTranslation";
 import { useEffect, useRef } from "react";
@@ -26,21 +26,25 @@ export default function Checkout({ direction }) {
         }).catch(console.log);
     }, [router, notificationSent.current]);
 
+    const handleBackToStart = async () => {
+        await router.push(STEP_URLS[0]);
+    }
+
     return (
         <Step
             direction={direction}
             style={{ width: "100%", maxHeight: "100%" }}
         >
-            <Box
-                display={"flex"}
+            <Stack
                 flexDirection={"column"}
                 justifyContent={"center"}
                 alignItems={"center"}
+                spacing={2}
             >
                 <svg
                     className="progress-icon"
                     viewBox="0 0 50 50"
-                    style={{ maxWidth: 400, maxHeight: 400 }}
+                    style={{ maxWidth: 300, maxHeight: 300 }}
                 >
                     <motion.path
                         fill="none"
@@ -80,7 +84,10 @@ export default function Checkout({ direction }) {
                 <Typography variant="h3" align={"center"}>
                     {t("checkout:checkout-complete")}
                 </Typography>
-            </Box>
+                <Button onClick={handleBackToStart} color={"primary"} variant={"outlined"}>
+                    {t("checkout:back-to-start")}
+                </Button>
+            </Stack>
         </Step>
     );
 }
