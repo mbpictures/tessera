@@ -626,6 +626,9 @@ describe("Buy tickets", () => {
                 expect(html).to.contain('We hereby confirm your\n' +
                     '                                                    order. Enclosed you will\n' +
                     '                                                    find an invoice.');
+
+                cy.get("#back-to-start").click();
+                cy.url().should("eq", Cypress.config().baseUrl + "/");
             });
         });
     });
