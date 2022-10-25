@@ -147,7 +147,7 @@ export const decodeTicketQR = (readValue): {id: string; secret: string} => {
 }
 
 export const getEventTitle = (eventDate: {title?: string; event: {title: string}}) => {
-    return eventDate.title ?? eventDate.event.title;
+    return eventDate?.title ?? eventDate?.event?.title;
 }
 
 export const eventDateIsBookable = (eventDate: {ticketSaleStartDate?: string | Date; ticketSaleEndDate?: string | Date; date?: string | Date;}, currentDate?: Date) => {

@@ -1,5 +1,5 @@
 import { Step } from "../components/Step";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button,
     Card,
@@ -23,11 +23,15 @@ import { PayButton } from "../components/payment/button/PayButton";
 import { getOption } from "../lib/options";
 import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
+import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
+import { getEventTitle } from "../constants/util";
 
-export default function Payment({ categories, direction, paymentMethods, paymentFees, shippingFees }) {
+export default function Payment({ categories, direction, paymentMethods, paymentFees, shippingFees, events }) {
     const payment = useAppSelector(selectPayment);
+    const selectedEventId = useAppSelector(selectEventSelected);
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const [eventTitle, setEventTitle] = useState<string | null>(null);
 
     const theme = useTheme();
     const containerStyling: React.CSSProperties = useMediaQuery(
@@ -44,6 +48,10 @@ export default function Payment({ categories, direction, paymentMethods, payment
         if (payment.state !== "finished") return;
         router.push("/checkout").catch(console.log);
     }, [payment, router]);
+
+    useEffect(() => {
+        setEventTitle(getEventTitle(events.find(e => e.id === selectedEventId)));
+    }, [events, selectedEventId]);
 
     const openSeatSelectionPage = () => {
         router.push("/seatselection").catch(console.log);
@@ -125,6 +133,7 @@ export default function Payment({ categories, direction, paymentMethods, payment
                             onEdit={openSeatSelectionPage}
                             paymentFees={paymentFees}
                             shippingFees={shippingFees}
+                            eventName={eventTitle}
                         />
                         {PaymentFactory.getPaymentInstance(
                             payment.payment
@@ -139,6 +148,17 @@ export default function Payment({ categories, direction, paymentMethods, payment
 export async function getStaticProps({ locale }) {
     const categories = await prisma.category.findMany();
     const paymentMethods = await getOption(Options.PaymentProviders);
+    const events = await prisma.eventDate.findMany({
+        select: {
+            title: true,
+            event: {
+                select: {
+                    title: true
+                }
+            },
+            id: true
+        }
+    });
 
     return {
         props: {
@@ -149,7 +169,8 @@ export async function getStaticProps({ locale }) {
             paymentFees: await getOption(Options.PaymentFeesPayment),
             shippingFees: await getOption(Options.PaymentFeesShipping),
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/payment' }))
+            ...(await loadNamespaces({ locale, pathname: '/payment' })),
+            events
         }
     };
 }
