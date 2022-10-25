@@ -84,7 +84,7 @@ export default function Checkout({ direction }) {
                 <Typography variant="h3" align={"center"}>
                     {t("checkout:checkout-complete")}
                 </Typography>
-                <Button onClick={handleBackToStart} color={"primary"} variant={"outlined"}>
+                <Button onClick={handleBackToStart} color={"primary"} variant={"outlined"} id={"back-to-start"}>
                     {t("checkout:back-to-start")}
                 </Button>
             </Stack>
