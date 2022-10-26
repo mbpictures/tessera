@@ -23,7 +23,8 @@ export const PaymentOverview = ({
     hideEmptyCategories,
     displayColor,
     shippingFees,
-    paymentFees
+    paymentFees,
+    eventName
 }: {
     categories: Array<{
         id: number;
@@ -38,6 +39,7 @@ export const PaymentOverview = ({
     displayColor?: boolean;
     shippingFees?: Record<string, number>;
     paymentFees?: Record<string, number>;
+    eventName?: string;
 }) => {
     const order = useAppSelector(selectOrder);
     const payment = useAppSelector(selectPayment).payment?.type;
@@ -59,6 +61,11 @@ export const PaymentOverview = ({
             subheader={
                 <ListSubheader>
                     <Typography variant="h5">{t("common:summary")}</Typography>
+                    {
+                        eventName && (
+                            <Typography variant="h6">{eventName}</Typography>
+                        )
+                    }
                 </ListSubheader>
             }
         >
