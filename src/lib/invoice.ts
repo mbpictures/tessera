@@ -1,7 +1,7 @@
 import prisma from "./prisma";
 import ejs from "ejs";
 import htmlPdf from "html-pdf";
-import { calculateTotalPrice, getServiceFeeAmount, summarizeTicketAmount } from "../constants/util";
+import { calculateTotalPrice, getEventTitle, getServiceFeeAmount, summarizeTicketAmount } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
 import { getOption } from "./options";
@@ -129,7 +129,8 @@ export const generateInvoice = async (
                 orderDB.locale
             ),
             bank_information: (await getOption(Options.PaymentDetails)),
-            ...(purpose && {purpose})
+            ...(purpose && {purpose}),
+            event_name: getEventTitle(orderDB.eventDate)
         });
 
         htmlPdf
