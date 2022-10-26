@@ -85,7 +85,6 @@ const SeatMapDialogInner = ({ seatmap, onClose, categories, onChange }) => {
     };
 
     const handleChangeSeat = (rowIndex, newSeat: Seat, index: number) => {
-        console.log(rowIndex);
         const newSeatmapDefinition = copySeatmapDefinition();
         newSeatmapDefinition[rowIndex][index] = newSeat;
         setSeatmapDefinition(newSeatmapDefinition);
