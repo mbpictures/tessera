@@ -191,7 +191,7 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
                         <AccordionDetails>
                             <PaymentMethods
                                 paymentMethods={["invoice"]}
-                                categories={categories}
+                                categories={categories[selector.selectedEvent.selectedEvent] ?? Object.values(categories)[0]}
                                 paymentFees={paymentFees}
                             />
                         </AccordionDetails>
