@@ -9,6 +9,7 @@ import { PaymentType } from "../../store/factories/payment/PaymentFactory";
 import { OrderState, selectOrder } from "../../store/reducers/orderReducer";
 import useTranslation from "next-translate/useTranslation";
 import { idempotencyCall } from "../../lib/idempotency/clientsideIdempotency";
+import payment from "../../../locale/en/payment.json";
 
 export const Invoice = () => {
     const selector = useAppSelector(selectPayment);
@@ -35,12 +36,12 @@ export const Invoice = () => {
 
     return (
         <Typography>
-            {t("payment:invoice-description")}
+            {t("payment:invoice-description", null, {fallback: payment["invoice-description"]})}
         </Typography>
     );
 };
 
 export const InvoiceHeader = () => {
     const { t } = useTranslation();
-    return <Typography>{t("payment:invoice")}</Typography>;
+    return <Typography>{t("payment:invoice", null, {fallback: payment["invoice"]})}</Typography>;
 };

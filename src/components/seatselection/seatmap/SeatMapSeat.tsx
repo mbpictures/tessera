@@ -8,6 +8,8 @@ import { SEAT_COLORS } from "../../../constants/Constants";
 import { formatPrice } from "../../../constants/util";
 import { useTheme } from "@mui/system";
 import useTranslation from "next-translate/useTranslation";
+import seatselection from "../../../../locale/en/seatselection.json";
+import common from "../../../../locale/en/common.json";
 
 export interface Seat {
     type: "seat" | "space";
@@ -85,15 +87,15 @@ export const SeatMapSeat = ({
                 <React.Fragment>
                     {(seat.occupied && !isSelected) ? (
                         <Typography>
-                            {t("seatselection:seat-booked")}
+                            {t("seatselection:seat-booked", null, {fallback: seatselection["seat-booked"]})}
                         </Typography>
                     ) : (
                         <>
                             <Typography variant={"body1"}>
-                                {t("common:category")}: {category.label}
+                                {t("common:category", null, {fallback: common["category"]})}: {category.label}
                             </Typography>
                             <Typography variant={"body1"}>
-                                {t("common:price")}:{" "}
+                                {t("common:price", null, {fallback: common["price"]})}:{" "}
                                 {formatPrice(
                                     category.price * seat.amount,
                                     category.currency

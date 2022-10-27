@@ -9,6 +9,7 @@ import {
     setShipping
 } from "../../store/reducers/personalInformationReducer";
 import useTranslation from "next-translate/useTranslation";
+import information from "../../../locale/en/information.json";
 
 export const PostalDeliveryShippingComponent = () => {
     const { t } = useTranslation();
@@ -36,7 +37,7 @@ export const PostalDeliveryShippingComponent = () => {
     return (
         <Stack spacing={1}>
             <Typography variant="body2">
-                {t("information:postal-delivery-description")}
+                {t("information:postal-delivery-description", null, {fallback: information["postal-delivery-description"]})}
             </Typography>
             <FormControlLabel
                 control={
@@ -48,7 +49,7 @@ export const PostalDeliveryShippingComponent = () => {
                         }
                     />
                 }
-                label={t("information:differing-shipping-address")}
+                label={t("information:differing-shipping-address", null, {fallback: information["differing-shipping-address"]})}
                 id={"checkbox-differing-shipping-address"}
             />
 
