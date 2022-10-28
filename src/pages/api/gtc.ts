@@ -9,7 +9,9 @@ export default async function handler(
     if (req.method !== "GET")
         return res.status(400).end("Method unsupported");
 
-    const { data, type } = await getOptionData(Options.GTC);
+    const {type: gtcType} = req.query;
+
+    const { data, type } = await getOptionData(gtcType === "privacy" ? Options.Privacy : Options.GTC);
     if (!data)
         return res.status(404).end("No GTC set");
 
