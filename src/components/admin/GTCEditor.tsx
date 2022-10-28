@@ -16,13 +16,13 @@ const Editor = dynamic<any>(() =>
 )
 
 export const GTCEditor = () => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState<string | null>(null);
     const [data, setData] = useState(EditorState.createEmpty());
 
     useEffect(() => {
         if (!open) return;
         const loadData = async () => {
-            const response = await axios.get("/api/gtc", {
+            const response = await axios.get("/api/gtc?type=" + open, {
                 responseType: "blob"
             });
             const text = await response.data.text();
@@ -32,16 +32,16 @@ export const GTCEditor = () => {
     }, [open]);
 
     const handleSave = async () => {
-        await axios.post("/api/admin/options/data/" + Options.GTC, {
+        await axios.post("/api/admin/options/data/" + (open === "privacy" ? Options.Privacy : Options.GTC), {
             data: convertToHTML(data?.getCurrentContent()),
             type: "text/html"
         });
-        setOpen(false);
+        setOpen(null);
     };
 
     return (
         <>
-            <Dialog open={open} onClose={() => setOpen(false)} fullScreen>
+            <Dialog open={open !== null} onClose={() => setOpen(null)} fullScreen>
                 <AppBar sx={{ position: "relative" }}>
                     <Toolbar>
                         <Typography
@@ -54,7 +54,7 @@ export const GTCEditor = () => {
                         <IconButton
                             edge="start"
                             color="inherit"
-                            onClick={() => setOpen(false)}
+                            onClick={() => setOpen(null)}
                             aria-label="close"
                         >
                             <CloseIcon />
@@ -82,8 +82,11 @@ export const GTCEditor = () => {
                     />
                 </Box>
             </Dialog>
-            <Button onClick={() => setOpen(true)} fullWidth>
-                Open Editor
+            <Button onClick={() => setOpen("gtc")} fullWidth>
+                Open GTC
+            </Button>
+            <Button onClick={() => setOpen("privacy")} fullWidth>
+                Open Privacy Policy
             </Button>
         </>
     )
