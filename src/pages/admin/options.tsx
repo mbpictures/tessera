@@ -29,6 +29,7 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import { TemplatePreview } from "../../components/admin/dialogs/TemplatePreview";
+import { GTCEditor } from "../../components/admin/GTCEditor";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -432,6 +433,14 @@ export default function Options({options, permissionDenied}) {
                         <SaveButton action={handleSaveTemplates} fullWidth>
                             Save
                         </SaveButton>
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary>
+                        Terms and Services
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <GTCEditor />
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
