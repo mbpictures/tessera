@@ -90,6 +90,8 @@ export const PayPal = () => {
         dispatch(setPaymentStatus("finished"));
     };
 
+    if (!payment.gtcAccepted) return null;
+
     return (
         <>
             <PayPalScriptProvider
