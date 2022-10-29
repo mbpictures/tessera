@@ -65,6 +65,7 @@ export const AcceptGTC = () => {
                     <Checkbox
                         checked={payment.gtcAccepted}
                         onChange={(event) => dispatch(setGtcAccepted(event.target.checked))}
+                        id="accept-gtc-button"
                     />
                 }
                 label={
