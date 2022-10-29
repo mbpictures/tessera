@@ -13,5 +13,8 @@
     "invoice-description": "You will receive an invoice containing the recipient's bank details by e-mail.",
     "paypal-description": "",
     "shipping-fee": "Shipping Fee",
-    "payment-fee": "Payment Service Fee"
+    "payment-fee": "Payment Service Fee",
+    "accept-gtc": "I accept <linkGTC>Terms & Conditions</linkGTC> and the <linkPrivacy>Privacy Policy</linkPrivacy>",
+    "gtc-header": "General Terms and Conditions",
+    "privacy-header": "Privacy Policy"
 }

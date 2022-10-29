@@ -25,6 +25,7 @@ import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 import { selectEventSelected } from "../store/reducers/eventSelectionReducer";
 import { getEventTitle } from "../constants/util";
+import { AcceptGTC } from "../components/form/AcceptGTC";
 
 export default function Payment({ categories, direction, paymentMethods, paymentFees, shippingFees, events }) {
     const payment = useAppSelector(selectPayment);
@@ -135,6 +136,7 @@ export default function Payment({ categories, direction, paymentMethods, payment
                             shippingFees={shippingFees}
                             eventName={eventTitle}
                         />
+                        <AcceptGTC />
                         {PaymentFactory.getPaymentInstance(
                             payment.payment
                         )?.getPaymentButton() ?? <PayButton />}

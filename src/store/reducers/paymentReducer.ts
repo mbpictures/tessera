@@ -14,6 +14,7 @@ interface PaymentState {
     payment: IPayment;
     state: PaymentStatus;
     idempotencyKey: string | null;
+    gtcAccepted: boolean;
 }
 
 export interface IPayment {
@@ -27,7 +28,8 @@ const initialState: PaymentState = {
         type: null
     },
     state: "none",
-    idempotencyKey: null
+    idempotencyKey: null,
+    gtcAccepted: false
 };
 
 export const paymentSlice = createSlice({
@@ -43,10 +45,13 @@ export const paymentSlice = createSlice({
         setIdempotencyKey: (state, action: PayloadAction<string>) => {
             state.idempotencyKey = action.payload;
         },
+        setGtcAccepted: (state, action: PayloadAction<boolean>) => {
+            state.gtcAccepted = action.payload;
+        },
         resetPayment: () => initialState
     }
 });
 
-export const { setPayment, setPaymentStatus, resetPayment, setIdempotencyKey } = paymentSlice.actions;
+export const { setPayment, setPaymentStatus, resetPayment, setIdempotencyKey, setGtcAccepted } = paymentSlice.actions;
 export const selectPayment = (state: RootState) => state.payment;
 export default paymentSlice.reducer;

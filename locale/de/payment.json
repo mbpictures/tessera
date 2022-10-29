@@ -13,5 +13,8 @@
     "invoice-description": "Ihnen wird eine Rechnung per E-Mail zu gesendet!",
     "paypal-description": "",
     "shipping-fee": "Versandkosten",
-    "payment-fee": "Zahlungsgebühren"
+    "payment-fee": "Zahlungsgebühren",
+    "accept-gtc": "Ich akzeptiere die <linkGTC>AGB</linkGTC> und die <linkPrivacy>Datenschutzbestimmungen</linkPrivacy>",
+    "gtc-header": "Allgemeine Geschäftsbedingungen",
+    "privacy-header": "Datenschutzbestimmungen"
 }

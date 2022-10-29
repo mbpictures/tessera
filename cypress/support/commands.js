@@ -233,6 +233,7 @@ Cypress.Commands.add("purchaseTicket", (options) => {
         if (options?.paymentMethod !== undefined && !options?.paymentMethod) return cy.wrap(information);
         const payment = options?.paymentMethod ?? "invoice";
         cy.get("#checkbox-" + payment).click();
+        cy.get("#accept-gtc-button").click();
         cy.get("#pay-button").click();
 
         cy.url().should("include", "/checkout");

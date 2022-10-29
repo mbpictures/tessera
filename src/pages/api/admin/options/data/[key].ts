@@ -119,8 +119,16 @@ export default async function handler(
             });
         });
         const file = data.files.file;
-        const fileData = await fs.promises.readFile(file.filepath);
-        await setOptionData(optionsKey, fileData, file.mimetype);
+        let fileData;
+        let fileType;
+        if (file) {
+            fileData = await fs.promises.readFile(file.filepath);
+            fileType = file.mimetype;
+        } else {
+            fileData = Buffer.from(data.fields.data, "utf-8");
+            fileType = data.fields.type;
+        }
+        await setOptionData(optionsKey, fileData, fileType);
         res.status(200).end("Updated");
         return;
     }

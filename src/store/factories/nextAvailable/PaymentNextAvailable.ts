@@ -7,6 +7,6 @@ export class PaymentNextAvailable extends NextAvailable {
         const data = selectPayment(this.state);
         return (
             PaymentFactory.getPaymentInstance(data.payment)?.isValid() ?? false
-        );
+        ) && data.gtcAccepted;
     }
 }
