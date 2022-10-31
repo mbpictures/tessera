@@ -14,7 +14,7 @@ export const CheckboxAccordion = ({
     onSelect,
     children
 }: {
-    label: string | React.ReactNode | React.Component;
+    label: React.ReactNode;
     name: string;
     selectedItem: string;
     onSelect: (checkedItem) => unknown;
