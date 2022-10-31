@@ -10,7 +10,7 @@ import {
     TextField, Typography
 } from "@mui/material";
 import { ShippingType } from "../../store/factories/shipping/ShippingFactory";
-import { Clear } from "@mui/icons-material";
+import Clear from "@mui/icons-material/Clear";
 import * as React from "react";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useRef, useState } from "react";

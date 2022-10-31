@@ -14,7 +14,7 @@ import { Box } from "@mui/system";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { motion } from "framer-motion";
-import { Delete } from "@mui/icons-material";
+import Delete from "@mui/icons-material/Delete";
 import { formatPrice } from "../../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import seatSelectionText from "../../../../locale/en/seatselection.json";

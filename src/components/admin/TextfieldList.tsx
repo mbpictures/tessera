@@ -1,5 +1,6 @@
 import { Button, IconButton, InputAdornment, List, ListSubheader, TextField } from "@mui/material";
-import { DeleteOutlined, Add } from "@mui/icons-material";
+import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
+import Add from "@mui/icons-material/Add";
 
 export const TextfieldList = ({
     values,
