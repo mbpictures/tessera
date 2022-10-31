@@ -32,6 +32,6 @@ module.exports = nextTranslate({
     output: "standalone",
     staticPageGenerationTimeout: 60*4,
     eslint: {
-        ignoreDuringBuilds: process.env.IGNORE_LINT,
+        ignoreDuringBuilds: process.env.IGNORE_LINT && process.env.IGNORE_LINT === "true",
     }
 });
