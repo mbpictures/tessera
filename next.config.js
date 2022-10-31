@@ -32,6 +32,9 @@ module.exports = nextTranslate({
     output: "standalone",
     staticPageGenerationTimeout: 60*4,
     eslint: {
-        ignoreDuringBuilds: process.env.IGNORE_LINT && process.env.IGNORE_LINT === "true",
+        ignoreDuringBuilds: process.env.IGNORE_LINT && process.env.IGNORE_LINT === "true"
+    },
+    typescript: {
+        ignoreBuildErrors: process.env.IGNORE_TYPE_ERRORS && process.env.IGNORE_TYPE_ERRORS === "true"
     }
 });
