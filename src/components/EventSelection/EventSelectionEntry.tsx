@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
 import { Accordion, AccordionDetails, AccordionSummary, Theme, Typography } from "@mui/material";
 import styles from "../../style/EventSelection.module.scss";
-import { Check } from "@mui/icons-material";
+import Check from "@mui/icons-material/Check";
 import { ChangeEventHandler } from "react";
 import { useAppSelector } from "../../store/hooks";
 import { selectEventSelected } from "../../store/reducers/eventSelectionReducer";

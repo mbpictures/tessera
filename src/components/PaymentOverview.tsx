@@ -7,7 +7,7 @@ import {
     ListSubheader,
     Typography
 } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import Edit from "@mui/icons-material/Edit";
 import React from "react";
 import { useAppSelector } from "../store/hooks";
 import { selectOrder } from "../store/reducers/orderReducer";
