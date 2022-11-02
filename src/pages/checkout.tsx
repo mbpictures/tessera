@@ -9,20 +9,26 @@ import useTranslation from "next-translate/useTranslation";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useAppSelector } from "../store/hooks";
+import { selectPayment } from "../store/reducers/paymentReducer";
+import { selectOrder } from "../store/reducers/orderReducer";
 
 export default function Checkout({ direction }) {
     const theme = useTheme();
     const { t } = useTranslation();
     const router = useRouter();
     const notificationSent = useRef(false);
+    const paymentSelector = useAppSelector(selectPayment);
+    const orderSelector = useAppSelector(selectOrder);
 
     useEffect(() => {
         if (!router.isReady || notificationSent.current) return;
 
+        notificationSent.current = true;
         const {order: orderId, payment} = router.query;
         axios.post("/api/order/checkout_complete_notification", {
-            orderId,
-            payment
+            orderId: orderSelector.orderId ?? orderId,
+            payment: paymentSelector.payment.type ?? payment
         }).catch(console.log);
     }, [router, notificationSent.current]);
 
