@@ -97,7 +97,6 @@ async function handler(
             );
         }
 
-        // TODO: replace hard coded types by factory methods
         if (orderDB.task === null &&
             (PaymentFactory.getPaymentInstance({type: paymentType, data: null}).needsManualProcessing() ||
                 ShippingFactory.getShippingInstance({type: user.shipping.type, data: null}).needsManualProcessing()
