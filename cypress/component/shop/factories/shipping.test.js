@@ -94,4 +94,12 @@ describe("Shipping Factories", () => {
         expect(boxoffice.isValid()).to.equal(true);
         expect(boxoffice.DisplayName).to.equal("box-office");
     })
+
+    it("Manual Processing", () => {
+        const manualType = ShippingType.Post;
+        const withoutProcessing = Object.values(ShippingType).filter(val => val !== manualType)
+            .map(type => ShippingFactory.getShippingInstance({type, data: null}).needsManualProcessing());
+        expect(withoutProcessing).to.deep.equal(withoutProcessing.map(() => false));
+        expect(ShippingFactory.getShippingInstance({type: manualType, data: null}).needsManualProcessing()).to.equal(true);
+    });
 })

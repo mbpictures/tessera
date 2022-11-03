@@ -103,4 +103,13 @@ describe("Payment Factories", () => {
         expect(iban.paymentResultValid(JSON.stringify({  }))).to.equal(false);
         expect(iban.paymentResultValid(JSON.stringify({event: "charge.failed"}))).to.equal(false);
     })
+
+
+    it("Manual Processing", () => {
+        const manualType = PaymentType.Invoice;
+        const withoutProcessing = Object.values(PaymentType).filter(val => val !== manualType)
+            .map(type => PaymentFactory.getPaymentInstance({type, data: null}).needsManualProcessing());
+        expect(withoutProcessing).to.deep.equal(withoutProcessing.map(() => false));
+        expect(PaymentFactory.getPaymentInstance({type: manualType, data: null}).needsManualProcessing()).to.equal(true);
+    });
 })
