@@ -65,4 +65,8 @@ export class PostalDeliveryShipping extends Shipping {
             }
         };
     }
+
+    override needsManualProcessing(): boolean {
+        return true;
+    }
 }
