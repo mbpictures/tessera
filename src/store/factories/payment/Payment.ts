@@ -25,4 +25,8 @@ export abstract class Payment {
     }
 
     abstract isValid(): boolean;
+
+    needsManualProcessing(): boolean {
+        return false;
+    }
 }
