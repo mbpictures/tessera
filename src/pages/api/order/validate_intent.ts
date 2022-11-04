@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
+import { PaymentFactory, PaymentType } from "../../../store/factories/payment/PaymentFactory";
 
 export default async function handler(
     req: NextApiRequest,
@@ -18,15 +19,16 @@ export default async function handler(
                 id: orderId
             },
             select: {
+                paymentType: true,
                 paymentIntent: true,
                 paymentResult: true
             }
         });
 
-        // TODO: add payment intent validation using payment factory
-        const paymentResultValid = withResult ? order.paymentResult !== null && order.paymentResult !== "" : true;
+        const paymentInstance = PaymentFactory.getPaymentInstance({type: order.paymentType as PaymentType, data: null});
+        const paymentResultValid = withResult ? paymentInstance.paymentResultValid(order.paymentResult) : true;
         res.status(200).json({
-            valid: order.paymentIntent !== null && order.paymentIntent !== "" && paymentResultValid
+            valid: paymentInstance.paymentIntentValid(order.paymentIntent) && paymentResultValid
         });
     } catch (e) {
         res.status(500).end("Server error");

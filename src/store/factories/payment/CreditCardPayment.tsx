@@ -48,4 +48,8 @@ export class CreditCardPayment extends Payment {
     getValidPaymentResult(data?: any): Object {
         return {event: "charge.succeeded"};
     }
+
+    override paymentIntentValid(data: any): boolean {
+        return super.paymentIntentValid(data) ? !!JSON.parse(data)?.client_secret : false;
+    }
 }

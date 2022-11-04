@@ -19,4 +19,8 @@ export abstract class Shipping {
     abstract isValid(): boolean;
 
     abstract getSuccessfulShipping(): IShipping;
+
+    needsManualProcessing(): boolean {
+        return false;
+    }
 }

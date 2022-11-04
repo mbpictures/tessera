@@ -3,8 +3,8 @@ import { OrderState } from "../../../store/reducers/orderReducer";
 import { PersonalInformationState } from "../../../store/reducers/personalInformationReducer";
 import prisma from "../../../lib/prisma";
 import { withNotification } from "../../../lib/notifications/withNotification";
-import { PaymentType } from "../../../store/factories/payment/PaymentFactory";
-import { ShippingType } from "../../../store/factories/shipping/ShippingFactory";
+import { PaymentFactory, PaymentType } from "../../../store/factories/payment/PaymentFactory";
+import { ShippingFactory } from "../../../store/factories/shipping/ShippingFactory";
 import { validateOrder } from "../../../constants/serverUtil";
 
 const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKey) => {
@@ -60,7 +60,7 @@ async function handler(
         order: OrderState;
         user: PersonalInformationState;
         eventDateId: number;
-        paymentType: string;
+        paymentType: PaymentType;
         locale: string;
     } = req.body;
     const idempotencyKey = req.headers["idempotency-key"] as string;
@@ -97,8 +97,10 @@ async function handler(
             );
         }
 
-        // TODO: replace hard coded types by factory methods
-        if (orderDB.task === null && (paymentType === PaymentType.Invoice || user.shipping.type === ShippingType.Post)) {
+        if (orderDB.task === null &&
+            (PaymentFactory.getPaymentInstance({type: paymentType, data: null}).needsManualProcessing() ||
+                ShippingFactory.getShippingInstance({type: user.shipping.type, data: null}).needsManualProcessing()
+            )) {
             await prisma.task.create({
                 data: {
                     order: {

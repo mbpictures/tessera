@@ -25,4 +25,12 @@ export abstract class Payment {
     }
 
     abstract isValid(): boolean;
+
+    needsManualProcessing(): boolean {
+        return false;
+    }
+
+    paymentIntentValid(data: any): boolean {
+        return data !== "" && data !== null;
+    }
 }

@@ -28,4 +28,12 @@ export class InvoicePayment extends Payment {
     getValidPaymentResult(data?: any): Object {
         return { payed: true };
     }
+
+    override needsManualProcessing() {
+        return true;
+    }
+
+    override paymentIntentValid(data: any): boolean {
+        return super.paymentIntentValid(data) ? !!JSON.parse(data)?.invoicePurpose : false;
+    }
 }
