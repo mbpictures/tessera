@@ -32,4 +32,8 @@ export class InvoicePayment extends Payment {
     override needsManualProcessing() {
         return true;
     }
+
+    override paymentIntentValid(data: any): boolean {
+        return super.paymentIntentValid(data) ? !!JSON.parse(data)?.invoicePurpose : false;
+    }
 }

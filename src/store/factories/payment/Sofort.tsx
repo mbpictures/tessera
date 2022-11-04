@@ -27,4 +27,8 @@ export class SofortPayment extends Payment {
     getValidPaymentResult(data?: any): Object {
         return { status: true };
     }
+
+    override paymentIntentValid(data: any): boolean {
+        return super.paymentIntentValid(data) ? !!JSON.parse(data)?.payment_url : false;
+    }
 }

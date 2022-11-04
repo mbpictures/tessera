@@ -26,4 +26,9 @@ export class PayPalPayment extends Payment {
     getValidPaymentResult(data?: any): Object {
         return { status: "COMPLETED" };
     }
+
+    override paymentIntentValid(data: any): boolean {
+        const validIntentStatus = ["CREATED", "SAVED", "APPROVED", "PAYER_ACTION_REQUIRED"];
+        return super.paymentIntentValid(data) ? validIntentStatus.includes(JSON.parse(data)?.status) : false;
+    }
 }
