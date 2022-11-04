@@ -32,6 +32,11 @@ describe("Payment Factories", () => {
         expect(invoice.paymentResultValid(JSON.stringify(null))).to.equal(false);
         expect(invoice.paymentResultValid(JSON.stringify({}))).to.equal(false);
         expect(invoice.paymentResultValid(JSON.stringify({payed: false}))).to.equal(false);
+
+        expect(invoice.paymentIntentValid(JSON.stringify(null))).to.equal(false);
+        expect(invoice.paymentIntentValid(JSON.stringify({  }))).to.equal(false);
+        expect(invoice.paymentIntentValid(JSON.stringify({ invoicePurpose: null }))).to.equal(false);
+        expect(invoice.paymentIntentValid(JSON.stringify({ invoicePurpose: "ABC" }))).to.equal(true);
     })
 
     it("Sofort", () => {
@@ -47,6 +52,11 @@ describe("Payment Factories", () => {
         expect(sofort.paymentResultValid(JSON.stringify(null))).to.equal(false);
         expect(sofort.paymentResultValid(JSON.stringify({  }))).to.equal(false);
         expect(sofort.paymentResultValid(JSON.stringify({transaction: {status: false}}))).to.equal(false);
+
+        expect(sofort.paymentIntentValid(JSON.stringify(null))).to.equal(false);
+        expect(sofort.paymentIntentValid(JSON.stringify({  }))).to.equal(false);
+        expect(sofort.paymentIntentValid(JSON.stringify({ payment_url: null }))).to.equal(false);
+        expect(sofort.paymentIntentValid(JSON.stringify({ payment_url: "ABC" }))).to.equal(true);
     })
 
     it("CreditCard", () => {
@@ -68,6 +78,11 @@ describe("Payment Factories", () => {
         expect(creditcard.paymentResultValid(JSON.stringify(null))).to.equal(false);
         expect(creditcard.paymentResultValid(JSON.stringify({  }))).to.equal(false);
         expect(creditcard.paymentResultValid(JSON.stringify({event: "charge.failed"}))).to.equal(false);
+
+        expect(creditcard.paymentIntentValid(JSON.stringify(null))).to.equal(false);
+        expect(creditcard.paymentIntentValid(JSON.stringify({  }))).to.equal(false);
+        expect(creditcard.paymentIntentValid(JSON.stringify({ client_secret: null }))).to.equal(false);
+        expect(creditcard.paymentIntentValid(JSON.stringify({ client_secret: "ABC" }))).to.equal(true);
     })
 
     it("PayPal", () => {
@@ -83,6 +98,12 @@ describe("Payment Factories", () => {
         expect(paypal.paymentResultValid(JSON.stringify(null))).to.equal(false);
         expect(paypal.paymentResultValid(JSON.stringify({  }))).to.equal(false);
         expect(paypal.paymentResultValid(JSON.stringify({status: "FAILED"}))).to.equal(false);
+
+        expect(paypal.paymentIntentValid(JSON.stringify(null))).to.equal(false);
+        expect(paypal.paymentIntentValid(JSON.stringify({  }))).to.equal(false);
+        expect(paypal.paymentIntentValid(JSON.stringify({ status: null }))).to.equal(false);
+        expect(paypal.paymentIntentValid(JSON.stringify({ status: "ABC" }))).to.equal(false);
+        expect(paypal.paymentIntentValid(JSON.stringify({ status: "APPROVED" }))).to.equal(true);
     })
 
     it("StripeIBAN", () => {
@@ -102,6 +123,11 @@ describe("Payment Factories", () => {
         expect(iban.paymentResultValid(JSON.stringify(null))).to.equal(false);
         expect(iban.paymentResultValid(JSON.stringify({  }))).to.equal(false);
         expect(iban.paymentResultValid(JSON.stringify({event: "charge.failed"}))).to.equal(false);
+
+        expect(iban.paymentIntentValid(JSON.stringify(null))).to.equal(false);
+        expect(iban.paymentIntentValid(JSON.stringify({  }))).to.equal(false);
+        expect(iban.paymentIntentValid(JSON.stringify({ client_secret: null }))).to.equal(false);
+        expect(iban.paymentIntentValid(JSON.stringify({ client_secret: "ABC" }))).to.equal(true);
     })
 
 
