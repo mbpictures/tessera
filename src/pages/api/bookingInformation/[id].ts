@@ -7,7 +7,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     if (req.method !== "GET") return res.status(400).end("Method unsupported");
-    const { id } = req.query;
+    const { id, reservationId } = req.query;
     const eventDateId = parseInt(id as string);
     try {
         const event = await prisma.eventDate.findUnique({
@@ -32,14 +32,14 @@ export default async function handler(
         let seatMap;
         let categoryAmount = event.event.categories.map(cat => cat.category);
         if (event.event.seatType === "free") {
-            const ticketAmounts = await getCategoryTicketAmount(eventDateId);
+            const ticketAmounts = await getCategoryTicketAmount(eventDateId, [], reservationId as string);
             categoryAmount = event.event.categories.map(category => ({
                 ...category.category,
                 ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - ticketAmounts[category.categoryId], 0)
             }))
         }
         else {
-            seatMap = await getSeatMap(eventDateId, true);
+            seatMap = await getSeatMap(eventDateId, true, reservationId as string);
         }
         return res.status(200).json({seatMap, categoryAmount});
     } catch (e) {
