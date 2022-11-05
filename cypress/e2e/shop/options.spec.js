@@ -79,13 +79,8 @@ describe("Admin Configuration on store page", () => {
                         value: deliveryMethods,
                     }
                 }).then(() => {
-                    cy.visit("/seatselection/1?event=1");
-                    cy.get(".seat-selection-free-add").first().click();
-                    cy.get(".category-selection").last().click();
-                    cy.get("#category-selection-entry0-1").click();
-                    cy.get("#stepper-next-button").click();
-                    cy.url().should("include", "information");
-                    cy.get("#information-address-next").click();
+                    cy.purchaseTicket({information: false});
+                    cy.get("#information-delivery").click();
 
                     cy.wrap(deliveryMethods).each((item) => {
                         cy.get("#checkbox-" + item).should("exist");
