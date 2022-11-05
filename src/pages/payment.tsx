@@ -55,7 +55,7 @@ export default function Payment({ categories, direction, paymentMethods, payment
     }, [events, selectedEventId]);
 
     const openSeatSelectionPage = () => {
-        router.push("/seatselection").catch(console.log);
+        router.push("/seatselection/" + selectedEventId + "?event=" + selectedEventId).catch(console.log);
     };
 
     return (
