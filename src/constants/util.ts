@@ -29,6 +29,10 @@ export const validateAddress = (address: IAddress) => {
     );
 };
 
+export const validateTicketNames = (tickets) => {
+    return tickets.every(ticket => (ticket.firstName ?? "").length > 2 && (ticket.lastName ?? "").length > 2);
+}
+
 export const hasNumber = (myString) => {
     return /\d/.test(myString);
 };
