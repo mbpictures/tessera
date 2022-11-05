@@ -281,7 +281,7 @@ export const isTicketOccupied = async (eventDateId: number, tickets: Tickets | T
     }, {});
 }
 
-export const getSeatMap = async (eventDateId, withOccupiedMarked): Promise<SeatMap> => {
+export const getSeatMap = async (eventDateId, withOccupiedMarked, reservationId?): Promise<SeatMap> => {
     const event = await prisma.eventDate.findUnique({
         where: {
             id: eventDateId
@@ -303,7 +303,7 @@ export const getSeatMap = async (eventDateId, withOccupiedMarked): Promise<SeatM
 
     let seatMap: SeatMap = JSON.parse(event.event.seatMap.definition);
     if (withOccupiedMarked) {
-        const occupies = await isTicketOccupied(eventDateId, seatMap.flat(2).map(seat => ({seatId: seat.id, amount: seat.amount, categoryId: seat.category})));
+        const occupies = await isTicketOccupied(eventDateId, seatMap.flat(2).map(seat => ({seatId: seat.id, amount: seat.amount, categoryId: seat.category})), reservationId);
         seatMap = seatMap.map((row) =>
             row.map((seat) => {
                 return {

@@ -21,7 +21,10 @@ export type Tickets = Array<Ticket>;
 
 const initialState: OrderState = {
     tickets: [],
-    ticketPersonalizationRequired: false
+    ticketPersonalizationRequired: false,
+    orderId: undefined,
+    reservationId: undefined,
+    reservationExpiresAt: undefined
 };
 
 export const orderSlice = createSlice({

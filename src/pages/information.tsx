@@ -27,9 +27,9 @@ import useTranslation from "next-translate/useTranslation";
 import loadNamespaces from "next-translate/loadNamespaces";
 import { TicketNames } from "../components/form/TicketNames";
 import prisma from "../lib/prisma";
-import { setTicketPersonalizationRequired } from "../store/reducers/orderReducer";
+import { selectOrder, setTicketPersonalizationRequired } from "../store/reducers/orderReducer";
 import { useRouter } from "next/router";
-import { formatPrice } from "../constants/util";
+import { formatPrice, validateAddress, validateTicketNames } from "../constants/util";
 
 const validateEmail = (email) => {
     const re =
@@ -39,6 +39,7 @@ const validateEmail = (email) => {
 
 export default function Information({ direction, deliveryMethods, categories, events, shippingFees }) {
     const selector = useAppSelector(selectPersonalInformation);
+    const selectorOrder = useAppSelector(selectOrder);
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(0);
@@ -128,7 +129,14 @@ export default function Information({ direction, deliveryMethods, categories, ev
                                     dispatch(setAddress(newValue))
                                 }
                             />
-                            <Button onClick={() => setExpanded(event?.personalTicket ? 1 : 2)} fullWidth={true} id={"information-address-next"}>{t("common:next")}</Button>
+                            <Button
+                                onClick={() => setExpanded(event?.personalTicket ? 1 : 2)}
+                                fullWidth={true}
+                                id={"information-address-next"}
+                                disabled={!validateAddress(selector.address)}
+                            >
+                                {t("common:next")}
+                            </Button>
                         </Stack>
                     </AccordionDetails>
                 </Accordion>
@@ -138,7 +146,14 @@ export default function Information({ direction, deliveryMethods, categories, ev
                             <AccordionSummary>{t("information:tickets")}</AccordionSummary>
                             <AccordionDetails>
                                 <TicketNames categories={categories} />
-                                <Button onClick={() => setExpanded(2)} fullWidth={true} id={"information-tickets-next"}>{t("common:next")}</Button>
+                                <Button
+                                    onClick={() => setExpanded(2)}
+                                    fullWidth={true}
+                                    id={"information-tickets-next"}
+                                    disabled={!validateTicketNames(selectorOrder.tickets)}
+                                >
+                                    {t("common:next")}
+                                </Button>
                             </AccordionDetails>
                         </Accordion>
                     )

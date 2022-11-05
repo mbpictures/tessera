@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Step } from "../../components/Step";
 import prisma from "../../lib/prisma";
 import {
@@ -12,6 +12,8 @@ import { eventDateIsBookable } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { getCategoryTicketAmount, getSeatMap } from "../../constants/serverUtil";
 import axios from "axios";
+import { useAppSelector } from "../../store/hooks";
+import { selectOrder } from "../../store/reducers/orderReducer";
 
 export default function SeatSelection({
     categories,
@@ -27,23 +29,25 @@ export default function SeatSelection({
     const [categoriesState, setCategoriesState] = useState(categories);
     const [seatMapState, setSeatMapState] = useState(seatMap);
     const interval = useRef<NodeJS.Timer>();
+    const order = useAppSelector(selectOrder);
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         try {
-            const response = await axios.get("/api/bookingInformation/" + eventDate.id);
+            const query = order.reservationId ? "?reservationId=" + order.reservationId : "";
+            const response = await axios.get("/api/bookingInformation/" + eventDate.id + query);
             setCategoriesState(old => response?.data?.categoryAmount ?? old);
             setSeatMapState(old => response?.data?.seatMap ?? old);
         } catch (e) {
             console.log(e);
         }
-    };
+    }, [order.reservationId]);
 
     useEffect(() => {
         loadData().catch(console.log);
         interval.current = setInterval(loadData, 30000);
 
         return () => clearInterval(interval.current);
-    }, []);
+    }, [loadData]);
 
     if (fallback) return null;
     if (!eventDateIsBookable(eventDate))

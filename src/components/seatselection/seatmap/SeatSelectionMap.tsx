@@ -75,7 +75,9 @@ export const SeatSelectionMap = ({
         return {
             orderId: order.orderId,
             tickets: order.tickets.map((a) => a),
-            ticketPersonalizationRequired: order.ticketPersonalizationRequired
+            ticketPersonalizationRequired: order.ticketPersonalizationRequired,
+            reservationId: order.reservationId,
+            reservationExpiresAt: order.reservationExpiresAt
         };
     };
 

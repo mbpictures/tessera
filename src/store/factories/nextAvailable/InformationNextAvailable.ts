@@ -3,7 +3,7 @@ import {
     PersonalInformationState,
     selectPersonalInformation
 } from "../../reducers/personalInformationReducer";
-import { validateAddress } from "../../../constants/util";
+import { validateAddress, validateTicketNames } from "../../../constants/util";
 import { ShippingFactory } from "../shipping/ShippingFactory";
 import { selectOrder } from "../../reducers/orderReducer";
 
@@ -19,7 +19,7 @@ export class InformationNextAvailable extends NextAvailable {
             this.state
         );
         const order = selectOrder(this.state);
-        const ticketsValid = order.ticketPersonalizationRequired ? order.tickets.every(ticket => (ticket.firstName ?? "").length > 2 && (ticket.lastName ?? "").length > 2) : true;
+        const ticketsValid = order.ticketPersonalizationRequired ? validateTicketNames(order.tickets) : true;
         const emailValid = validateEmail(data.email);
         return (
             ticketsValid &&

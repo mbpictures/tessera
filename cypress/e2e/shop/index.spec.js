@@ -45,7 +45,7 @@ describe("Buy tickets", () => {
         cy.createEvents();
     });
 
-    /*it("Events exist", () => {
+    it("Events exist", () => {
         cy.visit("/");
 
         cy.fixture("admin/events").then((events) => {
@@ -195,7 +195,7 @@ describe("Buy tickets", () => {
         cy.get("#stepper-next-button").should("not.be.enabled");
         cy.get("#checkbox-download").click();
         cy.get("#stepper-next-button").should("be.enabled");
-    });*/
+    });
 
     it("Select Payment", () => {
         cy.purchaseTicket({paymentMethod: false});
