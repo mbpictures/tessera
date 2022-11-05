@@ -40,7 +40,7 @@ export const storeOrderAndUser = async (
     paymentType,
     idempotencyKey
 ) => {
-    if (order.orderId || user.userId)
+    if (order.orderId && user.userId)
         return { userId: user.userId, orderId: order.orderId };
     const response = await idempotencyCall("/api/order/store", {
         order: order,

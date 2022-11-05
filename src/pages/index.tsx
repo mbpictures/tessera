@@ -11,11 +11,13 @@ import { Options } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
 import { resetOrder } from "../store/reducers/orderReducer";
 import { eventDateIsBookable } from "../constants/util";
+import { resetPayment } from "../store/reducers/paymentReducer";
 
 export default function Home({ events, direction, title, subtitle }) {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        dispatch(resetPayment());
         dispatch(resetOrder());
     }, []);
 
