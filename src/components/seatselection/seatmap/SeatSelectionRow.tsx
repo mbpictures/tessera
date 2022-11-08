@@ -8,13 +8,15 @@ export const SeatSelectionRow = ({
     categories,
     onSelectSeat,
     forceNoRedux,
-    onContextMenu
+    onContextMenu,
+    currency
 }: {
     row: SeatRow;
     categories: Array<{ id: number; label: string; price: number }>;
     onSelectSeat?: OnSeatSelect;
     onContextMenu?: OnContextMenu;
     forceNoRedux?: boolean;
+    currency: string;
 }) => {
     return (
         <div style={{ display: "flex" }}>
@@ -27,6 +29,7 @@ export const SeatSelectionRow = ({
                     forceNoRedux={forceNoRedux}
                     onContextMenu={onContextMenu}
                     index={index}
+                    currency={currency}
                 />
             ))}
         </div>

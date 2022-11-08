@@ -4,7 +4,7 @@ import QRCode from "qrcode";
 import { formatPrice, getStaticAssetFile } from "../constants/serverUtil";
 import { randomBytes } from "crypto";
 import { encodeTicketQR, getEventTitle } from "../constants/util";
-import { getOptionData } from "./options";
+import { getOption, getOptionData } from "./options";
 import { Options } from "../constants/Constants";
 
 const fillTextField = (form, fieldName, value) => {
@@ -125,13 +125,14 @@ export const generateTicketWithId = async (ticketId: string): Promise<Uint8Array
             category: true
         }
     });
+    const currency = await getOption(Options.Currency);
     return await generateTicket(
         (await getOptionData(Options.TemplateTicket, getStaticAssetFile("ticket/template.pdf"))).data,
         {
             seatInformation: order.seatId?.toString() ?? order.category.label,
             price: order.category.price,
             name: (order.firstName ?? order.order.user.firstName) + " " + (order.lastName ?? order.order.user.lastName),
-            currency: order.category.currency,
+            currency: currency,
             locale: order.order.locale,
             date: order.order.eventDate.date
         },
@@ -164,6 +165,7 @@ export const generateTickets = async (
     });
 
     const categories = await prisma.category.findMany();
+    const currency = await getOption(Options.Currency);
 
     return await Promise.all(
         orderDB.tickets.map(async (ticket) => {
@@ -176,7 +178,7 @@ export const generateTickets = async (
                     seatInformation: ticket.seatId?.toString() ?? category.label,
                     price: category.price,
                     name: (ticket.firstName ?? orderDB.user.firstName) + " " + (ticket.lastName ?? orderDB.user.lastName),
-                    currency: category.currency,
+                    currency: currency,
                     locale: orderDB.locale,
                     date: orderDB.eventDate.date
                 },

@@ -73,7 +73,7 @@ const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element |
     )
 }
 
-export default function Orders({ permissionDenied, count, categories, eventDates, events, paymentFees}) {
+export default function Orders({ permissionDenied, count, categories, eventDates, events, paymentFees, currency}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
@@ -195,6 +195,7 @@ export default function Orders({ permissionDenied, count, categories, eventDates
                     setAddOrderOpen(false);
                 }}
                 paymentFees={paymentFees}
+                currency={currency}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Orders</Typography>
@@ -415,7 +416,8 @@ export async function getServerSideProps(context: NextPageContext) {
                     }, {}),
                     eventDates: JSON.parse(JSON.stringify(eventDateMaps)),
                     events: JSON.parse(JSON.stringify(events)),
-                    paymentFees: await getOption(Options.PaymentFeesPayment)
+                    paymentFees: await getOption(Options.PaymentFeesPayment),
+                    currency: await getOption(Options.Currency)
                 }
             };
         },

@@ -28,14 +28,14 @@ export const SeatMapSeat = ({
     onSeatSelect,
     forceNoRedux,
     index,
-    onContextMenu
+    onContextMenu,
+    currency
 }: {
     seat: Seat;
     categories: Array<{
         id: number;
         label: string;
         price: number;
-        currency: string;
         color?: string;
         activeColor?: string;
         occupiedColor?: string;
@@ -44,6 +44,7 @@ export const SeatMapSeat = ({
     onContextMenu?: OnContextMenu;
     forceNoRedux?: boolean;
     index: number;
+    currency: string;
 }) => {
     const [isSelected, setIsSelected] = useState(false);
     const reduxOrder = (useAppSelector(selectOrder) as OrderState);
@@ -98,7 +99,7 @@ export const SeatMapSeat = ({
                                 {t("common:price", null, {fallback: common["price"]})}:{" "}
                                 {formatPrice(
                                     category.price * seat.amount,
-                                    category.currency
+                                    currency
                                 )}
                             </Typography>
                         </>

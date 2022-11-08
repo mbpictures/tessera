@@ -31,7 +31,6 @@ export const PaymentOverview = ({
         price: number;
         label: string;
         color?: string;
-        currency: string;
     }>;
     withEditButton?: boolean;
     onEdit?: Function;
@@ -42,7 +41,7 @@ export const PaymentOverview = ({
     eventName?: string;
 }) => {
     const order = useAppSelector(selectOrder);
-    const payment = useAppSelector(selectPayment).payment?.type;
+    const payment = useAppSelector(selectPayment);
     const shipping = useAppSelector(selectPersonalInformation).shipping?.type;
     const { t } = useTranslation();
 
@@ -53,8 +52,8 @@ export const PaymentOverview = ({
 
     const items = summarizeTicketAmount(order.tickets, categories, hideEmptyCategories);
     const shippingPrice = shippingFees ? shippingFees[shipping] ?? 0 : 0;
-    const paymentPrice = paymentFees ? paymentFees[payment] ?? 0 : 0;
-    const price = calculateTotalPrice(order.tickets, categories, shippingFees, paymentFees, shipping, payment);
+    const paymentPrice = paymentFees ? paymentFees[payment.payment?.type] ?? 0 : 0;
+    const price = calculateTotalPrice(order.tickets, categories, shippingFees, paymentFees, shipping, payment.payment?.type);
 
     return (
         <List
@@ -93,7 +92,7 @@ export const PaymentOverview = ({
                         <ListItemText
                             secondary={
                                 <span>
-                                    {formatPrice(category.price, category.currency)}
+                                    {formatPrice(category.price, payment.currency)}
                                 </span>
                             }
                             primary={
@@ -123,7 +122,7 @@ export const PaymentOverview = ({
                     <ListItem>
                         <ListItemText
                             primary={t("payment:shipping-fee")}
-                            secondary={formatPrice(shippingPrice, categories[0].currency)}
+                            secondary={formatPrice(shippingPrice, payment.currency)}
                             className={"payment-overview-service-fee"}
                         />
                     </ListItem>
@@ -134,7 +133,7 @@ export const PaymentOverview = ({
                     <ListItem>
                         <ListItemText
                             primary={t("payment:payment-fee")}
-                            secondary={formatPrice(paymentPrice, categories[0].currency)}
+                            secondary={formatPrice(paymentPrice, payment.currency)}
                             className={"payment-overview-service-fee"}
                         />
                     </ListItem>
@@ -148,11 +147,11 @@ export const PaymentOverview = ({
                             primary={<strong>{t("common:total-price")}:</strong>}
                             secondary={
                                 <span id="payment-overview-total-price">
-                            {formatPrice(
-                                Math.max(price, 0),
-                                categories[0].currency
-                            )}
-                        </span>
+                                    {formatPrice(
+                                        Math.max(price, 0),
+                                        payment.currency
+                                    )}
+                                </span>
                             }
                         />
                     </ListItem>

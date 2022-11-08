@@ -39,7 +39,8 @@ export const ManageEventDialog = ({
     seatmaps,
     categories,
     onClose,
-    onChange
+    onChange,
+    currency
 }) => {
     const originalSelectedCategories = useMemo(
         () => event?.categories?.map((category) => category.category.id) ?? [],
@@ -426,6 +427,7 @@ export const ManageEventDialog = ({
                 seatmap={
                     openPreview ? seatmaps.find((x) => x.id === values.seatMap) : null
                 }
+                currency={currency}
             />
             <ConfirmDialog
                 open={deleteOpen}

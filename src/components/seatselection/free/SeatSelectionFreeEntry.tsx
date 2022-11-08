@@ -28,14 +28,14 @@ export const SeatSelectionFreeEntry = ({
     currentlySelectedCategories,
     tickets,
     onRemove,
-    category
+    category,
+    currency
 }: {
     onChange?: (index: number, amount: number, categoryId, oldCategory) => unknown;
     categories: Array<{
         id: number;
         label: string;
         price: number;
-        currency: string;
         ticketsLeft: number;
     }>;
     index: number;
@@ -43,6 +43,7 @@ export const SeatSelectionFreeEntry = ({
     tickets: Tickets;
     onRemove?: (index: number, categoryId: number) => unknown;
     category?: number;
+    currency: string;
 }) => {
     const alreadyUsedCategories = currentlySelectedCategories.filter((_, i) => i !== index);
     const categoriesFiltered = categories.filter(category => !alreadyUsedCategories.includes(category.id));
@@ -146,7 +147,7 @@ export const SeatSelectionFreeEntry = ({
                             id={"category-selection-entry" + index + "-" + category.id}
                         >
                             {category.label} (
-                            {formatPrice(category.price, category.currency)})
+                            {formatPrice(category.price, currency)})
                         </MenuItem>
                     ))}
                 </Select>
@@ -157,7 +158,7 @@ export const SeatSelectionFreeEntry = ({
                     {price > 0 && (
                         <Typography variant={"body1"}>
                             {t("common:price", null, {fallback: commonText["price"]})}:{" "}
-                            <b>{formatPrice(price, categories[0].currency)}</b>
+                            <b>{formatPrice(price, currency)}</b>
                         </Typography>
                     )}
                 </motion.div>

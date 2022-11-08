@@ -12,9 +12,7 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import {
-    getAdminServerSideProps
-} from "../../../constants/serverUtil";
+import { getAdminServerSideProps } from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
@@ -24,8 +22,10 @@ import { SeatMapDialog } from "../../../components/admin/dialogs/SeatMapDialog";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
+import { getOption } from "../../../lib/options";
+import { Options } from "../../../constants/Constants";
 
-export default function SeatMaps({ seatmaps, categories, permissionDenied }) {
+export default function SeatMaps({ seatmaps, categories, permissionDenied, currency }) {
     const { data: session } = useSession();
     const router = useRouter();
     const [seatmap, setSeatmap] = useState(null);
@@ -53,6 +53,7 @@ export default function SeatMaps({ seatmaps, categories, permissionDenied }) {
                 categories={categories}
                 onClose={() => setSeatmap(null)}
                 onChange={refreshProps}
+                currency={currency}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Seat Maps</Typography>
@@ -125,7 +126,8 @@ export async function getServerSideProps(context) {
             return {
                 props: {
                     seatmaps,
-                    categories
+                    categories,
+                    currency: await getOption(Options.Currency)
                 }
             };
         },

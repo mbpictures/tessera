@@ -31,7 +31,8 @@ export const SeatSelectionFactory = ({
                                          hideSummary,
                                          onSeatAlreadyBooked,
                                          seatMapId,
-                                         containsPreview
+                                         containsPreview,
+                                         currency
 }: {
     seatType: string,
     categories: Array<any>,
@@ -41,6 +42,7 @@ export const SeatSelectionFactory = ({
     hideSummary?: boolean,
     onSeatAlreadyBooked?: Function,
     containsPreview?: boolean
+    currency: string;
 }) => {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
@@ -140,6 +142,7 @@ export const SeatSelectionFactory = ({
                     hideSummary={hideSummary}
                     seatMapId={seatMapId}
                     containsPreview={containsPreview}
+                    currency={currency}
                 />
             );
             containerStyles.width = "100%";
@@ -148,7 +151,7 @@ export const SeatSelectionFactory = ({
             break;
         case "free":
         default:
-            seatSelection = <SeatSelectionFree categories={categories} />;
+            seatSelection = <SeatSelectionFree categories={categories} currency={currency} />;
     }
 
     return (

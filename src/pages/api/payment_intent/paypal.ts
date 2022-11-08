@@ -62,7 +62,7 @@ async function handler(
             JSON.parse(orderDB.shipping).type,
             orderDB.paymentType
         );
-        let currency = categories[0].currency;
+        const currency = await getOption(Options.Currency);
 
         let request = new paypal.orders.OrdersCreateRequest();
         request.requestBody({

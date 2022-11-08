@@ -23,13 +23,15 @@ export const SeatSelectionRowEditor = ({
     categories,
     onSelectSeat,
     onAddSeat,
-    onChangeSeat
+    onChangeSeat,
+    currency
 }: {
     row: SeatRow;
     categories: Array<any>;
     onSelectSeat?: OnSeatSelect;
     onAddSeat?: OnAddSeat;
     onChangeSeat?: OnChangeSeat;
+    currency: string;
 }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | HTMLDivElement | null>(null);
     const [newSeatIndex, setNewSeatIndex] = useState<number>(-1);
@@ -118,8 +120,7 @@ export const SeatSelectionRowEditor = ({
         id: -1,
         label: "New Seat",
         color: "#333333",
-        price: 0,
-        currency: "USD"
+        price: 0
     });
 
     return (
@@ -130,6 +131,7 @@ export const SeatSelectionRowEditor = ({
                 forceNoRedux
                 onSelectSeat={onSelectSeat}
                 onContextMenu={handleContextMenu}
+                currency={currency}
             />
             <IconButton onClick={handleOpenMenu}>
                 <AddIcon />

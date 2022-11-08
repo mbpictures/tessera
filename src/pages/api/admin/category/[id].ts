@@ -53,15 +53,14 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        const { label, price, color, activeColor, occupiedColor, currency } =
+        const { label, price, color, activeColor, occupiedColor } =
             req.body;
         const data = {
             ...(label && { label }),
             ...(price && { price }),
             ...(color && { color }),
             ...(activeColor && { activeColor }),
-            ...(occupiedColor && { occupiedColor }),
-            ...(currency && { currency })
+            ...(occupiedColor && { occupiedColor })
         };
         await prisma.category.update({
             where: {

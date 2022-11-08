@@ -31,18 +31,19 @@ export const SeatSelectionMap = ({
     categories,
     hideSummary,
     seatMapId,
-    containsPreview
+    containsPreview,
+    currency
 }: {
     seatSelectionDefinition: SeatMap;
     categories: Array<{
         id: number;
         label: string;
         price: number;
-        currency: string;
     }>;
     hideSummary?: boolean;
     seatMapId?: number;
     containsPreview?: boolean;
+    currency: string;
 }) => {
     const order = useAppSelector(selectOrder) as OrderState;
     const dispatch = useAppDispatch();
@@ -137,6 +138,7 @@ export const SeatSelectionMap = ({
                                         row={row}
                                         categories={categories}
                                         onSelectSeat={handleSelectSeat}
+                                        currency={currency}
                                     />
                                 ))}
                             </div>

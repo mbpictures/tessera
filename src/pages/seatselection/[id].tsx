@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Step } from "../../components/Step";
 import prisma from "../../lib/prisma";
-import {
-    SeatMap
-} from "../../components/seatselection/seatmap/SeatSelectionMap";
+import { SeatMap } from "../../components/seatselection/seatmap/SeatSelectionMap";
 import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
@@ -12,8 +10,9 @@ import { eventDateIsBookable } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import { getCategoryTicketAmount, getSeatMap } from "../../constants/serverUtil";
 import axios from "axios";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectOrder } from "../../store/reducers/orderReducer";
+import { setCurrency } from "../../store/reducers/paymentReducer";
 
 export default function SeatSelection({
     categories,
@@ -23,13 +22,15 @@ export default function SeatSelection({
     fallback,
     eventDate,
     seatMapId,
-    containsPreview
+    containsPreview,
+    currency
 }) {
     const {t} = useTranslation();
     const [categoriesState, setCategoriesState] = useState(categories);
     const [seatMapState, setSeatMapState] = useState(seatMap);
     const interval = useRef<NodeJS.Timer>();
     const order = useAppSelector(selectOrder);
+    const dispatch = useAppDispatch();
 
     const loadData = useCallback(async () => {
         try {
@@ -41,6 +42,10 @@ export default function SeatSelection({
             console.log(e);
         }
     }, [order.reservationId]);
+
+    useEffect(() => {
+        dispatch(setCurrency(currency));
+    }, [])
 
     useEffect(() => {
         loadData().catch(console.log);
@@ -66,7 +71,15 @@ export default function SeatSelection({
                 height: seatType === "seatmap" ? "100%" : "auto"
             }}
         >
-            <SeatSelectionFactory seatSelectionDefinition={seatMapState} categories={categoriesState} seatType={seatType} onSeatAlreadyBooked={loadData} seatMapId={seatMapId} containsPreview={containsPreview} />
+            <SeatSelectionFactory
+                seatSelectionDefinition={seatMapState}
+                categories={categoriesState}
+                seatType={seatType}
+                onSeatAlreadyBooked={loadData}
+                seatMapId={seatMapId}
+                containsPreview={containsPreview}
+                currency={currency}
+            />
         </Step>
     );
 }
@@ -137,7 +150,8 @@ export async function getStaticProps({ params, locale }) {
             ...(await loadNamespaces({ locale, pathname: '/seatselection/[id]' })),
             withReservationCountdown: true,
             seatMapId: eventDate.event.seatMapId,
-            containsPreview: eventDate.event.seatMap?.previewType !== null
+            containsPreview: eventDate.event.seatMap?.previewType !== null,
+            currency: (await getOption(Options.Currency))
         }
     };
 }
