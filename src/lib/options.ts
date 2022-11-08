@@ -2,7 +2,7 @@ import prisma from "./prisma";
 import { ShippingType } from "../store/factories/shipping/ShippingFactory";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
 import { Options } from "../constants/Constants";
-import { revalidateBuild } from "../constants/serverUtil";
+import { revalidateBuild, revalidateEventPages } from "../constants/serverUtil";
 import { NextApiResponse } from "next";
 
 const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
@@ -23,7 +23,8 @@ const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
         group[value] = 0;
         return group;
     }, {}),
-    "payment.invoice-number": 1
+    "payment.invoice-number": 1,
+    "payment.currency": "USD"
 }
 
 const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
@@ -47,6 +48,9 @@ const updateNecessaryPages = async (key: Options, res?: NextApiResponse) => {
             break;
         case Options.PaymentFeesShipping:
             await revalidateBuild(res, ["/payment", "/information"]);
+            break;
+        case Options.Currency:
+            await revalidateEventPages(res, ["/payment"])
     }
 };
 
