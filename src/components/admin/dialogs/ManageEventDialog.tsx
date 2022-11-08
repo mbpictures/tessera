@@ -274,7 +274,7 @@ export const ManageEventDialog = ({
                                     return {
                                         secondaryLabel: formatPrice(
                                             category.price,
-                                            category.currency
+                                            currency
                                         ),
                                         primaryLabel: `Category: ${category.label}`,
                                         value: category.id,
