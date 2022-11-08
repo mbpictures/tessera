@@ -174,7 +174,7 @@ export default function Orders({ permissionDenied, count, categories, eventDates
                 onMarkAsPayed={() => loadOrders(filter.current)}
                 onMarkAsShipped={() => loadOrders(filter.current)}
                 onDelete={() => loadOrders(filter.current)}
-                categories={categories}
+                categories={categories[order?.eventDateId]}
             />
             <MarkOrdersAsPayedDialog
                 open={markAsPaidOpen}
