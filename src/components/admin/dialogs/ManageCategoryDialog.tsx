@@ -1,5 +1,5 @@
 import {
-    Autocomplete, Button,
+    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -27,16 +27,16 @@ interface props {
     onClose: () => unknown;
     onChange?: Function;
     category?: any;
+    currency: string;
 }
 
-export const ManageCategoryDialog = ({ open, onClose, onChange, category }: props) => {
+export const ManageCategoryDialog = ({ open, onClose, onChange, category, currency }: props) => {
     const { enqueueSnackbar } = useSnackbar();
     const [deleteOpen, setDeleteOpen] = useState(false);
 
     const schema = Yup.object().shape({
         label: Yup.string().required("Name is required"),
         price: Yup.number().required("Price is required"),
-        currency: Yup.string().required("Currency"),
         color: Yup.string(),
         activeColor: Yup.string(),
         occupiedColor: Yup.string()
@@ -47,7 +47,6 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category }: prop
         initialValues: {
             label: category?.label ?? "",
             price: category?.price ?? 0,
-            currency: category?.currency ?? "USD",
             color: category?.color ?? SEAT_COLORS.normal,
             activeColor: category?.activeColor ?? SEAT_COLORS.active,
             occupiedColor: category?.occupiedColor ?? SEAT_COLORS.occupied
@@ -81,7 +80,6 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category }: prop
         }
         formik.setFieldValue("label", category.label);
         formik.setFieldValue("price", category.price);
-        formik.setFieldValue("currency", category.currency);
         formik.setFieldValue("color", category.color);
         formik.setFieldValue("activeColor", category.activeColor);
         formik.setFieldValue("occupiedColor", category.occupiedColor);
@@ -159,30 +157,9 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category }: prop
                                         helperText={
                                             touched.price && errors.price
                                         }
-                                    />
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={Object.keys(
-                                            currencyToSymbolMap
-                                        )}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Currency"
-                                            />
-                                        )}
-                                        getOptionLabel={(option) =>
-                                            `${currencyToSymbolMap[option]} (${option})`
-                                        }
-                                        isOptionEqualToValue={(option, value) =>
-                                            option === value
-                                        }
-                                        value={values.currency}
-                                        onChange={(event, newValue) =>
-                                            setFieldValue("currency", newValue)
-                                        }
-                                        sx={{ flexGrow: 1 }}
+                                        InputProps={{
+                                            endAdornment: currencyToSymbolMap[currency]
+                                        }}
                                     />
                                 </Stack>
                                 <Stack direction={"row"}>

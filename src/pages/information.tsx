@@ -30,6 +30,7 @@ import prisma from "../lib/prisma";
 import { selectOrder, setTicketPersonalizationRequired } from "../store/reducers/orderReducer";
 import { useRouter } from "next/router";
 import { formatPrice, validateAddress, validateTicketNames } from "../constants/util";
+import { selectPayment } from "../store/reducers/paymentReducer";
 
 const validateEmail = (email) => {
     const re =
@@ -40,6 +41,7 @@ const validateEmail = (email) => {
 export default function Information({ direction, deliveryMethods, categories, events, shippingFees }) {
     const selector = useAppSelector(selectPersonalInformation);
     const selectorOrder = useAppSelector(selectOrder);
+    const currency = useAppSelector(selectPayment).currency;
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(0);
@@ -169,7 +171,7 @@ export default function Information({ direction, deliveryMethods, categories, ev
                                     const instance = ShippingFactory.getShippingInstance({type: shippingType, data: null});
                                     let label = t(`information:${instance.DisplayName}`);
                                     if ((shippingFees[shippingType] ?? 0) !== 0)
-                                        label += ` (${shippingFees[shippingType] > 0 ? "+" : ""}${formatPrice(shippingFees[shippingType], categories[0].currency)})`;
+                                        label += ` (${shippingFees[shippingType] > 0 ? "+" : ""}${formatPrice(shippingFees[shippingType], currency)})`;
                                     return (
                                         <CheckboxAccordion
                                             label={label}

@@ -1,19 +1,7 @@
 import { useSession } from "next-auth/react";
 import { AdminLayout } from "../../../components/admin/layout";
-import {
-    Box,
-    Button,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Typography
-} from "@mui/material";
-import {
-    getAdminServerSideProps
-} from "../../../constants/serverUtil";
+import { Box, Button, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { getAdminServerSideProps } from "../../../constants/serverUtil";
 import EditIcon from "@mui/icons-material/Edit";
 import prisma from "../../../lib/prisma";
 import CheckIcon from "@mui/icons-material/Check";
@@ -23,12 +11,15 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { ManageEventDialog } from "../../../components/admin/dialogs/ManageEventDialog";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
+import { getOption } from "../../../lib/options";
+import { Options } from "../../../constants/Constants";
 
 export default function Events({
     events,
     seatmaps,
     categories,
-    permissionDenied
+    permissionDenied,
+    currency
 }) {
     const { data: session } = useSession();
     const [addEventOpen, setAddEventOpen] = useState(false);
@@ -53,6 +44,7 @@ export default function Events({
                 seatmaps={seatmaps}
                 onChange={refreshProps}
                 categories={categories}
+                currency={currency}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Events</Typography>
@@ -160,7 +152,8 @@ export async function getServerSideProps(context) {
                 props: {
                     events: serializableEvents,
                     seatmaps,
-                    categories
+                    categories,
+                    currency: await getOption(Options.Currency)
                 }
             };
         },

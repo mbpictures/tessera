@@ -55,9 +55,10 @@ interface props {
     onClose: () => unknown;
     onAdd: () => unknown;
     paymentFees: any;
+    currency: string;
 }
 
-const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, paymentFees}: props) => {
+const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, paymentFees, currency}: props) => {
     const selector = useAppSelector((state) => state);
     const [orderStored, setOrderStored] = useState(false);
     const dispatch = useAppDispatch();
@@ -134,6 +135,7 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
                                             seatSelectionDefinition={event.seatMap?.definition}
                                             noWrap
                                             hideSummary
+                                            currency={currency}
                                         />
                                     )
                                 }
@@ -191,7 +193,6 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
                         <AccordionDetails>
                             <PaymentMethods
                                 paymentMethods={["invoice"]}
-                                categories={categories[selector.selectedEvent.selectedEvent] ?? Object.values(categories)[0]}
                                 paymentFees={paymentFees}
                             />
                         </AccordionDetails>

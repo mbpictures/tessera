@@ -31,6 +31,7 @@ export const generateInvoice = async (
                 shipping: true
             }
         });
+        const currency = await getOption(Options.Currency);
         const shippingFees = await getOption(Options.PaymentFeesShipping);
         const paymentFees = await getOption(Options.PaymentFeesPayment);
 
@@ -62,13 +63,13 @@ export const generateInvoice = async (
                 name: category.label,
                 unit_price: formatPrice(
                     category.price,
-                    category.currency,
+                    currency,
                     orderDB.locale
                 ),
                 amount: order.amount,
                 total_price: formatPrice(
                     category.price * order.amount,
-                    category.currency,
+                    currency,
                     orderDB.locale
                 )
             };
@@ -78,13 +79,13 @@ export const generateInvoice = async (
                 name: "Shipping Fee",
                 unit_price: formatPrice(
                     getServiceFeeAmount(shippingFees, JSON.parse(orderDB.shipping).type),
-                    categories[0].currency,
+                    currency,
                     orderDB.locale
                 ),
                 amount: 1,
                 total_price: formatPrice(
                     getServiceFeeAmount(shippingFees, JSON.parse(orderDB.shipping).type),
-                    categories[0].currency,
+                    currency,
                     orderDB.locale
                 )
             })
@@ -94,13 +95,13 @@ export const generateInvoice = async (
                 name: "Payment Fee",
                 unit_price: formatPrice(
                     getServiceFeeAmount(paymentFees, orderDB.paymentType),
-                    categories[0].currency,
+                    currency,
                     orderDB.locale
                 ),
                 amount: 1,
                 total_price: formatPrice(
                     getServiceFeeAmount(paymentFees, orderDB.paymentType),
-                    categories[0].currency,
+                    currency,
                     orderDB.locale
                 )
             })
@@ -119,13 +120,13 @@ export const generateInvoice = async (
             products: products,
             total_net_price: formatPrice(
                 totalPrice * (1 - (taxAmount / 100)),
-                categories[0].currency,
+                currency,
                 orderDB.locale
             ),
             tax_amount: `${taxAmount}%`,
             total_price: formatPrice(
                 totalPrice,
-                categories[0].currency,
+                currency,
                 orderDB.locale
             ),
             bank_information: (await getOption(Options.PaymentDetails)),

@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import seatSelectionText from "../../../../locale/en/seatselection.json";
 import commonText from "../../../../locale/en/common.json";
 
-export const SeatSelectionFree = ({ categories }) => {
+export const SeatSelectionFree = ({ categories, currency }) => {
     const order = useAppSelector(selectOrder) as OrderState;
     categories = categories
         .filter(category => (category.ticketsLeft !== null && typeof category.ticketsLeft !== "undefined" ? category.ticketsLeft > 0 : true) ||
@@ -83,6 +83,7 @@ export const SeatSelectionFree = ({ categories }) => {
                                                 tickets={order.tickets}
                                                 currentlySelectedCategories={currentlySelectedCategories}
                                                 category={o}
+                                                currency={currency}
                                             />
                                         </Grid>
                                     );
@@ -106,7 +107,7 @@ export const SeatSelectionFree = ({ categories }) => {
                                 {t("common:total-price", null, {fallback: commonText["total-price"]})}:{" "}
                                 <b id={"seat-selection-free-total-price"}>
                                     {
-                                        categories.length > 0 && formatPrice(price, categories[0]?.currency)
+                                        categories.length > 0 && formatPrice(price, currency)
                                     }
                                 </b>
                             </Typography>

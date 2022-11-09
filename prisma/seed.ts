@@ -13,7 +13,6 @@ export async function main() {
         data: {
             label: "Premium",
             price: 60.99,
-            currency: "USD",
             color: "#59bb59"
         }
     })
@@ -21,7 +20,6 @@ export async function main() {
         data: {
             label: "Economy",
             price: 30.99,
-            currency: "USD",
             color: "#59B8BB"
         }
     })

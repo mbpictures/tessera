@@ -6,7 +6,7 @@ import { OptionLabels, Options as OptionsEnum, STEP_URLS } from "../../constants
 import {
     Accordion,
     AccordionDetails,
-    AccordionSummary,
+    AccordionSummary, Autocomplete,
     Box, Button, IconButton, InputAdornment, Link, List, ListItem, ListItemText,
     Stack,
     TextField, Tooltip,
@@ -30,6 +30,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import { TemplatePreview } from "../../components/admin/dialogs/TemplatePreview";
 import { GTCEditor } from "../../components/admin/GTCEditor";
+import currencyToSymbolMap from "currency-symbol-map/map";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -47,6 +48,7 @@ export default function Options({options, permissionDenied}) {
     const [templateFiles, setTemplateFiles] = useState<Partial<Record<OptionsEnum, Blob>>>({});
     const [templatePreview, setTemplatePreview] = useState(null);
     const [invoiceNumber, setInvoiceNumber] = useState(1);
+    const [currency, setCurrency] = useState("");
     const router = useRouter();
 
     const {enqueueSnackbar} = useSnackbar();
@@ -63,6 +65,7 @@ export default function Options({options, permissionDenied}) {
         setShippingFees(options[OptionsEnum.PaymentFeesShipping] ?? {});
         setPaymentFees(options[OptionsEnum.PaymentFeesPayment] ?? {});
         setInvoiceNumber(options[OptionsEnum.InvoiceNumber] ?? 1);
+        setCurrency(options[OptionsEnum.Currency] ?? "");
     }, [options, permissionDenied]);
 
     const refreshProps = async () => {
@@ -80,6 +83,7 @@ export default function Options({options, permissionDenied}) {
         try {
             await storeSetting(OptionsEnum.ShopTitle, title);
             await storeSetting(OptionsEnum.ShopSubtitle, subtitle);
+            await storeSetting(OptionsEnum.Currency, currency);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -209,6 +213,29 @@ export default function Options({options, permissionDenied}) {
                                 value={subtitle}
                                 onChange={(event) => setSubtitle(event.target.value)}
                                 id={"shop-subtitle-input"}
+                            />
+                            <Autocomplete
+                                disablePortal
+                                options={Object.keys(
+                                    currencyToSymbolMap
+                                )}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Shop Currency"
+                                    />
+                                )}
+                                getOptionLabel={(option) =>
+                                    `${currencyToSymbolMap[option]} (${option})`
+                                }
+                                isOptionEqualToValue={(option, value) =>
+                                    option === value
+                                }
+                                value={currency}
+                                onChange={(event, newValue) =>
+                                    setCurrency(newValue)
+                                }
+                                sx={{ flexGrow: 1 }}
                             />
                             <SaveButton
                                 action={handleSaveGeneral}

@@ -1,5 +1,5 @@
-import { Checkbox, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material";
-import { CSSProperties, ReactNode } from "react";
+import { Checkbox, List, ListItem, ListItemIcon, ListItemText, ListSubheader, SxProps, Theme } from "@mui/material";
+import { ReactNode } from "react";
 
 export interface SelectionListOption {
     primaryLabel: string;
@@ -19,7 +19,7 @@ export const SelectionList = ({
     selection: any[];
     onChange: (newSelection: any[]) => unknown;
     header: string;
-    style?: CSSProperties
+    style?: SxProps<Theme>
 }) => {
     const handleClick = (value: any) => {
         let newCategories = selection.map((a) => a);

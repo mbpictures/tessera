@@ -51,7 +51,6 @@ model Category {
     color           String?
     activeColor     String?
     occupiedColor   String?
-    currency        String
     events          CategoriesOnEvents[]
     tickets         Ticket[]
 }

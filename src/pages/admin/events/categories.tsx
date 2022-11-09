@@ -17,19 +17,20 @@ import {
 } from "../../../constants/serverUtil";
 import prisma from "../../../lib/prisma";
 import EditIcon from "@mui/icons-material/Edit";
-import { SEAT_COLORS } from "../../../constants/Constants";
+import { Options, SEAT_COLORS } from "../../../constants/Constants";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import AddIcon from "@mui/icons-material/Add";
 import { ManageCategoryDialog } from "../../../components/admin/dialogs/ManageCategoryDialog";
 import { formatPrice } from "../../../constants/util";
 import { PermissionSection, PermissionType } from "../../../constants/interfaces";
+import { getOption } from "../../../lib/options";
 
 const ColorPreview = ({ color }: { color: string }) => {
     return <Box width={30} height={30} bgcolor={color} />;
 };
 
-export default function Categories({ categories, permissionDenied }) {
+export default function Categories({ categories, permissionDenied, currency }) {
     const { data: session } = useSession();
     const router = useRouter();
     const [category, setCategory] = useState(null);
@@ -51,6 +52,7 @@ export default function Categories({ categories, permissionDenied }) {
                 }}
                 onChange={refreshProps}
                 category={category}
+                currency={currency}
             />
             <Box sx={{ pb: 5 }}>
                 <Typography variant="h4">Categories</Typography>
@@ -87,7 +89,7 @@ export default function Categories({ categories, permissionDenied }) {
                                             <TableCell>
                                                 {formatPrice(
                                                     category.price,
-                                                    category.currency
+                                                    currency
                                                 )}
                                             </TableCell>
                                             <TableCell>
@@ -140,8 +142,10 @@ export async function getServerSideProps(context) {
         context,
         async () => {
             const categories = await prisma.category.findMany();
+            const currency = await getOption(Options.Currency);
             return {
                 props: {
+                    currency,
                     categories
                 }
             };

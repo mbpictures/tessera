@@ -37,7 +37,7 @@ const isJson = (str) => {
     return true;
 };
 
-const SeatMapDialogInner = ({ seatmap, onClose, categories, onChange }) => {
+const SeatMapDialogInner = ({ seatmap, onClose, categories, onChange, currency }) => {
     const [seatmapDefinition, setSeatmapDefinition] = useState<SeatMap>([]);
     const [scale, setScale] = useState<number>(1);
     const container = useRef<HTMLDivElement>(null);
@@ -209,6 +209,7 @@ const SeatMapDialogInner = ({ seatmap, onClose, categories, onChange }) => {
                                                 )
                                             }
                                             onChangeSeat={(seat, indexInRow) => handleChangeSeat(index, seat, indexInRow)}
+                                            currency={currency}
                                         />
                                     );
                                 })}
@@ -311,7 +312,7 @@ const SeatMapDialogInner = ({ seatmap, onClose, categories, onChange }) => {
     );
 };
 
-export const SeatMapDialog = (props: {seatmap, onClose, categories, onChange}) => {
+export const SeatMapDialog = (props: {seatmap, onClose, categories, onChange, currency}) => {
     return (
         <Provider store={makeStore()}>
             <SeatMapDialogInner {...props} />

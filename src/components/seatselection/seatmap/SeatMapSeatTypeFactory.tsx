@@ -10,7 +10,8 @@ export const SeatMapSeatTypeFactory = ({
     onSelectSeat,
     forceNoRedux,
     index,
-    onContextMenu
+    onContextMenu,
+    currency
 }: {
     data: SeatType;
     categories;
@@ -18,6 +19,7 @@ export const SeatMapSeatTypeFactory = ({
     onContextMenu?: OnContextMenu;
     forceNoRedux?: boolean;
     index: number;
+    currency: string;
 }) => {
     if (data.type === "seat") {
         return (
@@ -28,6 +30,7 @@ export const SeatMapSeatTypeFactory = ({
                 forceNoRedux={forceNoRedux}
                 index={index}
                 onContextMenu={onContextMenu}
+                currency={currency}
             />
         );
     }
