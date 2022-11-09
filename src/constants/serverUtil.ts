@@ -246,7 +246,8 @@ export const getCategoryTicketAmount = async (eventDateId: number, tickets?: Tic
     })));
 
     return databaseAmounts.reduce((dict, element) => {
-        dict[element.categoryId] = element._count;
+        if (!dict[element.categoryId]) dict[element.categoryId] = 0;
+        dict[element.categoryId] = dict[element.categoryId] + element._count;
         return dict;
     }, {});
 }
