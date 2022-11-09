@@ -10,7 +10,7 @@ import {
 } from "../../store/factories/payment/PaymentFactory";
 import { formatPrice, getServiceFeeAmount } from "../../constants/util";
 
-export const PaymentMethods = ({ paymentMethods, paymentFees, categories }) => {
+export const PaymentMethods = ({ paymentMethods, paymentFees }) => {
     const selector = useAppSelector(selectPayment);
     const dispatch = useAppDispatch();
     const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -48,7 +48,7 @@ export const PaymentMethods = ({ paymentMethods, paymentFees, categories }) => {
                                         }
                                         {
                                             getServiceFeeAmount(paymentFees, value.data.type) !== 0 && (
-                                                ` (${getServiceFeeAmount(paymentFees, value.data.type) > 0 ? "+" : ""}${formatPrice(getServiceFeeAmount(paymentFees, value.data.type), categories[0].currency)})`
+                                                ` (${getServiceFeeAmount(paymentFees, value.data.type) > 0 ? "+" : ""}${formatPrice(getServiceFeeAmount(paymentFees, value.data.type), selector.currency)})`
                                             )
                                         }
                                     </>

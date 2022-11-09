@@ -114,7 +114,7 @@ export default function Payment({ categories, direction, paymentMethods, payment
                         }}
                     >
                         <Card>
-                            <PaymentMethods paymentMethods={paymentMethods} paymentFees={paymentFees} categories={categories} />
+                            <PaymentMethods paymentMethods={paymentMethods} paymentFees={paymentFees} />
                         </Card>
                     </Box>
                 </Grid>
