@@ -100,7 +100,7 @@ describe("Buy tickets", () => {
             const secondCategory = eventFixture.categories[1];
             cy.get("#seat-selection-free-total-price").should(
                 "have.text",
-                formatPrice(firstCategory.price, firstCategory.currency)
+                formatPrice(firstCategory.price, "USD")
             );
 
             cy.get(".category-selection").first().click();
@@ -108,7 +108,7 @@ describe("Buy tickets", () => {
 
             cy.get("#seat-selection-free-total-price").should(
                 "have.text",
-                formatPrice(secondCategory.price, secondCategory.currency)
+                formatPrice(secondCategory.price, "USD")
             );
 
             cy.get("#stepper-next-button").should("not.be.disabled");
@@ -160,7 +160,7 @@ describe("Buy tickets", () => {
                 .reduce((a, b) => a + eventsFixture.categories[b.category].price, 0);
             cy.get("#payment-overview-total-price").should(
                 "have.text",
-                formatPrice(price, eventsFixture.categories[0].currency)
+                formatPrice(price, "USD")
             );
 
             const categoryLabel = eventsFixture.categories[seats[0].category].label;
