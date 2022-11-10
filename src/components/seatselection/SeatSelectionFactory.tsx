@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SeatSelectionMap } from "./seatmap/SeatSelectionMap";
 import { SeatSelectionFree } from "./free/SeatSelectionFree";
 import {
+    Accordion, AccordionDetails, AccordionSummary,
     Button,
     Dialog,
     DialogActions,
@@ -11,7 +12,7 @@ import {
     List,
     ListItem,
     ListItemIcon,
-    ListItemText
+    ListItemText, Typography
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectOrder, setReservationExpiresAt, setReservationId, setTickets } from "../../store/reducers/orderReducer";
@@ -171,22 +172,32 @@ export const SeatSelectionFactory = ({
                     }
                     {
                         error?.invalidTickets && (
-                            <List>
-                                {
-                                    error?.invalidTickets?.map((ticket, index) => {
-                                        const category = categories.find(category => category.id === ticket.categoryId)
-                                        return (
-                                            <ListItem key={index}>
-                                                <ListItemIcon>{index + 1}.</ListItemIcon>
-                                                <ListItemText
-                                                    primary={category.label}
-                                                    secondary={ticket.seatId && (t("common:seat", {seat: ticket.seatId}))}
-                                                />
-                                            </ListItem>
-                                        )
-                                    })
-                                }
-                            </List>
+                            <>
+                                <Typography>
+                                    <b>{t("common:number-of-tickets-unavailable", {ticketAmount: error.invalidTickets.length})}</b>
+                                </Typography>
+                                <Accordion>
+                                    <AccordionSummary>{t("common:view-occupied-tickets")}</AccordionSummary>
+                                    <AccordionDetails>
+                                        <List>
+                                            {
+                                                error?.invalidTickets?.map((ticket, index) => {
+                                                    const category = categories.find(category => category.id === ticket.categoryId)
+                                                    return (
+                                                        <ListItem key={index}>
+                                                            <ListItemIcon>{index + 1}.</ListItemIcon>
+                                                            <ListItemText
+                                                                primary={category.label}
+                                                                secondary={ticket.seatId && (t("common:seat", {seat: ticket.seatId}))}
+                                                            />
+                                                        </ListItem>
+                                                    )
+                                                })
+                                            }
+                                        </List>
+                                    </AccordionDetails>
+                                </Accordion>
+                            </>
                         )
                     }
                 </DialogContent>

@@ -13,12 +13,14 @@
     "price": "Price",
     "event-not-bookable": "The selected event is currently not available",
     "tickets-already-booked-title": "Tickets already booked!",
-    "tickets-already-booked-content": "Some of the tickets you have chosen are already booked or reserved and thus have been reset. The blocked tickets are:",
+    "tickets-already-booked-content": "Some of the tickets you have chosen are already booked or reserved and thus have been reset.",
     "seat": "Seat: {{seat}}",
     "close": "Close",
     "unknown-error": "Unknown error occurred!",
     "ticket-reservation-error-content": "An error occurred while the reservation of your tickets, but don't panic. You can still continue your booking, just be aware, that others can be faster than you.",
     "seat-reservation-time-over": "The time when your tickets are reserved is over, however you can continue with the booking process, without blocked seats.",
     "time-until-title": "Remaining reservation time:",
-    "time-until": "{{minutes}}:{{seconds}}"
+    "time-until": "{{minutes}}:{{seconds}}",
+    "number-of-tickets-unavailable": "{{ticketAmount}} tickets of your order are unavailable",
+    "view-occupied-tickets": "Show unavailable tickets"
 }

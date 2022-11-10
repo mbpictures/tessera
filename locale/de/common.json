@@ -13,12 +13,14 @@
     "price": "Preis",
     "event-not-bookable": "Das ausgewählte Event ist aktuell nicht verfügbar",
     "tickets-already-booked-title": "Tickets bereits gebucht!",
-    "tickets-already-booked-content": "Einige der ausgewählten Tickets wurden bereits gebucht und die Auswahl der blockierten Tickets wird zurückgesetzt. Die blockierte Tickets sind:",
+    "tickets-already-booked-content": "Einige der ausgewählten Tickets wurden bereits gebucht und die Auswahl der blockierten Tickets wird zurückgesetzt.",
     "seat": "Sitzplatz: {{seat}}",
     "close": "Schließen",
     "unknown-error": "Ein unbekannter Fehler ist aufgetreten!",
     "ticket-reservation-error-content": "Beim Reservieren Ihrer Bestellung ist ein Fehler aufgetreten, aber keine Panik! Sie können die Buchung weiterhin fortsetzen, allerdings sind Ihre Tickets für den weiteren Verlauf nicht für andere Kunden gesperrt.",
     "seat-reservation-time-over": "Die Reservierungszeit Ihrer Tickets ist zu Ende. Sie können Ihre Buchung vorsetzen, allerdings ohne garantierte Sitzplätze.",
     "time-until-title": "Restzeit der Sitz-Reservierung:",
-    "time-until": "{{minutes}}:{{seconds}}"
+    "time-until": "{{minutes}}:{{seconds}}",
+    "number-of-tickets-unavailable": "{{ticketAmount}} Tickets sind nicht mehr verfügbare",
+    "view-occupied-tickets": "Nicht verfügbare Tickets anzeigen"
 }
