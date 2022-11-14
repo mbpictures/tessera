@@ -96,6 +96,7 @@ model Order {
     date            DateTime    @default(now())
     task            Task?
     idempotencyKey  String      @unique
+    cancellationSecret String
 }
 
 model SeatReservation {
