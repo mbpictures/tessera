@@ -169,7 +169,7 @@ export const send = async (orderId, isCancellation?: boolean) => {
             containsInvoice,
             order.eventDate,
             tickets,
-            `${process.env.NEXT_PUBLIC_SHOP_DOMAIN}/refund?orderId=${orderId}&secret=${order.cancellationSecret}`,
+            `${process.env.NEXT_PUBLIC_SHOP_DOMAIN}/refund?orderId=${orderId}&secret=${encodeURIComponent(order.cancellationSecret)}`,
             isCancellation
         );
 
