@@ -32,7 +32,7 @@ export const getEmailHtml = async (firstName, lastName, containsTickets, contain
         }
     }
 
-    const html = isCancellation ?
+    const html = !isCancellation ?
         await getOptionData(Options.TemplateConfirmEmail, getStaticAssetFile("email/template.html", "utf-8")) :
         await getOptionData(Options.TemplateCancellationEmail, getStaticAssetFile("email/cancellation.html", "utf-8"));
     return ejs.render(
