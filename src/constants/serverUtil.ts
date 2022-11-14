@@ -9,6 +9,7 @@ import i18nConfig from "../../i18n";
 import { Ticket, Tickets } from "../store/reducers/orderReducer";
 import { eventDateIsBookable } from "./util";
 import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
+import { randomBytes } from "crypto";
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -122,6 +123,11 @@ export const serverAuthenticate = async (
     }
     return user;
 };
+
+export const generateSecret = () => {
+    const bytes = randomBytes(48);
+    return bytes.toString('base64');
+}
 
 export const formatPrice = (
     price: number,

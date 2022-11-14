@@ -1,8 +1,7 @@
 import { PDFDocument } from "pdf-lib";
 import prisma from "./prisma";
 import QRCode from "qrcode";
-import { formatPrice, getStaticAssetFile } from "../constants/serverUtil";
-import { randomBytes } from "crypto";
+import { formatPrice, getStaticAssetFile, generateSecret } from "../constants/serverUtil";
 import { encodeTicketQR, getEventTitle } from "../constants/util";
 import { getOption, getOptionData } from "./options";
 import { Options } from "../constants/Constants";
@@ -17,11 +16,6 @@ const fillTextField = (form, fieldName, value) => {
     }
 };
 
-const getTicketSecret = () => {
-    const bytes = randomBytes(48);
-    return bytes.toString('base64');
-}
-
 export const generateTicketSecret = async (ticketId) => {
     const ticket = await prisma.ticket.findUnique({
         where: {
@@ -30,7 +24,7 @@ export const generateTicketSecret = async (ticketId) => {
     });
     let secret = ticket.secret;
     if (secret === null || secret === "") {
-        secret = getTicketSecret();
+        secret = generateSecret();
 
         await prisma.ticket.update({
             data: {
@@ -68,7 +62,7 @@ export const generateTicket = async (
 
             let secret;
             if (demo) {
-                secret = getTicketSecret();
+                secret = generateSecret();
             } else {
                 secret = await generateTicketSecret(ticketId);
             }
