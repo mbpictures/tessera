@@ -362,6 +362,13 @@
                                                     </a>
                                                 </p>
                                                 <% } %>
+
+                                                <% if (cancellationLink) { %>
+                                                <p style="font-size: smaller">
+                                                    Click <a href="<%= cancellationLink %>">here</a>
+                                                    to cancel your order.
+                                                </p>
+                                                <% } %>
                                             </td>
                                         </tr>
                                     </table>
