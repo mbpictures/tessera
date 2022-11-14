@@ -1,0 +1,20 @@
+{
+    "title": "Cancel your order",
+    "subtitle": "Select the tickets you want to cancel.",
+    "loading-order": "Loading order...",
+    "amount-of-refund": "Total Amount to refund: <b>{{amount}}</b>",
+    "cancel-whole-order": "With the current selection, you will cancel your whole order!",
+    "submit": "Submit",
+    "confirm-title": "Sure?",
+    "confirm-accept": "I'm sure!",
+    "confirm-cancel": "Cancel",
+    "confirm-description": "Are you sure you want to cancel the selected tickets? This operation can&apos;t be undone.",
+    "confirm-info": "Your tickets will be available for purchase again and can be sold to other customers. An updated receipt will be sent to your email address and all personal information will be deleted from our servers, when you choose to cancel the whole order.",
+    "not-found-title": "Not Found",
+    "not-found-content": "No order with the provided id was found!",
+    "unauthorized-title": "Unauthorized",
+    "unauthorized-content": "The cancellation secret doesn't correspond to the order you provided!",
+    "parameter-missing-title": "Missing Order ID or Secret",
+    "parameter-missing-content": "You missed to provide an order id or the secret to cancel your order.",
+    "canceled-successfully": "Order canceled successfully"
+}

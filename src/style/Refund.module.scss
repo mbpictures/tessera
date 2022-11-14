@@ -1,0 +1,29 @@
+.background {
+    background-size: 400% 400%;
+
+    -webkit-animation: Background 15s ease infinite;
+    -moz-animation: Background 15s ease infinite;
+    -o-animation: Background 15s ease infinite;
+    animation: Background 15s ease infinite;
+}
+
+@-webkit-keyframes Background {
+    0%{background-position:0 62%}
+    50%{background-position:100% 39%}
+    100%{background-position:0 62%}
+}
+@-moz-keyframes Background {
+    0%{background-position:0 62%}
+    50%{background-position:100% 39%}
+    100%{background-position:0 62%}
+}
+@-o-keyframes Background {
+    0%{background-position:0 62%}
+    50%{background-position:100% 39%}
+    100%{background-position:0 62%}
+}
+@keyframes Background {
+    0%{background-position:0 62%}
+    50%{background-position:100% 39%}
+    100%{background-position:0 62%}
+}
