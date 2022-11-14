@@ -16,7 +16,7 @@ import { getOption, getOptionData, setOption } from "./options";
 import { Options } from "../constants/Constants";
 import unescape from "lodash/unescape";
 
-export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets, isCancellation) => {
+export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets, cancellationLink, isCancellation) => {
     let googleWallet = undefined;
     if (containsTickets && validateConfiguration()) {
         try {
@@ -41,7 +41,8 @@ export const getEmailHtml = async (firstName, lastName, containsTickets, contain
             customerName: firstName + " " + lastName,
             containsTickets: containsTickets,
             containsInvoice: containsInvoice ? true : undefined,
-            googleWallet: googleWallet
+            googleWallet: googleWallet,
+            cancellationLink: cancellationLink
         }
     );
 }
@@ -65,7 +66,8 @@ export const send = async (orderId, isCancellation?: boolean) => {
                         date: true,
                         event: true
                     }
-                }
+                },
+                cancellationSecret: true
             },
         });
 
@@ -160,7 +162,16 @@ export const send = async (orderId, isCancellation?: boolean) => {
                 }
             }
         })
-        message.html = await getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice, order.eventDate, tickets, isCancellation);
+        message.html = await getEmailHtml(
+            order.user.firstName,
+            order.user.lastName,
+            containsTickets,
+            containsInvoice,
+            order.eventDate,
+            tickets,
+            `${process.env.NEXT_PUBLIC_SHOP_DOMAIN}/refund?orderId=${orderId}&secret=${order.cancellationSecret}`,
+            isCancellation
+        );
 
         (await getEmailTransporter()).sendMail(message, async (error) => {
             if (error) {
