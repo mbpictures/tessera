@@ -5,7 +5,7 @@ import prisma from "../../../lib/prisma";
 import { withNotification } from "../../../lib/notifications/withNotification";
 import { PaymentFactory, PaymentType } from "../../../store/factories/payment/PaymentFactory";
 import { ShippingFactory } from "../../../store/factories/shipping/ShippingFactory";
-import { validateOrder } from "../../../constants/serverUtil";
+import { generateSecret, validateOrder } from "../../../constants/serverUtil";
 
 const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKey) => {
     return await prisma.order.create({
@@ -30,7 +30,8 @@ const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKe
             },
             shipping: JSON.stringify(user.shipping),
             locale: locale,
-            idempotencyKey: idempotencyKey
+            idempotencyKey: idempotencyKey,
+            cancellationSecret: generateSecret()
         },
         include: {
             user: true,
