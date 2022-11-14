@@ -1,7 +1,5 @@
-import { motion } from "framer-motion";
 import { Step } from "../components/Step";
 import { Button, Stack, Typography } from "@mui/material";
-import { useTheme } from "@mui/system";
 import { getOption } from "../lib/options";
 import { Options, STEP_URLS } from "../constants/Constants";
 import loadNamespaces from "next-translate/loadNamespaces";
@@ -12,9 +10,9 @@ import axios from "axios";
 import { useAppSelector } from "../store/hooks";
 import { selectPayment } from "../store/reducers/paymentReducer";
 import { selectOrder } from "../store/reducers/orderReducer";
+import { SuccessAnimated } from "../components/SuccessAnimated";
 
 export default function Checkout({ direction }) {
-    const theme = useTheme();
     const { t } = useTranslation();
     const router = useRouter();
     const notificationSent = useRef(false);
@@ -47,46 +45,7 @@ export default function Checkout({ direction }) {
                 alignItems={"center"}
                 spacing={2}
             >
-                <svg
-                    className="progress-icon"
-                    viewBox="0 0 50 50"
-                    style={{ maxWidth: 300, maxHeight: 300 }}
-                >
-                    <motion.path
-                        fill="none"
-                        strokeWidth="2"
-                        stroke={theme.palette.success.main}
-                        d="M 0, 20 a 20, 20 0 1,0 40,0 a 20, 20 0 1,0 -40,0"
-                        style={{ translateX: 5, translateY: 5 }}
-                        animate={{
-                            pathLength: 1,
-                            transition: {
-                                delay: 0.1,
-                                duration: 0.3
-                            }
-                        }}
-                        initial={{
-                            pathLength: 0
-                        }}
-                    />
-                    <motion.path
-                        fill="none"
-                        strokeWidth="2"
-                        stroke={theme.palette.success.main}
-                        d="M14,26 L 22,33 L 35,16"
-                        strokeDasharray="0 1"
-                        animate={{
-                            pathLength: 1,
-                            transition: {
-                                delay: 0.4,
-                                duration: 0.3
-                            }
-                        }}
-                        initial={{
-                            pathLength: 0
-                        }}
-                    />
-                </svg>
+                <SuccessAnimated />
                 <Typography variant="h3" align={"center"}>
                     {t("checkout:checkout-complete")}
                 </Typography>
