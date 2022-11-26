@@ -118,6 +118,7 @@ export async function getServerSideProps(context) {
                             },
                         }
                     },
+                    customFields: true,
                     categories: {
                         include: {
                             category: true
