@@ -21,6 +21,7 @@ model Event {
     coverImageSize  Int?
     personalTicket  Boolean     @default(false)
     dates           EventDate[]
+    customFields    CustomField[]
 }
 
 model EventDate {
@@ -33,6 +34,15 @@ model EventDate {
     ticketSaleStartDate DateTime?
     ticketSaleEndDate   DateTime?
     seatReservations    SeatReservation[]
+}
+
+model CustomField {
+    id                  Int         @default(autoincrement()) @id
+    label               String
+    name                String
+    isRequired          Boolean
+    event               Event       @relation(fields: [eventId], references: [id])
+    eventId             Int
 }
 
 model SeatMap {
@@ -76,6 +86,7 @@ model User {
     countryCode     String
     regionCode      String
     orders          Order[]
+    customFields    String?
 }
 
 model Order {
