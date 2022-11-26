@@ -13,7 +13,7 @@ import {
 } from "../store/reducers/nextStepAvailableReducer";
 import { getStoreWithOrderId } from "../constants/util";
 import {
-    setAddress,
+    setAddress, setCustomFields,
     setEmail,
     setShipping,
     setUserId
@@ -78,6 +78,7 @@ export const Step = ({
                     dispatch(setEmail(personalInformation.email));
                     dispatch(setShipping(personalInformation.shipping));
                     dispatch(setAddress(personalInformation.address));
+                    dispatch(setCustomFields(personalInformation.customFields));
                 })
                 .catch(() => {
                     router.push(STEP_URLS[0]).catch(console.log);
