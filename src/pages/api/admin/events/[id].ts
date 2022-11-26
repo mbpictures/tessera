@@ -23,7 +23,8 @@ export default async function handler(
             id: parseInt(id as string)
         },
         include: {
-            dates: true
+            dates: true,
+            customFields: true
         }
     });
 
@@ -54,7 +55,7 @@ export default async function handler(
     }
 
     if (req.method === "PUT") {
-        let { title, seatType, seatMapId, categories, personalTicket, maxAmounts = {}, dates } = req.body;
+        let { title, seatType, seatMapId, categories, personalTicket, maxAmounts = {}, dates, customFields } = req.body;
 
         if (!categories && seatType === "seatmap") {
             const seatMap = await prisma.seatMap.findUnique({
@@ -139,6 +140,19 @@ export default async function handler(
                     }
                 });
             }
+        }
+        if (customFields) {
+            await prisma.$transaction(event.customFields.map(field => prisma.customField.delete({where: {id: field.id}})));
+            await prisma.$transaction(customFields.map(field => prisma.customField.create(
+                {
+                    data: {
+                        ...field,
+                        event: {
+                            connect: {
+                                id: parseInt(id as string)
+                            }
+                        }}
+                })));
         }
 
         await prisma.event.update({
