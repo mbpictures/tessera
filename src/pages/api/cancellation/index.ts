@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 import { send } from "../../../lib/send";
+import { PaymentFactory, PaymentType } from "../../../store/factories/payment/PaymentFactory";
+import { calculateTotalPrice } from "../../../constants/util";
 
 export default async function handler(
     req: NextApiRequest,
@@ -65,7 +67,26 @@ export default async function handler(
                         id: true
                     }
                 },
-                userId: true
+                userId: true,
+                paymentType: true,
+                paymentResult: true,
+                paymentIntent: true
+            }
+        });
+        const ticketsDB = await prisma.ticket.findMany({
+            where: {
+                id: {
+                    in: tickets
+                }
+            }
+        });
+        const refund = await prisma.refund.create({
+            data: {
+                paymentResult: count.paymentResult,
+                paymentType: count.paymentType,
+                paymentIntent: count.paymentIntent,
+                ticketsRefunded: tickets.length,
+                refundAmount: calculateTotalPrice(ticketsDB, (await prisma.category.findMany()))
             }
         });
         if (count.tickets.length === 0) {
@@ -85,6 +106,36 @@ export default async function handler(
                     id: count.userId
                 }
             });
+        }
+        else {
+            await prisma.order.update({
+                where: {
+                    id: orderId as string
+                },
+                data: {
+                    refundId: refund.id
+                }
+            });
+        }
+        // user has paid, so we need to initiate refund
+        const paymentInstance = PaymentFactory.getPaymentInstance({type: count.paymentType as PaymentType, data: null})
+        if (paymentInstance?.paymentResultValid(count.paymentResult)) {
+            if (paymentInstance.needsManualProcessing()) {
+                await prisma.task.create({
+                    data: {
+                        notes: "[]",
+                        order: null,
+                        refund: {
+                            connect: {
+                                id: refund.id
+                            }
+                        }
+                    }
+                });
+            }
+            else {
+                // TODO: auto refund of paypal, sofort and stripe
+            }
         }
         return res.status(200).end("Order successfully cancelled");
     }
