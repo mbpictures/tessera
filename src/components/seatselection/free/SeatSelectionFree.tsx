@@ -64,11 +64,6 @@ export const SeatSelectionFree = ({ categories, currency }) => {
             {
                 categories.length > 0 ? (
                     <>
-                        <motion.div layout>
-                            <Typography variant={"body1"} alignSelf={"center"}>
-                                {t("seatselection:no-seat-reservation", null, {fallback: ""})}
-                            </Typography>
-                        </motion.div>
                         <Grid container spacing={2} justifyContent={"center"}>
                             {currentlySelectedCategories &&
                                 currentlySelectedCategories.length > 0 &&

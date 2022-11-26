@@ -25,6 +25,14 @@ const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pa
         axios.defaults.baseURL = window.location.origin;
     }
 
+    if (router.pathname === "/refund") {
+        return (
+            <StoreThemeConfig customTheme={pageProps.theme}>
+                <Component {...pageProps} />
+            </StoreThemeConfig>
+        );
+    }
+
     if (router.pathname.startsWith("/admin")) {
         const SessionProvider = dynamic<SessionProviderProps>(() =>
             import("next-auth/react").then((mod) => mod.SessionProvider)

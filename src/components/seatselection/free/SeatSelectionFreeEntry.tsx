@@ -107,14 +107,23 @@ export const SeatSelectionFreeEntry = ({
                         justifyContent: "center"
                     }}
                 >
-                    <TextField
-                        id="outlined-basic"
-                        label={t("common:amount", null, {fallback: commonText["amount"]})}
-                        variant="outlined"
-                        value={ticketAmount === -1 ? "" : ticketAmount}
-                        onChange={handleChange}
-                        className={"seat-selection-free-ticket-amount"}
-                    />
+                    <Stack spacing={1}>
+                        <TextField
+                            id="outlined-basic"
+                            label={t("common:amount", null, {fallback: commonText["amount"]})}
+                            variant="outlined"
+                            value={ticketAmount === -1 ? "" : ticketAmount}
+                            onChange={handleChange}
+                            className={"seat-selection-free-ticket-amount"}
+                        />
+                        {
+                            getTicketsLeft() < Infinity && (
+                                <Typography variant={"caption"}>
+                                    {t("seatselection:tickets-left", {ticketsLeft: getTicketsLeft()})}
+                                </Typography>
+                            )
+                        }
+                    </Stack>
                     <Box width={20} />
                     <Stack>
                         <IconButton

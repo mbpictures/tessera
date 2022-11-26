@@ -32,7 +32,7 @@ export default async function handler(
         let seatMap;
         let categoryAmount = event.event.categories.map(cat => cat.category);
         if (event.event.seatType === "free") {
-            const ticketAmounts = await getCategoryTicketAmount(eventDateId, [], reservationId as string);
+            const ticketAmounts = await getCategoryTicketAmount(eventDateId, null, reservationId as string);
             categoryAmount = event.event.categories.map(category => ({
                 ...category.category,
                 ticketsLeft: isNaN(category.maxAmount) || !category.maxAmount || category.maxAmount === 0 ? null : Math.max(category.maxAmount - ticketAmounts[category.categoryId], 0)

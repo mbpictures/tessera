@@ -3,7 +3,7 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Simple Transactional Email</title>
+        <title>Confirm Cancellation</title>
         <style>
             /* -------------------------------------
             GLOBAL RESETS
@@ -301,10 +301,10 @@
         </style>
     </head>
     <body class="">
-        <span class="preheader"
-            >This is preheader text. Some clients will show this text as a
-            preview.</span
-        >
+        <span class="preheader">
+            This is preheader text. Some clients will show this text as a
+            preview.
+        </span>
         <table role="presentation" class="body">
             <tr>
                 <td>&nbsp;</td>
@@ -322,14 +322,15 @@
                                                     Hello <%= customerName %>,
                                                 </p>
                                                 <p>
-                                                    Thank you for placing your
-                                                    order on
-                                                    <a
-                                                        href="demo-ticketshop.com"
-                                                        >demo-ticketshop.com</a
-                                                    >. We hereby confirm your
-                                                    order. Enclosed you will
-                                                    find an invoice.
+                                                    Sad to see you go! Hope to
+                                                    see you soon again. You find
+                                                    an updated invoice as
+                                                    attachment. When you have opted
+                                                    for downloadable tickets and
+                                                    already received them, the
+                                                    cancelled tickets become
+                                                    invalid. All others remain
+                                                    valid.
                                                 </p>
                                                 <% if (containsTickets) { %>
                                                 <p>
@@ -347,28 +348,11 @@
                                                 <% } %>
                                                 <p>
                                                     We look forward to welcoming
-                                                    you to our event!
+                                                    you to our next events!
                                                 </p>
                                                 <p>
                                                     Your demo-ticketshop Team!
                                                 </p>
-                                                <% if (googleWallet) { %>
-                                                <p>
-                                                    <a href="<%= googleWallet.allTicketsLink %>">
-                                                        <img
-                                                            src="https://raw.githubusercontent.com/google-pay/wallet-web-codelab/main/public/wallet-button.png"
-                                                            style="max-height: 46px"
-                                                        />
-                                                    </a>
-                                                </p>
-                                                <% } %>
-
-                                                <% if (cancellationLink) { %>
-                                                <p style="font-size: smaller">
-                                                    Click <a href="<%= cancellationLink %>">here</a>
-                                                    to cancel your order.
-                                                </p>
-                                                <% } %>
                                             </td>
                                         </tr>
                                     </table>

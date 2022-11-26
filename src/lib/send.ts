@@ -16,7 +16,7 @@ import { getOption, getOptionData, setOption } from "./options";
 import { Options } from "../constants/Constants";
 import unescape from "lodash/unescape";
 
-export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets) => {
+export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets, cancellationLink, isCancellation) => {
     let googleWallet = undefined;
     if (containsTickets && validateConfiguration()) {
         try {
@@ -31,18 +31,23 @@ export const getEmailHtml = async (firstName, lastName, containsTickets, contain
             console.log(e);
         }
     }
+
+    const html = !isCancellation ?
+        await getOptionData(Options.TemplateConfirmEmail, getStaticAssetFile("email/template.html", "utf-8")) :
+        await getOptionData(Options.TemplateCancellationEmail, getStaticAssetFile("email/cancellation.html", "utf-8"));
     return ejs.render(
-        unescape((await getOptionData(Options.TemplateConfirmEmail, getStaticAssetFile("email/template.html", "utf-8"))).data.toString()),
+        unescape(html.data.toString()),
         {
             customerName: firstName + " " + lastName,
             containsTickets: containsTickets,
             containsInvoice: containsInvoice ? true : undefined,
-            googleWallet: googleWallet
+            googleWallet: googleWallet,
+            cancellationLink: cancellationLink
         }
     );
 }
 
-export const send = async (orderId) => {
+export const send = async (orderId, isCancellation?: boolean) => {
     return new Promise<void>(async (resolve, reject) => {
         const order = await prisma.order.findUnique({
             where: {
@@ -61,26 +66,27 @@ export const send = async (orderId) => {
                         date: true,
                         event: true
                     }
-                }
+                },
+                cancellationSecret: true
             },
         });
 
        let attachments = [];
         // generate invoice
         let containsInvoice = false;
-       if (!order.invoiceSent) {
-           const invoiceData = await generateInvoice(
-               (await getOptionData(Options.TemplateInvoice, getStaticAssetFile("invoice/template.html", "utf-8"))).data,
-               orderId
-           );
+        if (!order.invoiceSent || isCancellation) {
+            const invoiceData = await generateInvoice(
+                (await getOptionData(Options.TemplateInvoice, getStaticAssetFile("invoice/template.html", "utf-8"))).data,
+                orderId
+            );
 
-           attachments.push({
-               filename: "Invoice.pdf",
-               content: invoiceData,
-               contentType: "application/pdf",
-           });
-           containsInvoice = true;
-       }
+            attachments.push({
+                filename: "Invoice.pdf",
+                content: invoiceData,
+                contentType: "application/pdf",
+            });
+            containsInvoice = true;
+        }
 
         // generate tickets
         const shipping = ShippingFactory.getShippingInstance(
@@ -156,7 +162,16 @@ export const send = async (orderId) => {
                 }
             }
         })
-        message.html = await getEmailHtml(order.user.firstName, order.user.lastName, containsTickets, containsInvoice, order.eventDate, tickets);
+        message.html = await getEmailHtml(
+            order.user.firstName,
+            order.user.lastName,
+            containsTickets,
+            containsInvoice,
+            order.eventDate,
+            tickets,
+            `${process.env.NEXT_PUBLIC_SHOP_DOMAIN}/refund?orderId=${orderId}&secret=${encodeURIComponent(order.cancellationSecret)}`,
+            isCancellation
+        );
 
         (await getEmailTransporter()).sendMail(message, async (error) => {
             if (error) {

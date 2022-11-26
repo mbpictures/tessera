@@ -110,6 +110,9 @@ export async function main() {
                     }
                 },
                 paymentType: "invoice",
+                paymentIntent: JSON.stringify({
+                    "invoicePurpose;": "AAAAAA"
+                }),
                 shipping: JSON.stringify({type: "download", data: {}}),
                 locale: "en-GB",
                 eventDate: {
@@ -121,7 +124,8 @@ export async function main() {
                 tickets: {
                     create: tickets
                 },
-                idempotencyKey: randomUUID()
+                idempotencyKey: randomUUID(),
+                cancellationSecret: randomUUID()
             }
         })
     }

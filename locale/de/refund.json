@@ -1,0 +1,20 @@
+{
+    "title": "Bestellung stornieren",
+    "subtitle": "Wählen Sie die Tickets aus, die Sie stornieren wollen",
+    "loading-order": "Bestellung wird geladen...",
+    "amount-of-refund": "Gesamtbetrag der Erstattung: <b>{{amount}}</b>",
+    "cancel-whole-order": "Mit dieser Auswahl, widerrufen Sie die gesamte Bestellung!",
+    "submit": "Senden",
+    "confirm-title": "Sicher?",
+    "confirm-accept": "Ich bin sicher!",
+    "confirm-cancel": "Abbrechen",
+    "confirm-description": "Sind Sie sicher, dass Sie die ausgewählten Tickets stornieren möchten? Diese Operation kann nicht rückgänging gemacht werden.",
+    "confirm-info": "Ihre Tickets werden wieder für den Verkauf freigegeben und können von anderen Kunden gekauft werden. Eine aktualisierte Rechnung wird an Ihre E-Mail Addresse gesendet und all Ihre persönlichen Daten werden - beim Storno der gesamten Buchung - von unseren Servern gelöscht.",
+    "not-found-title": "Nicht gefunden",
+    "not-found-content": "Es wurde keine Bestellung mit der angegebenen ID gefunden!",
+    "unauthorized-title": "Nicht autorisiert",
+    "unauthorized-content": "Der geheime Schlüssel passt nicht zur angegebenen Bestellung!",
+    "parameter-missing-title": "Fehlende ID oder Schlüssel",
+    "parameter-missing-content": "Sie haben keine ID der Bestellung oder den passenden geheimen Schlüssel angegeben!",
+    "canceled-successfully": "Bestellung erfolgreich storniert"
+}
