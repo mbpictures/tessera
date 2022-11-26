@@ -97,6 +97,19 @@ model Order {
     task            Task?
     idempotencyKey  String      @unique
     cancellationSecret String
+    refund          Refund?     @relation(fields: [refundId], references: [id])
+    refundId        String?     @unique
+}
+
+model Refund {
+    id              String      @default(uuid()) @id
+    paymentType     String
+    paymentIntent   String?
+    paymentResult   String?
+    ticketsRefunded Int
+    refundAmount    Float
+    order           Order?
+    task            Task?
 }
 
 model SeatReservation {
@@ -172,4 +185,6 @@ model Task {
     assignedUser    AdminUser?  @relation(fields: [adminUserId], references: [id])
     adminUserId     Int?
     notes           String
+    refund          Refund?     @relation(fields: [refundId], references: [id])
+    refundId        String?     @unique
 }
