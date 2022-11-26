@@ -25,7 +25,8 @@ const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKe
                     zip: user.address.zip,
                     city: user.address.city,
                     countryCode: user.address.country.countryShortCode,
-                    regionCode: user.address.region.shortCode
+                    regionCode: user.address.region.shortCode,
+                    customFields: JSON.stringify(user.customFields)
                 }
             },
             shipping: JSON.stringify(user.shipping),
