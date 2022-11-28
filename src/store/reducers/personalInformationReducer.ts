@@ -4,11 +4,19 @@ import { Country, Region } from "country-region-data";
 import { IAddress } from "../../constants/interfaces";
 import { ShippingType } from "../factories/shipping/ShippingFactory";
 
+export interface CustomField {
+    label: string;
+    name: string;
+    isRequired: boolean;
+}
+
 export interface PersonalInformationState {
     address: IAddress;
     email: string;
     shipping: IShipping;
     userId?: string;
+    customFields: Record<string, string>;
+    serverCustomFields: Array<CustomField>;
 }
 
 export interface IShipping {
@@ -26,6 +34,8 @@ const initialState: PersonalInformationState = {
         zip: "",
         city: ""
     },
+    customFields: {},
+    serverCustomFields: [],
     email: "",
     shipping: null,
     userId: null
@@ -68,6 +78,12 @@ export const personalInformationSlice = createSlice({
         setUserId: (state, action: PayloadAction<string>) => {
             state.userId = action.payload;
         },
+        setCustomFields: (state, action: PayloadAction<Record<string, string>>) => {
+            state.customFields = action.payload;
+        },
+        setServerCustomFields: (state, action: PayloadAction<Array<CustomField>>) => {
+            state.serverCustomFields = action.payload;
+        },
         resetPersonalInformation: () => initialState
     }
 });
@@ -84,7 +100,9 @@ export const {
     setRegion,
     setShipping,
     setUserId,
-    resetPersonalInformation
+    resetPersonalInformation,
+    setCustomFields,
+    setServerCustomFields
 } = personalInformationSlice.actions;
 export const selectPersonalInformation = (state: RootState) =>
     state.personalInformation;

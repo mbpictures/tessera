@@ -123,7 +123,11 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categor
                 {address.firstName} {address.lastName}<br />
                 {address.address}<br/>
                 {address.zip} {address.city}<br />
-                {address.countryCode}-{address.regionCode}
+                {address.countryCode}-{address.regionCode}<br />
+                <br />
+                {
+                    Object.entries(JSON.parse(order.user.customFields)).map(field => `${field[0]}: ${field[1]}`)
+                }
             </Typography>
             <Divider sx={{mt: 2, mb: 2}} />
             <TicketList order={order} categories={categories} />

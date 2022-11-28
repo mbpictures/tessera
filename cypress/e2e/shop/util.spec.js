@@ -37,7 +37,9 @@ describe("Util", () => {
                     zip: faker.address.zipCode("#####"),
                     country: country,
                     region: country.regions.length > 0 ? country.regions[0] : null
-                }
+                },
+                serverCustomFields: [],
+                customFields: null
             };
 
             cy.storeOrderAndUser(orderOriginal, user, 1, "invoice").then(({userId, orderId}) => {

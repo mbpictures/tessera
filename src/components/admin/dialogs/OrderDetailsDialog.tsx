@@ -84,7 +84,11 @@ export const OrderDetailsDialog = ({
                                         {order.user.zip} {order.user.city}
                                         <br />
                                         {order.user.countryCode}{" "}
-                                        {order.user.regionCode}
+                                        {order.user.regionCode}<br />
+                                        <br />
+                                        {
+                                            Object.entries(JSON.parse(order.user.customFields)).map(field => `${field[0]}: ${field[1]}`)
+                                        }
                                     </Typography>
                                     <Button color={"error"} onClick={() => setDeleteOpen(true)}>
                                         Delete

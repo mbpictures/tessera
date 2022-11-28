@@ -25,6 +25,7 @@ import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import isEqual from "lodash/isEqual";
 import { EventDateDialog } from "./EventDateDialog";
+import { EventCustomFieldsDialog } from "./EventCustomFieldsDialog";
 
 const extractCategoryMaxAmounts = (event) => {
     return event?.categories?.reduce((dict, el) => {
@@ -52,6 +53,7 @@ export const ManageEventDialog = ({
     const [coverImageSize, setCoverImageSize] = useState<number | null>(null);
     const [removeCoverImage, setRemoveCoverImage] = useState(false);
     const [eventDatesOpen, setEventDatesOpen] = useState(false);
+    const [customFieldsOpen, setCustomFieldsOpen] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
     const formik = useFormik({
@@ -62,7 +64,8 @@ export const ManageEventDialog = ({
             selectedCategories: originalSelectedCategories,
             personalTicket: event?.personalTicket ?? false,
             categoryMaxAmount: extractCategoryMaxAmounts(event),
-            eventDates: event?.dates ?? []
+            eventDates: event?.dates ?? [],
+            customFields: event?.customFields ?? []
         },
         onSubmit: async (values) => {
             try {
@@ -72,7 +75,8 @@ export const ManageEventDialog = ({
                     seatType: values.seatType,
                     personalTicket: values.personalTicket,
                     ...(values.seatType === "free" && { categories: values.selectedCategories, maxAmounts: values.categoryMaxAmount }),
-                    dates: values.eventDates
+                    dates: values.eventDates,
+                    customFields: values.customFields
                 };
                 let eventId = event?.id;
                 if (!event) {
@@ -111,6 +115,7 @@ export const ManageEventDialog = ({
         formik.setFieldValue("personalTicket", event.personalTicket);
         formik.setFieldValue("categoryMaxAmount", extractCategoryMaxAmounts(event));
         formik.setFieldValue("eventDates", event.dates);
+        formik.setFieldValue("customFields", event.customFields);
     }, [event, originalSelectedCategories]);
 
     const deleteCoverImage = async (eventId) => {
@@ -176,7 +181,8 @@ export const ManageEventDialog = ({
         !arrayEquals(originalSelectedCategories, values.selectedCategories) ||
         coverImage !== null ||
         removeCoverImage ||
-        !isEqual(values.eventDates, event?.dates);
+        !isEqual(values.eventDates, event?.dates) ||
+        !isEqual(values.customFields, event?.customFields);
 
     const isValid =
         values.title !== "" &&
@@ -395,6 +401,9 @@ export const ManageEventDialog = ({
                         <Button onClick={() => setEventDatesOpen(true)}>
                             Configure Event Dates
                         </Button>
+                        <Button onClick={() => setCustomFieldsOpen(true)}>
+                            Configure Custom Fields
+                        </Button>
                         <Stack direction={"row"}>
                             <LoadingButton
                                 color={"success"}
@@ -440,6 +449,12 @@ export const ManageEventDialog = ({
                 open={eventDatesOpen}
                 onClose={() => setEventDatesOpen(false)}
                 onChange={(newDates) => setFieldValue("eventDates", newDates)}
+            />
+            <EventCustomFieldsDialog
+                customFields={values.customFields}
+                open={customFieldsOpen}
+                onClose={() => setCustomFieldsOpen(false)}
+                onChange={(newFields) => setFieldValue("customFields", newFields)}
             />
         </>
     );
