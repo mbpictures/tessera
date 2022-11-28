@@ -111,7 +111,7 @@ export const generateInvoice = async (
 
         const html = ejs.render(unescape(template.toString()), {
             invoice_number: invoiceNumber,
-            creation_date: `${date.getDate()}. ${date.getMonth()} ${date.getFullYear()}`,
+            creation_date: date.toLocaleDateString(orderDB.locale),
             receiver: [
                 orderDB.user.firstName + " " + orderDB.user.lastName,
                 orderDB.user.address,

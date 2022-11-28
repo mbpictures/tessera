@@ -54,7 +54,9 @@ export default async function handler(
             },
             email: order.user.email,
             userId: order.user.id,
-            shipping: JSON.parse(order.shipping) as IShipping
+            shipping: JSON.parse(order.shipping) as IShipping,
+            customFields: JSON.parse(order.user.customFields),
+            serverCustomFields: []
         };
 
         res.status(200).json({

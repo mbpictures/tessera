@@ -14,16 +14,22 @@ const validateEmail = (email) => {
 };
 
 export class InformationNextAvailable extends NextAvailable {
+    static customFieldsValid(fields: Array<{name: string, label: string, isRequired: boolean}>, userFields): boolean {
+        return fields.filter(field => field.isRequired).every(field => userFields[field.name] && userFields[field.name].length > 0);
+    }
+
     isNextAvailable(): boolean {
         const data: PersonalInformationState = selectPersonalInformation(
             this.state
         );
         const order = selectOrder(this.state);
         const ticketsValid = order.ticketPersonalizationRequired ? validateTicketNames(order.tickets) : true;
+        const customFieldsValid = InformationNextAvailable.customFieldsValid(data.serverCustomFields, data.customFields);
         const emailValid = validateEmail(data.email);
         return (
             ticketsValid &&
             emailValid &&
+            customFieldsValid &&
             validateAddress(data.address) &&
             (ShippingFactory.getShippingInstance(data.shipping)?.isValid() ??
                 false)

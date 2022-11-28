@@ -14,8 +14,8 @@ import { CheckboxAccordion } from "../components/CheckboxAccordion";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
     selectPersonalInformation,
-    setAddress,
-    setEmail,
+    setAddress, setCustomFields,
+    setEmail, setServerCustomFields,
     setShipping
 } from "../store/reducers/personalInformationReducer";
 import { ShippingFactory, ShippingType } from "../store/factories/shipping/ShippingFactory";
@@ -31,6 +31,8 @@ import { selectOrder, setTicketPersonalizationRequired } from "../store/reducers
 import { useRouter } from "next/router";
 import { formatPrice, validateAddress, validateTicketNames } from "../constants/util";
 import { selectPayment } from "../store/reducers/paymentReducer";
+import { CustomFields } from "../components/form/CustomFields";
+import { InformationNextAvailable } from "../store/factories/nextAvailable/InformationNextAvailable";
 
 const validateEmail = (email) => {
     const re =
@@ -50,7 +52,7 @@ export default function Information({ direction, deliveryMethods, categories, ev
 
     useEffect(() => {
         setEvent(events.find(event => event.id === parseInt(router.query.event as string)));
-    }, [events])
+    }, [events, router.isReady])
 
     const [selectedShippingMethod, setSelectedShippingMethod] =
         useState<ShippingType | null>(selector.shipping?.type ?? null);
@@ -75,6 +77,7 @@ export default function Information({ direction, deliveryMethods, categories, ev
     useEffect(() => {
         if (!event) return;
         dispatch(setTicketPersonalizationRequired(event.personalTicket));
+        dispatch(setServerCustomFields(event.customFields));
     }, [event]);
 
     useEffect(() => {
@@ -131,11 +134,19 @@ export default function Information({ direction, deliveryMethods, categories, ev
                                     dispatch(setAddress(newValue))
                                 }
                             />
+                            <CustomFields
+                                customFields={event?.customFields}
+                                onChange={(newValue) => dispatch(setCustomFields(newValue))}
+                                value={selector.customFields}
+                            />
                             <Button
                                 onClick={() => setExpanded(event?.personalTicket ? 1 : 2)}
                                 fullWidth={true}
                                 id={"information-address-next"}
-                                disabled={!validateAddress(selector.address)}
+                                disabled={!validateAddress(selector.address) ||
+                                    !validateEmail(selector.email) ||
+                                    !InformationNextAvailable.customFieldsValid(event?.customFields, selector.customFields)
+                                }
                             >
                                 {t("common:next")}
                             </Button>
@@ -201,7 +212,14 @@ export async function getStaticProps({ locale }) {
             events: await prisma.event.findMany({
                 select: {
                     personalTicket: true,
-                    id: true
+                    id: true,
+                    customFields: {
+                        select: {
+                            name: true,
+                            label: true,
+                            isRequired: true
+                        }
+                    }
                 }
             }),
             shippingFees: await getOption(Options.PaymentFeesShipping),
