@@ -41,11 +41,12 @@ export default async function handler(
                 });
             })
         );
-        await prisma.task.delete({
-            where: {
-                id: order.task.id
-            }
-        })
+        if (order.task?.id)
+            await prisma.task.delete({
+                where: {
+                    id: order.task.id
+                }
+            })
         await prisma.order.delete({
             where: {
                 id: id as string
