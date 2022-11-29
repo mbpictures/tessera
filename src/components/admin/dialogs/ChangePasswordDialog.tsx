@@ -27,7 +27,7 @@ export const ChangePasswordDialog = ({ open, user, onClose }) => {
 
     const canChange =
         confirmNewPassword === newPassword &&
-        newPassword.length > 6 &&
+        confirmNewPassword.length > 6 &&
         currentPassword.length > 6;
 
     const changePassword = async () => {
