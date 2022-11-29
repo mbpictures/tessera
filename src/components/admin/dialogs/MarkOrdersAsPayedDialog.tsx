@@ -15,9 +15,9 @@ import { useSnackbar } from "notistack";
 import { validate as uuidValidate } from 'uuid';
 import { hasPayedIcon } from "../OrderInformationDetails";
 import { hasPayed } from "../../../constants/orderValidation";
-import { formatPrice } from "../../../constants/util";
+import { calculateTotalPrice, formatPrice } from "../../../constants/util";
 
-export const MarkOrdersAsPayedDialog = ({open, onClose, categories}) => {
+export const MarkOrdersAsPayedDialog = ({open, onClose, categories, currency, shippingFees, paymentFees}) => {
     const [orderId, setOrderId] = useState("");
     const [autoMarkAsPaid, setAutoMarkAsPaid] = useState(false);
     const [order, setOrder] = useState(null);
@@ -93,7 +93,7 @@ export const MarkOrdersAsPayedDialog = ({open, onClose, categories}) => {
                                 {
                                     order ? (
                                         <Stack>
-                                            <OrderDisplay order={order} categories={categories} />
+                                            <OrderDisplay order={order} categories={order ? categories[order.eventDateId] : categories[0]} currency={currency} shippingFees={shippingFees} paymentFees={paymentFees} />
                                             {
                                                 hasPayed(order) ? (
                                                     <Typography>{hasPayedIcon(order)} This order is already paid</Typography>
@@ -115,16 +115,15 @@ export const MarkOrdersAsPayedDialog = ({open, onClose, categories}) => {
     )
 };
 
-const OrderDisplay = ({order, categories}) => {
-    const getTotalPriceOfOrder = (order) => {
-        return order.tickets?.reduce((a, ticket) => a + ticket.amount * categories.find(category => category.id === ticket.categoryId).price, 0) ?? 0;
-    }
+const OrderDisplay = ({order, categories, currency, shippingFees, paymentFees}) => {
+
+    const totalPrice = calculateTotalPrice(order.tickets, categories, shippingFees, paymentFees, JSON.parse(order.shipping).type, order.paymentType);
 
     return (
         <Stack>
             <Typography>OrderID: {order.id}</Typography>
             <Typography>TicketAmount: {order.tickets.length}</Typography>
-            <Typography>Total Price: {formatPrice(getTotalPriceOfOrder(order), categories[0].currency)}</Typography>
+            <Typography>Total Price: {formatPrice(totalPrice, currency)}</Typography>
             <Typography>Date: {new Date(order.date).toLocaleString()}</Typography>
         </Stack>
     )

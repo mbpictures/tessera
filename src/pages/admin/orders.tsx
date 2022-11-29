@@ -73,7 +73,7 @@ const ConditionalCell = ({text, list, columnName}: {text: string | JSX.Element |
     )
 }
 
-export default function Orders({ permissionDenied, count, categories, eventDates, events, paymentFees, currency}) {
+export default function Orders({ permissionDenied, count, categories, eventDates, events, paymentFees, currency, shippingFees}) {
     const { data: session } = useSession();
     const [orders, setOrders] = useState([]);
     const [order, setOrder] = useState(null);
@@ -183,6 +183,9 @@ export default function Orders({ permissionDenied, count, categories, eventDates
                     setMarkAsPaidOpen(false);
                 }}
                 categories={categories}
+                currency={currency}
+                shippingFees={shippingFees}
+                paymentFees={paymentFees}
             />
             <AddOrder
                 open={addOrderOpen}
@@ -417,6 +420,7 @@ export async function getServerSideProps(context: NextPageContext) {
                     eventDates: JSON.parse(JSON.stringify(eventDateMaps)),
                     events: JSON.parse(JSON.stringify(events)),
                     paymentFees: await getOption(Options.PaymentFeesPayment),
+                    shippingFees: await getOption(Options.PaymentFeesShipping),
                     currency: await getOption(Options.Currency)
                 }
             };
