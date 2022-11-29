@@ -15,7 +15,7 @@ const validateEmail = (email) => {
 
 export class InformationNextAvailable extends NextAvailable {
     static customFieldsValid(fields: Array<{name: string, label: string, isRequired: boolean}>, userFields): boolean {
-        return fields.filter(field => field.isRequired).every(field => userFields[field.name] && userFields[field.name].length > 0);
+        return fields?.filter(field => field.isRequired).every(field => userFields[field.name] && userFields[field.name].length > 0) ?? true;
     }
 
     isNextAvailable(): boolean {
