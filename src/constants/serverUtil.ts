@@ -167,7 +167,7 @@ export const revalidateEventPages = async (res, additionalPages: string[]) => {
     await revalidateBuild(res, eventPaths.concat(additionalPages));
 };
 
-export const validateOrder = async (tickets: Tickets, eventDateId, reservationId): Promise<[boolean, Tickets]> => {
+export const validateOrder = async (tickets: Tickets, eventDateId, reservationId, checkEventBookable: boolean = true): Promise<[boolean, Tickets]> => {
     if (tickets.length === 0) return [false, []];
     const eventDate = await prisma.eventDate.findUnique({
         where: {
@@ -190,7 +190,7 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
             ticketSaleStartDate: true
         }
     });
-    if (!eventDateIsBookable(eventDate)) return [false, tickets];
+    if (checkEventBookable && !eventDateIsBookable(eventDate)) return [false, tickets];
     const seatIds = tickets.filter(ticket => ticket.seatId);
     if (eventDate.event.seatType === "seatMap" && seatIds.length !== tickets.length)
         return [false, tickets.filter(ticket => !ticket.seatId)]; // all tickets of event with seat reservation need a seatId

@@ -28,7 +28,6 @@ import { Box } from "@mui/system";
 import { NextAvailableFactory } from "../../../store/factories/nextAvailable/NextAvailableFactory";
 import { STEP_URLS } from "../../../constants/Constants";
 import { resetEvent, setEvent } from "../../../store/reducers/eventSelectionReducer";
-import { storeOrderAndUser } from "../../../constants/util";
 import { useSnackbar } from "notistack";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { resetOrder, setOrderId } from "../../../store/reducers/orderReducer";
@@ -36,7 +35,7 @@ import { resetPayment, setGtcAccepted, setPaymentStatus } from "../../../store/r
 import { LoadingButton } from "@mui/lab";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
-import { v4 as uuid } from "uuid";
+import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -76,15 +75,16 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
 
     const storeOrder = async () => {
         try {
-            const { userId, orderId } = await storeOrderAndUser(
-                selector.order,
-                selector.personalInformation,
-                selector.selectedEvent.selectedEvent,
-                selector.payment.payment.type,
-                uuid()
-            );
-            dispatch(setUserId(userId));
-            dispatch(setOrderId(orderId));
+            console.log("TEST");
+            const response = await axios.post("/api/admin/order/store", {
+                order: selector.order,
+                user: selector.personalInformation,
+                eventDateId: selector.selectedEvent.selectedEvent,
+                paymentType: selector.payment.payment.type,
+                locale: navigator.language
+            });
+            dispatch(setUserId(response.data.userId));
+            dispatch(setOrderId(response.data.orderId));
             dispatch(setPaymentStatus("initiate"));
         } catch (e) {
             enqueueSnackbar("Error: " + e.message, {variant: "error"})
