@@ -136,6 +136,7 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
                                             noWrap
                                             hideSummary
                                             currency={currency}
+                                            noReservation
                                         />
                                     )
                                 }
