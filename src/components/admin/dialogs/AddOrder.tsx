@@ -32,7 +32,7 @@ import { storeOrderAndUser } from "../../../constants/util";
 import { useSnackbar } from "notistack";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { resetOrder, setOrderId } from "../../../store/reducers/orderReducer";
-import { resetPayment, setPaymentStatus } from "../../../store/reducers/paymentReducer";
+import { resetPayment, setGtcAccepted, setPaymentStatus } from "../../../store/reducers/paymentReducer";
 import { LoadingButton } from "@mui/lab";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
@@ -63,6 +63,11 @@ const AddOrderInner = ({open, events, eventDates, categories, onClose, onAdd, pa
     const [orderStored, setOrderStored] = useState(false);
     const dispatch = useAppDispatch();
     const {enqueueSnackbar} = useSnackbar();
+
+    useEffect(() => {
+        if (!open) return;
+        dispatch(setGtcAccepted(true));
+    }, [open]);
 
     useEffect(() => {
         if (selector.payment.state !== "finished") return;
