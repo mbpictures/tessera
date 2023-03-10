@@ -6,11 +6,11 @@
     <a href="LICENSE" target="_blank">
       <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" />
     </a>
-    <img alt="Build Status" src="https://img.shields.io/github/workflow/status/mbpictures/tessera/build/main?style=for-the-badge" />
-    <img alt="CI Status" src="https://img.shields.io/github/workflow/status/mbpictures/tessera/ci/main?label=CI&style=for-the-badge" />
+    <img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/mbpictures/tessera/build.yml?style=for-the-badge" />
+    <img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/mbpictures/tessera/node.js.yml?label=CI&style=for-the-badge" />
     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/mbpictures/tessera?style=for-the-badge&token=R7CJUK2K1X">
     <a href="https://mbpictures.github.io/tessera" target="_blank">
-        <img alt="Docs badge" src="https://img.shields.io/github/workflow/status/mbpictures/tessera/redoc/documentation?label=DOCS&style=for-the-badge" />
+        <img alt="Docs badge" src="https://img.shields.io/github/actions/workflow/status/mbpictures/tessera/redoc.yml?branch=documentation&label=Docs&style=for-the-badge" />
     </a>
   </p>
 </h1>
