@@ -33,7 +33,8 @@ export const SeatSelectionFactory = ({
                                          onSeatAlreadyBooked,
                                          seatMapId,
                                          containsPreview,
-                                         currency
+                                         currency,
+                                         noReservation
 }: {
     seatType: string,
     categories: Array<any>,
@@ -44,6 +45,7 @@ export const SeatSelectionFactory = ({
     onSeatAlreadyBooked?: Function,
     containsPreview?: boolean
     currency: string;
+    noReservation?: boolean;
 }) => {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
@@ -55,6 +57,7 @@ export const SeatSelectionFactory = ({
     const recaptchaValue = useRef(null);
 
     const sendReservation = async () => {
+        if (noReservation) return;
         let reservationId = order.reservationId;
         if (!reservationId) {
             reservationId = uuid();

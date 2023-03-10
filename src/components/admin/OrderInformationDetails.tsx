@@ -126,7 +126,7 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categor
                 {address.countryCode}-{address.regionCode}<br />
                 <br />
                 {
-                    Object.entries(JSON.parse(order.user.customFields)).map(field => `${field[0]}: ${field[1]}`)
+                    order.user.customFields && Object.entries(JSON.parse(order.user.customFields)).map(field => `${field[0]}: ${field[1]}`)
                 }
             </Typography>
             <Divider sx={{mt: 2, mb: 2}} />
