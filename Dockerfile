@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 FROM node:16-alpine as builder
+RUN apk add --update --no-cache openssl1.1-compat
 WORKDIR /ticketshop
 COPY . .
 COPY --from=deps /ticketshop/node_modules ./node_modules
