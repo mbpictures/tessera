@@ -80,7 +80,8 @@ export async function getStaticProps({ locale }) {
             title: await getOption(Options.ShopTitle),
             subtitle: await getOption(Options.ShopSubtitle),
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/' }))
+            ...(await loadNamespaces({ locale, pathname: '/' })),
+            impressUrl: await getOption(Options.ImpressUrl)
         }
     };
 }

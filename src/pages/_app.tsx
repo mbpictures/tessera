@@ -68,6 +68,7 @@ const Global: React.FunctionComponent<{Component, pageProps}> = ({ Component, pa
                     disableOverflow={pageProps.disableOverflow ?? false}
                     noNext={pageProps.noNext ?? false}
                     withReservationCountdown={pageProps.withReservationCountdown ?? false}
+                    impressUrl={pageProps.impressUrl ?? ""}
                 >
                     <AnimatePresence exitBeforeEnter initial={false}>
                         <Component

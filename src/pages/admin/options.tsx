@@ -37,6 +37,7 @@ const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 export default function Options({options, permissionDenied}) {
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
+    const [impressUrl, setImpressUrl] = useState("");
     const [paymentProviders, setPaymentProviders] = useState([]);
     const [taxAmount, setTaxAmount] = useState(0);
     const [shippingProviders, setShippingProviders] = useState([]);
@@ -57,6 +58,7 @@ export default function Options({options, permissionDenied}) {
         if (permissionDenied) return;
         setTitle(options[OptionsEnum.ShopTitle] ?? "");
         setSubtitle(options[OptionsEnum.ShopSubtitle] ?? "");
+        setImpressUrl(options[OptionsEnum.ImpressUrl] ?? "");
         setPaymentProviders(options[OptionsEnum.PaymentProviders] ?? []);
         setShippingProviders(options[OptionsEnum.Delivery] ?? []);
         setTheme(options[OptionsEnum.Theme] ?? {});
@@ -84,6 +86,7 @@ export default function Options({options, permissionDenied}) {
             await storeSetting(OptionsEnum.ShopTitle, title);
             await storeSetting(OptionsEnum.ShopSubtitle, subtitle);
             await storeSetting(OptionsEnum.Currency, currency);
+            await storeSetting(OptionsEnum.ImpressUrl, impressUrl);
         } catch (e) {
             enqueueSnackbar("Error: " + (e?.reponse?.data ?? e.message), {
                 variant: "error"
@@ -236,6 +239,11 @@ export default function Options({options, permissionDenied}) {
                                     setCurrency(newValue)
                                 }
                                 sx={{ flexGrow: 1 }}
+                            />
+                            <TextField
+                                label={"Impress URL (empty means no impress is shown)"}
+                                value={impressUrl}
+                                onChange={(event) => setImpressUrl(event.target.value)}
                             />
                             <SaveButton
                                 action={handleSaveGeneral}

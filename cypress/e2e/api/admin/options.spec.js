@@ -35,7 +35,9 @@ describe("Configuration in admin dashboard", () => {
                 cy.get("#shop-subtitle-input").clear().type("Test Subtitle");
                 cy.get("#general-save").click();
 
-                cy.wait("@options"); // to store general, two requests are required
+                cy.wait("@options"); // to store general, three requests are required
+                cy.wait(0);
+                cy.wait("@options");
                 cy.wait(0);
                 cy.wait("@options");
                 cy.request({

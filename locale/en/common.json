@@ -22,5 +22,6 @@
     "time-until-title": "Remaining reservation time:",
     "time-until": "{{minutes}}:{{seconds}}",
     "number-of-tickets-unavailable": "{{ticketAmount}} tickets of your order are unavailable",
-    "view-occupied-tickets": "Show unavailable tickets"
+    "view-occupied-tickets": "Show unavailable tickets",
+    "impress": "Impress"
 }

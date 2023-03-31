@@ -23,6 +23,7 @@ export const SEAT_COLORS = {
 export enum Options {
     ShopTitle = "shop.title",
     ShopSubtitle = "shop.subtitle",
+    ImpressUrl = "shop.impress",
     PaymentProviders = "shop.payment-provider",
     Delivery = "shop.delivery",
     Theme = "shop.theme",

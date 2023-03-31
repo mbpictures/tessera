@@ -224,7 +224,8 @@ export async function getStaticProps({ locale }) {
             }),
             shippingFees: await getOption(Options.PaymentFeesShipping),
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/information' }))
+            ...(await loadNamespaces({ locale, pathname: '/information' })),
+            impressUrl: await getOption(Options.ImpressUrl)
         }
     };
 }

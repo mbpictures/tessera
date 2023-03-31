@@ -22,5 +22,6 @@
     "time-until-title": "Restzeit der Sitz-Reservierung:",
     "time-until": "{{minutes}}:{{seconds}}",
     "number-of-tickets-unavailable": "{{ticketAmount}} Tickets sind nicht mehr verfügbare",
-    "view-occupied-tickets": "Nicht verfügbare Tickets anzeigen"
+    "view-occupied-tickets": "Nicht verfügbare Tickets anzeigen",
+    "impress": "Impressum"
 }
