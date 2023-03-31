@@ -9,6 +9,7 @@ const DEFAULT_OPTIONS: Partial<Record<Options, any>> = {
     "shop.title": "Ticket shop",
     "shop.payment-provider": Object.values(PaymentType),
     "shop.delivery": Object.values(ShippingType),
+    "shop.impress": "",
     "payment.information": [
         "Jon Doe",
         "Demo Bank",
