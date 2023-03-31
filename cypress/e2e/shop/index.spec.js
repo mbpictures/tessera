@@ -593,6 +593,11 @@ describe("Buy tickets", () => {
         cy.fixture("admin/events").then((eventsFixture) => {
             const seats = eventsFixture.events[1].seatMap.flat(2).filter((seat) => seat.type !== "space");
             cy.visit("/seatselection/2?event=2");
+            cy.intercept({
+                url: "/api/bookingInformation/2"
+            }, req => {
+                req.destroy()
+            });
             // simulate other user reservating seat before we are
             cy.request({
                 url: "/api/order/reservation",
@@ -608,15 +613,16 @@ describe("Buy tickets", () => {
                         }
                     ]
                 }
-            });
-            cy.get("#seat-reservation-error").should("not.exist");
-            cy.get(".seat-selection-seatmap-seat").eq(0).click();
-            cy.get("#seat-reservation-error").should("exist");
-            cy.get("#seat-reservation-error-close").click();
-            cy.get(".seat-selection-seatmap-seat").eq(0).then(elem => {
-                cy.wrap(elem, {timeout: 62000})
-                    .should("have.css", "background-color")
-                    .and("be.colored", eventsFixture.categories[seats[0].category].occupiedColor.toLowerCase());
+            }).then(() => {
+                cy.get("#seat-reservation-error").should("not.exist");
+                cy.get(".seat-selection-seatmap-seat").eq(0).click();
+                cy.get("#seat-reservation-error").should("exist");
+                cy.get("#seat-reservation-error-close").click();
+                cy.get(".seat-selection-seatmap-seat").eq(0).then(elem => {
+                    cy.wrap(elem, {timeout: 62000})
+                        .should("have.css", "background-color")
+                        .and("be.colored", eventsFixture.categories[seats[0].category].occupiedColor.toLowerCase());
+                });
             });
         });
     });
