@@ -14,7 +14,7 @@ export const LanguageSelection = () => {
     if ((router.locales?.length ?? 0) <= 1) return null;
 
     return (
-        <Select value={router.locale} sx={{"> div": {padding: "0 10px"}}}>
+        <Select value={router.locale} sx={{"> div": {padding: "0 10px"}, flex: "1 1 auto"}}>
             {
                 router.locales.map((locale) => {
                     let code = locale.toUpperCase().split("-")[0];

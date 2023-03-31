@@ -61,7 +61,8 @@ export async function getStaticProps({ locale }) {
     return {
         props: {
             theme: await getOption(Options.Theme),
-            ...(await loadNamespaces({ locale, pathname: '/checkout' }))
+            ...(await loadNamespaces({ locale, pathname: '/checkout' })),
+            impressUrl: await getOption(Options.ImpressUrl)
         }
     }
 }

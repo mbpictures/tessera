@@ -151,7 +151,8 @@ export async function getStaticProps({ params, locale }) {
             withReservationCountdown: true,
             seatMapId: eventDate.event.seatMapId,
             containsPreview: eventDate.event.seatMap?.previewType !== null,
-            currency: (await getOption(Options.Currency))
+            currency: (await getOption(Options.Currency)),
+            impressUrl: await getOption(Options.ImpressUrl)
         }
     };
 }

@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Step, StepLabel, Stepper } from "@mui/material";
+import { Box, Button, Link, Paper, Step, StepLabel, Stepper } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { STEP_URLS, STEPS } from "../constants/Constants";
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ interface Props {
     noNext?: boolean;
     children?: React.ReactNode;
     withReservationCountdown?: boolean;
+    impressUrl?: string;
 }
 
 const decodeHtml = (str) => {
@@ -69,6 +70,8 @@ export const StepperContainer = (props: Props) => {
         const query = currentStep - 1 === 0 ? "" : `?event=${selectedEvent}`;
         await router.push(`${url}${query}`);
     };
+
+    console.log(props.impressUrl);
 
     return (
         <Box
@@ -141,8 +144,15 @@ export const StepperContainer = (props: Props) => {
                                 {t("back")}
                             </Button>
 
-                            <Box sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+                            <Box sx={{ flex: "1 1 auto", display: "flex", alignItems: "center", flexDirection: "column" }}>
                                 <LanguageSelection />
+                                {
+                                    props.impressUrl !== "" && (
+                                        <Link href={props.impressUrl} target={"_blank"}>
+                                            {t("impress")}
+                                        </Link>
+                                    )
+                                }
                             </Box>
 
                             <Button
