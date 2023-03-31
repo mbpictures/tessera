@@ -1,6 +1,6 @@
 import prisma from "./prisma";
 import ejs from "ejs";
-import htmlPdf from "html-pdf";
+import htmlPdf from "html-pdf-node";
 import { calculateTotalPrice, getEventTitle, getServiceFeeAmount, summarizeTicketAmount } from "../constants/util";
 import { formatPrice } from "../constants/serverUtil";
 import { PaymentType } from "../store/factories/payment/PaymentFactory";
@@ -135,13 +135,8 @@ export const generateInvoice = async (
         });
 
         htmlPdf
-            .create(html, { format: "A4" })
-            .toBuffer((err, res) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve(res);
-            });
+            .generatePdf({content: html}, { format: "A4" })
+            .then(buffer => resolve(buffer))
+            .catch(err => reject(err));
     });
 };
