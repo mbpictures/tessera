@@ -1,11 +1,12 @@
 import { Autocomplete, Grid, Stack, TextField } from "@mui/material";
 import { IAddress } from "../../constants/interfaces";
 import { ZIP } from "./ZIP";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import countryRegionData, { Country, Region } from "country-region-data";
 import { addressValidatorMap } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
 import informationText from "../../../locale/en/information.json";
+import countryLocalize from "i18n-iso-countries";
 
 const validateAddressComponent = (address: IAddress, property: string) => {
     if (addressValidatorMap[property](address)) return null;
@@ -17,6 +18,8 @@ const validateAddressComponent = (address: IAddress, property: string) => {
     if (property === "region") return "information:region-error";
 };
 
+type LocalizedCountry = Country & {localizedCountryName: string | undefined};
+
 export const AddressComponent = ({
     value,
     onChange
@@ -24,13 +27,19 @@ export const AddressComponent = ({
     value: IAddress;
     onChange: (newAddress: IAddress) => unknown;
 }) => {
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
     const [localZip, setLocalZip] = useState<string>(value.zip ?? "");
     const [firstNameError, setFirstNameError] = useState<string>(null);
     const [lastNameError, setLastNameError] = useState<string>(null);
     const [addressError, setAddressError] = useState<string>(null);
     const [cityError, setCityError] = useState<string>(null);
     const [touched, setTouched] = useState<string[]>([]);
+    const [localizedCountryData, setLocalizedCountryData] = useState<LocalizedCountry[]>(countryRegionData.map(d => ({...d, localizedCountryName: undefined})));
+
+    useEffect(() => {
+        countryLocalize.registerLocale(require(`i18n-iso-countries/langs/${lang}.json`));
+        setLocalizedCountryData(countryRegionData.map(d => ({...d, localizedCountryName: countryLocalize.getName(d.countryShortCode, lang)})));
+    }, [lang]);
 
     const handleUpdate = (property, newValue) => {
         const newAddress: IAddress = Object.assign({}, value);
@@ -145,10 +154,12 @@ export const AddressComponent = ({
                                 name={"address-country-text"}
                             />
                         )}
-                        options={countryRegionData}
+                        options={localizedCountryData}
                         fullWidth
+                        autoSelect={true}
+                        freeSolo={true}
                         onChange={handleChangeCountry}
-                        getOptionLabel={(option: Country) => option.countryName}
+                        getOptionLabel={(option: LocalizedCountry) => option.localizedCountryName ?? option.countryName}
                         isOptionEqualToValue={(option, value) =>
                             option?.countryName === value?.countryName &&
                             option?.countryShortCode === value?.countryShortCode
