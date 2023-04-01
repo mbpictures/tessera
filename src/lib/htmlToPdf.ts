@@ -2,6 +2,7 @@ import puppeteer from "puppeteer";
 
 export const generatePdf = async (html, options): Promise<Buffer> => {
     const browser = await puppeteer.launch({
+        headless: true,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -12,5 +13,7 @@ export const generatePdf = async (html, options): Promise<Buffer> => {
         waitUntil: 'networkidle0', // wait for page to load completely
     });
 
-    return await page.pdf(options);
+    const pdf = await page.pdf(options);
+    await browser.close();
+    return pdf;
 }
