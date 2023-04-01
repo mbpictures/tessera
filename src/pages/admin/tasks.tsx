@@ -25,6 +25,7 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { ManageTaskDialog } from "../../components/admin/dialogs/ManageTaskDialog";
 import { getTaskType } from "../../constants/orderValidation";
+import { SaveButton } from "../../components/admin/SaveButton";
 
 interface Task extends TaskBase {
     assignedUser: AdminUser;
@@ -93,13 +94,13 @@ export default function Tasks({ tasks, permissionDenied, categories }: {tasks: A
                                         <TableCell>{getTaskType(task) === "shipping" ? "Ship tickets" : "Check payment receipt"}</TableCell>
                                         <TableCell>
                                             <Tooltip title={"Mark current step of this task as completed"}>
-                                                <IconButton
-                                                    onClick={() => checkTask(task)}
+                                                <SaveButton
+                                                    action={async () => await checkTask(task)}
                                                     className={"task-check"}
                                                     color={"success"}
                                                 >
                                                     <TaskAltIcon />
-                                                </IconButton>
+                                                </SaveButton>
                                             </Tooltip>
                                         </TableCell>
                                         <TableCell>

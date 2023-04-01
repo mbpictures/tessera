@@ -45,6 +45,7 @@ export const OrderDetailsDialog = ({
     const handleDeleteOrder = async () => {
         try {
             await axios.delete("/api/admin/order/" + order.id);
+            setDeleteOpen(false);
             onClose();
             onDelete();
         } catch (e) {
