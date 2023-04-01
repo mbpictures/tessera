@@ -20,6 +20,7 @@ import { hasPayed, hasShipped } from "../../constants/orderValidation";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { SaveButton } from "./SaveButton";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -69,9 +70,9 @@ export const OrderPaymentInformationDetails = ({order, onMarkAsPayed}) => {
             </Typography>
             {order.paymentType === "invoice" &&
                 !hasPayed(order) && (
-                    <Button onClick={handleMarkAsPayed}>
+                    <SaveButton action={handleMarkAsPayed}>
                         Mark as payed
-                    </Button>
+                    </SaveButton>
                 )}
             <Divider />
             <Typography>
