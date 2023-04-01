@@ -77,6 +77,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^6.3.11",
     "google-auth-library": "^8.5.2",
+    "i18n-iso-countries": "^7.5.0",
     "ical-generator": "^3.5.2",
     "json-2-csv": "^3.17.1",
     "jsonwebtoken": "^8.5.1",
