@@ -157,7 +157,6 @@ export const AddressComponent = ({
                         options={localizedCountryData}
                         fullWidth
                         autoSelect={true}
-                        freeSolo={true}
                         onChange={handleChangeCountry}
                         getOptionLabel={(option: LocalizedCountry) => option.localizedCountryName ?? option.countryName}
                         isOptionEqualToValue={(option, value) =>
