@@ -15,6 +15,7 @@ import {
 import { getOption, getOptionData, setOption } from "./options";
 import { Options } from "../constants/Constants";
 import unescape from "lodash/unescape";
+import getT from 'next-translate/getT';
 
 export const getEmailHtml = async (firstName, lastName, containsTickets, containsInvoice, eventDate, tickets, cancellationLink, isCancellation) => {
     let googleWallet = undefined;
@@ -67,9 +68,11 @@ export const send = async (orderId, isCancellation?: boolean) => {
                         event: true
                     }
                 },
-                cancellationSecret: true
+                cancellationSecret: true,
+                locale: true
             },
         });
+        const t = await getT(order.locale.includes("-") ? order.locale.split("-")[0] : order.locale, "mail");
 
        let attachments = [];
         // generate invoice
@@ -81,7 +84,7 @@ export const send = async (orderId, isCancellation?: boolean) => {
             );
 
             attachments.push({
-                filename: "Invoice.pdf",
+                filename: t("invoice-filename"),
                 content: invoiceData,
                 contentType: "application/pdf",
             });
@@ -110,7 +113,7 @@ export const send = async (orderId, isCancellation?: boolean) => {
             );
             tickets.forEach((ticket, i) => {
                 attachments.push({
-                    filename: `Ticket${i + 1}.pdf`,
+                    filename: t("ticket-filename", {number: i + 1}),
                     content: ticket,
                     contentType: "application/pdf",
                 });
@@ -126,7 +129,7 @@ export const send = async (orderId, isCancellation?: boolean) => {
         const message: any = {
             from: process.env.EMAIL_SENDER,
             to: order.user.email,
-            subject: "Your ticket order!",
+            subject: t("email-title"),
             html: null,
             attachments
         };

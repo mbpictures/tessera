@@ -1,0 +1,5 @@
+{
+    "invoice-filename": "Rechnung.pdf",
+    "ticket-filename": "Ticket{{number}}.pdf",
+    "email-title": "Ihre Ticket Bestellung"
+}
