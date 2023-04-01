@@ -71,8 +71,6 @@ export const StepperContainer = (props: Props) => {
         await router.push(`${url}${query}`);
     };
 
-    console.log(props.impressUrl);
-
     return (
         <Box
             sx={{
