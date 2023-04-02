@@ -23,5 +23,6 @@
     "box-office-description": "Die Tickets können an der Abendkasse abgeholt werden",
     "seat": "Sitzplatz {{seat}}",
     "tickets": "Tickets",
-    "delivery": "Lieferung"
+    "delivery": "Lieferung",
+    "no-options": "Keine Optionen"
 }

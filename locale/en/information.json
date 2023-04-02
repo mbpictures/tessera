@@ -23,5 +23,6 @@
     "box-office-description": "You can pick up your ticket at the Box-Office.",
     "seat": "Seat {{seat}}",
     "tickets": "Tickets",
-    "delivery": "Delivery"
+    "delivery": "Delivery",
+    "no-options": "No options"
 }

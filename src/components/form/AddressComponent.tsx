@@ -1,7 +1,7 @@
 import { Autocomplete, Grid, Stack, TextField } from "@mui/material";
 import { IAddress } from "../../constants/interfaces";
 import { ZIP } from "./ZIP";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import countryRegionData, { Country, Region } from "country-region-data";
 import { addressValidatorMap } from "../../constants/util";
 import useTranslation from "next-translate/useTranslation";
@@ -34,7 +34,7 @@ export const AddressComponent = ({
     const [addressError, setAddressError] = useState<string>(null);
     const [cityError, setCityError] = useState<string>(null);
     const [touched, setTouched] = useState<string[]>([]);
-    const [localizedCountryData, setLocalizedCountryData] = useState<LocalizedCountry[]>(countryRegionData.map(d => ({...d, localizedCountryName: undefined})));
+    const [localizedCountryData, setLocalizedCountryData] = useState<LocalizedCountry[]>([]);
 
     useEffect(() => {
         countryLocalize.registerLocale(require(`i18n-iso-countries/langs/${lang}.json`));
@@ -147,16 +147,32 @@ export const AddressComponent = ({
             <Grid container rowSpacing={1}>
                 <Grid item md={6} xs={12}>
                     <Autocomplete
-                        renderInput={(params) => (
+                        renderInput={({inputProps, ...params}) => (
                             <TextField
                                 {...params}
                                 label={t("information:country", null, {fallback: informationText.country})}
                                 name={"address-country-text"}
+                                inputProps={{
+                                    ...inputProps,
+                                    autoComplete: "off",
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => {
+                                        const value = localizedCountryData.find(a => a.localizedCountryName === event.target.value || a.countryName === event.target.value);
+                                        if (!value) {
+                                            inputProps.onChange(event);
+                                            return;
+                                        }
+                                        handleChangeCountry(event, value);
+                                    }
+                                }}
                             />
                         )}
-                        options={localizedCountryData}
+                        options={
+                            localizedCountryData
+                                .sort((a, b) => (a.localizedCountryName ?? a.countryName) > (b.localizedCountryName ?? b.countryName) ? 1 : -1)
+                        }
+                        noOptionsText={t("information:no-options")}
                         fullWidth
-                        autoSelect={true}
+                        autoSelect
                         onChange={handleChangeCountry}
                         getOptionLabel={(option: LocalizedCountry) => option.localizedCountryName ?? option.countryName}
                         isOptionEqualToValue={(option, value) =>
