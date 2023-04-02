@@ -34,7 +34,7 @@ export const AddressComponent = ({
     const [addressError, setAddressError] = useState<string>(null);
     const [cityError, setCityError] = useState<string>(null);
     const [touched, setTouched] = useState<string[]>([]);
-    const [localizedCountryData, setLocalizedCountryData] = useState<LocalizedCountry[]>(countryRegionData.map(d => ({...d, localizedCountryName: undefined})));
+    const [localizedCountryData, setLocalizedCountryData] = useState<LocalizedCountry[]>([]);
 
     useEffect(() => {
         countryLocalize.registerLocale(require(`i18n-iso-countries/langs/${lang}.json`));
@@ -154,7 +154,11 @@ export const AddressComponent = ({
                                 name={"address-country-text"}
                             />
                         )}
-                        options={localizedCountryData}
+                        options={
+                            localizedCountryData
+                                .sort((a, b) => (a.localizedCountryName ?? a.countryName) > (b.localizedCountryName ?? b.countryName) ? 1 : -1)
+                        }
+                        noOptionsText={t("information:no-options")}
                         fullWidth
                         autoSelect={true}
                         onChange={handleChangeCountry}
