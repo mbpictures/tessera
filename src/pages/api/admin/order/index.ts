@@ -25,7 +25,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const user = await serverAuthenticate(req, res, {
-        permission: PermissionSection.EventManagement,
+        permission: PermissionSection.Orders,
         permissionType: PermissionType.Read
     });
     if (!user) return;
