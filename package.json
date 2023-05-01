@@ -92,6 +92,7 @@
     "notistack": "^2.0.5",
     "paypal-checkout": "^4.0.336",
     "pdf-lib": "^1.17.1",
+    "ps-node-promise-es6": "^0.0.1",
     "puppeteer": "^19.8.2",
     "qrcode": "^1.5.1",
     "raw-body": "^2.5.1",
