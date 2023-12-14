@@ -70,6 +70,8 @@ export const OrderDetailsDialog = ({
                                     <Typography>
                                         Event: {getEventTitle(order.eventDate)}
                                         <br />
+                                        Event Date: {new Date(order.eventDate.date).toLocaleString()}
+                                        <br />
                                         OrderID: {order.id}
                                         <br />
                                         Date: {new Date(order.date).toLocaleString()}

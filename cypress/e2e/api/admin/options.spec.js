@@ -40,6 +40,7 @@ describe("Configuration in admin dashboard", () => {
                 cy.wait("@options");
                 cy.wait(0);
                 cy.wait("@options");
+                cy.wait(2000);
                 cy.request({
                     method: "GET",
                     url: "api/admin/options",
