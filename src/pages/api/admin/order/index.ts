@@ -36,10 +36,10 @@ export default async function handler(
                 eventDate: {
                     select: {
                         title: true,
+                        date: true,
                         event: {
                             select: {
                                 title: true
-
                             }
                         }
                     }
