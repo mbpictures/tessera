@@ -26,10 +26,8 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /ticketshop/public ./public
 COPY --from=builder /ticketshop/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /ticketshop/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /ticketshop/.next/static ./.next/static
 RUN sed -i "s|sqlite|postgresql|g" /ticketshop/node_modules/.prisma/client/schema.prisma
 RUN sed -i "s|\"file:./dev.db\"|env(\"DATABASE_URL\")|g" /ticketshop/node_modules/.prisma/client/schema.prisma
 
