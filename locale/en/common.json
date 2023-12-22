@@ -23,5 +23,6 @@
     "time-until": "{{minutes}}:{{seconds}}",
     "number-of-tickets-unavailable": "{{ticketAmount}} tickets of your order are unavailable",
     "view-occupied-tickets": "Show unavailable tickets",
-    "impress": "Impress"
+    "impress": "Impress",
+    "choose-continue": "Please select an event and press continue (lower right corner)"
 }

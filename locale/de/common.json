@@ -23,5 +23,6 @@
     "time-until": "{{minutes}}:{{seconds}}",
     "number-of-tickets-unavailable": "{{ticketAmount}} Tickets sind nicht mehr verfügbare",
     "view-occupied-tickets": "Nicht verfügbare Tickets anzeigen",
-    "impress": "Impressum"
+    "impress": "Impressum",
+    "choose-continue": "Bitte Event auswählen und weiter (rechts unten) klicken"
 }
