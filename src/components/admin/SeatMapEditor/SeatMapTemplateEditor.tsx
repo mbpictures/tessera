@@ -74,7 +74,7 @@ const countingGenerators = {
             for (let row of newDefinition) {
                 for (let col = 0; col < templateData.blockWidth; col++) {
                     const rowIndex = col + (templateData.blockWidth + 1) * block;
-                    if (row[rowIndex].type !== "seat" || row.length <= rowIndex) continue;
+                    if (row.length <= rowIndex || row[rowIndex].type !== "seat") continue;
                     index++;
                     row[rowIndex].id = index;
                 }
