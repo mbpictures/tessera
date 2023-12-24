@@ -1,12 +1,12 @@
 import { SeatRow, SeatSelectionRow } from "./SeatSelectionRow";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
 import { Card, Grid, IconButton, useMediaQuery } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     OrderState,
     selectOrder, setTickets
 } from "../../../store/reducers/orderReducer";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Seat } from "./SeatMapSeat";
 import { PaymentOverview } from "../../PaymentOverview";
 import { useTheme } from "@mui/system";
@@ -53,24 +53,30 @@ export const SeatSelectionMap = ({
     const [previewOpen, setPreviewOpen] = useState(false);
     const theme = useTheme();
     const isLgDown = useMediaQuery(theme.breakpoints.down("lg"));
+    const ref = useRef<ReactZoomPanPinchRef>(null);
 
-    const rescale = () => {
+    const rescale = useCallback(() => {
         if (!content.current || !container.current) return;
         const {width: maxWidth, height: maxHeight} = getDimensions(container.current);
         const {width, height} = getDimensions(content.current);
         setScale(Math.min(maxWidth / width, maxHeight / height));
-    };
+    }, [content, container]);
+
+    useEffect(() => {
+        if (!ref.current) return;
+        ref.current.centerView(scale);
+    }, [scale, ref]);
 
     useEffect(() => {
         rescale();
     }, [container, content]);
 
     useEffect(() => {
-        document.addEventListener("resize", rescale);
+        window.addEventListener("resize", rescale);
         return () => {
-            document.removeEventListener("resize", rescale);
+            window.removeEventListener("resize", rescale);
         };
-    }, []);
+    }, [rescale]);
 
     const createNewOrder = (): OrderState => {
         return {
@@ -126,7 +132,7 @@ export const SeatSelectionMap = ({
                     }}
                     ref={container}
                 >
-                    <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds>
+                    <TransformWrapper centerOnInit centerZoomedOut minScale={scale} limitToBounds ref={ref}>
                         <TransformComponent wrapperStyle={{ width: "100%", height: isLgDown ? "500px" : "100%" }}>
                             <div
                                 style={{ display: "flex", flexDirection: "column" }}

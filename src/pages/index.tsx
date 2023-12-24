@@ -12,8 +12,10 @@ import loadNamespaces from "next-translate/loadNamespaces";
 import { resetOrder } from "../store/reducers/orderReducer";
 import { eventDateIsBookable } from "../constants/util";
 import { resetPayment } from "../store/reducers/paymentReducer";
+import useTranslation from "next-translate/useTranslation";
 
 export default function Home({ events, direction, title, subtitle }) {
+    const {t} = useTranslation("common");
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -45,6 +47,9 @@ export default function Home({ events, direction, title, subtitle }) {
                     </Typography>
                 )
             }
+            <Typography component={"div"} align={"center"} variant={"caption"}>
+                {t("choose-continue")}
+            </Typography>
             {
                 gallery ? (
                     <GalleryEventSelection events={events} onChange={handleChange} />
