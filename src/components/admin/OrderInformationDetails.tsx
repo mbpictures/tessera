@@ -60,6 +60,17 @@ export const OrderPaymentInformationDetails = ({order, onMarkAsPayed}) => {
         }
     };
 
+    const handleResendEmail = async () => {
+        try {
+            await axios.post("/api/admin/order/resend", { orderId: order.id, invoice: true });
+            enqueueSnackbar("Confirmation email sent!", { variant: "success" });
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    }
+
     return (
         <>
             <Typography>
@@ -74,6 +85,9 @@ export const OrderPaymentInformationDetails = ({order, onMarkAsPayed}) => {
                         Mark as payed
                     </SaveButton>
                 )}
+            <SaveButton action={handleResendEmail}>
+                Resend Confirmation E-Mail
+            </SaveButton>
             <Divider />
             <Typography>
                 Detailed information (in case of payment errors
@@ -101,6 +115,18 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categor
             });
         }
     };
+
+    const handleResendTickets = async () => {
+        try {
+            await axios.post("/api/admin/order/resend", { orderId: order.id, tickets: true });
+            enqueueSnackbar("Download Tickets sent!", { variant: "success" });
+            onMarkAsShipped();
+        } catch (e) {
+            enqueueSnackbar("Error: " + (e?.response?.data ?? e.message), {
+                variant: "error"
+            });
+        }
+    }
 
     const getShippingAddress = () => {
         const shipping = JSON.parse(order.shipping);
@@ -137,6 +163,9 @@ export const OrderDeliveryInformationDetails = ({order, onMarkAsShipped, categor
                     Mark as shipped
                 </Button>
             )}
+            <SaveButton action={handleResendTickets}>
+                Resend download tickets
+            </SaveButton>
             <Divider />
             <Typography>
                 Detailed information
