@@ -7,7 +7,7 @@
   "homepage": "https://github.com/mbpictures/ticketshop#readme",
   "license": "MIT",
   "scripts": {
-    "copy-standalone": "npx copyfiles -a -E \"public/**/*\" .next/standalone && npx copyfiles -a -E \".next/static/**/*\" .next/standalone/",
+    "copy-standalone": "npx copyfiles -a -E \"public/**/*\" .next/standalone && npx copyfiles -a -E \".next/static/**/*\" .next/standalone/ && cd src && npx copyfiles -a -E \"assets/**/*\" ../.next/standalone/.next/server/chunks",
     "dev": "next dev",
     "dev:test": "cross-env EMAIL_PROVIDER= EMAIL_HOST=localhost EMAIL_PORT=7777 next dev",
     "build": "next build && npm run copy-standalone",
