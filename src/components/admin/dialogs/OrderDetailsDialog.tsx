@@ -18,6 +18,7 @@ import { getEventTitle } from "../../../constants/util";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import { SaveButton } from "../SaveButton";
 
 export const OrderDetailsDialog = ({
     order,
@@ -51,6 +52,12 @@ export const OrderDetailsDialog = ({
         } catch (e) {
             enqueueSnackbar("Error deleting order: " + (e?.response?.data), {variant: "error"});
         }
+    }
+
+    const downloadInvoice = async () => {
+        const response = await axios.get("/api/admin/order/" + order.id + "/invoice");
+        const blob = await (await fetch(response.data)).blob()
+        window.open(URL.createObjectURL(blob));
     }
 
     return (
@@ -93,6 +100,9 @@ export const OrderDetailsDialog = ({
                                             order.user.customFields && Object.entries(JSON.parse(order.user.customFields)).map(field => `${field[0]}: ${field[1]}`)
                                         }
                                     </Typography>
+                                    <SaveButton action={downloadInvoice}>
+                                        Download Invoice
+                                    </SaveButton>
                                     <Button color={"error"} onClick={() => setDeleteOpen(true)}>
                                         Delete
                                     </Button>
