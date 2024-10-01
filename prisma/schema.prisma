@@ -109,6 +109,7 @@ model Order {
   task               Task?
   idempotencyKey     String    @unique
   cancellationSecret String
+  invoiceNumber      Int?
 }
 
 model SeatReservation {
