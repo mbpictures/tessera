@@ -183,7 +183,6 @@ export const send = async (orderId, isCancellation?: boolean) => {
             }
 
             if (containsInvoice) {
-                await setOption(Options.InvoiceNumber, (await getOption(Options.InvoiceNumber)) + 1);
                 await prisma.order.update({
                     where: {
                         id: orderId
