@@ -27,7 +27,8 @@ export const generateInvoice = async (
             paymentType: true,
             paymentIntent: true,
             tickets: true,
-            shipping: true
+            shipping: true,
+            invoiceNumber: true
         }
     });
     const currency = await getOption(Options.Currency);
@@ -106,10 +107,8 @@ export const generateInvoice = async (
         })
     }
 
-    const invoiceNumber = (await getOption(Options.InvoiceNumber)) + 1;
-
     const html = ejs.render(unescape(template.toString()), {
-        invoice_number: invoiceNumber,
+        invoice_number: orderDB.invoiceNumber,
         creation_date: date.toLocaleDateString(orderDB.locale),
         receiver: [
             orderDB.user.firstName + " " + orderDB.user.lastName,

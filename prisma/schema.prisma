@@ -2,186 +2,187 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-    binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Event {
-    id              Int         @default(autoincrement()) @id
-    title           String
-    seatType        String
-    seatMap         SeatMap?    @relation(fields: [seatMapId], references: [id])
-    seatMapId       Int?
-    categories      CategoriesOnEvents[]
-    coverImage      String?
-    coverImageSize  Int?
-    personalTicket  Boolean     @default(false)
-    dates           EventDate[]
-    customFields    CustomField[]
+  id             Int                  @id @default(autoincrement())
+  title          String
+  seatType       String
+  seatMap        SeatMap?             @relation(fields: [seatMapId], references: [id])
+  seatMapId      Int?
+  categories     CategoriesOnEvents[]
+  coverImage     String?
+  coverImageSize Int?
+  personalTicket Boolean              @default(false)
+  dates          EventDate[]
+  customFields   CustomField[]
 }
 
 model EventDate {
-    id                  Int         @default(autoincrement()) @id
-    title               String?
-    event               Event       @relation(fields: [eventId], references: [id])
-    eventId             Int
-    date                DateTime?
-    orders              Order[]
-    ticketSaleStartDate DateTime?
-    ticketSaleEndDate   DateTime?
-    seatReservations    SeatReservation[]
+  id                  Int               @id @default(autoincrement())
+  title               String?
+  event               Event             @relation(fields: [eventId], references: [id])
+  eventId             Int
+  date                DateTime?
+  orders              Order[]
+  ticketSaleStartDate DateTime?
+  ticketSaleEndDate   DateTime?
+  seatReservations    SeatReservation[]
 }
 
 model CustomField {
-    id                  Int         @default(autoincrement()) @id
-    label               String
-    name                String
-    isRequired          Boolean
-    event               Event       @relation(fields: [eventId], references: [id])
-    eventId             Int
+  id         Int     @id @default(autoincrement())
+  label      String
+  name       String
+  isRequired Boolean
+  event      Event   @relation(fields: [eventId], references: [id])
+  eventId    Int
 }
 
 model SeatMap {
-    id              Int         @default(autoincrement()) @id
-    events          Event[]
-    orders          Order[]
-    definition      String
-    preview         Bytes?
-    previewType     String?
+  id          Int     @id @default(autoincrement())
+  events      Event[]
+  orders      Order[]
+  definition  String
+  preview     Bytes?
+  previewType String?
 }
 
 model Category {
-    id              Int         @default(autoincrement()) @id
-    label           String
-    price           Float
-    color           String?
-    activeColor     String?
-    occupiedColor   String?
-    events          CategoriesOnEvents[]
-    tickets         Ticket[]
+  id            Int                  @id @default(autoincrement())
+  label         String
+  price         Float
+  color         String?
+  activeColor   String?
+  occupiedColor String?
+  events        CategoriesOnEvents[]
+  tickets       Ticket[]
 }
 
 model CategoriesOnEvents {
-    event           Event        @relation(fields: [eventId], references: [id])
-    eventId         Int
-    category        Category     @relation(fields: [categoryId], references: [id])
-    categoryId      Int
-    maxAmount       Int?
+  event      Event    @relation(fields: [eventId], references: [id])
+  eventId    Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  maxAmount  Int?
 
-    @@id([eventId, categoryId])
+  @@id([eventId, categoryId])
 }
 
 model User {
-    id              String      @default(uuid()) @id
-    firstName       String
-    lastName        String
-    email           String
-    address         String
-    zip             String
-    city            String
-    countryCode     String
-    regionCode      String
-    orders          Order[]
-    customFields    String?
+  id           String  @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String
+  address      String
+  zip          String
+  city         String
+  countryCode  String
+  regionCode   String
+  orders       Order[]
+  customFields String?
 }
 
 model Order {
-    id              String      @default(uuid()) @id
-    user            User        @relation(fields: [userId], references: [id])
-    userId          String
-    paymentType     String
-    paymentIntent   String?
-    paymentResult   String?
-    seatMap         SeatMap?    @relation(fields: [seatMapId], references: [id])
-    seatMapId       Int?
-    eventDate       EventDate   @relation(fields: [eventDateId], references: [id])
-    eventDateId     Int
-    shipping        String
-    tickets         Ticket[]
-    locale          String
-    invoiceSent     Boolean     @default(false)
-    date            DateTime    @default(now())
-    task            Task?
-    idempotencyKey  String      @unique
-    cancellationSecret String
+  id                 String    @id @default(uuid())
+  user               User      @relation(fields: [userId], references: [id])
+  userId             String
+  paymentType        String
+  paymentIntent      String?
+  paymentResult      String?
+  seatMap            SeatMap?  @relation(fields: [seatMapId], references: [id])
+  seatMapId          Int?
+  eventDate          EventDate @relation(fields: [eventDateId], references: [id])
+  eventDateId        Int
+  shipping           String
+  tickets            Ticket[]
+  locale             String
+  invoiceSent        Boolean   @default(false)
+  date               DateTime  @default(now())
+  task               Task?
+  idempotencyKey     String    @unique
+  cancellationSecret String
+  invoiceNumber      Int?
 }
 
 model SeatReservation {
-    id              String      @default(uuid()) @id
-    reservationId   String
-    seatId          Int?
-    categoryId      Int
-    amount          Int         @default(1)
-    expiresAt       DateTime
-    eventDateId     Int
-    eventDate       EventDate   @relation(fields: [eventDateId], references: [id])
+  id            String    @id @default(uuid())
+  reservationId String
+  seatId        Int?
+  categoryId    Int
+  amount        Int       @default(1)
+  expiresAt     DateTime
+  eventDateId   Int
+  eventDate     EventDate @relation(fields: [eventDateId], references: [id])
 }
 
 model Ticket {
-    id              String      @default(uuid()) @id
-    order           Order       @relation(fields: [orderId], references: [id])
-    orderId         String
-    used            Boolean     @default(false)
-    seatId          Int?
-    secret          String?
-    category        Category    @relation(fields: [categoryId], references: [id])
-    categoryId      Int
-    amount          Int         @default(1)
-    firstName       String?
-    lastName        String?
+  id         String   @id @default(uuid())
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+  used       Boolean  @default(false)
+  seatId     Int?
+  secret     String?
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  amount     Int      @default(1)
+  firstName  String?
+  lastName   String?
 }
 
 model AdminUser {
-    id              Int         @default(autoincrement()) @id
-    userName        String      @unique
-    email           String      @unique
-    password        String
-    apiKeys         AdminApiKeys[]
-    readRights      String
-    writeRights     String
-    notifications   Notification[]
-    tasks           Task[]
+  id            Int            @id @default(autoincrement())
+  userName      String         @unique
+  email         String         @unique
+  password      String
+  apiKeys       AdminApiKeys[]
+  readRights    String
+  writeRights   String
+  notifications Notification[]
+  tasks         Task[]
 }
 
 model AdminApiKeys {
-    id              Int         @default(autoincrement()) @id
-    key             String      @unique
-    user            AdminUser   @relation(fields: [userId], references: [id])
-    userId          Int
-    name            String
+  id     Int       @id @default(autoincrement())
+  key    String    @unique
+  user   AdminUser @relation(fields: [userId], references: [id])
+  userId Int
+  name   String
 }
 
 model Option {
-    key             String      @unique
-    value           String
-    data            Bytes?
+  key   String @unique
+  value String
+  data  Bytes?
 }
 
 model Translation {
-    id              Int         @default(autoincrement()) @id
-    key             String
-    namespace       String
-    translations    String
+  id           Int    @id @default(autoincrement())
+  key          String
+  namespace    String
+  translations String
 }
 
 model Notification {
-    id              Int         @default(autoincrement()) @id
-    user            AdminUser   @relation(fields: [userId], references: [id])
-    userId          Int
-    data            String?
-    type            String
+  id     Int       @id @default(autoincrement())
+  user   AdminUser @relation(fields: [userId], references: [id])
+  userId Int
+  data   String?
+  type   String
 }
 
 model Task {
-    id              Int         @default(autoincrement()) @id
-    order           Order       @relation(fields: [orderId], references: [id])
-    orderId         String      @unique
-    assignedUser    AdminUser?  @relation(fields: [adminUserId], references: [id])
-    adminUserId     Int?
-    notes           String
+  id           Int        @id @default(autoincrement())
+  order        Order      @relation(fields: [orderId], references: [id])
+  orderId      String     @unique
+  assignedUser AdminUser? @relation(fields: [adminUserId], references: [id])
+  adminUserId  Int?
+  notes        String
 }

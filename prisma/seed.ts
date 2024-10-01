@@ -1,6 +1,7 @@
 import prisma from "../src/lib/prisma";
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import { randomUUID } from "crypto";
+import { Options } from "../src/constants/Constants";
 
 function getRandom(min, max) {
     min = Math.ceil(min);
@@ -125,10 +126,17 @@ export async function main() {
                     create: tickets
                 },
                 idempotencyKey: randomUUID(),
-                cancellationSecret: randomUUID()
+                cancellationSecret: randomUUID(),
+                invoiceNumber: i + 1
             }
-        })
+        });
     }
+    await prisma.option.create({
+        data: {
+            key: Options.InvoiceNumber,
+            value: JSON.stringify({value: 101})
+        }
+    });
 }
 
 main()

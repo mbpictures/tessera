@@ -10,14 +10,13 @@ export const generatePdf = async (html, options): Promise<Buffer> => {
             '--disable-setuid-sandbox',
         ]
     });
-    const browserPID = browser.process().pid;
+    //const browserPID = browser.process().pid;
     const page = await browser.newPage();
 
     let pdf;
-
     try {
         await page.setContent(html, {
-            waitUntil: 'networkidle0', // wait for page to load completely
+            waitUntil: 'domcontentloaded', // wait for page to load completely
         });
         pdf = await page.pdf(options);
     } catch (e) {
@@ -25,7 +24,7 @@ export const generatePdf = async (html, options): Promise<Buffer> => {
     } finally {
         await page.close();
         await browser.close();
-        await killPID(browserPID);
+        //await killPID(browserPID);
     }
     return pdf;
 }

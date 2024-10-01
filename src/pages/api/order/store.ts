@@ -6,9 +6,13 @@ import { withNotification } from "../../../lib/notifications/withNotification";
 import { PaymentFactory, PaymentType } from "../../../store/factories/payment/PaymentFactory";
 import { ShippingFactory } from "../../../store/factories/shipping/ShippingFactory";
 import { generateSecret, validateOrder } from "../../../constants/serverUtil";
+import { getOption, setOption } from "../../../lib/options";
+import { Options } from "../../../constants/Constants";
 
 const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKey) => {
-    return await prisma.order.create({
+    const invoiceNumber = (await getOption(Options.InvoiceNumber)) + 1;
+    await setOption(Options.InvoiceNumber, invoiceNumber);
+    return prisma.order.create({
         data: {
             eventDate: {
                 connect: {
@@ -32,7 +36,8 @@ const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKe
             shipping: JSON.stringify(user.shipping),
             locale: locale,
             idempotencyKey: idempotencyKey,
-            cancellationSecret: generateSecret()
+            cancellationSecret: generateSecret(),
+            invoiceNumber
         },
         include: {
             user: true,
