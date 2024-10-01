@@ -36,7 +36,8 @@ const createOrder = async (eventDateId, paymentType, user, locale, idempotencyKe
             shipping: JSON.stringify(user.shipping),
             locale: locale,
             idempotencyKey: idempotencyKey,
-            cancellationSecret: generateSecret()
+            cancellationSecret: generateSecret(),
+            invoiceNumber
         },
         include: {
             user: true,
