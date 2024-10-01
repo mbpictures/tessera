@@ -6,6 +6,7 @@ import {
     Grid,
     IconButton,
     Menu,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -45,6 +46,7 @@ import { hasPayedIcon } from "../../components/admin/OrderInformationDetails";
 import { getEventTitle } from "../../constants/util";
 import { getOption } from "../../lib/options";
 import { Options } from "../../constants/Constants";
+import { SaveButton } from "../../components/admin/SaveButton";
 
 const COLUMNS = [
     "Event",
@@ -166,6 +168,12 @@ export default function Orders({ permissionDenied, count, categories, eventDates
         window.location.href = window.location.origin + "/" + getOrderUrl({amount: "", page: "", exportFile: "csv"});
     }
 
+    const downloadInvoices = async () => {
+        const response = await axios.get("/api/admin/order/invoice?" + new URLSearchParams(omitBy(filter.current, isEmpty)));
+        const blob = await (await fetch(response.data)).blob()
+        window.open(URL.createObjectURL(blob));
+    }
+
     return (
         <AdminLayout permissionDenied={permissionDenied}>
             <OrderDetailsDialog
@@ -205,21 +213,31 @@ export default function Orders({ permissionDenied, count, categories, eventDates
             </Box>
             <Grid container>
                 <Grid item xs={12} md={6}>
-                    <Button
-                        fullWidth={isMdDown}
-                        onClick={() => setMarkAsPaidOpen(true)}
-                        variant={"outlined"}
-                    >
-                        Mark orders as paid
-                    </Button>
-                    <Button
-                        fullWidth={isMdDown}
-                        onClick={() => setAddOrderOpen(true)}
-                        variant={"outlined"}
-                        color="secondary"
-                    >
-                        Add Order
-                    </Button>
+                    <Stack direction={"row"} spacing={1}>
+                        <Button
+                            fullWidth={isMdDown}
+                            onClick={() => setMarkAsPaidOpen(true)}
+                            variant={"outlined"}
+                        >
+                            Mark orders as paid
+                        </Button>
+                        <Button
+                            fullWidth={isMdDown}
+                            onClick={() => setAddOrderOpen(true)}
+                            variant={"outlined"}
+                            color="secondary"
+                        >
+                            Add Order
+                        </Button>
+                        <SaveButton
+                            fullWidth={isMdDown}
+                            action={downloadInvoices}
+                            variant={"outlined"}
+                            color="warning"
+                        >
+                            Download Invoices
+                        </SaveButton>
+                    </Stack>
                 </Grid>
                 <Grid item xs={12} md={6} display={"flex"} justifyContent={"flex-end"}>
                     <OrderFilter
