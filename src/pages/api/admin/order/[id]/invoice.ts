@@ -6,6 +6,12 @@ import { generateInvoice } from "../../../../../lib/invoice";
 import { getOptionData } from "../../../../../lib/options";
 import { Options } from "../../../../../constants/Constants";
 
+export const config = {
+    api: {
+        responseLimit: false,
+    },
+};
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse

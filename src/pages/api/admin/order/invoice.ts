@@ -7,6 +7,12 @@ import { getOptionData } from "../../../../lib/options";
 import { Options } from "../../../../constants/Constants";
 import PDFMerger from "pdf-merger-js";
 
+export const config = {
+    api: {
+        responseLimit: false,
+    },
+};
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
