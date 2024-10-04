@@ -1,24 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+    makeOrderDBRequestFromQuery,
     serverAuthenticate
 } from "../../../../constants/serverUtil";
 import prisma from "../../../../lib/prisma";
 import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 import { json2csvAsync } from 'json-2-csv';
-
-function setProperty(object, path, value) {
-    const pList = path.split(".");
-    const len = pList.length;
-    for(let i = 0; i < len-1; i++) {
-        const elem = pList[i];
-        if( !object[elem] ) object[elem] = {}
-        object = object[elem];
-    }
-
-    object[pList[len-1]] = value;
-    return object;
-}
-
 
 export default async function handler(
     req: NextApiRequest,
@@ -31,57 +18,27 @@ export default async function handler(
     if (!user) return;
 
     if (req.method === "GET") {
-        const request = {
-            include: {
-                eventDate: {
-                    select: {
-                        title: true,
-                        date: true,
-                        event: {
-                            select: {
-                                title: true
+        const request = makeOrderDBRequestFromQuery(
+            req.query,
+            {
+                include: {
+                    eventDate: {
+                        select: {
+                            title: true,
+                            date: true,
+                            event: {
+                                select: {
+                                    title: true
+                                }
                             }
                         }
-                    }
-                },
-                user: true,
-                tickets: true
+                    },
+                    user: true,
+                    tickets: true
+                }
             }
-        }
-        let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName, sorting, exportFile}: any = req.query;
-
-        if (amount) {
-            request["take"] = parseInt(amount as string);
-            if (page)
-                request["skip"] = parseInt(page as string) * parseInt(amount as string);
-        }
-        if (shipping) {
-            setProperty(request, "where.shipping.contains", `"type":"${shipping}"`);
-        }
-        if (eventId) {
-            setProperty(request, "where.eventId", parseInt(eventId));
-        }
-        if (event) {
-            setProperty(request, "where.event.title", event);
-        }
-        if (payment) {
-            setProperty(request, "where.paymentType", payment);
-        }
-        if (customerFirstName) {
-            setProperty(request, "where.user.firstName.contains", customerFirstName);
-        }
-        if (customerLastName) {
-            setProperty(request, "where.user.lastName.contains", customerLastName);
-        }
-        if (sorting) {
-            sorting = decodeURIComponent(sorting);
-            setProperty(request, "orderBy", sorting.split(",").map(sort => {
-                const split = sort.split(":");
-                const result = {};
-                setProperty(result, split[0], split[1]);
-                return result;
-            }));
-        }
+        );
+        let {exportFile}: any = req.query;
 
         const orders = await prisma.order.findMany(request);
 

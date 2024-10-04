@@ -10,6 +10,9 @@ import { Ticket, Tickets } from "../store/reducers/orderReducer";
 import { eventDateIsBookable } from "./util";
 import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
 import { randomBytes } from "crypto";
+import { Prisma } from ".prisma/client";
+import OrderFindManyArgs = Prisma.OrderFindManyArgs;
+import SelectSubset = Prisma.SelectSubset;
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -321,4 +324,55 @@ export const getSeatMap = async (eventDateId, withOccupiedMarked, reservationId?
         );
     }
     return seatMap;
+}
+
+export const setProperty = (object: any, path: string, value: any) => {
+    const pList = path.split(".");
+    const len = pList.length;
+    for(let i = 0; i < len-1; i++) {
+        const elem = pList[i];
+        if( !object[elem] ) object[elem] = {}
+        object = object[elem];
+    }
+
+    object[pList[len-1]] = value;
+    return object;
+}
+
+export const makeOrderDBRequestFromQuery = (query: Partial<{[p: string]: string | string[]}>, baseRequest?: SelectSubset<OrderFindManyArgs, OrderFindManyArgs>): SelectSubset<OrderFindManyArgs, OrderFindManyArgs> => {
+    let {page, amount, shipping, eventId, event, payment, customerFirstName, customerLastName, sorting}: any = query;
+    const request = baseRequest ?? {};
+    if (amount) {
+        request["take"] = parseInt(amount as string);
+        if (page)
+            request["skip"] = parseInt(page as string) * parseInt(amount as string);
+    }
+    if (shipping) {
+        setProperty(request, "where.shipping.contains", `"type":"${shipping}"`);
+    }
+    if (eventId) {
+        setProperty(request, "where.eventId", parseInt(eventId));
+    }
+    if (event) {
+        setProperty(request, "where.event.title", event);
+    }
+    if (payment) {
+        setProperty(request, "where.paymentType", payment);
+    }
+    if (customerFirstName) {
+        setProperty(request, "where.user.firstName.contains", customerFirstName);
+    }
+    if (customerLastName) {
+        setProperty(request, "where.user.lastName.contains", customerLastName);
+    }
+    if (sorting) {
+        sorting = decodeURIComponent(sorting);
+        setProperty(request, "orderBy", sorting.split(",").map(sort => {
+            const split = sort.split(":");
+            const result = {};
+            setProperty(result, split[0], split[1]);
+            return result;
+        }));
+    }
+    return request;
 }
