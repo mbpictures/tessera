@@ -23,14 +23,15 @@ export default async function handler(
     }
 
     if (req.method === "POST") {
-        const { label, price, color, activeColor, occupiedColor } = req.body;
+        const { label, price, color, activeColor, occupiedColor, maxTickets } = req.body;
         const category = await prisma.category.create({
             data: {
                 label: label,
                 price: parseFloat(price),
                 color: color,
                 activeColor: activeColor,
-                occupiedColor: occupiedColor
+                occupiedColor: occupiedColor,
+                maxTickets: maxTickets === "" || maxTickets === null ? null : parseInt(maxTickets)
             }
         });
         res.status(200).end(category.id.toFixed(0));
