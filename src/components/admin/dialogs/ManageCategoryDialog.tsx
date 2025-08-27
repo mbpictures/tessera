@@ -39,7 +39,8 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category, curren
         price: Yup.number().required("Price is required"),
         color: Yup.string(),
         activeColor: Yup.string(),
-        occupiedColor: Yup.string()
+        occupiedColor: Yup.string(),
+        maxTickets: Yup.number().nullable()
     });
 
 
@@ -49,7 +50,8 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category, curren
             price: category?.price ?? 0,
             color: category?.color ?? SEAT_COLORS.normal,
             activeColor: category?.activeColor ?? SEAT_COLORS.active,
-            occupiedColor: category?.occupiedColor ?? SEAT_COLORS.occupied
+            occupiedColor: category?.occupiedColor ?? SEAT_COLORS.occupied,
+            maxTickets: category?.maxTickets ?? null
         },
         validationSchema: schema,
         onSubmit: async (values) => {
@@ -83,6 +85,7 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category, curren
         formik.setFieldValue("color", category.color);
         formik.setFieldValue("activeColor", category.activeColor);
         formik.setFieldValue("occupiedColor", category.occupiedColor);
+        formik.setFieldValue("maxTickets", category.maxTickets);
     }, [category]);
 
     const handleDeleteCategory = async () => {
@@ -221,6 +224,19 @@ export const ManageCategoryDialog = ({ open, onClose, onChange, category, curren
                                         disableAlpha
                                         hideTextfield
                                     />
+                                </Stack>
+                                <Stack
+                                    direction={"column"}
+                                    spacing={2}
+                                >
+                                    <TextField
+                                        label={"Maximum Tickets"}
+                                        sx={{ flexGrow: 1 }}
+                                        {...getFieldProps("maxTickets")}
+                                    />
+                                    <Typography variant="caption">
+                                        Leave empty for unlimited tickets per order
+                                    </Typography>
                                 </Stack>
                                 <Stack direction={"row"}>
                                     <LoadingButton
