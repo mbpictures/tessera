@@ -64,6 +64,7 @@ model Category {
   occupiedColor String?
   events        CategoriesOnEvents[]
   tickets       Ticket[]
+  maxTickets    Int?
 }
 
 model CategoriesOnEvents {
