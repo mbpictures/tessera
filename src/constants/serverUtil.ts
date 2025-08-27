@@ -11,8 +11,8 @@ import { eventDateIsBookable } from "./util";
 import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
 import { randomBytes } from "crypto";
 import { Prisma } from ".prisma/client";
-import OrderFindManyArgs = Prisma.OrderFindManyArgs;
-import SelectSubset = Prisma.SelectSubset;
+type OrderFindManyArgs = Prisma.OrderFindManyArgs;
+type SelectSubset<X, U> = Prisma.SelectSubset<X, U>;
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
