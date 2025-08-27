@@ -183,7 +183,8 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
                     categories: {
                         select: {
                             categoryId: true,
-                            maxAmount: true
+                            maxAmount: true,
+                            category: true,
                         }
                     }
                 }
