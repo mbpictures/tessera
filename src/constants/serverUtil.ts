@@ -11,8 +11,8 @@ import { eventDateIsBookable } from "./util";
 import { SeatMap } from "../components/seatselection/seatmap/SeatSelectionMap";
 import { randomBytes } from "crypto";
 import { Prisma } from ".prisma/client";
-import OrderFindManyArgs = Prisma.OrderFindManyArgs;
-import SelectSubset = Prisma.SelectSubset;
+type OrderFindManyArgs = Prisma.OrderFindManyArgs;
+type SelectSubset<X, U> = Prisma.SelectSubset<X, U>;
 
 export function getStaticAssetFile(file, options = null) {
     let basePath = process.cwd();
@@ -183,7 +183,8 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
                     categories: {
                         select: {
                             categoryId: true,
-                            maxAmount: true
+                            maxAmount: true,
+                            category: true,
                         }
                     }
                 }
@@ -212,6 +213,20 @@ export const validateOrder = async (tickets: Tickets, eventDateId, reservationId
 
     let currentAmounts = await getCategoryTicketAmount(eventDateId, tickets, reservationId);
     let invalidTickets = [];
+    const orderTicketSum = tickets.reduce((group, ticket) => {
+        if (!group[ticket.categoryId]) group[ticket.categoryId] = 0;
+        group[ticket.categoryId] += ticket.amount;
+        return group;
+    }, {} as Record<number, number>);
+    const invalidTicketCategories = Object.entries(orderTicketSum).filter(entry => {
+        const category = eventDate.event.categories.find(c => c.categoryId === parseInt(entry[0]))?.category;
+        const maxPerOrder = category ? (category.maxTickets ?? 0) : 0;
+        return entry[1] > maxPerOrder && maxPerOrder > 0;
+    }).map(entry => parseInt(entry[0], 10));
+    if (invalidTicketCategories.length > 0) {
+        return [false, tickets.filter(ticket => invalidTicketCategories.includes(ticket.categoryId))];
+    }
+
     for (let ticket of tickets) {
         if (typeof currentAmounts[ticket.categoryId] === "undefined")
             currentAmounts[ticket.categoryId] = 0;

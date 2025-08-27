@@ -37,6 +37,7 @@ export const SeatSelectionFreeEntry = ({
         label: string;
         price: number;
         ticketsLeft: number;
+        maxTickets: number | null;
     }>;
     index: number;
     currentlySelectedCategories: Array<number>;
@@ -57,6 +58,10 @@ export const SeatSelectionFreeEntry = ({
 
     const getTicketsLeft = (categoryId?: number) => {
         return categories.find((value) => value.id === (categoryId ?? category))?.ticketsLeft ?? Infinity;
+    };
+
+    const getMaxTickets = (categoryId?: number) => {
+        return categories.find((value) => value.id === (categoryId ?? category))?.maxTickets ?? Infinity;
     }
 
     const handleChange = (event) => {
@@ -64,14 +69,14 @@ export const SeatSelectionFreeEntry = ({
             setTicketAmount(-1);
             return;
         }
-        const newValue = Math.min(isNaN(parseInt(event.target.value)) ? 0 : parseInt(event.target.value), getTicketsLeft());
+        const newValue = Math.min(isNaN(parseInt(event.target.value)) ? 0 : parseInt(event.target.value), getTicketsLeft(), getMaxTickets());
         setTicketAmount(newValue);
         onChange(index, newValue, category, category);
     };
 
     const onAdd = () => {
         if (category === -1) return;
-        const val = Math.min(ticketAmount + 1, getTicketsLeft());
+        const val = Math.min(ticketAmount + 1, getTicketsLeft(), getMaxTickets());
         setTicketAmount(val);
         onChange(index, val, category, category);
     };
@@ -83,7 +88,7 @@ export const SeatSelectionFreeEntry = ({
     };
 
     const handleCategoryChange = (event) => {
-        onChange(index, Math.min(ticketAmount, getTicketsLeft(parseInt(event.target.value))), parseInt(event.target.value), category);
+        onChange(index, Math.min(ticketAmount, getTicketsLeft(parseInt(event.target.value)), getMaxTickets(parseInt(event.target.value))), parseInt(event.target.value), category);
     };
 
     const price =
@@ -120,6 +125,13 @@ export const SeatSelectionFreeEntry = ({
                             getTicketsLeft() < Infinity && (
                                 <Typography variant={"caption"}>
                                     {t("seatselection:tickets-left", {ticketsLeft: getTicketsLeft()})}
+                                </Typography>
+                            )
+                        }
+                        {
+                            getMaxTickets() < Infinity && (
+                                <Typography variant={"caption"}>
+                                    {t("seatselection:max-tickets", {maxTickets: getMaxTickets()})}
                                 </Typography>
                             )
                         }

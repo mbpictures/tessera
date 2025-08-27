@@ -26,9 +26,15 @@ export default async function handler(
         include: {
             order: {
                 include: {
-                    user: true
+                    user: true,
+                    eventDate: {
+                        include: {
+                            event: true
+                        }
+                    }
                 }
-            }
+            },
+            category: true
         }
     });
     if (!ticket)
