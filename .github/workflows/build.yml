@@ -35,10 +35,10 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ticketshop-ci
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 14.18
-      uses: actions/setup-node@v2
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
       with:
-        node-version: '14.18'
+        node-version: 20
         cache: 'npm'
     - run: npm ci
     - run: npm run cypress:build
