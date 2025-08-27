@@ -4,5 +4,6 @@
     "event-booked-out": "Tut uns leid, aber das Event ist bereits voll ausgebucht",
     "seat-map-preview": "Sitzplan Vorschau",
     "seat-booked": "Dieser Platz wurde bereits gebucht",
-    "tickets-left": "Tickets verfügbar: {{ticketsLeft}}"
+    "tickets-left": "Tickets verfügbar: {{ticketsLeft}}",
+    "max-tickets": "Maximale Tickets pro Bestellung: {{maxTickets}}"
 }

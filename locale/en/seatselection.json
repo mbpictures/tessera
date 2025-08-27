@@ -4,5 +4,6 @@
     "event-booked-out": "We are sorry, but the event is already fully booked",
     "seat-map-preview": "Seat Map Preview",
     "seat-booked": "This seat has already been booked",
-    "tickets-left": "Tickets left: {{ticketsLeft}}"
+    "tickets-left": "Tickets left: {{ticketsLeft}}",
+    "max-tickets": "Maximum tickets per order: {{maxTickets}}"
 }
