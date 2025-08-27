@@ -1,11 +1,17 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import { getStaticAssetFile, serverAuthenticate } from "../../../../constants/serverUtil";
+import { getStaticAssetFile, makeOrderDBRequestFromQuery, serverAuthenticate } from "../../../../constants/serverUtil";
 import { PermissionSection, PermissionType } from "../../../../constants/interfaces";
 import prisma from "../../../../lib/prisma";
 import { generateInvoice } from "../../../../lib/invoice";
 import { getOptionData } from "../../../../lib/options";
 import { Options } from "../../../../constants/Constants";
 import PDFMerger from "pdf-merger-js";
+
+export const config = {
+    api: {
+        responseLimit: false,
+    },
+};
 
 export default async function handler(
     req: NextApiRequest,
@@ -21,7 +27,8 @@ export default async function handler(
     if (req.method === "GET") {
         const pdfs = [];
         const merger = new PDFMerger();
-        const orders = await prisma.order.findMany();
+        const request = makeOrderDBRequestFromQuery(req.query);
+        const orders = await prisma.order.findMany(request);
         for (const order of orders) {
             const invoiceData = await generateInvoice(
                 (await getOptionData(Options.TemplateInvoice, getStaticAssetFile("invoice/template.html", "utf-8"))).data,
