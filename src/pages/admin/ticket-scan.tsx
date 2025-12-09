@@ -159,7 +159,8 @@ export default function TicketScan({permissionDenied}){
                     {
                         ticket && (
                             <Stack>
-                                <Typography>Ticket used: {ticket.used ? <ClearIcon color={"error"} /> : <CheckIcon color={"success"} />}</Typography>
+                                <Typography>Ticket valid: {ticket.used ? <ClearIcon color={"error"} /> : <CheckIcon color={"success"} />}</Typography>
+                                <Typography>Event: {ticket.order.event.name}</Typography>
                                 <Typography>Name: {ticket.order.user.firstName} {ticket.order.user.lastName}</Typography>
                                 <Typography>Ticket-Id: {ticket.id}</Typography>
                             </Stack>
