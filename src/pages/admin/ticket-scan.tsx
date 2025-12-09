@@ -1,5 +1,5 @@
 import {
-    Button,
+    Button, CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -34,6 +34,7 @@ export default function TicketScan({permissionDenied}){
     const ticketId = useRef<{id: string; secret: string;}>(null);
     const [deviceId, setDeviceId] = useState(null);
     const [devices, setDevices] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!navigator.mediaDevices) return;
@@ -82,6 +83,7 @@ export default function TicketScan({permissionDenied}){
             setTimeout(() => {
                 ticketId.current = null;
             }, 500);
+            setLoading(false);
         }
     }
 
@@ -101,6 +103,7 @@ export default function TicketScan({permissionDenied}){
         }
 
         ticketId.current = parsedQR;
+        setLoading(true);
         if (autoSendRef.current) {
             await accept();
             return;
@@ -109,6 +112,7 @@ export default function TicketScan({permissionDenied}){
         try {
             const ticket = await axios.get("/api/admin/ticket/" + ticketId.current.id);
             setTicket(ticket.data);
+            setLoading(false);
         } catch (e) {
             if (e.response.status === 404) {
                 enqueueSnackbar("Ticket not found", {variant: "info"});
@@ -206,6 +210,13 @@ export default function TicketScan({permissionDenied}){
                     <SettingsIcon />
                 </IconButton>
             </Box>
+            {
+                loading && (
+                    <Box style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
+                        <CircularProgress variant={"indeterminate"} />
+                    </Box>
+                )
+            }
             <div id={style.qrMarker}><div /></div>
             <QrReader
                 constraints={!deviceId ? {facingMode: "environment"} : {deviceId}}
