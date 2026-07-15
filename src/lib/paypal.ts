@@ -7,8 +7,9 @@ export const environment = () => {
     if (
         process.env.PAYPAL_CLIENT_LIVE_ENVIRONMENT &&
         process.env.PAYPAL_CLIENT_LIVE_ENVIRONMENT.toLowerCase() === "true"
-    )
-        new paypal.core.LiveEnvironment(clientId, clientSecret);
+    ) {
+        return new paypal.core.LiveEnvironment(clientId, clientSecret);
+    }
     return new paypal.core.SandboxEnvironment(clientId, clientSecret);
 };
 
